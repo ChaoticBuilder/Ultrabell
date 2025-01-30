@@ -1639,7 +1639,7 @@ void mode_fixed_camera(struct Camera *c) {
     if (gCurrLevelNum == LEVEL_BBH) {
         set_fov_function(CAM_FOV_BBH);
     } elseif (gCurrLevelNum == LEVEL_CASTLE) {
-        set_fov_function(CAM_FOV_BBH);
+        set_fov_function(CAM_FOV_CASTLE);
     }
     } else {
         set_fov_function(CAM_FOV_APP_45);
@@ -5289,7 +5289,7 @@ void set_fixed_cam_axis_sa_lobby(UNUSED s16 preset) {
             break;
 
         case AREA_CASTLE_LOBBY:
-            vec3f_set(sFixedModeBasePosition, -577.f, 143.f, 1443.f);
+            vec3f_set(sFixedModeBasePosition, 724.f, 150.f, 856.f);
             break;
     }
 }
@@ -10927,7 +10927,7 @@ void approach_fov_45(struct MarioState *m) {
     f32 targetFoV = sFOVState.fov;
 
     if (m->area->camera->mode == CAMERA_MODE_FIXED && m->area->camera->cutscene == 0) {
-        targetFoV = 45.f;
+        targetFoV = 60.f;
     } else {
         targetFoV = 45.f;
     }
@@ -10979,6 +10979,9 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
                 break;
             case CAM_FOV_BBH:
                 set_fov_bbh(marioState);
+                break;
+            case CAM_FOV_CASTLE:
+                approach_fov_45(marioState);
                 break;
             case CAM_FOV_APP_45:
                 approach_fov_45(marioState);
