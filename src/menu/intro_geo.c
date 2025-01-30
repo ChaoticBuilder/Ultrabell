@@ -15,8 +15,8 @@
 
 // frame counts for the zoom in, hold, and zoom out of title model
 #define INTRO_STEPS_ZOOM_IN 20
-#define INTRO_STEPS_HOLD_1 75
-#define INTRO_STEPS_ZOOM_OUT 91
+#define INTRO_STEPS_HOLD_1 960
+#define INTRO_STEPS_ZOOM_OUT 0
 
 // background types
 enum IntroBackgroundTypes {
@@ -213,7 +213,7 @@ static s8 gameOverBackgroundTable[] = {
 
 // order of tiles that are flipped from "Game Over" to "Super Mario 64"
 static s8 flipOrder[] = {
-    0, 1, 2, 3, 7, 11, 10, 9, 8, 4, 5, 6
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
 /**

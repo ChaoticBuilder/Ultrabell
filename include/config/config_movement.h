@@ -26,7 +26,7 @@
  * - Precise turning control.
  * - Prevents falling from the edges.
  */
-// #define BETTER_HANGING
+#define BETTER_HANGING
 
 /**
  * Change the movement speed when hanging from a ceiling (the vanilla value is 4.0f, has no effect if BETTER_HANGING is enabled).
@@ -41,7 +41,7 @@
 /**
  * Disables fall damage.
  */
-#define NO_FALL_DAMAGE
+// #define NO_FALL_DAMAGE
 
 /**
  * Disables the scream that mario makes when falling off a great height (this is separate from actual fall damage).
@@ -51,12 +51,12 @@
 /**
  * Fall height for normal fall damage. Vanilla is 1150.0f.
  */
-#define FALL_DAMAGE_HEIGHT_SMALL 1150.0f
+#define FALL_DAMAGE_HEIGHT_SMALL 1344.0f
 
 /**
  * Fall height for double fall damage. Vanilla is 3000.0f.
  */
-#define FALL_DAMAGE_HEIGHT_LARGE 3000.0f
+#define FALL_DAMAGE_HEIGHT_LARGE 2688.0f
 
 /**
  * Disables Mario getting stuck in snow and sand when falling.
@@ -81,12 +81,12 @@
 /**
  * If A and Z are pressed on the same frame while running, Mario will long jump instead of ground pound.
  */
-// #define EASIER_LONG_JUMPS
+#define EASIER_LONG_JUMPS
 
 /**
  * Enables the ability to hold Z while twirling to descend faster.
  */
-// #define Z_TWIRL
+#define Z_TWIRL
 
 /**
  * Disables bonks when ground pounding next to a wall.
@@ -101,12 +101,12 @@
 /**
  * Allows Mario to grab hangable ceilings from any state.
  */
-// #define HANGING_FIX
+#define HANGING_FIX
 
 /**
  * The maximum angle the player can wall kick, in degrees. 0..90. To allow 45 degree wall kicks, you must supply `46` to allow 45 and under.
  */
-#define WALL_KICK_DEGREES 45
+#define WALL_KICK_DEGREES 61
 
 /**
  * Makes Mario unable to ledge grab steep slopes to prevent false ledge grabs.
@@ -134,7 +134,7 @@
  * be interrupted with text
  * Uncomment this to fix this bug, and frustrate speedrunners
  */
-#define BUGFIX_DIALOG_TIME_STOP
+// #define BUGFIX_DIALOG_TIME_STOP
 
 /**
  * Inertia defines; allow Mario to preserve his momemtum when leaving moving platforms.

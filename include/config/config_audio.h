@@ -12,14 +12,14 @@
 /**
  * Red coins should use the unchanging JP sound effect.
  */
-// #define JP_RED_COIN_SOUND
+#define JP_RED_COIN_SOUND
 
 /** 
  * In vanilla, Mario's sounds are pitch shifted in real time in order to maintain a sense of consistency. This can be annoying when replacing Mario's sounds.
  * This define will disable this behavior, making sound replacements easier to manage. Use of this is not recommended unless you're actually replacing Mario's sounds.
  * When toggling this define, you will need to run `make clean` for it to apply.
  */
-// #define DISABLE_MARIO_PITCH_SHIFTING
+#define DISABLE_MARIO_PITCH_SHIFTING
 
 /** 
  * Enables the additional spacial processing that takes place with sound effects in vanilla.

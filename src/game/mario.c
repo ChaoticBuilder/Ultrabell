@@ -514,10 +514,6 @@ u32 mario_get_terrain_sound_addend(struct MarioState *m) {
  * Determines if Mario is facing "downhill."
  */
 s32 mario_facing_downhill(struct MarioState *m, s32 turnYaw) {
-    // Forces Mario to do a belly slide rather than a butt slide when on a super slippery floor, no matter his angle, so that the player can't jump.
-    if (m->floor && m->floor->type == SURFACE_SUPER_SLIPPERY)
-        return FALSE;
-
     s16 faceAngleYaw = m->faceAngle[1];
 
     // This is never used in practice, as turnYaw is
@@ -577,9 +573,6 @@ s32 mario_floor_is_slope(struct MarioState *m) {
  */
 s32 mario_floor_is_steep(struct MarioState *m) {
     f32 normY;
-    if (m->floor->type == SURFACE_SUPER_SLIPPERY)
-        return TRUE;
-
 #ifdef JUMP_KICK_FIX
     if (m->floor->type == SURFACE_NOT_SLIPPERY) {
         return FALSE;
@@ -733,7 +726,7 @@ void set_mario_y_vel_based_on_fspeed(struct MarioState *m, f32 initialVelY, f32 
     // It was likely trampoline related based on code location.
     m->vel[1] = initialVelY + get_additive_y_vel_for_jumps() + m->forwardVel * multiplier;
 
-    if (m->squishTimer != 0 || m->quicksandDepth > 1.0f) {
+    if (m->quicksandDepth > 1.0f) {
         m->vel[1] *= 0.5f;
     }
 }
@@ -751,23 +744,23 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
     switch (action) {
         case ACT_DOUBLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 52.0f, 0.25f);
+            set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.25f);
             m->forwardVel *= 0.8f;
             break;
 
         case ACT_BACKFLIP:
             m->marioObj->header.gfx.animInfo.animID = -1;
             m->forwardVel = -16.0f;
-            set_mario_y_vel_based_on_fspeed(m, 62.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 70.0f, 0.0f);
             break;
 
         case ACT_TRIPLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 69.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 76.0f, 0.0f);
             m->forwardVel *= 0.8f;
             break;
 
         case ACT_FLYING_TRIPLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 82.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 84.0f, 0.0f);
             break;
 
         case ACT_WATER_JUMP:
@@ -795,7 +788,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_WALL_KICK_AIR:
         case ACT_TOP_OF_POLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 62.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 54.0f, 0.0f);
             if (m->forwardVel < 24.0f) {
                 m->forwardVel = 24.0f;
             }
@@ -803,7 +796,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SIDE_FLIP:
-            set_mario_y_vel_based_on_fspeed(m, 62.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 50.0f, 0.0f);
             m->forwardVel = 8.0f;
             m->faceAngle[1] = m->intendedYaw;
             break;
@@ -815,10 +808,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_LAVA_BOOST:
-            m->vel[1] = 84.0f;
-            if (actionArg == 0) {
-                m->forwardVel = 0.0f;
-            }
+            m->vel[1] = 96.0f;
             break;
 
         case ACT_DIVE:
@@ -830,7 +820,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_LONG_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
-            set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             m->marioObj->oMarioLongJumpIsSlow = m->forwardVel > 16.0f ? FALSE : TRUE;
 
             //! (BLJ's) This properly handles long jumps from getting forward speed with
@@ -841,14 +831,14 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SLIDE_KICK:
-            m->vel[1] = 12.0f;
+            m->vel[1] = 28.0f;
             if (m->forwardVel < 32.0f) {
                 m->forwardVel = 32.0f;
             }
             break;
 
         case ACT_JUMP_KICK:
-            m->vel[1] = 20.0f;
+            m->vel[1] = 24.0f;
             break;
     }
 

@@ -433,12 +433,12 @@ void update_walking_speed(struct MarioState *m) {
 
     if (m->forwardVel <= 0.0f) {
         // Slow down if moving backwards
-        m->forwardVel += 1.1f;
+        m->forwardVel += 1.0f;
     } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
-        m->forwardVel += 1.1f - m->forwardVel / 43.0f;
+        m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 1.0f;
+        m->forwardVel -= 0.0f;
     }
 
     if (m->forwardVel > 48.0f) {
@@ -482,7 +482,10 @@ s32 should_begin_sliding(struct MarioState *m) {
     return FALSE;
 }
 
-#define analog_stick_held_back(m) (abs_angle_diff((m)->intendedYaw, (m)->faceAngle[1]) > 0x471C)
+s32 analog_stick_held_back(struct MarioState *m) {
+    s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
+    return intendedDYaw < -0x471C || intendedDYaw > 0x471C;
+}
 
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
@@ -510,7 +513,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
-    return set_mario_action(m, ACT_DECELERATING, 0);
+    return set_mario_action(m, ACT_IDLE, 0);
 }
 
 void anim_and_audio_for_walk(struct MarioState *m) {
@@ -591,7 +594,6 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                         animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);
                         set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, animSpeed);
                         play_step_sound(m, 9, 45);
-                        targetPitch = tilt_body_running(m);
 
                         inLoop = FALSE;
                     }
@@ -753,7 +755,6 @@ void tilt_body_ground_shell(struct MarioState *m, s16 startYaw) {
 
 s32 act_walking(struct MarioState *m) {
     Vec3f startPos;
-    s16 startYaw = m->faceAngle[1];
 
     mario_drop_held_object(m);
 
@@ -785,7 +786,7 @@ s32 act_walking(struct MarioState *m) {
 #ifdef SIDE_FLIP_AT_LOW_SPEEDS
     if (analog_stick_held_back(m) && m->forwardVel >= 0.0f) {
 #else
-    if (analog_stick_held_back(m) && m->forwardVel >= 16.0f) {
+    if (analog_stick_held_back(m) && m->forwardVel >= 12.5f) {
 #endif
         return set_mario_action(m, ACT_TURNING_AROUND, 0);
     }
@@ -819,7 +820,6 @@ s32 act_walking(struct MarioState *m) {
     }
 
     check_ledge_climb_down(m);
-    tilt_body_walking(m, startYaw);
     return FALSE;
 }
 

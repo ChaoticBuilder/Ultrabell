@@ -1638,6 +1638,9 @@ void mode_fixed_camera(struct Camera *c) {
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
     if (gCurrLevelNum == LEVEL_BBH) {
         set_fov_function(CAM_FOV_BBH);
+    } elseif (gCurrLevelNum == LEVEL_CASTLE) {
+        set_fov_function(CAM_FOV_BBH);
+    }
     } else {
         set_fov_function(CAM_FOV_APP_45);
     }
@@ -5068,7 +5071,7 @@ void offset_rotated_coords(Vec3f dst, Vec3f from, Vec3s rotation, f32 xTo, f32 y
 
 void determine_pushing_or_pulling_door(s16 *rotation) {
     if (sMarioCamState->action == ACT_PULLING_DOOR) {
-        *rotation = 0;
+        *rotation = DEGREES(0);
     } else {
         *rotation = DEGREES(-180);
     }
@@ -9584,53 +9587,7 @@ void cutscene_enter_painting_stub(UNUSED struct Camera *c) {
  * zooms in until the star select screen appears.
  */
 void cutscene_enter_painting(struct Camera *c) {
-    struct Surface *floor, *highFloor;
-    Vec3f paintingPos, focus, focusOffset;
-    Vec3s paintingAngle;
-    f32 floorHeight;
-
-    cutscene_event(cutscene_enter_painting_stub, c, 0, 0);
-    // Zoom in
-    set_fov_function(CAM_FOV_APP_20);
     sStatusFlags |= CAM_FLAG_SMOOTH_MOVEMENT;
-
-    if (gRipplingPainting != NULL) {
-        paintingAngle[0] = 0;
-        paintingAngle[1] = (s32)((gRipplingPainting->yaw / 360.f) * 65536.f); // convert degrees to IAU
-        paintingAngle[2] = 0;
-
-        focusOffset[0] = gRipplingPainting->size / 2;
-        focusOffset[1] = focusOffset[0];
-        focusOffset[2] = 0;
-
-        paintingPos[0] = gRipplingPainting->posX;
-        paintingPos[1] = gRipplingPainting->posY;
-        paintingPos[2] = gRipplingPainting->posZ;
-
-        offset_rotated(focus, paintingPos, focusOffset, paintingAngle);
-        approach_vec3f_asymptotic(c->focus, focus, 0.1f, 0.1f, 0.1f);
-        focusOffset[2] = -(((gRipplingPainting->size * 1000.f) / 2) / 307.f);
-        offset_rotated(focus, paintingPos, focusOffset, paintingAngle);
-        floorHeight = find_floor(focus[0], focus[1] + 500.f, focus[2], &highFloor) + 125.f;
-
-        if (focus[1] < floorHeight) {
-            focus[1] = floorHeight;
-        }
-
-        if (c->cutscene == CUTSCENE_ENTER_PAINTING) {
-            approach_vec3f_asymptotic(c->pos, focus, 0.2f, 0.1f, 0.2f);
-        } else {
-            approach_vec3f_asymptotic(c->pos, focus, 0.9f, 0.9f, 0.9f);
-        }
-
-        find_floor(sMarioCamState->pos[0], sMarioCamState->pos[1] + 50.f, sMarioCamState->pos[2], &floor);
-
-        if ((floor->type < SURFACE_PAINTING_WOBBLE_A6) || (floor->type > SURFACE_PAINTING_WARP_F9)) {
-            c->cutscene = 0;
-            gCutsceneTimer = CUTSCENE_STOP;
-            sStatusFlags |= CAM_FLAG_SMOOTH_MOVEMENT;
-        }
-    }
     c->mode = CAMERA_MODE_CLOSE;
 }
 
@@ -9887,6 +9844,15 @@ void cutscene_door_move_behind_mario(struct Camera *c) {
     vec3s_set(sCutsceneVars[0].angle, 0, sMarioCamState->faceAngle[1] + doorRotation, 0);
     vec3f_set(camOffset, 0.f, 125.f, 250.f);
 
+    
+    if (doorRotation == 0) {
+        camOffset[0] = 64.f;
+        camOffset[1] = 256.f;
+    } else {
+        camOffset[0] = -48.f;
+        camOffset[1] = 0.f;
+    }
+
     offset_rotated(c->pos, sMarioCamState->pos, camOffset, sCutsceneVars[0].angle);
 }
 
@@ -9896,10 +9862,13 @@ void cutscene_door_move_behind_mario(struct Camera *c) {
 void cutscene_door_follow_mario(struct Camera *c) {
     s16 pitch, yaw;
     f32 dist;
+    s16 doorRotation;
 
+    determine_pushing_or_pulling_door(&doorRotation);
     set_focus_rel_mario(c, 0.f, 125.f, 0.f, 0);
     vec3f_get_dist_and_angle(c->focus, c->pos, &dist, &pitch, &yaw);
     camera_approach_f32_symmetric_bool(&dist, 150.f, 7.f);
+    camera_approach_s16_symmetric_bool(&pitch, 0, 64);
     vec3f_set_dist_and_angle(c->focus, c->pos, dist, pitch, yaw);
     update_camera_yaw(c);
 }
@@ -11028,9 +10997,6 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
                 break;
             case CAM_FOV_APP_60:
                 approach_fov_60(marioState);
-                break;
-            default:
-                set_fov_45(marioState);
                 break;
         }
     }

@@ -14,13 +14,13 @@
 /**
  * Decides whether you can exit course while moving (has no effect if you disable Exit Course).
  */
-// #define EXIT_COURSE_WHILE_MOVING
+#define EXIT_COURSE_WHILE_MOVING
 
 /**
  * Decides whether to treat exiting course as if the player had died. 
  * If enabled, the player will get warped to the failure warp node when selecting EXIT COURSE. (Has no effect if you disable Exit Course)
  */
-// #define DEATH_ON_EXIT_COURSE
+#define DEATH_ON_EXIT_COURSE
 
 /**
  * Decides which level, area and warp ID the "Exit Course" option takes you to (has no effect if you disable Exit Course or enable DEATH_ON_EXIT_COURSE).
