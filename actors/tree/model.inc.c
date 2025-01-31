@@ -14,7 +14,7 @@ ALIGNED8 static const Texture tree_seg3_texture_bubbly_right_side[] = {
 
 // 0x0302FE28
 static const Vtx tree_seg3_vertex_bubbly_left_side[] = {
-    {{{  -356,     -9,      0}, 0, {  -200,   2012}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  -356,     -9,      0}, 0, {  -136,   2012}, {0xff, 0xff, 0xff, 0xff}}},
     {{{     0,     -9,      0}, 0, {   990,   2012}, {0xff, 0xff, 0xff, 0xff}}},
     {{{     0,    820,      0}, 0, {   990,   -504}, {0xff, 0xff, 0xff, 0xff}}},
 };
@@ -22,7 +22,7 @@ static const Vtx tree_seg3_vertex_bubbly_left_side[] = {
 // 0x0302FE58
 static const Vtx tree_seg3_vertex_bubbly_right_side[] = {
     {{{     0,     -9,      0}, 0, {     0,   2012}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{   358,     -9,      0}, 0, {  1160,   2012}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   358,     -9,      0}, 0, {  1096,   2012}, {0xff, 0xff, 0xff, 0xff}}},
     {{{     0,    820,      0}, 0, {     0,   -504}, {0xff, 0xff, 0xff, 0xff}}},
 };
 
