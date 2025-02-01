@@ -96,7 +96,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 s32 check_kick_or_dive_in_air(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         // lower speed value for diving instead of kicking
-        return set_mario_action(m, m->forwardVel > 12.0f ? ACT_DIVE : ACT_JUMP_KICK, 0);
+        return set_mario_action(m, m->forwardVel > 20.0f ? ACT_DIVE : ACT_JUMP_KICK, 0);
     }
     return FALSE;
 }
@@ -464,6 +464,7 @@ s32 act_double_jump(struct MarioState *m) {
 }
 
 s32 act_triple_jump(struct MarioState *m) {
+    play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_WAHA);
     if (gSpecialTripleJump) {
         return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
     }
@@ -477,8 +478,6 @@ s32 act_triple_jump(struct MarioState *m) {
     }
     else {
         return set_mario_action(m, ACT_TWIRLING, 0);
-        play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_TWIRL_BOUNCE);
-        play_mario_sound(m, SOUND_MARIO_HAHA, SOUND_MARIO_TWIRL_BOUNCE);
     }
 #if ENABLE_RUMBLE
     if (m->action == ACT_TRIPLE_JUMP_LAND) {
@@ -1261,27 +1260,19 @@ s32 act_air_hit_wall(struct MarioState *m) {
 
     if (++(m->actionTimer) <= 2) {
         if (m->input & INPUT_A_PRESSED) {
-            m->vel[1] = 52.0f;
+            m->vel[1] = 64.0f;
             m->faceAngle[1] += 0x8000;
             return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
         }
-    } else if (m->forwardVel >= 38.0f) {
-        m->wallKickTimer = 5;
-        if (m->vel[1] > 0.0f) {
-            m->vel[1] = 0.0f;
-        }
-
-        m->particleFlags |= PARTICLE_VERTICAL_STAR;
-        return set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
     } else {
-        m->wallKickTimer = 30;
+        m->wallKickTimer = 15;
 
         if (m->forwardVel > 8.0f) {
             mario_set_forward_vel(m, -8.0f);
         }
         return set_mario_action(m, ACT_SOFT_BONK, 0);
     }
-
+        m->particleFlags |= PARTICLE_VERTICAL_STAR;
     set_mario_animation(m, MARIO_ANIM_START_WALLKICK);
 
     return TRUE;
@@ -1289,7 +1280,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
 
 s32 act_forward_rollout(struct MarioState *m) {
     if (m->actionState == 0) {
-        m->vel[1] = 36.0f;
+        m->vel[1] = 32.0f;
         m->actionState = 1;
     }
 
@@ -1330,7 +1321,7 @@ s32 act_forward_rollout(struct MarioState *m) {
 
 s32 act_backward_rollout(struct MarioState *m) {
     if (m->actionState == 0) {
-        m->vel[1] = 30.0f;
+        m->vel[1] = 32.0f;
         m->actionState = 1;
     }
 

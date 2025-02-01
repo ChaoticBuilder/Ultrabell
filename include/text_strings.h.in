@@ -197,10 +197,10 @@
 #define TEXT_COPY_FILE _("COPY FILE")
 #define TEXT_ERASE_FILE _("ERASE FILE")
 #define TEXT_SOUND_SELECT _("SOUND SELECT")
-#define TEXT_FILE_MARIO_A _("MARIO A")
-#define TEXT_FILE_MARIO_B _("MARIO B")
-#define TEXT_FILE_MARIO_C _("MARIO C")
-#define TEXT_FILE_MARIO_D _("MARIO D")
+#define TEXT_FILE_MARIO_A _("FILE A")
+#define TEXT_FILE_MARIO_B _("FILE B")
+#define TEXT_FILE_MARIO_C _("FILE C")
+#define TEXT_FILE_MARIO_D _("FILE D")
 
 // Menu Options
 #define TEXT_SCORE _("SCORE")
@@ -213,7 +213,7 @@
 #define TEXT_HEADSET _("HEADSET")
 
 // Misc Menu Text
-#define TEXT_SAVED_DATA_EXISTS _("SAVED DATA EXITS") // Misspell
+#define TEXT_SAVED_DATA_EXISTS _("SAVED DATA EXISTS") // Misspell
 #define TEXT_NO_SAVED_DATA_EXISTS _("NO SAVED DATA EXISTS")
 
 // Inside a Menu
@@ -232,12 +232,12 @@
 #define TEXT_SCORE_MARIO_D _("☺D")
 
 // Copy Menu
-#define TEXT_COPY_IT_TO_WHERE _("COPY IT TO WHERE?")
+#define TEXT_COPY_IT_TO_WHERE _("COPYING TO")
 #define TEXT_COPYING_COMPLETED _("COPYING COMPLETED")
-#define TEXT_NO_FILE_TO_COPY_FROM _("NO EMPTY FILE")
+#define TEXT_NO_FILE_TO_COPY_FROM _("FILE IS NOT EMPTY")
 
 // Erase Menu
-#define TEXT_SURE _("SURE?")
+#define TEXT_SURE _("ARE YOU SURE?")
 #define TEXT_YES _("YES")
 #define TEXT_NO _("NO")
 #define TEXT_FILE_MARIO_A_JUST_ERASED _("MARIO A JUST ERASED")
