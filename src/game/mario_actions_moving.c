@@ -5,6 +5,7 @@
 #include "mario_actions_object.h"
 #include "mario_actions_airborne.h"
 #include "mario.h"
+#include "main.h"
 #include "audio/external.h"
 #include "engine/math_util.h"
 #include "engine/surface_collision.h"
@@ -490,8 +491,7 @@ s32 analog_stick_held_back(struct MarioState *m) {
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
-        if (m->forwardVel > 20.0f) {
-            m->vel[1] = 28.0f;
+        if (m->forwardVel > 24.0f) {
             return set_mario_action(m, ACT_DIVE, 1);
         }
 
@@ -1319,7 +1319,7 @@ s32 act_burning_ground(struct MarioState *m) {
         m->forwardVel = 48.0f;
     }
 
-    m->forwardVel = approach_f32(m->forwardVel, 32.0f, 4.0f, 1.0f);
+    m->forwardVel = approach_f32(m->forwardVel, 48.0f, 48.0f, 48.0f);
 
     if (m->input & INPUT_NONZERO_ANALOG) {
         m->faceAngle[1] = approach_angle(m->faceAngle[1], m->intendedYaw, 0x600);
@@ -1337,9 +1337,11 @@ s32 act_burning_ground(struct MarioState *m) {
     m->particleFlags |= PARTICLE_FIRE;
     play_sound(SOUND_MOVING_LAVA_BURN, m->marioObj->header.gfx.cameraToObject);
 
-    m->health -= 10;
-    if (m->health < 0x100) {
-        set_mario_action(m, ACT_STANDING_DEATH, 0);
+    if(!gDebugLevelSelect) {
+        m->health -= 10;
+        if (m->health < 0x100) {
+            set_mario_action(m, ACT_STANDING_DEATH, 0);
+        }
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_DEAD;

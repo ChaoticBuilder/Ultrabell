@@ -771,8 +771,8 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_BURNING_JUMP:
-            m->vel[1] = 0.5f;
-            m->forwardVel = 0.0f;
+            m->vel[1] = 42.0f;
+            m->forwardVel = 48.0f;
             break;
 
         case ACT_RIDING_SHELL_JUMP:
@@ -812,6 +812,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_DIVE:
+            m->vel[1] = 32.0f;
             if ((forwardVel = m->forwardVel + 15.0f) > 48.0f) {
                 forwardVel = 48.0f;
             }
@@ -831,14 +832,14 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SLIDE_KICK:
-            m->vel[1] = 20.0f;
+            m->vel[1] = 28.0f;
             if (m->forwardVel < 32.0f) {
                 m->forwardVel = 32.0f;
             }
             break;
 
         case ACT_JUMP_KICK:
-            m->vel[1] = 24.0f;
+            m->vel[1] = 32.0f;
             break;
     }
 

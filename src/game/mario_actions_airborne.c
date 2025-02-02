@@ -11,6 +11,7 @@
 #include "interaction.h"
 #include "level_update.h"
 #include "mario.h"
+#include "main.h"
 #include "mario_step.h"
 #include "save_file.h"
 #include "rumble_init.h"
@@ -970,12 +971,13 @@ s32 act_burning_jump(struct MarioState *m) {
     set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_SINGLE_JUMP : MARIO_ANIM_FIRE_LAVA_BURN);
     m->particleFlags |= PARTICLE_FIRE;
     play_sound(SOUND_MOVING_LAVA_BURN, m->marioObj->header.gfx.cameraToObject);
-
     m->marioObj->oMarioBurnTimer += 3;
 
-    m->health -= 10;
-    if (m->health < 0x100) {
-        m->health = 0xFF;
+    if(!gDebugLevelSelect) {
+        m->health -= 10;
+        if (m->health < 0x100) {
+            m->health = 0xFF;
+        }
     }
 #if ENABLE_RUMBLE
     reset_rumble_timers_slip();
@@ -995,9 +997,11 @@ s32 act_burning_fall(struct MarioState *m) {
     m->particleFlags |= PARTICLE_FIRE;
     m->marioObj->oMarioBurnTimer += 3;
 
-    m->health -= 10;
-    if (m->health < 0x100) {
-        m->health = 0xFF;
+    if(!gDebugLevelSelect) {
+        m->health -= 10;
+        if (m->health < 0x100) {
+            m->health = 0xFF;
+        }
     }
 #if ENABLE_RUMBLE
     reset_rumble_timers_slip();
