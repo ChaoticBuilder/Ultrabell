@@ -423,7 +423,7 @@ void update_walking_speed(struct MarioState *m) {
     if (m->floor != NULL && m->floor->type == SURFACE_SLOW) {
         maxTargetSpeed = 24.0f;
     } else {
-        maxTargetSpeed = 32.0f;
+        maxTargetSpeed = 48.0f;
     }
 
     targetSpeed = m->intendedMag < maxTargetSpeed ? m->intendedMag : maxTargetSpeed;
@@ -439,7 +439,7 @@ void update_walking_speed(struct MarioState *m) {
         // If accelerating
         m->forwardVel += 0.625f;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.0f;
+        m->forwardVel -= 0.0625f;
     }
 
     if (m->forwardVel > 48.0f) {
@@ -491,7 +491,7 @@ s32 analog_stick_held_back(struct MarioState *m) {
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
-        if (m->forwardVel > 24.0f) {
+        if (m->forwardVel > 20.0f) {
             return set_mario_action(m, ACT_DIVE, 1);
         }
 
@@ -581,6 +581,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                         animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);
                         set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, animSpeed);
                         play_step_sound(m, 10, 49);
+                        targetPitch = tilt_body_running(m);
 
                         inLoop = FALSE;
                     }
@@ -716,13 +717,13 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
 
     if (animID == MARIO_ANIM_WALKING || animID == MARIO_ANIM_RUNNING) {
         s16 dYaw = m->faceAngle[1] - startYaw;
-        //! (Speed Crash) These casts can cause a crash if (dYaw * forwardVel / 12) or
-        //! (forwardVel * 170) exceed or equal 2^31.
-        s16 nextBodyRoll = -(s16)(dYaw * m->forwardVel / 12.0f);
-        s16 nextBodyPitch = (s16)(m->forwardVel * 170.0f);
+        //! (Speed Crash) These casts can cause a crash if
+        //! (forwardVel * 170) exceeds or equals 2^31.
+        // Pitch is reversed, a higher multiplier makes Mario tilt backwards farther instead of forwards.
+        s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
+        s16 nextBodyPitch = -(s16)(m->forwardVel * 48.0f);
 
-        nextBodyRoll  = CLAMP(nextBodyRoll, -DEGREES(30), DEGREES(30));
-        nextBodyPitch = CLAMP(nextBodyPitch,         0x0, DEGREES(30));
+        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(30), DEGREES(30));
 
         marioBodyState->torsoAngle[2] = approach_s32(marioBodyState->torsoAngle[2], nextBodyRoll, 0x400, 0x400);
         marioBodyState->torsoAngle[0] = approach_s32(marioBodyState->torsoAngle[0], nextBodyPitch, 0x400, 0x400);
@@ -755,6 +756,7 @@ void tilt_body_ground_shell(struct MarioState *m, s16 startYaw) {
 
 s32 act_walking(struct MarioState *m) {
     Vec3f startPos;
+    s16 startYaw = m->faceAngle[1];
 
     mario_drop_held_object(m);
 
@@ -820,6 +822,7 @@ s32 act_walking(struct MarioState *m) {
     }
 
     check_ledge_climb_down(m);
+    tilt_body_walking(m, startYaw);
     return FALSE;
 }
 
@@ -1442,7 +1445,6 @@ s32 common_slide_action_with_jump(struct MarioState *m, u32 stopAction, u32 jump
 s32 act_butt_slide(struct MarioState *m) {
     s32 cancel = common_slide_action_with_jump(m, ACT_BUTT_SLIDE_STOP, ACT_JUMP, ACT_BUTT_SLIDE_AIR,
                                                MARIO_ANIM_SLIDE);
-    tilt_body_butt_slide(m);
     return cancel;
 }
 
@@ -1453,7 +1455,6 @@ s32 act_hold_butt_slide(struct MarioState *m) {
 
     s32 cancel = common_slide_action_with_jump(m, ACT_HOLD_BUTT_SLIDE_STOP, ACT_HOLD_JUMP, ACT_HOLD_BUTT_SLIDE_AIR,
                                                MARIO_ANIM_SLIDING_ON_BOTTOM_WITH_LIGHT_OBJ);
-    tilt_body_butt_slide(m);
     return cancel;
 }
 

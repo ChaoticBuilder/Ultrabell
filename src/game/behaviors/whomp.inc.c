@@ -26,7 +26,9 @@ void whomp_init(void) {
         if (o->oSubAction == 0) {
             if (o->oDistanceToMario < 600.0f) {
                 o->oSubAction++;
-                seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
+                fadeout_background_music(3, 100);
+                play_music(1, 35, 0);
+                seq_player_fade_out(1, 9088);
             } else {
                 cur_obj_set_pos_to_home();
                 o->oHealth = 3;

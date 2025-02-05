@@ -201,7 +201,9 @@ static void wiggler_act_walk(void) {
     // Update text if necessary
     if (o->oWigglerTextStatus < WIGGLER_TEXT_STATUS_COMPLETED_DIALOG) {
         if (o->oWigglerTextStatus == WIGGLER_TEXT_STATUS_AWAIT_DIALOG) {
-            seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
+            fadeout_background_music(3, 100);
+            play_music(1, 35, 0);
+            seq_player_fade_out(1, 9088);
             o->oWigglerTextStatus = WIGGLER_TEXT_STATUS_SHOWING_DIALOG;
         }
 

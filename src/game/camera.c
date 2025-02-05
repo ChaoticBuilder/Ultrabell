@@ -1634,13 +1634,12 @@ void mode_parallel_tracking_camera(struct Camera *c) {
 /**
  * Fixed camera mode, the camera rotates around a point and looks and zooms toward Mario.
  */
-void mode_fixed_camera(struct Camera *c) {
+void mode_fixed_camera(UNUSED struct Camera *c) {
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
     if (gCurrLevelNum == LEVEL_BBH) {
         set_fov_function(CAM_FOV_BBH);
-    } elseif (gCurrLevelNum == LEVEL_CASTLE) {
+    } else if (gCurrLevelNum == LEVEL_CASTLE) {
         set_fov_function(CAM_FOV_CASTLE);
-    }
     } else {
         set_fov_function(CAM_FOV_APP_45);
     }
@@ -1649,7 +1648,6 @@ void mode_fixed_camera(struct Camera *c) {
 #endif
     c->nextYaw = update_fixed_camera(c, c->focus, c->pos);
     c->yaw = c->nextYaw;
-    pan_ahead_of_player(c);
     vec3_zero(sCastleEntranceOffset);
 }
 
@@ -7754,10 +7752,11 @@ void cutscene_bowser_arena_pan_left(UNUSED struct Camera *c) {
 /**
  * Duplicate of cutscene_mario_dialog().
  */
-void cutscene_bowser_arena_mario_dialog(UNUSED struct Camera *c) {
+/*
+ void cutscene_bowser_arena_mario_dialog(UNUSED struct Camera *c) {
     cutscene_common_set_dialog_state(MARIO_DIALOG_LOOK_FRONT);
 }
-
+*/
 void cutscene_stop_dialog(UNUSED struct Camera *c) {
     cutscene_common_set_dialog_state(MARIO_DIALOG_STOP);
 }
@@ -7790,6 +7789,7 @@ void cutscene_bowser_arena_start(struct Camera *c) {
 /**
  * Create the dialog box depending on which bowser fight Mario is in.
  */
+/*
 void bowser_fight_intro_dialog(UNUSED struct Camera *c) {
     s16 dialog;
 
@@ -7806,10 +7806,12 @@ void bowser_fight_intro_dialog(UNUSED struct Camera *c) {
 
     create_dialog_box(dialog);
 }
+*/
 
 /**
  * Create the dialog box and wait until it's gone.
  */
+/*
 void cutscene_bowser_arena_dialog(struct Camera *c) {
     cutscene_event(bowser_fight_intro_dialog, c, 0, 0);
 
@@ -7817,12 +7819,13 @@ void cutscene_bowser_arena_dialog(struct Camera *c) {
         gCutsceneTimer = CUTSCENE_LOOP;
     }
 }
+*/
 
 /**
  * End the bowser arena cutscene.
  */
 void cutscene_bowser_arena_end(struct Camera *c) {
-    cutscene_stop_dialog(c);
+//    cutscene_stop_dialog(c);
     c->cutscene = 0;
     transition_next_state(c, 20);
     sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
@@ -7838,7 +7841,7 @@ void cutscene_bowser_arena(struct Camera *c) {
     cutscene_spawn_obj(CUTSCENE_OBJ_UNUSED_2, 0);
 
     if (gSecondCameraFocus != NULL) {
-        cutscene_event(cutscene_bowser_arena_mario_dialog, c, 0, -1);
+//        cutscene_event(cutscene_bowser_arena_mario_dialog, c, 0, -1);
         cutscene_event(cutscene_bowser_arena_start, c, 0, 5);
         cutscene_event(cutscene_bowser_area_start_bowser_walking, c, 40, 40);
         cutscene_event(cutscene_bowser_area_shake_fov, c, 145, 145);
@@ -8030,7 +8033,7 @@ void cutscene_red_coin_star_warp(struct Camera *c) {
  * Zoom out while looking at the star.
  */
 void cutscene_red_coin_star_set_fov(UNUSED struct Camera *c) {
-    sFOVState.fov = 60.f;
+    sFOVState.fov = 90.f;
 }
 
 void cutscene_red_coin_star(struct Camera *c) {
@@ -9604,8 +9607,8 @@ void cutscene_exit_painting_start(struct Camera *c) {
     struct Surface *floor;
     f32 floorHeight;
 
-    vec3f_set(sCutsceneVars[2].point, 258.f, -352.f, 1189.f);
-    vec3f_set(sCutsceneVars[1].point, 65.f, -155.f, 444.f);
+    vec3f_set(sCutsceneVars[2].point, -178.f, 155.f, 1050.f);
+    vec3f_set(sCutsceneVars[1].point, -58.f, 142.f, 444.f);
 
     if (gPrevLevel == LEVEL_TTM) {
         sCutsceneVars[1].point[1] = 0.f;
@@ -9670,7 +9673,6 @@ void cutscene_exit_painting_move_to_floor(struct Camera *c) {
  */
 void cutscene_exit_painting(struct Camera *c) {
     cutscene_event(cutscene_exit_painting_start, c, 0, 0);
-    cutscene_event(cutscene_exit_painting_move_to_mario, c, 5, -1);
     cutscene_event(cutscene_exit_painting_move_to_floor, c, 5, -1);
 
     //! Hardcoded position. TTM's painting is close to an opposite wall, so just fix the pos.
@@ -9847,7 +9849,7 @@ void cutscene_door_move_behind_mario(struct Camera *c) {
     
     if (doorRotation == 0) {
         camOffset[0] = 64.f;
-        camOffset[1] = 256.f;
+        camOffset[1] = 288.f;
     } else {
         camOffset[0] = -48.f;
         camOffset[1] = 0.f;
@@ -10207,7 +10209,7 @@ struct Cutscene sCutsceneSuffocation[] = {
  */
 struct Cutscene sCutsceneEnterBowserArena[] = {
     { cutscene_bowser_arena, 180 },
-    { cutscene_bowser_arena_dialog, CUTSCENE_LOOP },
+//    { cutscene_bowser_arena_dialog, CUTSCENE_LOOP },
     { cutscene_bowser_arena_end, 0 }
 };
 

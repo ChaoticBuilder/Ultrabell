@@ -751,7 +751,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 sDelayedWarpTimer = 32;
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
                 gSavedCourseNum = COURSE_NONE;
-                play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0xFF, 0xFF, 0xBD);
+                play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0xFF, 0xFF, 0xC5);
                 break;
 
             case WARP_OP_DEATH:

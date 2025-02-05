@@ -45,7 +45,7 @@
 /**
  * Enables a custom, enhanced performance profiler. (Enables PUPPYPRINT by default in config_safeguards).
  */
-// #define PUPPYPRINT_DEBUG
+#define PUPPYPRINT_DEBUG
 
 /**
  * Uses cycles instead of microseconds in Puppyprint debug output.
@@ -83,7 +83,7 @@
 /**
  * Includes vanilla debug functionality.
  */
-// #define VANILLA_DEBUG
+#define VANILLA_DEBUG
 
 /**
  * Forces a crash when the game starts. Useful for debugging the crash screen.
