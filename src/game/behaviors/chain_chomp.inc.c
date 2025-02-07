@@ -137,28 +137,20 @@ static void chain_chomp_sub_act_turn(void) {
     if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
         cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
         if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x800) {
-            if (o->oTimer > 30) {
-                if (cur_obj_check_anim_frame(0)) {
-                    cur_obj_reverse_animation();
-                    if (o->oTimer > 40) {
-                        // Increase the maximum distance from the pivot and enter
-                        // the lunging sub-action.
-                        cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP2);
+            if (cur_obj_check_anim_frame(0)) {
+                cur_obj_reverse_animation();
+                // Increase the maximum distance from the pivot and enter
+                // the lunging sub-action.
+                cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP2);
 
-                        o->oSubAction = CHAIN_CHOMP_SUB_ACT_LUNGE;
-                        // o->oChainChompMaxDistFromPivotPerChainPart = 900.0f / CHAIN_CHOMP_NUM_SEGMENTS;
-                        o->oChainChompMaxDistFromPivotPerChainPart = CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS;
-                        o->oForwardVel = 140.0f;
-                        o->oVelY = 20.0f;
-                        o->oGravity = 0.0f;
-                        o->oChainChompTargetPitch = obj_get_pitch_from_vel();
-                    }
-                } else {
-                    o->oTimer--;
+                o->oSubAction = CHAIN_CHOMP_SUB_ACT_LUNGE;
+                // o->oChainChompMaxDistFromPivotPerChainPart = 900.0f / CHAIN_CHOMP_NUM_SEGMENTS;
+                o->oChainChompMaxDistFromPivotPerChainPart = CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS;
+                o->oForwardVel = 140.0f;
+                o->oVelY = 20.0f;
+                o->oGravity = 0.0f;
+                o->oChainChompTargetPitch = obj_get_pitch_from_vel();
                 }
-            } else {
-                o->oForwardVel = 0.0f;
-            }
         } else {
             cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP1);
             o->oForwardVel = 10.0f;
