@@ -67,9 +67,8 @@ void slow_star_rotation(void) {
 void bhv_spawned_star_loop(void) {
     if (o->oAction == SPAWN_STAR_POS_CUTSCENE_ACT_START) {
         if (o->oTimer == 0) {
+            cur_obj_become_intangible();
             cutscene_object(CUTSCENE_STAR_SPAWN, o);
-            set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
-            o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
             o->oAngleVelYaw = 0x800;
             if (o->oBehParams2ndByte == SPAWN_STAR_POS_CUTSCENE_BP_SPAWN_AT_MARIO) {
                 spawned_star_set_target_above_mario();             
@@ -95,6 +94,7 @@ void bhv_spawned_star_loop(void) {
             o->oVelY = -4.0f;
         }
         if (o->oVelY < 0 && o->oPosY < o->oHomeY) {
+            cur_obj_become_tangible();
             gObjCutsceneDone = TRUE;
             o->oVelY = 0;
             o->oGravity = 0;
@@ -103,8 +103,6 @@ void bhv_spawned_star_loop(void) {
         spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
     } else if (o->oAction == SPAWN_STAR_POS_CUTSCENE_ACT_END) {
         if (gCamera->cutscene == 0 && gRecentCutscene == 0) {
-            clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
-            o->activeFlags &= ~ACTIVE_FLAG_INITIATED_TIME_STOP;
             o->oAction++; // SPAWN_STAR_POS_CUTSCENE_ACT_SLOW_STAR_ROTATION
         }
     } else { // SPAWN_STAR_POS_CUTSCENE_ACT_SLOW_STAR_ROTATION
