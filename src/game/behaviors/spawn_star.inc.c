@@ -56,9 +56,6 @@ void bhv_star_spawn_init(void) {
     } else {
         cutscene_object(CUTSCENE_RED_COIN_STAR_SPAWN, o);
     }
-
-    set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
-    o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
     cur_obj_become_intangible();
 }
 
@@ -66,6 +63,7 @@ void bhv_star_spawn_loop(void) {
     switch (o->oAction) {
         case SPAWN_STAR_ARC_CUTSCENE_ACT_START:
             o->oFaceAngleYaw += 0x1000;
+            cur_obj_become_intangible();
             if (o->oTimer > 20) {
                 o->oAction = SPAWN_STAR_ARC_CUTSCENE_ACT_GO_TO_HOME;
             }
@@ -111,8 +109,6 @@ void bhv_star_spawn_loop(void) {
             o->oFaceAngleYaw += 0x800;
             if (o->oTimer == 20) {
                 gObjCutsceneDone = TRUE;
-                clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
-                o->activeFlags &= ~ACTIVE_FLAG_INITIATED_TIME_STOP;
             }
 
             if (o->oInteractStatus & INT_STATUS_INTERACTED) {
