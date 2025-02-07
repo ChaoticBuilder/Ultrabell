@@ -738,16 +738,19 @@ u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *
     obj->oInteractStatus = INT_STATUS_INTERACTED;
 
 #ifdef X_COIN_STAR
-    if (COURSE_IS_MAIN_COURSE(gCurrCourseNum) && m->numCoins - obj->oDamageOrCoinValue < X_COIN_STAR
+    if (/* COURSE_IS_MAIN_COURSE(gCurrCourseNum) && */ m->numCoins - obj->oDamageOrCoinValue < X_COIN_STAR
         && m->numCoins >= X_COIN_STAR && !g100CoinStarSpawned) {
         bhv_spawn_star_no_level_exit(STAR_BP_ACT_100_COINS);
         g100CoinStarSpawned = TRUE;
     }
 #endif
 #ifdef ENABLE_LIVES
-    if (COURSE_IS_MAIN_COURSE(gCurrCourseNum) && m->numCoins % 100 == 0) {
+    if (gMarioState->numCoins >= 100) {
     gMarioState->numLives++;
     play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
+    gMarioState->numCoins = 0;
+    // This was a nightmare to figure out, DON'T FORGET TO UPDATE HUD COUNTERS OR ELSE THINGS BREAK
+    gHudDisplay.coins = 0;
     }
 #endif
 #if ENABLE_RUMBLE
@@ -1804,7 +1807,7 @@ void check_kick_or_punch_wall(struct MarioState *m) {
                     m->action = ACT_MOVE_PUNCHING;
                 }
 
-                mario_set_forward_vel(m, -96.0f);
+                mario_set_forward_vel(m, -32.0f);
                 play_sound(SOUND_ACTION_HIT_2, m->marioObj->header.gfx.cameraToObject);
                 m->particleFlags |= PARTICLE_TRIANGLE;
             } else if (m->action & ACT_FLAG_AIR) {
