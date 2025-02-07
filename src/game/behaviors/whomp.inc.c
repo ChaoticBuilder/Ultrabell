@@ -28,7 +28,7 @@ void whomp_init(void) {
                 o->oSubAction++;
                 fadeout_background_music(3, 100);
                 play_music(1, 35, 0);
-                seq_player_fade_out(1, 9088);
+                seq_player_fade_out(1, 8000);
             } else {
                 cur_obj_set_pos_to_home();
                 o->oHealth = 3;

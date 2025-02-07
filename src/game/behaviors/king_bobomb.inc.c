@@ -32,7 +32,7 @@ void king_bobomb_act_inactive(void) { // act 0
             o->oSubAction++;
             fadeout_background_music(3, 100);
             play_music(1, 35, 0);
-            seq_player_fade_out(1, 9088);
+            seq_player_fade_out(1, 8000);
         }
     } else if (cur_obj_update_dialog_with_cutscene(MARIO_DIALOG_LOOK_UP,
         DIALOG_FLAG_TURN_TO_MARIO, CUTSCENE_DIALOG, DIALOG_017)) {

@@ -203,7 +203,7 @@ static void wiggler_act_walk(void) {
         if (o->oWigglerTextStatus == WIGGLER_TEXT_STATUS_AWAIT_DIALOG) {
             fadeout_background_music(3, 100);
             play_music(1, 35, 0);
-            seq_player_fade_out(1, 9088);
+            seq_player_fade_out(1, 8000);
             o->oWigglerTextStatus = WIGGLER_TEXT_STATUS_SHOWING_DIALOG;
         }
 
