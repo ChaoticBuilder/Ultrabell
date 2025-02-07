@@ -744,6 +744,12 @@ u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *
         g100CoinStarSpawned = TRUE;
     }
 #endif
+#ifdef ENABLE_LIVES
+    if (COURSE_IS_MAIN_COURSE(gCurrCourseNum) && m->numCoins % 100 == 0) {
+    gMarioState->numLives++;
+    play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
+    }
+#endif
 #if ENABLE_RUMBLE
     if (obj->oDamageOrCoinValue >= 2) {
         queue_rumble_data(5, 80);
@@ -798,9 +804,6 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
             m->breathCounter = 0;
  #endif
 #endif // !POWER_STARS_HEAL
-            if (m->capTimer > 1) {
-                m->capTimer = 1;
-            }
         }
 
         if (noExit) {
@@ -1576,22 +1579,16 @@ u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o
 
         m->flags &= ~MARIO_CAP_ON_HEAD & ~MARIO_CAP_IN_HAND;
         m->flags |= capFlag;
+        m->flags |= MARIO_CAP_ON_HEAD;
 
         switch (capFlag) {
-            case MARIO_VANISH_CAP: capTime =  600; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
-            case MARIO_METAL_CAP:  capTime =  600; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
+            case MARIO_VANISH_CAP: capTime =  750; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
+            case MARIO_METAL_CAP:  capTime =  900; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
             case MARIO_WING_CAP:   capTime = 1800; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
         }
 
         if (capTime > m->capTimer) {
             m->capTimer = capTime;
-        }
-
-        if ((m->action & ACT_FLAG_IDLE) || m->action == ACT_WALKING) {
-            m->flags |= MARIO_CAP_IN_HAND;
-            set_mario_action(m, ACT_PUTTING_ON_CAP, 0);
-        } else {
-            m->flags |= MARIO_CAP_ON_HEAD;
         }
 
         play_sound(SOUND_MENU_STAR_SOUND, m->marioObj->header.gfx.cameraToObject);
@@ -1746,7 +1743,7 @@ u32 check_npc_talk(struct MarioState *m, struct Object *obj) {
 #ifdef EASIER_DIALOG_TRIGGER
     if (
         mario_can_talk(m, TRUE)
-        && abs_angle_diff(mario_obj_angle_to_object(m, obj), m->faceAngle[1]) <= SIGN_RANGE
+        && abs_angle_diff(mario_obj_angle_to_object(m, obj), m->faceAngle[1])
     ) {
 #ifdef DIALOG_INDICATOR
         struct Object *orangeNumber;
@@ -1807,7 +1804,7 @@ void check_kick_or_punch_wall(struct MarioState *m) {
                     m->action = ACT_MOVE_PUNCHING;
                 }
 
-                mario_set_forward_vel(m, -48.0f);
+                mario_set_forward_vel(m, -96.0f);
                 play_sound(SOUND_ACTION_HIT_2, m->marioObj->header.gfx.cameraToObject);
                 m->particleFlags |= PARTICLE_TRIANGLE;
             } else if (m->action & ACT_FLAG_AIR) {
