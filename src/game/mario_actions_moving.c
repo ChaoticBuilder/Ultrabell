@@ -788,7 +788,7 @@ s32 act_walking(struct MarioState *m) {
 #ifdef SIDE_FLIP_AT_LOW_SPEEDS
     if (analog_stick_held_back(m) && m->forwardVel >= 0.0f) {
 #else
-    if (analog_stick_held_back(m) && m->forwardVel >= 18.0f) {
+    if (analog_stick_held_back(m) && m->forwardVel >= 16.0f) {
 #endif
         return set_mario_action(m, ACT_TURNING_AROUND, 0);
     }
