@@ -20,8 +20,8 @@ static const Vtx transparent_star_seg3_vertex_body[] = {
 
 // 0x0302C560 - 0x0302C620
 const Gfx transparent_star_seg3_sub_dl_body[] = {
-    gsSPLightColor(LIGHT_1, 0x1e32e6ff),
-    gsSPLightColor(LIGHT_2, 0x30517ff),
+    gsSPLightColor(LIGHT_1, 0x00000000),
+    gsSPLightColor(LIGHT_2, 0xffff80ff),
     gsSPVertex(transparent_star_seg3_vertex_body, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  0,  3,  1, 0x0),
     gsSP2Triangles( 2,  1,  4, 0x0,  1,  3,  4, 0x0),
@@ -40,7 +40,7 @@ const Gfx transparent_star_seg3_sub_dl_body[] = {
 const Gfx transparent_star_seg3_dl_body[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADEFADEA, G_CC_SHADEFADEA),
-    gsDPSetEnvColor(255, 255, 255, 120),
+    gsDPSetEnvColor(255, 255, 255, 255),
     gsSPDisplayList(transparent_star_seg3_sub_dl_body),
     gsDPPipeSync(),
     gsDPSetEnvColor(255, 255, 255, 255),
