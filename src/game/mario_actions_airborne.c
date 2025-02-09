@@ -588,7 +588,7 @@ s32 act_side_flip(struct MarioState *m) {
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, 0);
 
-    if (common_air_action_step(m, ACT_SIDE_FLIP_LAND, MARIO_ANIM_SLIDEFLIP, AIR_STEP_CHECK_LEDGE_GRAB)
+    if (common_air_action_step(m, ACT_SIDE_FLIP_LAND, MARIO_ANIM_FORWARD_FLIP, AIR_STEP_CHECK_LEDGE_GRAB)
         != AIR_STEP_GRABBED_LEDGE) {
         m->marioObj->header.gfx.angle[1] += 0x8000;
     }
@@ -646,6 +646,7 @@ s32 act_riding_shell_air(struct MarioState *m) {
     switch (perform_air_step(m, 0)) {
         case AIR_STEP_LANDED:
             set_mario_action(m, ACT_RIDING_SHELL_GROUND, 1);
+            set_mario_animation(m, MARIO_ANIM_BEND_KNESS_RIDING_SHELL);
             break;
 
         case AIR_STEP_HIT_WALL:

@@ -1,6 +1,7 @@
 #include <PR/ultratypes.h>
 
 #include "sm64.h"
+#include "main.h"
 #include "mario_actions_submerged.h"
 #include "mario_actions_stationary.h"
 #include "level_update.h"
@@ -907,6 +908,7 @@ static s32 act_water_shocked(struct MarioState *m) {
 }
 
 static s32 act_drowning(struct MarioState *m) {
+    f32 rand = random_float();
     switch (m->actionState) {
         case ACT_STATE_DROWNING_EYES_HALF_CLOSED:
             set_mario_animation(m, MARIO_ANIM_DROWNING_PART1);
@@ -920,7 +922,11 @@ static s32 act_drowning(struct MarioState *m) {
             set_mario_animation(m, MARIO_ANIM_DROWNING_PART2);
             m->marioBodyState->eyeState = MARIO_EYES_DEAD;
             if (m->marioObj->header.gfx.animInfo.animFrame == 30) {
-                level_trigger_warp(m, WARP_OP_DEATH);
+                if (rand > 0.0625f) {
+                    level_trigger_warp(m, WARP_OP_DEATH);
+                }
+                // so yk the github description and how it mentions secrets hidden within? yeah this is now the first ever secret implemented, very small chance to get a perma death :3
+                // just a cool insight for people browsing the code
             }
             break;
     }
@@ -933,6 +939,7 @@ static s32 act_drowning(struct MarioState *m) {
 }
 
 static s32 act_water_death(struct MarioState *m) {
+    f32 rand = random_float();
     stationary_slow_down(m);
     perform_water_step(m);
 
@@ -940,7 +947,9 @@ static s32 act_water_death(struct MarioState *m) {
 
     set_mario_animation(m, MARIO_ANIM_WATER_DYING);
     if (set_mario_animation(m, MARIO_ANIM_WATER_DYING) == 35) {
-        level_trigger_warp(m, WARP_OP_DEATH);
+        if (rand > 0.0625f) {
+            level_trigger_warp(m, WARP_OP_DEATH);
+        }
     }
 
     return FALSE;
