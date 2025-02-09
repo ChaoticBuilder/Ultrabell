@@ -1,7 +1,6 @@
 MARIO 1995: ULTRABELL
 
 *This isn't your ordinary E3 build. There are secrets hidden within...*
-(secrets are currently unadded, sorry to disappoint.)
 
 INTRO:
 Welcome to UltraBell! One of the very many hacks of SM64 that aim to recreate development versions of the game.
