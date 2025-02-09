@@ -523,12 +523,13 @@ void anim_and_audio_for_walk(struct MarioState *m) {
         animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);
         set_mario_anim_with_accel(m, MARIO_ANIM_MOVE_IN_QUICKSAND, animSpeed);
         play_step_sound(m, 19, 93);
-        m->actionTimer = WALK_SPEED_START_TIPTOE;
+        m->actionTimer = WALK_SPEED_TIPTOE;
     } else {
         while (inLoop) {
             switch (m->actionTimer) {
-                // this whole thing is kinda jank, (the game literally crashes if I remove start_tiptoe) but I recreated beta walking to the best of my ability using a single gif on tcrf.net
-                case WALK_SPEED_START_TIPTOE:
+                // I recreated beta walking to the best of my ability using a single gif on tcrf.net
+
+                case WALK_SPEED_WALKING:
                     if (intendedSpeed > 22.0f) {
                         m->actionTimer = WALK_SPEED_RUNNING;
                     } else {
@@ -547,7 +548,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
 
                 case WALK_SPEED_TIPTOE:
                     if (intendedSpeed > 8.0f) {
-                        m->actionTimer = WALK_SPEED_START_TIPTOE;
+                        m->actionTimer = WALK_SPEED_WALKING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
                         animSpeed = (s32)(intendedSpeed * 0x10000);
@@ -563,7 +564,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
 
                 case WALK_SPEED_RUNNING:
                     if (intendedSpeed < 18.0f) {
-                        m->actionTimer = WALK_SPEED_START_TIPTOE;
+                        m->actionTimer = WALK_SPEED_WALKING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
                         animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);

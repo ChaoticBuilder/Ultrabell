@@ -6,9 +6,8 @@
 #include "types.h"
 
 enum WalkSpeeds {
-	WALK_SPEED_START_TIPTOE,
-	WALK_SPEED_TIPTOE,
 	WALK_SPEED_WALKING,
+	WALK_SPEED_TIPTOE,
 	WALK_SPEED_RUNNING,
 };
 
