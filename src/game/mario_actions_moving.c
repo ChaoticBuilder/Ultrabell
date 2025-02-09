@@ -530,7 +530,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                 // I recreated beta walking to the best of my ability using a single gif on tcrf.net
 
                 case WALK_SPEED_WALKING:
-                    if (intendedSpeed > 22.0f) {
+                    if (intendedSpeed > 18.0f) {
                         m->actionTimer = WALK_SPEED_RUNNING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
@@ -563,7 +563,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                     break;
 
                 case WALK_SPEED_RUNNING:
-                    if (intendedSpeed < 18.0f) {
+                    if (intendedSpeed < 14.0f) {
                         m->actionTimer = WALK_SPEED_WALKING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
