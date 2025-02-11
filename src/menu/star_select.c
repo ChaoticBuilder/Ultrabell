@@ -83,16 +83,18 @@ void bhv_act_selector_star_type_loop(void) {
     cur_obj_scale(gCurrentObject->oStarSelectorSize);
     // Unused timer, only referenced here. Probably replaced by sActSelectorMenuTimer
     gCurrentObject->oStarSelectorTimer++;
-    if (gPlayer1Controller->buttonDown & L_TRIG) {
-        gTimeAttackToggle = TRUE;
-    } else if (gPlayer1Controller->buttonDown & R_TRIG) {
-        gTimeAttackToggle = FALSE;
-    }
-    if (gTimeAttackToggle == TRUE) {
-        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(244), HUD_BOTTOM_Y, "TIME ATTACK ON");
-    } else {
-        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(252), HUD_BOTTOM_Y, "TIME ATTACK OFF");
-    }
+    #ifdef TIME_ATTACK
+        if (gPlayer1Controller->buttonDown & L_TRIG) {
+            gTimeAttackToggle = TRUE;
+        } else if (gPlayer1Controller->buttonDown & R_TRIG) {
+            gTimeAttackToggle = FALSE;
+        }
+        if (gTimeAttackToggle == TRUE) {
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(244), HUD_BOTTOM_Y, "TIME ATTACK ON");
+        } else {
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(252), HUD_BOTTOM_Y, "TIME ATTACK OFF");
+        }
+    #endif
 }
 
 /**

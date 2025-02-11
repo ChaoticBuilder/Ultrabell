@@ -13,7 +13,7 @@
 #define HUD_BOTTOM_Y 12 // Same height as the Lakitu icon
 
 // #define HUD_COINS_X 168
-#define HUD_STARS_X 88 // This starts counting from the right edge
+#define HUD_STARS_X 84 // This starts counting from the right edge
 #define HUD_CAMERA_X 54 // This starts counting from the right edge
 
 enum PowerMeterAnimation {

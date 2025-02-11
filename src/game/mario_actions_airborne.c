@@ -128,7 +128,7 @@ s32 check_fall_damage_or_get_stuck(struct MarioState *m, u32 hardFallAction) {
     if (should_get_stuck_in_ground(m)) {
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
         m->particleFlags |= PARTICLE_MIST_CIRCLE;
-        drop_and_set_mario_action(m, ACT_FEET_STUCK_IN_GROUND, 0);
+        drop_and_set_mario_action(m, ACT_TRIPLE_JUMP_LAND_STOP, 0);
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif
@@ -1270,7 +1270,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
             return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
         }
     } else {
-        m->wallKickTimer = 15;
+        m->wallKickTimer = 10;
 
         if (m->forwardVel > 8.0f) {
             mario_set_forward_vel(m, -8.0f);

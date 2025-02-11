@@ -407,9 +407,9 @@ void render_hud_breath_meter(void) {
  * Renders the amount of lives Mario has.
  */
 void render_hud_mario_lives(void) {
-    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_TOP_Y, ","); // 'Mario Head' glyph
-    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(40), HUD_TOP_Y, "*"); // 'X' glyph
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(55), HUD_TOP_Y, "%d", gHudDisplay.lives);
+    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_TOP_Y, ","); // 'Mario Head' glyph
+    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(32), HUD_TOP_Y, "*"); // 'X' glyph
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(47), HUD_TOP_Y, "%d", gHudDisplay.lives);
 }
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
@@ -430,7 +430,7 @@ void render_debug_mode(void) {
 void render_hud_coins(void) {
     print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X), (HUD_TOP_Y - 17), "$"); // 'Coin' glyph
     print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)), (HUD_TOP_Y - 17), "*"); // 'X' glyph
-    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 30)), (HUD_TOP_Y - 17), "%d", gHudDisplay.coins);
+    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)), (HUD_TOP_Y - 17), "%d", gHudDisplay.coins);
 }
 
 /**
@@ -441,7 +441,7 @@ void render_hud_stars(void) {
     if (gHudFlash == HUD_FLASH_STARS && gGlobalTimer & 0x8) return;
     print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X), HUD_TOP_Y, "^"); // 'Star' glyph
     print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)), HUD_TOP_Y, "*"); // 'X' glyph
-    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 30)), HUD_TOP_Y, "%d", gHudDisplay.stars);
+    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)), HUD_TOP_Y, "%d", gHudDisplay.stars);
 }
 
 /**
@@ -504,28 +504,28 @@ void render_hud_demo_timer(void) {
                     gMarioState->hurtCounter = 31;
                     gGlobalTimer = 0;
                 }
-                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_BOTTOM_Y, "TIME");
-                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(74), HUD_BOTTOM_Y, "%02d", (timeAttackMinutes % 60));
-                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(108), HUD_BOTTOM_Y, "%02d", (timeAttackSeconds % 60));
-                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(142), HUD_BOTTOM_Y, "%02d", (timeAttackCount % 30));
+                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "TIME");
+                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", (timeAttackMinutes % 60));
+                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", (timeAttackSeconds % 60));
+                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(136), HUD_BOTTOM_Y, "%02d", (timeAttackCount % 30));
         
                 gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
-                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(131), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
+                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(125), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
             }
         }
     #endif
     // Really disappointing, I hope I can fix the code soon..
     
     if (!(gTimeAttackToggle == TRUE)) {
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_BOTTOM_Y, "DEMO");
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(74), HUD_BOTTOM_Y, "%02d", timerHours);
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(108), HUD_BOTTOM_Y, "%02d", timerMinutes);
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "DEMO");
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", timerHours);
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerMinutes);
 
         gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
+        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
         gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
     }
 }
