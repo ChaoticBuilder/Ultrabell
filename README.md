@@ -14,4 +14,5 @@ You should really check it out despite that though! I've added quite a bit of st
 
 CREDITS:
 Credits to the amazing people behind the HackerSM64 Repo, I couldn't make this hack without them,
+
 spongelover6996 on Discord for the Time Attack Idea.
