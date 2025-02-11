@@ -504,22 +504,21 @@ void render_hud_demo_timer(void) {
                     gMarioState->hurtCounter = 31;
                     gGlobalTimer = 0;
                 }
+                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_BOTTOM_Y, "TIME");
+                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(74), HUD_BOTTOM_Y, "%02d", (timeAttackMinutes % 60));
+                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(108), HUD_BOTTOM_Y, "%02d", (timeAttackSeconds % 60));
+                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(142), HUD_BOTTOM_Y, "%02d", (timeAttackCount % 30));
+        
+                gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
+                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(131), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
             }
         }
     #endif
+    // Really disappointing, I hope I can fix the code soon..
     
-    if (gTimeAttackToggle == TRUE) {
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_BOTTOM_Y, "TIME");
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(74), HUD_BOTTOM_Y, "%02d", (timeAttackMinutes % 60));
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(108), HUD_BOTTOM_Y, "%02d", (timeAttackSeconds % 60));
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(142), HUD_BOTTOM_Y, "%02d", (timeAttackCount % 30));
-
-        gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(131), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-        gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
-    } else {
+    if (!(gTimeAttackToggle == TRUE)) {
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_BOTTOM_Y, "DEMO");
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(74), HUD_BOTTOM_Y, "%02d", timerHours);
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(108), HUD_BOTTOM_Y, "%02d", timerMinutes);
@@ -529,7 +528,6 @@ void render_hud_demo_timer(void) {
         render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
         gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
     }
-
 }
 #endif
 
