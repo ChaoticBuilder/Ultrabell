@@ -17,8 +17,11 @@
 #include "engine/math_util.h"
 #include "puppycam2.h"
 #include "puppyprint.h"
+#include "menu/star_select.h"
 
 #include "config.h"
+
+s32 gTimeAttackToggle = FALSE;
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -404,9 +407,9 @@ void render_hud_breath_meter(void) {
  * Renders the amount of lives Mario has.
  */
 void render_hud_mario_lives(void) {
-    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), (HUD_TOP_Y + 4), ","); // 'Mario Head' glyph
-    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(40), (HUD_TOP_Y + 4), "*"); // 'X' glyph
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(56), (HUD_TOP_Y + 4), "%d", gHudDisplay.lives);
+    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_TOP_Y, ","); // 'Mario Head' glyph
+    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(40), HUD_TOP_Y, "*"); // 'X' glyph
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(55), HUD_TOP_Y, "%d", gHudDisplay.lives);
 }
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
@@ -425,9 +428,9 @@ void render_debug_mode(void) {
  * Renders the amount of coins collected.
  */
 void render_hud_coins(void) {
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X + 8)), (HUD_TOP_Y - 12), "$"); // 'Coin' glyph
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 8)), (HUD_TOP_Y - 12), "*"); // 'X' glyph
-    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 24)), (HUD_TOP_Y - 12), "%d", gHudDisplay.coins);
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X), (HUD_TOP_Y - 17), "$"); // 'Coin' glyph
+    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)), (HUD_TOP_Y - 17), "*"); // 'X' glyph
+    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 30)), (HUD_TOP_Y - 17), "%d", gHudDisplay.coins);
 }
 
 /**
@@ -436,9 +439,9 @@ void render_hud_coins(void) {
  */
 void render_hud_stars(void) {
     if (gHudFlash == HUD_FLASH_STARS && gGlobalTimer & 0x8) return;
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X + 8)), (HUD_TOP_Y + 4), "^"); // 'Star' glyph
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 8)), (HUD_TOP_Y + 4), "*"); // 'X' glyph
-    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 24)), (HUD_TOP_Y + 4), "%d", gHudDisplay.stars);
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X), HUD_TOP_Y, "^"); // 'Star' glyph
+    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)), HUD_TOP_Y, "*"); // 'X' glyph
+    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 30)), HUD_TOP_Y, "%d", gHudDisplay.stars);
 }
 
 /**
@@ -465,24 +468,54 @@ void render_hud_timer(void) {
 
 #if MULTILANG
     switch (eu_get_language()) {
-        case LANGUAGE_ENGLISH: print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 8,  "TIME"); break;
-        case LANGUAGE_FRENCH:  print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(155), 8, "TEMPS"); break;
-        case LANGUAGE_GERMAN:  print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 8,  "ZEIT"); break;
+        case LANGUAGE_ENGLISH: print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(138), HUD_BOTTOM_Y,  "TIME"); break;
+        case LANGUAGE_FRENCH:  print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(143), HUD_BOTTOM_Y, "TEMPS"); break;
+        case LANGUAGE_GERMAN:  print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(138), HUD_BOTTOM_Y,  "ZEIT"); break;
     }
 #else
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 8, "TIME");
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(138), HUD_BOTTOM_Y, "TIME");
 #endif
 
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(91), 8, "%0d", timerMins);
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(71), 8, "%02d", timerSecs);
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(37), 8, "%d", timerFracSecs);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(88), HUD_BOTTOM_Y, "%0d", timerMins);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(66), HUD_BOTTOM_Y, "%02d", timerSecs);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(32), HUD_BOTTOM_Y, "%d", timerFracSecs);
 
     gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(82), 216, (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(82), 208, (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(48), 216, (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(43), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
+
+#ifdef DEMO_TIMER
+void render_hud_demo_timer(void) {
+    Texture *(*hudLUT)[58] = segmented_to_virtual(&main_hud_lut);
+    u16 timerCount = gGlobalTimer;
+    u16 timerMinutes = (timerCount / 1800);
+    u16 timerHours = (timerMinutes / 60);
+
+    #ifdef TIME_ATTACK
+    if (gTimeAttackToggle == TRUE) {
+        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(32), HUD_BOTTOM_Y, "ON");
+        if (COURSE_IS_MAIN_COURSE(gCurrCourseNum)
+        && timerMinutes >= TIME_ATTACK) {
+        gMarioState->hurtCounter = 31;
+        } else {
+            timerMinutes = 0;
+        }
+    }
+    #endif
+
+    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(24), HUD_BOTTOM_Y, "DEMO");
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(74), HUD_BOTTOM_Y, "%02d", timerHours);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(108), HUD_BOTTOM_Y, "%02d", timerMinutes);
+
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(97), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
+}
+#endif
 
 /**
  * Sets HUD status camera value depending of the actions
@@ -606,6 +639,7 @@ void render_hud(void) {
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
             render_hud_timer();
         }
+            render_hud_demo_timer();
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

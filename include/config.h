@@ -18,6 +18,7 @@
 #include "config/config_movement.h"
 #include "config/config_objects.h"
 #include "config/config_rom.h"
+#include "config/config_timeattack.h"
 
 // Local config - include a gitignore'd config file that's specific to just the user (if the file exists)
 #if __has_include("config/config_local.h")
