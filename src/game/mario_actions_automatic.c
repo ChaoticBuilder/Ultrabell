@@ -79,7 +79,7 @@ s32 set_pole_position(struct MarioState *m, f32 offsetY) {
     } else if (collided) {
         if (m->pos[1] > floorHeight + 20.0f) {
             m->forwardVel = -2.0f;
-            set_mario_action(m, ACT_SOFT_BONK, 0);
+            set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
             result = POLE_FELL_OFF;
         } else {
             set_mario_action(m, ACT_IDLE, 0);
@@ -100,7 +100,7 @@ s32 act_holding_pole(struct MarioState *m) {
     if ((m->input & INPUT_Z_PRESSED) || m->health < 0x100) {
         add_tree_leaf_particles(m);
         m->forwardVel = -2.0f;
-        return set_mario_action(m, ACT_SOFT_BONK, 0);
+        return set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
     }
 
     if (m->input & INPUT_A_PRESSED) {
@@ -156,7 +156,7 @@ s32 act_climbing_pole(struct MarioState *m) {
     if (m->health < 0x100) {
         add_tree_leaf_particles(m);
         m->forwardVel = -2.0f;
-        return set_mario_action(m, ACT_SOFT_BONK, 0);
+        return set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
     }
 
     if (m->input & INPUT_A_PRESSED) {
@@ -525,7 +525,7 @@ s32 let_go_of_ledge(struct MarioState *m) {
         m->pos[1] = floorHeight;
     }
 
-    return set_mario_action(m, ACT_SOFT_BONK, 0);
+    return set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
 }
 
 void climb_up_ledge(struct MarioState *m) {

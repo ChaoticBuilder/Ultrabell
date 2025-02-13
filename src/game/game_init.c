@@ -120,7 +120,7 @@ const Gfx init_rdp[] = {
     gsDPSetCombineKey(G_CK_NONE),
     gsDPSetAlphaCompare(G_AC_NONE),
     gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
-    gsDPSetColorDither(G_CD_MAGICSQ),
+    gsDPSetColorDither(G_CD_BAYER),
     gsDPSetCycleType(G_CYC_FILL),
     gsDPSetAlphaDither(G_AD_PATTERN),
     gsSPEndDisplayList(),
@@ -455,9 +455,7 @@ void display_and_vsync(void) {
         gGoddardVblankCallback = NULL;
     }
     exec_display_list(&gGfxPool->spTask);
-#ifndef UNLOCK_FPS
     osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-#endif
     osViSwapBuffer((void *) PHYSICAL_TO_VIRTUAL(gPhysicalFramebuffers[sRenderedFramebuffer]));
 #ifndef UNLOCK_FPS
     osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);

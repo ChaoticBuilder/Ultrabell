@@ -96,8 +96,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 
 s32 check_kick_or_dive_in_air(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
-        // lower speed value for diving instead of kicking
-        return set_mario_action(m, m->forwardVel > 24.0f ? ACT_DIVE : ACT_JUMP_KICK, 0);
+            set_mario_action(m, ACT_JUMP_KICK, 0);
     }
     return FALSE;
 }
@@ -1268,13 +1267,13 @@ s32 act_air_hit_wall(struct MarioState *m) {
 
     if (++(m->actionTimer) <= 2) {
         if (m->input & INPUT_A_PRESSED) {
-            m->vel[1] = 64.0f;
+            m->vel[1] = 80.0f;
             m->faceAngle[1] += 0x8000;
             return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
         }
     } else {
         if (m->forwardVel > 8.0f) {
-            mario_set_forward_vel(m, -1.0f);
+            mario_set_forward_vel(m, -0.1f);
         }
         m->vel[1] = 24.0f;
         return set_mario_action(m, ACT_SOFT_BONK, 0);
@@ -1566,6 +1565,10 @@ s32 act_jump_kick(struct MarioState *m) {
         set_mario_animation(m, MARIO_ANIM_AIR_KICK);
         m->actionState = ACT_STATE_JUMP_KICK_KICKING;
     }
+
+    if (m->input & INPUT_A_PRESSED) {
+        set_mario_action(m, ACT_DIVE, 0);
+    } 
 
     s32 animFrame = m->marioObj->header.gfx.animInfo.animFrame;
     if (animFrame == 0) {
