@@ -45,7 +45,7 @@ void obj_update_gfx_pos_and_angle(struct Object *obj) {
 }
 
 #ifdef OBJ_OPACITY_BY_CAM_DIST
-#define OBJ_OPACITY_NEAR   128.0f
+#define OBJ_OPACITY_NEAR   512.0f
 #define OBJ_OPACITY_LENGTH 512.0f
 void obj_set_opacity_from_cam_dist(struct Object *obj) {
     s32 opacityDist = ((-obj->header.gfx.cameraToObject[2] - OBJ_OPACITY_NEAR) * (256.0f / OBJ_OPACITY_LENGTH));
