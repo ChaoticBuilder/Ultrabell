@@ -528,7 +528,7 @@ void render_hud_demo_timer(void) {
     if (!(gTimeAttackToggle == TRUE)) {
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "DEMO");
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", timerHours);
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerMinutes);
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerMinutes % 60);
         // print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(160), HUD_BOTTOM_Y, "%02d", testvariable);
 
         gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
