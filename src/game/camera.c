@@ -2874,7 +2874,7 @@ void update_lakitu(struct Camera *c) {
 void update_camera(struct Camera *c) {
     PROFILER_GET_SNAPSHOT_TYPE(PROFILER_DELTA_COLLISION);
     gCamera = c;
-    update_camera_hud_status(c);
+    // update_camera_hud_status(c);
     if (c->cutscene == CUTSCENE_NONE
 #ifdef PUPPYCAM
         && !gPuppyCam.enabled
@@ -3758,6 +3758,7 @@ s32 find_c_buttons_pressed(u16 currentState, u16 buttonsPressed, u16 buttonsDown
 /**
  * Determine which icon to show on the HUD
  */
+/*
 s32 update_camera_hud_status(struct Camera *c) {
     s16 status = CAM_STATUS_NONE;
 
@@ -3778,7 +3779,7 @@ s32 update_camera_hud_status(struct Camera *c) {
     set_hud_camera_status(status);
     return status;
 }
-
+*/
 /**
  * Check `pos` for collisions within `radius`, and update `pos`
  *

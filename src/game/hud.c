@@ -481,9 +481,9 @@ void render_hud_timer(void) {
     print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(32), HUD_BOTTOM_Y, "%d", timerFracSecs);
 
     gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(43), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y + 5), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y - 4), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(43), (HUD_TOP_Y + 5), (*hudLUT)[GLYPH_APOSTROPHE]);
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
@@ -493,6 +493,13 @@ void render_hud_demo_timer(void) {
     u16 timerCount = gGlobalTimer;
     u16 timerMinutes = (timerCount / 1800);
     u16 timerHours = (timerMinutes / 60);
+    /*
+    u16 testvariable = 0;
+    while (TRUE) {
+        testvariable++;
+        wait(1);
+    }
+    */
     #ifdef TIME_ATTACK
         u16 timeAttackCount = gGlobalTimer;
         u16 timeAttackSeconds = (gGlobalTimer / 30);
@@ -522,10 +529,11 @@ void render_hud_demo_timer(void) {
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "DEMO");
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", timerHours);
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerMinutes);
+        // print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(160), HUD_BOTTOM_Y, "%02d", testvariable);
 
         gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
+        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 5), (*hudLUT)[GLYPH_APOSTROPHE]);
+        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 4), (*hudLUT)[GLYPH_APOSTROPHE]);
         gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
     }
 }
@@ -543,6 +551,7 @@ void set_hud_camera_status(s16 status) {
  * Renders camera HUD glyphs using a table list, depending of
  * the camera status called, a defined glyph is rendered.
  */
+/*
 void render_hud_camera_status(void) {
     Texture *(*cameraLUT)[6] = segmented_to_virtual(&main_hud_camera_lut);
     s32 x = GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_CAMERA_X);
@@ -578,7 +587,7 @@ void render_hud_camera_status(void) {
 
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
-
+*/
 /**
  * Render HUD strings using hudDisplayFlags with it's render functions,
  * excluding the cannon reticle which detects a camera preset for it.
@@ -644,7 +653,7 @@ void render_hud(void) {
 #ifdef PUPPYCAM
             if (!gPuppyCam.enabled) {
 #endif
-            render_hud_camera_status();
+//            render_hud_camera_status();
 #ifdef PUPPYCAM
             }
 #endif

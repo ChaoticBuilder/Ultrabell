@@ -32,6 +32,8 @@
 #include "save_file.h"
 #include "sound_init.h"
 #include "rumble_init.h"
+#include "ingame_menu.h"
+#include "dialog_ids.h"
 
 
 /**************************************************
@@ -621,15 +623,17 @@ s16 find_floor_slope(struct MarioState *m, s16 yawOffset) {
     f32 x = sins(m->faceAngle[1] + yawOffset) * 5.0f;
     f32 z = coss(m->faceAngle[1] + yawOffset) * 5.0f;
 #ifdef FAST_FLOOR_ALIGN
-    if (absf(m->forwardVel) > FAST_FLOOR_ALIGN) {
+    // if (absf(m->forwardVel) > FAST_FLOOR_ALIGN) {
         forwardFloorY  = get_surface_height_at_location(m->pos[0] + x, m->pos[2] + z, floor);
         backwardFloorY = get_surface_height_at_location(m->pos[0] - x, m->pos[2] - z, floor);
+/*
     } else {
         forwardFloorY  = find_floor(m->pos[0] + x, m->pos[1] + 100.0f, m->pos[2] + z, &floor);
         if (floor == NULL)  forwardFloorY = m->floorHeight; // handle OOB slopes
         backwardFloorY = find_floor(m->pos[0] - x, m->pos[1] + 100.0f, m->pos[2] - z, &floor);
         if (floor == NULL) backwardFloorY = m->floorHeight; // handle OOB slopes
     }
+*/
 #else
     forwardFloorY  = find_floor(m->pos[0] + x, m->pos[1] + 100.0f, m->pos[2] + z, &floor);
     if (floor == NULL)  forwardFloorY = m->floorHeight; // handle OOB slopes
@@ -1889,4 +1893,5 @@ void init_mario_from_save_file(void) {
 
     gHudDisplay.coins = 0;
     gHudDisplay.wedges = 8;
+    create_dialog_box(DIALOG_033);
 }
