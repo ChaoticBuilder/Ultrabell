@@ -1121,7 +1121,7 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
 }
 
 s32 check_wall_kick(struct MarioState *m) {
-    if ((m->input & INPUT_A_PRESSED) && m->wallKickTimer != 0 && m->prevAction == ACT_AIR_HIT_WALL) {
+    if ((m->input & INPUT_A_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL) {
         m->faceAngle[1] += 0x8000;
         return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
     }
@@ -1205,11 +1205,14 @@ s32 act_thrown_forward(struct MarioState *m) {
 s32 act_soft_bonk(struct MarioState *m) {
     if (check_wall_kick(m)) {
         return TRUE;
+    } else {
+        play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
+        m->particleFlags |= PARTICLE_DUST;
     }
 
     play_knockback_sound(m);
 
-    common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_GENERAL_FALL, m->forwardVel);
+    common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
     return FALSE;
 }
 
@@ -1270,16 +1273,16 @@ s32 act_air_hit_wall(struct MarioState *m) {
             return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
         }
     } else {
-        m->wallKickTimer = 10;
-
         if (m->forwardVel > 8.0f) {
-            mario_set_forward_vel(m, -8.0f);
+            mario_set_forward_vel(m, -1.0f);
         }
+        m->vel[1] = 24.0f;
         return set_mario_action(m, ACT_SOFT_BONK, 0);
     }
-        m->particleFlags |= PARTICLE_VERTICAL_STAR;
+    m->particleFlags |= PARTICLE_VERTICAL_STAR;
     set_mario_animation(m, MARIO_ANIM_START_WALLKICK);
-
+    play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
+    m->particleFlags |= PARTICLE_DUST;
     return TRUE;
 }
 
