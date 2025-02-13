@@ -15,6 +15,8 @@
 #include "memory.h"
 #include "behavior_data.h"
 #include "rumble_init.h"
+#include "camera.h"
+#include "game_init.h"
 
 #include "config.h"
 
@@ -1295,7 +1297,10 @@ s32 act_burning_ground(struct MarioState *m) {
     }
 
     m->marioObj->oMarioBurnTimer += 2;
-    if (m->marioObj->oMarioBurnTimer > 160) {
+    if (m->marioObj->oMarioBurnTimer >= 160) {
+        if (m->area->camera->mode == CAMERA_MODE_C_UP) {
+            set_camera_mode(m->area->camera, -1, 1);
+        }
         return set_mario_action(m, ACT_WALKING, 0);
     }
 

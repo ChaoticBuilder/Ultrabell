@@ -972,7 +972,7 @@ s32 act_burning_jump(struct MarioState *m) {
     set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_SINGLE_JUMP : MARIO_ANIM_FIRE_LAVA_BURN);
     m->particleFlags |= PARTICLE_FIRE;
     play_sound(SOUND_MOVING_LAVA_BURN, m->marioObj->header.gfx.cameraToObject);
-    m->marioObj->oMarioBurnTimer += 3;
+    m->marioObj->oMarioBurnTimer += 2;
 
     if(!gDebugLevelSelect) {
         m->health -= 10;
@@ -996,7 +996,7 @@ s32 act_burning_fall(struct MarioState *m) {
 
     set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
     m->particleFlags |= PARTICLE_FIRE;
-    m->marioObj->oMarioBurnTimer += 3;
+    m->marioObj->oMarioBurnTimer += 2;
 
     if(!gDebugLevelSelect) {
         m->health -= 10;

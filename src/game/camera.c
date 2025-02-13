@@ -376,7 +376,7 @@ struct Object *gSecondCameraFocus = NULL;
 /**
  * How fast the camera's yaw should approach the next yaw.
  */
-s16 sYawSpeed = 0x400;
+s16 sYawSpeed = 0x800;
 s32 gCurrLevelArea = 0;
 u32 gPrevLevel = 0;
 
@@ -1639,7 +1639,7 @@ void mode_fixed_camera(UNUSED struct Camera *c) {
     if (gCurrLevelNum == LEVEL_BBH) {
         set_fov_function(CAM_FOV_BBH);
     } else if (gCurrLevelNum == LEVEL_CASTLE) {
-        set_fov_function(CAM_FOV_CASTLE);
+        set_fov_function(CAM_FOV_APP_45);
     } else {
         set_fov_function(CAM_FOV_APP_45);
     }
@@ -2050,7 +2050,7 @@ s16 update_default_camera(struct Camera *c) {
         camera_approach_s16_symmetric_bool(&sCSideButtonYaw, 0, 0x100);
         nextYawVel = 0;
     }
-    sYawSpeed = 0x400;
+    sYawSpeed = 0x800;
     xzDist = calc_hor_dist(sMarioCamState->pos, c->pos);
 
     if (sStatusFlags & CAM_FLAG_BEHIND_MARIO_POST_DOOR) {
@@ -2792,8 +2792,8 @@ void update_lakitu(struct Camera *c) {
         sStatusFlags &= ~CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
 
         // Update old state
-        vec3f_copy(sOldPosition, newPos);
-        vec3f_copy(sOldFocus, newFoc);
+        vec3f_copy(newPos, c->pos);
+        vec3f_copy(newFoc, c->focus);
 
         gLakituState.yaw = c->yaw;
         gLakituState.nextYaw = c->nextYaw;
@@ -2881,6 +2881,18 @@ void update_camera(struct Camera *c) {
 #endif
         && gCurrentArea->camera->mode != CAMERA_MODE_INSIDE_CANNON) {
         // Only process R_TRIG if 'fixed' is not selected in the menu
+        if (gPlayer1Controller->buttonPressed & D_JPAD) {
+            gMarioState->faceAngle[1] = gLakituState.yaw;
+            play_sound_rbutton_changed();
+        } else if (gPlayer1Controller->buttonPressed & L_TRIG) {
+            if (c->mode != CAMERA_MODE_8_DIRECTIONS) {
+                set_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 1);
+                play_sound_rbutton_changed();
+            } else {
+                set_camera_mode(c, -1, 1);
+                play_sound_rbutton_changed();
+            }
+        }
         if (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) {
             if (gPlayer1Controller->buttonPressed & R_TRIG) {
                 if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {
@@ -2944,7 +2956,7 @@ void update_camera(struct Camera *c) {
     }
     // If not in a cutscene, do mode processing
     if (c->cutscene == CUTSCENE_NONE) {
-        sYawSpeed = 0x400;
+        sYawSpeed = 0x800;
 
         if (sSelectionFlags & CAM_MODE_MARIO_ACTIVE) {
             switch (c->mode) {
@@ -4837,19 +4849,23 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
                     //! doorStatus is never DOOR_ENTER_LOBBY when cameraEvent == 6, because
                     //! doorStatus is only used for the star door in the lobby, which uses
                     //! ACT_ENTERING_STAR_DOOR
+/*
                     if (c->mode == CAMERA_MODE_SPIRAL_STAIRS || c->mode == CAMERA_MODE_CLOSE || c->doorStatus == DOOR_ENTER_LOBBY) {
-                        cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE);
-                    } else {
                         cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-                    }
+                    } else {
+*/
+                    cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
+//                    }
                     break;
                 case AREA_BBH:
                     //! Castle Lobby uses 0 to mean 'no special modes', but BBH uses 1...
+/*
                     if (c->doorStatus == DOOR_LEAVING_SPECIAL) {
                         cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
                     } else {
-                        cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE);
-                    }
+*/
+                    cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
+//                    }
                     break;
                 default:
                     cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
