@@ -588,6 +588,11 @@ void render_hud_camera_status(void) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 */
+void render_mario_speed(void) {
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(96), (HUD_BOTTOM_Y + 17), "SPD");
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(56), (HUD_BOTTOM_Y + 17), "%d", gMarioStates[0].forwardVel);
+}
+
 /**
  * Render HUD strings using hudDisplayFlags with it's render functions,
  * excluding the cannon reticle which detects a camera preset for it.
@@ -663,6 +668,7 @@ void render_hud(void) {
             render_hud_timer();
         }
             render_hud_demo_timer();
+            render_mario_speed();
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

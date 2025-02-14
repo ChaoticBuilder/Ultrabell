@@ -287,7 +287,6 @@ void update_flying_yaw(struct MarioState *m) {
     }
 
     m->faceAngle[1] += m->angleVel[1];
-    m->faceAngle[2] = 20 * -m->angleVel[1];
 }
 
 void update_flying_pitch(struct MarioState *m) {
@@ -316,12 +315,24 @@ void update_flying_pitch(struct MarioState *m) {
     }
 }
 
+void update_flying_roll(struct MarioState *m) {
+        m->angleVel[2] = 0.0f + (m->controller->stickX * m->forwardVel / 2);
+            m->faceAngle[2] += m->angleVel[2];
+}
+
 void update_flying(struct MarioState *m) {
     update_flying_pitch(m);
     update_flying_yaw(m);
+    update_flying_roll(m);
+    /*
+    if (m->forwardVel <= 4.0f) {
+        m->forwardVel += 0.5f * (m->forwardVel / 8.0f);
+    }
+    */
+    m->forwardVel += (0.0f - (m->faceAngle[0] / 8192)) - 0.0625f;
 
-    m->forwardVel -= 2.0f * ((f32) m->faceAngle[0] / 0x4000) + 0.1f;
-    m->forwardVel -= 0.5f * (1.0f - coss(m->angleVel[1]));
+    // m->forwardVel -= 2.0f * ((f32) m->faceAngle[0] / 0x4000) + 0.1f;
+    // m->forwardVel -= 0.5f * (1.0f - coss(m->angleVel[1]));
 
     if (m->forwardVel < 0.0f) {
         m->forwardVel = 0.0f;
