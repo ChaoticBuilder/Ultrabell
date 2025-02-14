@@ -15,6 +15,8 @@
 #include "memory.h"
 #include "behavior_data.h"
 #include "rumble_init.h"
+#include "camera.h"
+#include "game_init.h"
 
 #include "config.h"
 
@@ -130,7 +132,7 @@ void slide_bonk(struct MarioState *m, UNUSED u32 fastAction, u32 slowAction) {
 s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 actionArg) {
     if (m->flags & MARIO_WING_CAP) {
         return set_mario_action(m, ACT_FLYING_TRIPLE_JUMP, 0);
-    } else if (m->forwardVel > 20.0f) {
+    } else if (m->forwardVel > 16.0f) {
         return set_mario_action(m, ACT_TRIPLE_JUMP, 0);
     } else {
         return set_mario_action(m, ACT_JUMP, 0);
@@ -1295,7 +1297,10 @@ s32 act_burning_ground(struct MarioState *m) {
     }
 
     m->marioObj->oMarioBurnTimer += 2;
-    if (m->marioObj->oMarioBurnTimer > 160) {
+    if (m->marioObj->oMarioBurnTimer >= 160) {
+        if (m->area->camera->mode == CAMERA_MODE_C_UP) {
+            set_camera_mode(m->area->camera, -1, 1);
+        }
         return set_mario_action(m, ACT_WALKING, 0);
     }
 
@@ -1482,7 +1487,7 @@ s32 act_crouch_slide(struct MarioState *m) {
 }
 
 s32 act_slide_kick_slide(struct MarioState *m) {
-    if (m->input & INPUT_A_PRESSED) {
+    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif
@@ -1514,7 +1519,7 @@ s32 act_slide_kick_slide(struct MarioState *m) {
 
 s32 stomach_slide_action(struct MarioState *m, u32 stopAction, u32 airAction, s32 animation) {
     if (m->actionTimer == 5) {
-        if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
+        if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
 #if ENABLE_RUMBLE
             queue_rumble_data(5, 80);
 #endif
@@ -1546,7 +1551,7 @@ s32 act_hold_stomach_slide(struct MarioState *m) {
 }
 
 s32 act_dive_slide(struct MarioState *m) {
-    if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
+    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif
@@ -1604,43 +1609,31 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
     }
 
     if (perform_ground_step(m) == GROUND_STEP_LEFT_GROUND) {
-        if (m->forwardVel < 0.0f) {
+        if (m->forwardVel < 0.0001f) {
+            // backwards is first because >= -0.01 looks odd
             set_mario_action(m, ACT_BACKWARD_GROUND_KB, actionArg);
-//            m->forwardVel += 0.01f;
+            // m->forwardVel += 0.01f;
         } else {
             set_mario_action(m, ACT_FORWARD_GROUND_KB, actionArg);
-//            m->forwardVel -= 0.01f;
+            // m->forwardVel -= 0.01f;
         }
         set_mario_action(m, ACT_IDLE, 0);
-/*
-            if (m->health < 0x100) {
-                set_mario_action(m, ACT_STANDING_DEATH, 0);
-            } else {
-                if (actionArg > 0) {
-                    m->invincTimer = 30;
-                }
-            set_mario_action(m, ACT_IDLE, 0);
-            // why does it keep making mario move while in the idle but there's no player control eeeeeee
-*/
-//        }
-//    }
-// HOW DID IT TAKE ME 30 MINUTES TO FIGURE OUT I FORGOT GROUND STEP NONE AAAAAAAAAA
     } else if (perform_ground_step(m) == GROUND_STEP_NONE) {  
         if (is_anim_at_end(m)) {
-        set_mario_action(m, ACT_IDLE, 0);
+            set_mario_action(m, ACT_IDLE, 0);
+            m->forwardVel = 20.0f;
         /*
         if (m->health < 0x100) {
                 set_mario_action(m, ACT_STANDING_DEATH, 0);
             } else {
-
+        */
             if (actionArg > 0) {
                 m->invincTimer = 30;
             }
-        */
-//            set_mario_action(m, ACT_IDLE, 0);
-// and the best part is, even after all this bugfixing, the code is still super jank
-// TODO: CLEAN THIS UP TMRW
+            // set_mario_action(m, ACT_IDLE, 0);
         }
+    } else {
+        m->forwardVel = 0.000001f;
     }
     return animFrame;
 }
@@ -1857,9 +1850,7 @@ s32 act_long_jump_land(struct MarioState *m) {
     }
 #endif
 
-    if (!(m->input & INPUT_Z_DOWN)) {
-        m->input &= ~INPUT_A_PRESSED;
-    }
+    sLongJumpLandAction.aPressedAction = m->input & INPUT_Z_DOWN ? ACT_LONG_JUMP : ACT_JUMP;
 
     if (common_landing_cancels(m, &sLongJumpLandAction, set_jumping_action)) {
         return TRUE;
