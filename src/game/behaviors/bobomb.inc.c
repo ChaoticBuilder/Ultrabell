@@ -28,8 +28,8 @@ void bobomb_spawn_coin(void) {
 }
 
 void bobomb_act_explode(void) {
-    if (o->oTimer < 5) {
-        cur_obj_scale(1.0f + ((f32) o->oTimer / 5.0f));
+    if (o->oTimer < 8) {
+        cur_obj_scale(1.0f + ((f32) o->oTimer / 6.0f));
     } else {
         struct Object *explosion = spawn_object(o, MODEL_EXPLOSION, bhvExplosion);
         explosion->oGraphYOffset += 100.0f;
@@ -130,7 +130,7 @@ void generic_bobomb_free_loop(void) {
 
     bobomb_check_interactions();
 
-    if (o->oBobombFuseTimer > 150) {
+    if (o->oBobombFuseTimer > 180) {
         o->oAction = 3;
     }
 }
@@ -159,7 +159,7 @@ void stationary_bobomb_free_loop(void) {
 
     bobomb_check_interactions();
 
-    if (o->oBobombFuseTimer > 150) {
+    if (o->oBobombFuseTimer > 180) {
         o->oAction = 3;
     }
 }
@@ -178,7 +178,7 @@ void bobomb_held_loop(void) {
     cur_obj_set_pos_relative(gMarioObject, 0.0f, 60.0f, 100.0f);
 
     o->oBobombFuseLit = TRUE;
-    if (o->oBobombFuseTimer > 150) {
+    if (o->oBobombFuseTimer > 180) {
         //! Although the Bob-omb's action is set to explode when the fuse timer expires,
         //  bobomb_act_explode() will not execute until the bob-omb's held state changes.
         //  This allows the Bob-omb to be regrabbed indefinitely.
