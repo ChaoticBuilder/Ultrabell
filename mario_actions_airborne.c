@@ -391,17 +391,23 @@ void update_flying(struct MarioState *m) {
     }
 
     if (m->flags & MARIO_WING_CAP) {
-        if (m->forwardVel > 64) {
-            m->forwardVel -= 0.5;
-            if (m->forwardVel > 128) {
-                m->forwardVel -= 2;
+        if (m->forwardVel > 32) {
+            m->forwardVel -= 0.25;
+            if (m->forwardVel > 64) {
+                m->forwardVel -= 0.375;
+                if (m->forwardVel > 96) {
+                    m->forwardVel -= 0.625;
+                }
             }
         }
     } else {
-        if (m->forwardVel > 64) {
-            m->forwardVel -= 1;
-            if (m->forwardVel > 96) {
-                m->forwardVel -= 2;
+        if (m->forwardVel > 32) {
+            m->forwardVel -= 0.375;
+            if (m->forwardVel > 64) {
+                m->forwardVel -= 0.625;
+                if (m->forwardVel > 96) {
+                    m->forwardVel -= 1.25;
+                }
             }
         }
     }
