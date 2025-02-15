@@ -1833,8 +1833,8 @@ s32 act_flying(struct MarioState *m) {
         }
         m->particleFlags |= PARTICLE_DUST;
     }
-    if (m->faceAngle[0] <= -DEGREES(30)) {
-        if (gGlobalTimer % 6 == 0) {
+    if (m->faceAngle[0] <= -DEGREES(60)) {
+        if (gGlobalTimer % 4 == 0) {
             m->particleFlags |= PARTICLE_FIRE;
         }
     }
