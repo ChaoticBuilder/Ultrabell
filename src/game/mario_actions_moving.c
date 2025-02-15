@@ -1555,6 +1555,9 @@ s32 act_dive_slide(struct MarioState *m) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif
+        if (m->input & INPUT_ABOVE_SLIDE) {
+            m->forwardVel = -1.0f;
+        }
         return set_mario_action(m, m->forwardVel > 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT,
                                 0);
     }

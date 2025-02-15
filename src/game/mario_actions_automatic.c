@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "level_table.h"
 #include "rumble_init.h"
+#include "game_init.h"
 
 #include "config.h"
 
@@ -122,14 +123,14 @@ s32 act_holding_pole(struct MarioState *m) {
         }
     }
 
-    if (m->controller->stickY < -16.0f) {
-        m->angleVel[1] -= m->controller->stickY * 2;
+    if (m->controller->stickY < -2.0f) {
+        m->angleVel[1] -= m->controller->stickY * 8;
         if (m->angleVel[1] > 0x1000) {
             m->angleVel[1] = 0x1000;
         }
 
         m->faceAngle[1] += m->angleVel[1];
-        marioObj->oMarioPolePos -= m->angleVel[1] / 0x100;
+        marioObj->oMarioPolePos += m->controller->stickY / 2;
 
         add_tree_leaf_particles(m);
         play_climbing_sounds(m, 2);
@@ -137,6 +138,9 @@ s32 act_holding_pole(struct MarioState *m) {
         reset_rumble_timers_slip();
 #endif
         set_sound_moving_speed(SOUND_BANK_MOVING, m->angleVel[1] / 0x100 * 2);
+        if (gGlobalTimer % 3 == 0) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
     } else {
         m->angleVel[1] = 0;
         m->faceAngle[1] -= m->controller->stickX * 16.0f;
@@ -169,7 +173,11 @@ s32 act_climbing_pole(struct MarioState *m) {
         return set_mario_action(m, ACT_HOLDING_POLE, 0);
     }
 
-    marioObj->oMarioPolePos += m->controller->stickY / 8.0f;
+    if (m->input & INPUT_B_DOWN) {
+        marioObj->oMarioPolePos += m->controller->stickY / 4.0f;
+    } else {
+        marioObj->oMarioPolePos += m->controller->stickY / 8.0f;
+    }
     m->angleVel[1]  = 0;
     m->faceAngle[1] = cameraAngle - approach_s32((s16)(cameraAngle - m->faceAngle[1]), 0, 0x400, 0x400);
 

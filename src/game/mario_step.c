@@ -612,15 +612,15 @@ void apply_gravity(struct MarioState *m) {
     if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) {
         apply_twirl_gravity(m);
     } else if (m->action == ACT_SHOT_FROM_CANNON) {
-        m->vel[1] -= 1.0f;
+        m->vel[1] -= 1.5f;
         if (m->vel[1] < -75.0f) {
             m->vel[1] = -75.0f;
         }
     } else if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK
                || m->action == ACT_BBH_ENTER_SPIN) {
-        m->vel[1] -= 2.0f;
-        if (m->vel[1] < -75.0f) {
-            m->vel[1] = -75.0f;
+        m->vel[1] -= 2.5f;
+        if (m->vel[1] < -80.0f) {
+            m->vel[1] = -80.0f;
         }
     } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_FALL_AFTER_STAR_GRAB) {
         m->vel[1] -= 3.2f;
@@ -644,14 +644,14 @@ void apply_gravity(struct MarioState *m) {
 
         m->vel[1] -= 2.5f;
         if (m->vel[1] < -37.5f) {
-            if ((m->vel[1] += 4.0f) > -48.0f) {
-                m->vel[1] = -48.0f;
+            if ((m->vel[1] += 4.0f) > -40.0f) {
+                m->vel[1] = -40.0f;
             }
         }
     } else {
         m->vel[1] -= 5.0f;
-        if (m->vel[1] < -96.0f) {
-            m->vel[1] = -96.0f;
+        if (m->vel[1] < -80.0f) {
+            m->vel[1] = -80.0f;
         }
     }
 }
