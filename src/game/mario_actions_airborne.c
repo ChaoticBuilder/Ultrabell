@@ -267,28 +267,24 @@ void update_flying_yaw(struct MarioState *m) {
     s16 targetYawVel = -(s16)(m->controller->stickX * (m->forwardVel / 4.0f));
 
     if (targetYawVel > 0) {
+        m->angleVel[2] -= 0x20;
         if (m->angleVel[1] < 0) {
             m->angleVel[1] += 0x40;
-            m->angleVel[2] += 0x40;
             if (m->angleVel[1] > 0x10) {
                 m->angleVel[1] = 0x10;
-                m->angleVel[2] = 0x10;
             }
         } else {
             m->angleVel[1] = approach_s32(m->angleVel[1], targetYawVel, 0x10, 0x20);
-            m->angleVel[2] += 0x20;
         }
     } else if (targetYawVel < 0) {
+        m->angleVel[2] += 0x20;
         if (m->angleVel[1] > 0) {
             m->angleVel[1] -= 0x40;
-            m->angleVel[2] -= 0x40;
             if (m->angleVel[1] < -0x10) {
                 m->angleVel[1] = -0x10;
-                m->angleVel[2] = -0x10;
             }
         } else {
             m->angleVel[1] = approach_s32(m->angleVel[1], targetYawVel, 0x20, 0x10);
-            m->angleVel[2] -= 0x20;
         }
     } else {
         m->angleVel[1] = approach_s32(m->angleVel[1], 0, 0x40, 0x40);
@@ -296,8 +292,13 @@ void update_flying_yaw(struct MarioState *m) {
     }
     
     m->faceAngle[1] += m->angleVel[1];
+    if (m->angleVel[2] > 8192) {
+        m->angleVel[2] = 8192;
+    } else if (m->angleVel[2] < -8192) {
+        m->angleVel[2] = -8192;
+    }
     if (spin == FALSE) {
-        m->faceAngle[2] -= m->angleVel[2];
+        m->faceAngle[2] += m->angleVel[2];
     }
 }
 
@@ -328,13 +329,22 @@ void update_flying_pitch(struct MarioState *m) {
 }
 
 void update_flying_roll(struct MarioState *m) {
-    if (m->forwardVel >= 96) {
-        m->faceAngle[2] += 64.0f * (m->forwardVel / 2);
-        spin = TRUE;
+    if (m->flags & MARIO_WING_CAP) {
+        if (m->forwardVel >= 128) {
+            m->faceAngle[2] += 64.0f * (m->forwardVel / 3);
+            spin = TRUE;
+        } else {
+            m->faceAngle[2] = approach_s32(m->faceAngle[2], 0, 1024, 1024);
+            spin = FALSE;
+        }
     } else {
-        m->faceAngle[2] = approach_s32(m->faceAngle[2], 0, 1024, 1024);
-        spin = FALSE;
-        // m->faceAngle[2] = approach_s32(m->faceAngle[2], 0, 1024, 1024);
+        if (m->forwardVel >= 96) {
+            m->faceAngle[2] += 64.0f * (m->forwardVel / 3);
+            spin = TRUE;
+        } else {
+            m->faceAngle[2] = approach_s32(m->faceAngle[2], 0, 1024, 1024);
+            spin = FALSE;
+        }
     }
 }
 
@@ -343,7 +353,11 @@ void update_flying(struct MarioState *m) {
     update_flying_yaw(m);
     update_flying_roll(m);
 
-    m->forwardVel -= 1.0f * ((f32) m->faceAngle[0] / 4096) + 0.0625;
+    if (m->flags & MARIO_WING_CAP) {
+        m->forwardVel -= 1.0f * ((f32) m->faceAngle[0] / 4096) - 0.375;
+    } else {
+        m->forwardVel -= 1.0f * ((f32) m->faceAngle[0] / 4096) + 0.09375;
+    }
     // m->forwardVel = 48.0f; // DEBUG
     /*
     if (m->forwardVel < 96) {
@@ -359,10 +373,10 @@ void update_flying(struct MarioState *m) {
     if (spin == FALSE) {
     // "you can't clamp mario's roll whilst also having the forwardvel spin" - sm64
     // well, how about I do anyway :3
-        if (m->faceAngle[2] >= 90) {
+        if (m->faceAngle[2] > DEGREES(90)) {
             m->faceAngle[2] = DEGREES(90);
-        } else if (m->faceAngle[2] <= -DEGREES(90)) {
-            m->faceAngle[2] = -DEGREES(90);
+        } else if (m->faceAngle[2] < -DEGREES(67.5)) {
+            m->faceAngle[2] = -DEGREES(67.5);
         }
     }
 
@@ -370,18 +384,27 @@ void update_flying(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 
-    if (m->forwardVel > 16.0f) {
-        m->faceAngle[0] += (m->forwardVel - 32.0f) * 6.0f;
-    } else if (m->forwardVel > 4.0f) {
-        m->faceAngle[0] += (m->forwardVel - 32.0f) * 10.0f;
-    } else {
+    if (m->forwardVel < 16) {
         m->faceAngle[0] -= (m->faceAngle[0] / 10 + 1536);
+    } else if (m->forwardVel > 256) {
+        m->forwardVel = 256;
     }
+
+    if (m->flags & MARIO_WING_CAP) {
+        if (m->forwardVel > 128) {
+            m->forwardVel -= 0.25;
+        }
+    } else {
+        if (m->forwardVel > 128) {
+            m->forwardVel -= 1;
+        }
+    }
+
 
     m->faceAngle[0] += m->angleVel[0];
 
     if (m->faceAngle[0] > DEGREES(90)) {
-        m->angleVel[0] -= (m->angleVel[0] / 64);
+        m->faceAngle[0] = DEGREES(90);
     }
     if (m->faceAngle[0] < -DEGREES(90)) {
         m->faceAngle[0] = -DEGREES(90);
@@ -1804,10 +1827,18 @@ s32 act_flying(struct MarioState *m) {
             lava_boost_on_wall(m);
             break;
     }
-
     if (m->faceAngle[0] > 0x800 && m->forwardVel >= 48.0f) {
+        if (m->flags & MARIO_WING_CAP) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
         m->particleFlags |= PARTICLE_DUST;
     }
+    if (m->faceAngle[0] <= -DEGREES(30)) {
+        if (gGlobalTimer % 6 == 0) {
+            m->particleFlags |= PARTICLE_FIRE;
+        }
+    }
+
 
     if (startPitch <= 0 && m->faceAngle[0] > 0 && m->forwardVel >= 48.0f) {
         play_sound(SOUND_ACTION_FLYING_FAST, m->marioObj->header.gfx.cameraToObject);
@@ -1820,6 +1851,18 @@ s32 act_flying(struct MarioState *m) {
 
     play_sound(SOUND_MOVING_FLYING, m->marioObj->header.gfx.cameraToObject);
     adjust_sound_for_speed(m);
+    if (m->flags & MARIO_WING_CAP) {
+        m->particleFlags |= PARTICLE_SPARKLES;
+        m->particleFlags |= PARTICLE_SPARKLES;
+        if (gGlobalTimer % 2 == 0) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
+    }
+    if (gGlobalTimer % 5 == 0) {
+        m->particleFlags |= PARTICLE_DUST;
+    } else if (gGlobalTimer % 2 == 0) {
+        m->particleFlags |= PARTICLE_SPARKLES;
+    }
     return FALSE;
 }
 
