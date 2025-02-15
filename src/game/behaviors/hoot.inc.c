@@ -133,20 +133,20 @@ void hoot_act_ascent(f32 xPrev, f32 zPrev) {
     f32 negX = 0 - o->oPosX;
     f32 negZ = 0 - o->oPosZ;
     s16 angleToOrigin = atan2s(negZ, negX);
+    s16 animFrame = o->header.gfx.animInfo.animFrame;
 
     o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, angleToOrigin, 0x500);
-    o->oMoveAnglePitch = DEGREES(290);
+    o->oMoveAnglePitch = DEGREES(300);
 
-    if (o->oTimer >= 29) {
-        cur_obj_play_sound_1(SOUND_ENV_WIND2);
-        o->header.gfx.animInfo.animFrame = 1;
+    if (animFrame == 0) {
+        cur_obj_play_sound_2(SOUND_GENERAL_WING_FLAP);
     }
 
     if (o->oPosY > 6500.0f) {
         o->oAction = HOOT_ACT_CARRY;
     }
 
-    hoot_carry_step(60, xPrev, zPrev);
+    hoot_carry_step(20, xPrev, zPrev);
 }
 
 void hoot_action_loop(void) {
@@ -162,9 +162,9 @@ void hoot_action_loop(void) {
         case HOOT_ACT_CARRY:
             hoot_player_set_yaw();
 
-            o->oMoveAnglePitch = 0x71C;
+            o->oMoveAnglePitch = DEGREES(10);
 
-            if (o->oPosY < 2700.0f) {
+            if (o->oPosY < 3500.0f) {
                 set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
 
                 if (cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_045)) {
@@ -179,11 +179,11 @@ void hoot_action_loop(void) {
         case HOOT_ACT_TIRED:
             hoot_player_set_yaw();
 
-            o->oMoveAnglePitch = 0;
+            o->oMoveAnglePitch = DEGREES(60);
 
             hoot_carry_step(20, xPrev, zPrev);
 
-            if (o->oTimer > 60) {
+            if (o->oTimer > 120) {
                 gMarioObject->oInteractStatus |= INT_STATUS_MARIO_DROP_FROM_HOOT;
             }
             break;
@@ -243,15 +243,15 @@ void bhv_hoot_loop(void) {
 
         case HOOT_AVAIL_WANTS_TO_TALK:
             hoot_awake_loop();
-
+/*
             if (set_mario_npc_dialog(MARIO_DIALOG_LOOK_UP) == MARIO_DIALOG_STATUS_SPEAK 
                 && cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_044)) {
                 set_mario_npc_dialog(MARIO_DIALOG_STOP);
-
+*/
                 cur_obj_become_tangible();
 
                 o->oHootAvailability = HOOT_AVAIL_READY_TO_FLY;
-            }
+//            }
             break;
 
         case HOOT_AVAIL_READY_TO_FLY:

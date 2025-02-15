@@ -1197,9 +1197,6 @@ void mode_outward_radial_camera(struct Camera *c) {
     c->pos[0] = pos[0];
     c->pos[2] = pos[2];
     sAreaYawChange = sAreaYaw - oldAreaYaw;
-    if (sMarioCamState->action == ACT_RIDING_HOOT) {
-        pos[1] += 500.f;
-    }
     set_camera_height(c, pos[1]);
     pan_ahead_of_player(c);
 }
