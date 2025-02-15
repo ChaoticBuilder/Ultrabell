@@ -261,32 +261,44 @@ void update_lava_boost_or_twirling(struct MarioState *m) {
     m->vel[2] = m->slideVelZ = m->forwardVel * coss(m->faceAngle[1]);
 }
 
+s32 spin = FALSE;
+
 void update_flying_yaw(struct MarioState *m) {
     s16 targetYawVel = -(s16)(m->controller->stickX * (m->forwardVel / 4.0f));
 
     if (targetYawVel > 0) {
         if (m->angleVel[1] < 0) {
             m->angleVel[1] += 0x40;
+            m->angleVel[2] += 0x40;
             if (m->angleVel[1] > 0x10) {
                 m->angleVel[1] = 0x10;
+                m->angleVel[2] = 0x10;
             }
         } else {
             m->angleVel[1] = approach_s32(m->angleVel[1], targetYawVel, 0x10, 0x20);
+            m->angleVel[2] += 0x20;
         }
     } else if (targetYawVel < 0) {
         if (m->angleVel[1] > 0) {
             m->angleVel[1] -= 0x40;
+            m->angleVel[2] -= 0x40;
             if (m->angleVel[1] < -0x10) {
                 m->angleVel[1] = -0x10;
+                m->angleVel[2] = -0x10;
             }
         } else {
             m->angleVel[1] = approach_s32(m->angleVel[1], targetYawVel, 0x20, 0x10);
+            m->angleVel[2] -= 0x20;
         }
     } else {
         m->angleVel[1] = approach_s32(m->angleVel[1], 0, 0x40, 0x40);
+        m->angleVel[2] = approach_s32(m->angleVel[2], 0, 0x40, 0x40);
     }
-
+    
     m->faceAngle[1] += m->angleVel[1];
+    if (spin == FALSE) {
+        m->faceAngle[2] -= m->angleVel[2];
+    }
 }
 
 void update_flying_pitch(struct MarioState *m) {
@@ -316,23 +328,43 @@ void update_flying_pitch(struct MarioState *m) {
 }
 
 void update_flying_roll(struct MarioState *m) {
-        m->angleVel[2] = 0.0f + (m->controller->stickX * m->forwardVel / 2);
-            m->faceAngle[2] += m->angleVel[2];
+    if (m->forwardVel >= 96) {
+        m->faceAngle[2] += 64.0f * (m->forwardVel / 2);
+        spin = TRUE;
+    } else {
+        m->faceAngle[2] = approach_s32(m->faceAngle[2], 0, 1024, 1024);
+        spin = FALSE;
+        // m->faceAngle[2] = approach_s32(m->faceAngle[2], 0, 1024, 1024);
+    }
 }
 
 void update_flying(struct MarioState *m) {
     update_flying_pitch(m);
     update_flying_yaw(m);
     update_flying_roll(m);
+
+    m->forwardVel -= 1.0f * ((f32) m->faceAngle[0] / 4096) + 0.0625;
+    // m->forwardVel = 48.0f; // DEBUG
     /*
-    if (m->forwardVel <= 4.0f) {
-        m->forwardVel += 0.5f * (m->forwardVel / 8.0f);
+    if (m->forwardVel < 96) {
+        m->forwardVel = 96.0f; // DEBUG
     }
     */
-    m->forwardVel += (0.0f - (m->faceAngle[0] / 8192)) - 0.0625f;
 
+    // nintendo's code sucks like wtf is this shit
+    // why on earth would it be taking the yaw accel into account when doing the flying physics
     // m->forwardVel -= 2.0f * ((f32) m->faceAngle[0] / 0x4000) + 0.1f;
     // m->forwardVel -= 0.5f * (1.0f - coss(m->angleVel[1]));
+
+    if (spin == FALSE) {
+    // "you can't clamp mario's roll whilst also having the forwardvel spin" - sm64
+    // well, how about I do anyway :3
+        if (m->faceAngle[2] >= 90) {
+            m->faceAngle[2] = DEGREES(90);
+        } else if (m->faceAngle[2] <= -DEGREES(90)) {
+            m->faceAngle[2] = -DEGREES(90);
+        }
+    }
 
     if (m->forwardVel < 0.0f) {
         m->forwardVel = 0.0f;
@@ -343,16 +375,16 @@ void update_flying(struct MarioState *m) {
     } else if (m->forwardVel > 4.0f) {
         m->faceAngle[0] += (m->forwardVel - 32.0f) * 10.0f;
     } else {
-        m->faceAngle[0] -= 0x400;
+        m->faceAngle[0] -= (m->faceAngle[0] / 10 + 1536);
     }
 
     m->faceAngle[0] += m->angleVel[0];
 
-    if (m->faceAngle[0] > DEGREES(60)) {
-        m->faceAngle[0] = DEGREES(60);
+    if (m->faceAngle[0] > DEGREES(90)) {
+        m->angleVel[0] -= (m->angleVel[0] / 64);
     }
-    if (m->faceAngle[0] < -DEGREES(60)) {
-        m->faceAngle[0] = -DEGREES(60);
+    if (m->faceAngle[0] < -DEGREES(90)) {
+        m->faceAngle[0] = -DEGREES(90);
     }
 
     m->vel[0] = m->forwardVel * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);
