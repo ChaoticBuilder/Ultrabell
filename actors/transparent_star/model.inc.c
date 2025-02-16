@@ -21,7 +21,7 @@ static const Vtx transparent_star_seg3_vertex_body[] = {
 // 0x0302C560 - 0x0302C620
 const Gfx transparent_star_seg3_sub_dl_body[] = {
     gsSPLightColor(LIGHT_1, 0x00000000),
-    gsSPLightColor(LIGHT_2, 0xffff80ff),
+    gsSPLightColor(LIGHT_2, 0xa9a168ff),
     gsSPVertex(transparent_star_seg3_vertex_body, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  0,  3,  1, 0x0),
     gsSP2Triangles( 2,  1,  4, 0x0,  1,  3,  4, 0x0),
