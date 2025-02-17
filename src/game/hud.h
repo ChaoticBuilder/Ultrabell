@@ -10,7 +10,7 @@
 #define HUD_POWER_METER_HIDDEN_Y     300
 
 #define HUD_TOP_Y 212
-#define HUD_BOTTOM_Y 8 // Same height as the Lakitu icon
+#define HUD_BOTTOM_Y 9
 
 // #define HUD_COINS_X 168
 #define HUD_STARS_X 84 // This starts counting from the right edge

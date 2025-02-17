@@ -330,7 +330,7 @@ void update_flying_pitch(struct MarioState *m) {
 
 void update_flying_roll(struct MarioState *m) {
     if (m->flags & MARIO_WING_CAP) {
-        if (m->forwardVel >= 128) {
+        if (m->forwardVel >= 112) {
             m->faceAngle[2] += 64.0f * (m->forwardVel / 3);
             spin = TRUE;
         } else {
@@ -373,8 +373,8 @@ void update_flying(struct MarioState *m) {
     if (spin == FALSE) {
     // "you can't clamp mario's roll whilst also having the forwardvel spin" - sm64
     // well, how about I do anyway :3
-        if (m->faceAngle[2] > DEGREES(90)) {
-            m->faceAngle[2] = DEGREES(90);
+        if (m->faceAngle[2] > DEGREES(67.5)) {
+            m->faceAngle[2] = DEGREES(67.5);
         } else if (m->faceAngle[2] < -DEGREES(67.5)) {
             m->faceAngle[2] = -DEGREES(67.5);
         }
@@ -406,7 +406,7 @@ void update_flying(struct MarioState *m) {
             if (m->forwardVel > 64) {
                 m->forwardVel -= 0.625;
                 if (m->forwardVel > 96) {
-                    m->forwardVel -= 1.25;
+                    m->forwardVel -= 0.75;
                 }
             }
         }
@@ -752,11 +752,12 @@ s32 act_twirling(struct MarioState *m) {
 
 #ifdef Z_TWIRL
     if (m->input & INPUT_Z_DOWN) {
-        yawVelTarget = 0x1000;
-    } else
+        yawVelTarget = 0x2500;
+        m->particleFlags |= PARTICLE_DUST;
+    }
 #endif
 
-        yawVelTarget = 0x1100;
+        yawVelTarget = 0x1250;
 
     m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
     m->twirlYaw += m->angleVel[1];

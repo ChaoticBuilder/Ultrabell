@@ -440,7 +440,7 @@ void update_walking_speed(struct MarioState *m) {
     }
 
     if (m->forwardVel > 48.0f) {
-        m->forwardVel = 48.0f;
+        m->forwardVel = 48.0f; // made it not a cap just a heavy speed loss because bugs are peak...
     }
 
 #ifdef VELOCITY_BASED_TURN_SPEED
