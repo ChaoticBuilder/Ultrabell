@@ -63,8 +63,6 @@ static f32 get_buoyancy(struct MarioState *m) {
         }
     } else if (swimming_near_surface(m)) {
         buoyancy = 1.25f;
-    } else if (!(m->action & ACT_FLAG_MOVING)) {
-        buoyancy = -2.0f;
     }
 
     return buoyancy;
@@ -229,7 +227,7 @@ static void update_swimming_speed(struct MarioState *m, f32 decelThreshold) {
     f32 buoyancy = get_buoyancy(m);
     f32 maxSpeed = 28.0f;
 
-    if (m->action & ACT_FLAG_STATIONARY) {
+    if (m->action & ACT_FLAG_STATIONARY && !(swimming_near_surface(m))) {
         m->forwardVel -= 2.0f;
     }
 
@@ -276,6 +274,7 @@ static void update_swimming_yaw(struct MarioState *m) {
     }
 
     m->faceAngle[1] += m->angleVel[1];
+
     m->faceAngle[2] = -m->angleVel[1] * 8;
 }
 
@@ -302,12 +301,38 @@ static void update_swimming_pitch(struct MarioState *m) {
 
 static void common_idle_step(struct MarioState *m, s32 animation, s32 animAccel) {
     s16 *headAngle = &m->marioBodyState->headAngle[0];
+    f32 maxTargetSpeed;
+    f32 targetSpeed;
+
+    maxTargetSpeed = 24.0f;
+    targetSpeed = m->intendedMag < maxTargetSpeed ? m->intendedMag : maxTargetSpeed;
+
+    if (swimming_near_surface(m)) {
+        m->faceAngle[0] = 0.0f;
+    } else {
+        update_swimming_pitch(m);
+    }
 
     update_swimming_yaw(m);
-    update_swimming_pitch(m);
     update_swimming_speed(m, MIN_SWIM_SPEED);
     perform_water_step(m);
     update_water_pitch(m);
+
+    if (swimming_near_surface(m)) {
+        if (m->forwardVel <= targetSpeed) {
+            m->forwardVel += 0.5f;
+        } else {
+            m->forwardVel -= 0.5f;
+        }
+
+        if (m->forwardVel > 16.0f) {
+            m->forwardVel = 16.0f;
+        }
+    }
+
+    if (m->forwardVel > 2.0f) {
+        set_swimming_at_surface_particles(m, PARTICLE_WAVE_TRAIL);
+    }
 
     if (m->faceAngle[0] > 0) {
         *headAngle = approach_s32(*headAngle, m->faceAngle[0] / 2, 0x80, 0x200);
@@ -343,11 +368,13 @@ static s32 act_water_idle(struct MarioState *m) {
         animAccel = 0x30000;
     }
 
-    common_idle_step(m, MARIO_ANIM_WATER_IDLE, animAccel);
+    common_idle_step(m, MARIO_ANIM_SWIM_WAIT, animAccel);
     return FALSE;
 }
 
 static s32 act_hold_water_idle(struct MarioState *m) {
+    u32 animAccel = 0x10000;
+
     if (m->flags & MARIO_METAL_CAP) {
         return set_mario_action(m, ACT_HOLD_METAL_WATER_FALLING, 0);
     }
@@ -364,7 +391,7 @@ static s32 act_hold_water_idle(struct MarioState *m) {
         return set_mario_action(m, ACT_HOLD_BREASTSTROKE, 0);
     }
 
-    common_idle_step(m, MARIO_ANIM_WATER_IDLE_WITH_OBJ, 0);
+    common_idle_step(m, MARIO_ANIM_WATER_IDLE_WITH_OBJ, animAccel);
     return FALSE;
 }
 
@@ -381,7 +408,7 @@ static s32 act_water_action_end(struct MarioState *m) {
         return set_mario_action(m, ACT_BREASTSTROKE, 0);
     }
 
-    common_idle_step(m, MARIO_ANIM_WATER_ACTION_END, 0);
+    common_idle_step(m, MARIO_ANIM_SWIM_STOP, 0);
     if (is_anim_at_end(m)) {
         set_mario_action(m, ACT_WATER_IDLE, 0);
     }
@@ -493,7 +520,7 @@ static s32 check_water_jump(struct MarioState *m) {
         if (probe >= m->waterLevel - 80 && m->faceAngle[0] >= 0 && m->controller->stickY < -60.0f) {
             vec3_zero(m->angleVel);
 
-            m->vel[1] = 62.0f;
+            m->vel[1] = 60.0f;
 
             if (m->heldObj == NULL) {
                 return set_mario_action(m, ACT_WATER_JUMP, 0);
@@ -815,7 +842,7 @@ static s32 act_water_throw(struct MarioState *m) {
 }
 
 static s32 act_water_punch(struct MarioState *m) {
-    if (m->forwardVel < 7.0f) {
+    if (m->forwardVel < 8.0f) {
         m->forwardVel += 1.0f;
     }
 
@@ -922,7 +949,7 @@ static s32 act_drowning(struct MarioState *m) {
             set_mario_animation(m, MARIO_ANIM_DROWNING_PART2);
             m->marioBodyState->eyeState = MARIO_EYES_DEAD;
             if (m->marioObj->header.gfx.animInfo.animFrame == 30) {
-                if (rand > 0.0625f) {
+                if (rand < 0.0625f) {
                     level_trigger_warp(m, WARP_OP_DEATH);
                 }
                 // so yk the github description and how it mentions secrets hidden within? yeah this is now the first ever secret implemented, very small chance to get a perma death :3
@@ -947,7 +974,7 @@ static s32 act_water_death(struct MarioState *m) {
 
     set_mario_animation(m, MARIO_ANIM_WATER_DYING);
     if (set_mario_animation(m, MARIO_ANIM_WATER_DYING) == 35) {
-        if (rand > 0.0625f) {
+        if (rand < 0.0625f) {
             level_trigger_warp(m, WARP_OP_DEATH);
         }
     }
@@ -1019,7 +1046,7 @@ static s32 act_water_plunge(struct MarioState *m) {
 
     switch (stateFlags) {
         case PLUNGE_FLAGS_NONE:
-            set_mario_animation(m, MARIO_ANIM_WATER_ACTION_END);
+            set_mario_animation(m, MARIO_ANIM_SWIM_WAIT);
             break;
         case PLUNGE_FLAG_HOLDING_OBJ:
             set_mario_animation(m, MARIO_ANIM_WATER_ACTION_END_WITH_OBJ);
@@ -1126,7 +1153,7 @@ static void update_metal_water_walking_speed(struct MarioState *m) {
     } else if (m->forwardVel <= targetSpeed) {
         m->forwardVel += 1.0f;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 1.0f;
+        m->forwardVel -= 0.0625f;
     }
 
     if (m->forwardVel > 32.0f) {
