@@ -160,12 +160,12 @@
         "inst5": {
             "release_rate": 10,
             "envelope": "envelope6",
-            "sound": "26_crystal_rhodes"
+            "sound": "42_vibraphone"
         },
         "inst6": {
             "release_rate": 10,
             "envelope": "envelope7",
-            "sound": "26_crystal_rhodes"
+            "sound": "42_vibraphone"
         }
     },
     "instrument_list": [

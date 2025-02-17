@@ -67,7 +67,7 @@
         "inst0": {
             "release_rate": 34,
             "envelope": "envelope0",
-            "sound": "1D"
+            "sound": "3C_acoustic_guitar"
         },
         "inst1": {
             "release_rate": 208,
@@ -86,7 +86,7 @@
         "inst3": {
             "release_rate": 208,
             "envelope": "envelope3",
-            "sound": "1A_slap_bass"
+            "sound": "3C_acoustic_guitar"
         },
         "inst4": {
             "release_rate": 114,
