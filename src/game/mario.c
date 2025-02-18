@@ -791,7 +791,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_WALL_KICK_AIR:
         case ACT_TOP_OF_POLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 64.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.0f);
             if (m->forwardVel < 24.0f) {
                 m->forwardVel = 24.0f;
             }
