@@ -747,8 +747,8 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
     switch (action) {
         case ACT_DOUBLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 64.0f, 0.25f);
-            m->forwardVel *= 0.8f;
+            set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.25f);
+            m->forwardVel *= 0.875f;
             break;
 
         case ACT_BACKFLIP:
@@ -758,12 +758,12 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_TRIPLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 68.0f, 0.0f);
-            m->forwardVel *= 0.8f;
+            set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f);
+            m->forwardVel *= 0.75f;
             break;
 
         case ACT_FLYING_TRIPLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 84.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 88.0f, 0.0f);
             break;
 
         case ACT_WATER_JUMP:
@@ -786,12 +786,12 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_HOLD_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
             set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.25f);
-            m->forwardVel *= 0.8f;
+            m->forwardVel *= 0.875f;
             break;
 
         case ACT_WALL_KICK_AIR:
         case ACT_TOP_OF_POLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 54.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 64.0f, 0.0f);
             if (m->forwardVel < 24.0f) {
                 m->forwardVel = 24.0f;
             }
@@ -829,6 +829,8 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
             //! (BLJ's) This properly handles long jumps from getting forward speed with
             //  too much velocity, but misses backwards longs allowing high negative speeds.
+
+            // cat coder here, don't remove the *= 1.5f or it somehow fucking breaks bljs
             if ((m->forwardVel *= 1.5f) > 48.0f) {
                 m->forwardVel = 48.0f;
             }
