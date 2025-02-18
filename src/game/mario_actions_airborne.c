@@ -29,7 +29,7 @@ void play_far_fall_sound(struct MarioState *m) {
     u32 action = m->action;
     if (!(action & ACT_FLAG_INVULNERABLE) && action != ACT_TWIRLING && action != ACT_FLYING
         && !(m->flags & MARIO_FALL_SOUND_PLAYED)) {
-        if (m->peakHeight - m->pos[1] > FALL_DAMAGE_HEIGHT_SMALL) {
+        if (m->peakHeight - m->pos[1] > FALL_DAMAGE_HEIGHT_LARGE) {
             play_sound(SOUND_MARIO_WAAAOOOW, m->marioObj->header.gfx.cameraToObject);
             m->flags |= MARIO_FALL_SOUND_PLAYED;
         }
@@ -78,6 +78,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 #endif
                 set_camera_shake_from_hit(SHAKE_FALL_DAMAGE);
                 play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
+                m->squishTimer = 75;
                 return drop_and_set_mario_action(m, hardFallAction, 4);
             } else if (fallHeight > damageHeight && !mario_floor_is_slippery(m)) {
                 m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 8 : 12;
@@ -214,6 +215,11 @@ void update_air_without_turn(struct MarioState *m) {
             intendedMag = m->intendedMag / 32.0f;
 
             m->forwardVel += intendedMag * coss(intendedDYaw) * 1.5f;
+            if (m->action != ACT_LONG_JUMP) {
+                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 320.0f;
+            } else {
+                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 80.0f;
+            }
             sidewaysSpeed = intendedMag * sins(intendedDYaw) * 10.0f;
         }
 
@@ -221,8 +227,14 @@ void update_air_without_turn(struct MarioState *m) {
         if (m->forwardVel > dragThreshold) {
             m->forwardVel -= 1.0f;
         }
-        if (m->forwardVel < -16.0f) {
-            m->forwardVel += 2.0f;
+        if (m->action != ACT_LONG_JUMP_LAND) {
+            if (m->forwardVel < -16.0f) {
+                if (m->forwardVel > -28.0f) {
+                    m->forwardVel -= (m->forwardVel / 15);
+                } else {
+                    m->forwardVel /= 1.03125f;
+                }
+            }
         }
 
         m->slideVelX = m->forwardVel * sins(m->faceAngle[1]);
@@ -1104,17 +1116,17 @@ s32 act_crazy_box_bounce(struct MarioState *m) {
     if (m->actionTimer == 0) {
         switch (m->actionArg) {
             case 0:
-                m->vel[1] = 45.0f;
+                m->vel[1] = 48.0f;
                 minSpeed = 32.0f;
                 break;
 
             case 1:
-                m->vel[1] = 60.0f;
+                m->vel[1] = 64.0f;
                 minSpeed = 36.0f;
                 break;
 
             case 2:
-                m->vel[1] = 100.0f;
+                m->vel[1] = 128.0f;
                 minSpeed = 48.0f;
                 break;
         }
@@ -1360,7 +1372,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
     }
 
     if (++(m->actionTimer) <= 60) {
-        m->vel[1] += 0.25f + (m->forwardVel / 64) - (m->vel[1] / 64);
+        m->vel[1] += 0.5f + (m->forwardVel / 192) - (m->vel[1] / 96);
     } else {
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
