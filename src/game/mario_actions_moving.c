@@ -440,7 +440,7 @@ void update_walking_speed(struct MarioState *m) {
     }
 
     if (m->forwardVel > 48.0f) {
-        m->forwardVel = 48.0f; // made it not a cap just a heavy speed loss because bugs are peak...
+        m->forwardVel = 48.0f;
     }
 
 #ifdef VELOCITY_BASED_TURN_SPEED
@@ -506,7 +506,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if (m->forwardVel >= 8.0f && m->floor->normal.y >= COS80) {
+    if (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -1636,7 +1636,11 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
             // set_mario_action(m, ACT_IDLE, 0);
         }
     } else {
-        m->forwardVel = 0.000001f;
+        if (m->forwardVel >= 0) {
+            m->forwardVel = 0.000001f;
+        } else {
+            m->forwardVel = -0.000001f;
+        }
     }
     return animFrame;
 }
@@ -1848,9 +1852,11 @@ s32 act_hold_freefall_land(struct MarioState *m) {
 s32 act_long_jump_land(struct MarioState *m) {
 #if defined (VERSION_SH) || defined(DISABLE_BLJ)
     // BLJ (Backwards Long Jump) speed build up fix, crushing SimpleFlips's dreams since July 1997
+    /*
     if (m->forwardVel < 0.0f) {
         m->forwardVel = 0.0f;
     }
+    */
 #endif
 
     sLongJumpLandAction.aPressedAction = m->input & INPUT_Z_DOWN ? ACT_LONG_JUMP : ACT_JUMP;

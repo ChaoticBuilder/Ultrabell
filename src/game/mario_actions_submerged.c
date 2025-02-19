@@ -368,7 +368,7 @@ static s32 act_water_idle(struct MarioState *m) {
         animAccel = 0x30000;
     }
 
-    common_idle_step(m, MARIO_ANIM_SWIM_WAIT, animAccel);
+    common_idle_step(m, MARIO_ANIM_WATER_IDLE, animAccel);
     return FALSE;
 }
 
@@ -408,7 +408,7 @@ static s32 act_water_action_end(struct MarioState *m) {
         return set_mario_action(m, ACT_BREASTSTROKE, 0);
     }
 
-    common_idle_step(m, MARIO_ANIM_SWIM_STOP, 0);
+    common_idle_step(m, MARIO_ANIM_WATER_ACTION_END, 0);
     if (is_anim_at_end(m)) {
         set_mario_action(m, ACT_WATER_IDLE, 0);
     }
@@ -1046,7 +1046,7 @@ static s32 act_water_plunge(struct MarioState *m) {
 
     switch (stateFlags) {
         case PLUNGE_FLAGS_NONE:
-            set_mario_animation(m, MARIO_ANIM_SWIM_WAIT);
+            set_mario_animation(m, MARIO_ANIM_WATER_IDLE);
             break;
         case PLUNGE_FLAG_HOLDING_OBJ:
             set_mario_animation(m, MARIO_ANIM_WATER_ACTION_END_WITH_OBJ);

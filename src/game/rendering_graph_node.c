@@ -480,21 +480,22 @@ void geo_process_perspective(struct GraphNodePerspective *node) {
         gCurGraphNodeCamFrustum = NULL;
     }
 }
-
+/* unused
 static f32 get_dist_from_camera(Vec3f pos) {
     return -((gCameraTransform[0][2] * pos[0])
            + (gCameraTransform[1][2] * pos[1])
            + (gCameraTransform[2][2] * pos[2])
            +  gCameraTransform[3][2]);
 }
-
+*/
 /**
  * Process a level of detail node. From the current transformation matrix,
  * the perpendicular distance to the camera is extracted and the children
  * of this node are only processed if that distance is within the render
  * range of this node.
  */
-void geo_process_level_of_detail(struct GraphNodeLevelOfDetail *node) {
+void geo_process_level_of_detail(struct GraphNodeLevelOfDetail UNUSED *node) {
+/* 
 #ifdef AUTO_LOD
     f32 distanceFromCam = (gEmulator & EMU_CONSOLE) ? get_dist_from_camera(gMatStack[gMatStackIndex][3]) : 50.0f;
 #else
@@ -506,6 +507,9 @@ void geo_process_level_of_detail(struct GraphNodeLevelOfDetail *node) {
         && node->node.children != 0) {
         geo_process_node_and_siblings(node->node.children);
     }
+*/
+    // always true, thanks kaze :3 (also, this breaks some things like the visual rotation of the pyramid platforms in bitfs, but you can just blame it on "beta weirdness" :333)
+    geo_process_node_and_siblings(node->node.children);
 }
 
 /**
@@ -1048,10 +1052,10 @@ void geo_process_object(struct Object *node) {
         if (isInvisible && noThrowMatrix) {
             mtxf_translate(gMatStack[gMatStackIndex + 1], node->header.gfx.pos);
         }
-        else{
+        else{ /* also kaze
             if (!noThrowMatrix) {
                 mtxf_scale_vec3f(gMatStack[gMatStackIndex + 1], *node->header.gfx.throwMatrix, node->header.gfx.scale);
-            } else if (node->header.gfx.node.flags & GRAPH_RENDER_BILLBOARD) {
+            } else */ if (node->header.gfx.node.flags & GRAPH_RENDER_BILLBOARD) {
                 mtxf_billboard(gMatStack[gMatStackIndex + 1], gMatStack[gMatStackIndex],
                             node->header.gfx.pos, node->header.gfx.scale, gCurGraphNodeCamera->roll);
             } else {
