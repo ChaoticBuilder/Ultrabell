@@ -313,16 +313,6 @@ Gfx *geo_switch_mario_character(s32 callContext, struct GraphNode *node, UNUSED 
 }
 */
 
-Gfx *geo_switch_mario_stand_run(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx) {
-    struct GraphNodeSwitchCase *switchCase = (struct GraphNodeSwitchCase *) node;
-    struct MarioBodyState *bodyState = &gBodyStates[switchCase->numCases];
-
-    if (callContext == GEO_CONTEXT_RENDER) {
-        // assign result. 0 if moving, 1 if stationary.
-        switchCase->selectedCase = ((bodyState->action & ACT_FLAG_STATIONARY) == 0);
-    }
-    return NULL;
-}
 /**
  * Generate a display list that sets the correct blend mode and color for mirror Mario.
  */
