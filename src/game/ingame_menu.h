@@ -3,6 +3,8 @@
 
 #include <PR/ultratypes.h>
 
+extern s32 gLuigiToggle;
+
 #define ASCII_TO_DIALOG(asc)                                       \
     (((asc) >= '0' && (asc) <= '9') ? ((asc) - '0') :              \
      ((asc) >= 'A' && (asc) <= 'Z') ? ((asc) - 'A' + 0x0A) :       \

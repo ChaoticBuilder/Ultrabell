@@ -1566,6 +1566,14 @@ void render_widescreen_setting(void) {
 }
 #endif
 
+void luigi_launcher_9000(void) {
+    if (gLuigiToggle == FALSE && gPlayer1Controller->buttonPressed & R_TRIG) {
+        gLuigiToggle = TRUE;
+    } else if (gLuigiToggle == TRUE && gPlayer1Controller->buttonPressed & R_TRIG) {
+        gLuigiToggle = FALSE;
+    }
+}
+
 #if defined(VERSION_JP) || defined(VERSION_SH)
     #define CRS_NUM_X1 93
 #elif defined(VERSION_US)
@@ -1936,6 +1944,7 @@ s32 render_pause_courses_and_castle(void) {
 #if defined(WIDE) && !defined(PUPPYCAM)
         render_widescreen_setting();
 #endif
+        luigi_launcher_9000();
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
     }

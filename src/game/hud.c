@@ -22,6 +22,7 @@
 #include "config.h"
 
 s32 gTimeAttackToggle = FALSE;
+s32 gLuigiToggle = FALSE;
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -539,6 +540,14 @@ void render_hud_demo_timer(void) {
 }
 #endif
 
+void render_luigi_test_output(void) {
+    // DEBUG PURPOSES, REMOVE LATER
+    if (gLuigiToggle == TRUE) {
+        print_text(70, (HUD_BOTTOM_Y + 40), "LUIGI IS COMING");
+        print_text(144, (HUD_BOTTOM_Y + 20), "RUN");
+    }
+}
+
 /**
  * Sets HUD status camera value depending of the actions
  * defined in update_camera_status.
@@ -669,6 +678,7 @@ void render_hud(void) {
         }
             render_hud_demo_timer();
             render_mario_speed();
+            render_luigi_test_output();
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

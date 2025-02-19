@@ -25,6 +25,7 @@
 #include "skybox.h"
 #include "sound_init.h"
 #include "puppycam2.h"
+#include "ingame_menu.h"
 
 #include "config.h"
 
@@ -294,6 +295,34 @@ void bhv_unlock_door_star_loop(void) {
     }
 }
 
+/*
+Gfx *geo_switch_mario_character(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx) {
+    struct GraphNodeSwitchCase *switchCase = (struct GraphNodeSwitchCase *) node;
+    struct MarioBodyState *bodyState = &gBodyStates[switchCase->numCases];
+
+    if (callContext == GEO_CONTEXT_RENDER) {
+        if (gLuigiToggle == TRUE) {
+            // TODO: ADD LUIGI SWITCHING CODE HERE
+        } else {
+            // AND THEN SWITCH BACK TO MARIO HERE
+            // also tbh if I'm being honest, this feature will probably not be implemented for a long time
+            // I suck at coding -w-
+        }
+    }
+    return NULL;
+}
+*/
+
+Gfx *geo_switch_mario_stand_run(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx) {
+    struct GraphNodeSwitchCase *switchCase = (struct GraphNodeSwitchCase *) node;
+    struct MarioBodyState *bodyState = &gBodyStates[switchCase->numCases];
+
+    if (callContext == GEO_CONTEXT_RENDER) {
+        // assign result. 0 if moving, 1 if stationary.
+        switchCase->selectedCase = ((bodyState->action & ACT_FLAG_STATIONARY) == 0);
+    }
+    return NULL;
+}
 /**
  * Generate a display list that sets the correct blend mode and color for mirror Mario.
  */
