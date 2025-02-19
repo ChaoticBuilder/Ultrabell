@@ -14,6 +14,7 @@ You should really check it out despite that though! I've added quite a bit of st
 
 CREDITS:
 spongelover6996 on Discord for the Time Attack idea,
+
 xbciom also on Discord for future level ideas and music, (yeah amazing fork, the first 2 credits listed aren't even implemented yet lmao)
 
 Kaze Emanuar, for making amazing videos on SM64 optimizations,
