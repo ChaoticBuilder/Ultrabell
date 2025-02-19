@@ -13,6 +13,10 @@ You should really check it out despite that though! I've added quite a bit of st
 (also, btw, if you notice any mistakes between the repo and the bps patch, please let me know, as I'm copying over the files by hand and can make mistakes.)
 
 CREDITS:
-Credits to the amazing people behind the HackerSM64 Repo, I couldn't make this hack without them,
 
-spongelover6996 on Discord for the Time Attack Idea.
+
+spongelover6996 on Discord for the Time Attack idea,
+xbciom also on Discord for future level ideas and music, (yeah amazing fork, the first 2 credits listed aren't even implemented yet lmao)
+Kaze Emanuar, for making amazing videos on SM64 optimizations,
+
+And finally, Credits to the amazing people behind the HackerSM64 Repo, I couldn't make this hack without them.
