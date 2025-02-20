@@ -540,13 +540,14 @@ void render_hud_demo_timer(void) {
 }
 #endif
 
+/*
 void render_luigi_test_output(void) {
     // DEBUG PURPOSES, REMOVE LATER
     if (gLuigiToggle == TRUE) {
-        print_text(70, (HUD_BOTTOM_Y + 40), "LUIGI IS COMING");
-        print_text(144, (HUD_BOTTOM_Y + 20), "RUN");
+        print_text(70, (HUD_BOTTOM_Y + 40), "LUIGI IS HERE");
     }
 }
+*/
 
 /**
  * Sets HUD status camera value depending of the actions
@@ -678,7 +679,7 @@ void render_hud(void) {
         }
             render_hud_demo_timer();
             render_mario_speed();
-            render_luigi_test_output();
+            // render_luigi_test_output();
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

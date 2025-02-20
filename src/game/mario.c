@@ -1216,6 +1216,11 @@ void debug_print_speed_action_normal(struct MarioState *m) {
 void update_mario_button_inputs(struct MarioState *m) {
     if (m->controller->buttonPressed & A_BUTTON) m->input |= INPUT_A_PRESSED;
     if (m->controller->buttonDown    & A_BUTTON) m->input |= INPUT_A_DOWN;
+    if (gLuigiToggle == TRUE) {
+        m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LUIGI];
+    } else {
+        m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_MARIO];
+    }
 
     // Don't update for these buttons if squished.
     if (m->squishTimer == 0) {

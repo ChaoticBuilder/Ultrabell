@@ -95,7 +95,7 @@ struct Object *gMarioObject;
  * second player. This is speculation, based on its position and its usage in
  * shadow.c.
  */
-// struct Object *gLuigiObject;
+struct Object *gLuigiObject;
 
 /**
  * The object whose behavior script is currently being updated.

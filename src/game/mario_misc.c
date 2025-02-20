@@ -296,17 +296,16 @@ void bhv_unlock_door_star_loop(void) {
 }
 
 /*
-Gfx *geo_switch_mario_character(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx) {
-    struct GraphNodeSwitchCase *switchCase = (struct GraphNodeSwitchCase *) node;
-    struct MarioBodyState *bodyState = &gBodyStates[switchCase->numCases];
-
+Gfx *geo_switch_mario_character(s32 callContext, UNUSED struct GraphNode *node, UNUSED Mat4 *mtx) {
     if (callContext == GEO_CONTEXT_RENDER) {
         if (gLuigiToggle == TRUE) {
             // TODO: ADD LUIGI SWITCHING CODE HERE
+            gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LUIGI];
         } else {
             // AND THEN SWITCH BACK TO MARIO HERE
             // also tbh if I'm being honest, this feature will probably not be implemented for a long time
             // I suck at coding -w-
+            gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_MARIO];
         }
     }
     return NULL;
