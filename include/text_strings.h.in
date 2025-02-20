@@ -1,7 +1,7 @@
 #ifndef TEXT_STRINGS_H
 #define TEXT_STRINGS_H
 
-#include "text_menu_strings.h"
+#include "text_menu_strings.h.in"
 
 #if defined(PUPPYCAM)
 #define NC_CAMX_EN              _("Camera Sensitivity")
@@ -85,6 +85,8 @@
 #define TEXT_HUD_CURRENT_RATIO_169 _("ASPECT RATIO: 16:9")
 #define TEXT_HUD_PRESS_L _("PRESS L TO SWITCH")
 #endif
+
+#define TEXT_HUD_PRESS_R _("PRESS R TO SWITCH BROS")
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
 

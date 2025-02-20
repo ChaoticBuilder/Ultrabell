@@ -44,6 +44,7 @@ u8 textCurrRatio43[] = { TEXT_HUD_CURRENT_RATIO_43 };
 u8 textCurrRatio169[] = { TEXT_HUD_CURRENT_RATIO_169 };
 u8 textPressL[] = { TEXT_HUD_PRESS_L };
 #endif
+u8 textPressR[] = { TEXT_HUD_PRESS_R };
 
 #if MULTILANG
 #define seg2_course_name_table course_name_table_eu_en
@@ -1567,6 +1568,10 @@ void render_widescreen_setting(void) {
 #endif
 
 void luigi_launcher_9000(void) {
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
+    print_generic_string(184, 8, textPressR);
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     if (gLuigiToggle == FALSE && gPlayer1Controller->buttonPressed & R_TRIG) {
         gLuigiToggle = TRUE;
     } else if (gLuigiToggle == TRUE && gPlayer1Controller->buttonPressed & R_TRIG) {
