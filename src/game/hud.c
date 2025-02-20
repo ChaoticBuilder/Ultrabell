@@ -482,9 +482,9 @@ void render_hud_timer(void) {
     print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(32), HUD_BOTTOM_Y, "%d", timerFracSecs);
 
     gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y + 5), (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y - 4), (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(43), (HUD_TOP_Y + 5), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y - 5), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(43), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
@@ -533,8 +533,8 @@ void render_hud_demo_timer(void) {
         // print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(160), HUD_BOTTOM_Y, "%02d", testvariable);
 
         gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 5), (*hudLUT)[GLYPH_APOSTROPHE]);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 4), (*hudLUT)[GLYPH_APOSTROPHE]);
+        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
+        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 5), (*hudLUT)[GLYPH_APOSTROPHE]);
         gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
     }
 }

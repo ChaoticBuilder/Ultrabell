@@ -74,12 +74,8 @@
         },
         "inst2": {
             "release_rate": 15,
-            "normal_range_lo": 27,
-            "normal_range_hi": 46,
             "envelope": "envelope2",
-            "sound_lo": "2E_accordion",
-            "sound": "2E_accordion",
-            "sound_hi": "2E_accordion"
+            "sound": "02"
         },
         "inst3": {
             "release_rate": 15,
@@ -93,7 +89,11 @@
         "inst4": {
             "release_rate": 10,
             "envelope": "envelope4",
-            "sound": "2E_accordion"
+			"normal_range_lo": 27,
+            "normal_range_hi": 46,
+            "sound_lo": "23_strings_1",
+            "sound": "24_strings_2",
+            "sound_hi": "25_strings_3"
         },
         "percussion": [
             {"release_rate": 10, "pan": 62, "envelope": "envelope5", "sound": {"sample": "06_kick_drum_1", "tuning": 0.210224}},

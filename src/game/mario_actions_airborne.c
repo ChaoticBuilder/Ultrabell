@@ -72,8 +72,8 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     f32 damageHeightLarge = FALL_DAMAGE_HEIGHT_LARGE;
 
     if (gLuigiToggle == TRUE) {
-        damageHeight += 512.0f;
-        damageHeightLarge += 1024.0f;
+        damageHeight += 768.0f;
+        damageHeightLarge += 1536.0f;
     }
 
     if (m->action != ACT_TWIRLING && m->action != ACT_SOFT_BONK && m->floor->type != SURFACE_BURNING) {
@@ -228,7 +228,7 @@ void update_air_without_turn(struct MarioState *m) {
             m->forwardVel += intendedMag * coss(intendedDYaw) * 1.5f;
             if (m->action != ACT_LONG_JUMP && m->action != ACT_WALL_KICK_AIR) {
                 if (gLuigiToggle == TRUE) {
-                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1024.0f;
+                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1152.0f;
                 } else {
                     m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 768.0f;
                 }
@@ -465,7 +465,8 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
-            if (gLuigiToggle == TRUE && m->input & INPUT_A_DOWN && m->action != ACT_SIDE_FLIP && m->action != ACT_LONG_JUMP) {
+            if (gLuigiToggle == TRUE && m->input & INPUT_A_DOWN && m->vel[1] < 0.0f &&
+                (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
                 set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x000BFFFF);
             } else {
                 set_mario_animation(m, animation);

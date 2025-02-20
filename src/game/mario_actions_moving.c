@@ -507,7 +507,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
     if (gLuigiToggle == TRUE) {
-        m->forwardVel += m->forwardVel / 2;
+        m->forwardVel += m->forwardVel;
         return set_mario_action(m, ACT_BRAKING, 0);
     } else if (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80) {
         return set_mario_action(m, ACT_BRAKING, 0);
@@ -714,9 +714,14 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
         //! (forwardVel * 170) exceeds or equals 2^31.
         // Pitch is reversed, a higher multiplier makes Mario tilt backwards farther instead of forwards.
         s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
-        s16 nextBodyPitch = -(s16)(m->forwardVel * 48.0f);
+        s16 nextBodyPitch;
+        if (gLuigiToggle == TRUE) {
+            nextBodyPitch = -(s16)(m->forwardVel * DEGREES(0.5));
+        } else {
+            nextBodyPitch = -(s16)(m->forwardVel * DEGREES(0.25));
+        }
 
-        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(30), 0);
+        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(15), 0);
 
         marioBodyState->torsoAngle[2] = approach_s32(marioBodyState->torsoAngle[2], nextBodyRoll, 0x400, 0x400);
         marioBodyState->torsoAngle[0] = approach_s32(marioBodyState->torsoAngle[0], nextBodyPitch, 0x400, 0x400);
