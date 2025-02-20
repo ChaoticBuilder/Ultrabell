@@ -9,6 +9,7 @@
 #include "game_init.h"
 #include "interaction.h"
 #include "mario_step.h"
+#include "ingame_menu.h"
 
 #include "config.h"
 
@@ -652,6 +653,18 @@ void apply_gravity(struct MarioState *m) {
         m->vel[1] -= 5.0f;
         if (m->vel[1] < -80.0f) {
             m->vel[1] = -80.0f;
+        }
+    }
+    if (gLuigiToggle == TRUE) {
+        if (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN) {
+            m->vel[1] += 1.5f;
+            if (m->vel[1] < 0.0f) {
+                if (m->input & INPUT_A_DOWN) {
+                    m->vel[1] += 2.5f;
+                } else {
+                    m->vel[1] -= 0.5f;
+                }
+            }
         }
     }
 }

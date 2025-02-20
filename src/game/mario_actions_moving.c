@@ -17,6 +17,7 @@
 #include "rumble_init.h"
 #include "camera.h"
 #include "game_init.h"
+#include "ingame_menu.h"
 
 #include "config.h"
 
@@ -505,8 +506,10 @@ s32 begin_braking_action(struct MarioState *m) {
         m->faceAngle[1] = m->actionArg;
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
-
-    if (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80) {
+    if (gLuigiToggle == TRUE) {
+        m->forwardVel += m->forwardVel / 2;
+        return set_mario_action(m, ACT_BRAKING, 0);
+    } else if (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -530,7 +533,6 @@ void anim_and_audio_for_walk(struct MarioState *m) {
         while (inLoop) {
             switch (m->actionTimer) {
                 // I recreated beta walking to the best of my ability using a single gif on tcrf.net
-
                 case WALK_SPEED_WALKING:
                     if (intendedSpeed > 18.0f) {
                         m->actionTimer = WALK_SPEED_RUNNING;
@@ -1637,9 +1639,9 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
         }
     } else {
         if (m->forwardVel >= 0) {
-            m->forwardVel = 0.000001f;
+            m->forwardVel = 0.1f;
         } else {
-            m->forwardVel = -0.000001f;
+            m->forwardVel = -0.1f;
         }
     }
     return animFrame;
