@@ -10929,7 +10929,7 @@ void fov_default(struct MarioState *m) {
 
     // apparently Mario's idle was a sleeping state according to beta footage
     if ((m->action == ACT_IDLE) || (m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
-        if (m->sleepTimer < 135) {
+        if (m->sleepTimer < 450) {
             m->sleepTimer++; // Increase the timer
             camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 30.f);
         } else { // Gradually set the FOV to 30 if the threshold is reached
