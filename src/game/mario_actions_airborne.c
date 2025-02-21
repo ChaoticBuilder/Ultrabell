@@ -381,9 +381,9 @@ void update_flying(struct MarioState *m) {
     update_flying_roll(m);
 
     if (m->flags & MARIO_WING_CAP) {
-        m->forwardVel -= 1.0f * ((f32) m->faceAngle[0] / 4096) - 0.0625;
+        m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) - 0.5f;
     } else {
-        m->forwardVel -= 1.0f * ((f32) m->faceAngle[0] / 4096) + 0.125;
+        m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) + 0.3125f;
     }
     // m->forwardVel = 48.0f; // DEBUG
     /*
