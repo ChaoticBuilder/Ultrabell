@@ -391,6 +391,9 @@ s32 apply_slope_decel(struct MarioState *m, f32 decelCoef) {
             decel = decelCoef * 3.0f;
             break;
     }
+    if (gLuigiToggle == TRUE) {
+        decel /= 4.0f;
+    }
 
     if ((m->forwardVel = approach_f32(m->forwardVel, 0.0f, decel, decel)) == 0.0f) {
         stopped = TRUE;
@@ -506,10 +509,8 @@ s32 begin_braking_action(struct MarioState *m) {
         m->faceAngle[1] = m->actionArg;
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
-    if (gLuigiToggle == TRUE) {
-        m->forwardVel += m->forwardVel;
-        return set_mario_action(m, ACT_BRAKING, 0);
-    } else if (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80) {
+
+    if (gLuigiToggle == TRUE || (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80)) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 

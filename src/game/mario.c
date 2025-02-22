@@ -1057,7 +1057,7 @@ s32 drop_and_set_mario_action(struct MarioState *m, u32 action, u32 actionArg) {
  */
 s32 hurt_and_set_mario_action(struct MarioState *m, u32 action, u32 actionArg, s16 hurtCounter) {
     m->hurtCounter = hurtCounter;
-
+    
     return set_mario_action(m, action, actionArg);
 }
 

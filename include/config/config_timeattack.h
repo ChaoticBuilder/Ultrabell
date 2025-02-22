@@ -12,4 +12,4 @@
 /**
  * Enable "Time Attack", an extra gamemode for speedrunning, after a certain amount of time, it kills Mario.
  */
-#define TIME_ATTACK 1
+// #define TIME_ATTACK 1

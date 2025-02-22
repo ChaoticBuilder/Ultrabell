@@ -28,7 +28,7 @@ static const Vtx star_seg3_vertex_body[] = {
 // 0x0302B7B0 - 0x0302B870
 const Gfx star_seg3_sub_dl_body[] = {
     gsSPLightColor(LIGHT_1, 0xffff00ff),
-    gsSPLightColor(LIGHT_2, 0xb19900ff),
+    gsSPLightColor(LIGHT_2, 0x998900ff),
     gsSPVertex(star_seg3_vertex_body, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  0,  3,  1, 0x0),
     gsSP2Triangles( 2,  1,  4, 0x0,  1,  3,  4, 0x0),

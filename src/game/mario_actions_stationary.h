@@ -44,7 +44,7 @@ enum ActionStatesGroundPoundLand { // act_ground_pound_land
 
 enum ActionStatesFirstPerson { // act_first_person
     ACT_STATE_FIRST_PERSON_SET_MODE,
-    ACT_STATE_FIRST_PERSON_IDLE
+    ACT_STATE_FIRST_PERSON_IDLE,
 };
 
 s32 check_common_idle_cancels(struct MarioState *m);

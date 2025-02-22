@@ -491,9 +491,9 @@ void render_hud_timer(void) {
 #ifdef DEMO_TIMER
 void render_hud_demo_timer(void) {
     Texture *(*hudLUT)[58] = segmented_to_virtual(&main_hud_lut);
-    u16 timerCount = gGlobalTimer;
-    u16 timerMinutes = (timerCount / 1800);
-    u16 timerHours = (timerMinutes / 60);
+    u16 timerCount = gGlobalTimer / 30;
+    u16 timerMinutes = timerCount / 60;
+    // u16 timerHours;
     /*
     u16 testvariable = 0;
     while (TRUE) {
@@ -526,10 +526,10 @@ void render_hud_demo_timer(void) {
     #endif
     // Really disappointing, I hope I can fix the code soon..
     
-    if (!(gTimeAttackToggle == TRUE)) {
+    if (gTimeAttackToggle == FALSE) {
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "DEMO");
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", timerHours);
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerMinutes % 60);
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", timerMinutes % 30);
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerCount % 60);
         // print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(160), HUD_BOTTOM_Y, "%02d", testvariable);
 
         gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);

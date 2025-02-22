@@ -70,8 +70,8 @@ void king_bobomb_act_active(void) { // act 2
         }
 
         if (o->oKingBobombPlayerGrabEscapeCooldown == 0) {
-            o->oForwardVel = 3.0f;
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
+            o->oForwardVel = 10.0f;
+            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
         } else {
             o->oForwardVel = 0.0f;
             o->oKingBobombPlayerGrabEscapeCooldown--;
@@ -80,6 +80,7 @@ void king_bobomb_act_active(void) { // act 2
 
     if (cur_obj_check_grabbed_mario()) {
         o->oAction = KING_BOBOMB_ACT_GRABBED_MARIO;
+        gMarioState->hurtCounter = 4;
     }
 
     if (mario_is_far_below_object(1200.0f)) {

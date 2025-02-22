@@ -1207,10 +1207,10 @@ void handle_controller_cursor_input(void) {
     s16 rawStickY = gPlayer1Controller->rawStickY;
 
     // Handle deadzone
-    if (rawStickY > -2 && rawStickY < 2) {
+    if (rawStickY > -1 && rawStickY < 1) {
         rawStickY = 0;
     }
-    if (rawStickX > -2 && rawStickX < 2) {
+    if (rawStickX > -1 && rawStickX < 1) {
         rawStickX = 0;
     }
 

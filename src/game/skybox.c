@@ -295,7 +295,7 @@ Gfx *create_skybox_facing_camera(s8 player, s8 background, f32 fov, Vec3f pos, V
 
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
     // For the "Plunder in the Sunken Ship" star in JRB, make the sky darker and slightly green.
-    if (background == BACKGROUND_ABOVE_CLOUDS && gCurrActNum == 1) {
+    if (background == BACKGROUND_ABOVE_CLOUDS) {
         colorIndex = 0;
     }
 #endif

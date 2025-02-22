@@ -135,7 +135,7 @@ void puppycam_default_config(void) {
     gPuppyCam.options.invertX = FALSE;
     gPuppyCam.options.sensitivityX = 5;
     gPuppyCam.options.analogue = FALSE;
-    gPuppyCam.options.inputType = INPUT_SINGLE_PRESS;
+    gPuppyCam.options.inputType = INPUT_CLASSIC;
     gPuppyCam.options.turnHelper = TRUE;
 }
 
