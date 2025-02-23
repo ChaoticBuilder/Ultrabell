@@ -1656,13 +1656,13 @@ void mode_fixed_camera(UNUSED struct Camera *c) {
  */
 s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     f32 dist;
-    s16 absPitch;
+    UNUSED s16 absPitch;
     s16 pitch;
     s16 yaw;
     s16 goalPitch = -sMarioCamState->faceAngle[0];
     s16 marioYaw = sMarioCamState->faceAngle[1] + DEGREES(180);
-    s16 goalYawOff = 0;
-    s16 yawSpeed;
+    UNUSED s16 goalYawOff = 0;
+    s16 yawSpeed = 96;
     s16 pitchInc = 384;
     f32 maxDist = 1000.f;
     f32 focYOff = 125.f;
@@ -1685,6 +1685,7 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     if (dist > maxDist) {
         dist = maxDist;
     }
+    /*
     if ((absPitch = pitch) < 0) {
         absPitch = -absPitch;
     }
@@ -1772,8 +1773,9 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
         sBehindMarioSoundTimer = 30;
         pitchInc = 0x800;
     }
+    */
 
-    approach_s16_asymptotic_bool(&yaw, marioYaw + goalYawOff, yawSpeed);
+    camera_approach_s16_symmetric_bool(&yaw, marioYaw, yawSpeed);
     camera_approach_s16_symmetric_bool(&pitch, goalPitch, pitchInc);
     if (dist < 300.f) {
         dist = 300.f;
@@ -1990,7 +1992,7 @@ s16 update_default_camera(struct Camera *c) {
     vec3f_get_dist_and_angle(sMarioCamState->pos, c->pos, &dist, &pitch, &yaw);
 
     // If C-Down is active, determine what distance the camera should be from Mario
-    if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
+    if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT && c->mode == CAMERA_MODE_CLOSE) {
         //! In Mario mode, the camera is zoomed out further than in Lakitu mode (1400 vs 1200)
         if (set_cam_angle(0) == CAM_ANGLE_MARIO) {
             zoomDist = gCameraZoomDist + 1050;
@@ -4706,7 +4708,7 @@ void handle_c_button_movement(struct Camera *c) {
 
     // Zoom in
     if (gPlayer1Controller->buttonPressed & U_CBUTTONS) {
-        if (c->mode != CAMERA_MODE_FIXED && (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT)) {
+        if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
             gCameraMovementFlags &= ~CAM_MOVE_ZOOMED_OUT;
             play_sound_cbutton_up();
         } else {

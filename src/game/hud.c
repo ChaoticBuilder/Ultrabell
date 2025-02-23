@@ -23,6 +23,7 @@
 
 s32 gTimeAttackToggle = FALSE;
 s32 gLuigiToggle = FALSE;
+s32 gSecondsToggle = TRUE;
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -529,13 +530,15 @@ void render_hud_demo_timer(void) {
     if (gTimeAttackToggle == FALSE) {
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "DEMO");
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", timerMinutes % 30);
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerCount % 60);
         // print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(160), HUD_BOTTOM_Y, "%02d", testvariable);
+        if (gSecondsToggle == TRUE) {
+            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerCount % 60);
 
-        gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
-        render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 5), (*hudLUT)[GLYPH_APOSTROPHE]);
-        gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
+            gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
+            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 5), (*hudLUT)[GLYPH_APOSTROPHE]);
+            gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
+        }
     }
 }
 #endif

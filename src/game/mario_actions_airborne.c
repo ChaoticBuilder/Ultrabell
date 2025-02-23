@@ -230,7 +230,7 @@ void update_air_without_turn(struct MarioState *m) {
                 if (gLuigiToggle == TRUE) {
                     m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1152.0f;
                 } else {
-                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 768.0f;
+                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1024.0f;
                 }
             } else {
                 m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 80.0f;
@@ -383,7 +383,7 @@ void update_flying(struct MarioState *m) {
     if (m->flags & MARIO_WING_CAP) {
         m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) - 0.5f;
     } else {
-        m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) + 0.3125f;
+        m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) + 0.25f;
     }
     // m->forwardVel = 48.0f; // DEBUG
     /*

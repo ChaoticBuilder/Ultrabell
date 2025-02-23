@@ -63,17 +63,17 @@
         "inst2": {
             "release_rate": 208,
             "envelope": "envelope2",
-            "sound": "2E_accordion"
+            "sound": "16_french_horns"
         },
         "inst3": {
             "release_rate": 208,
             "envelope": "envelope3",
-            "sound": "16_french_horns"
+            "sound": "17_trumpet"
         },
         "inst4": {
             "release_rate": 208,
             "envelope": "envelope4",
-            "sound": "16_french_horns"
+            "sound": "42_vibraphone"
         },
         "inst5": {
             "release_rate": 10,
@@ -91,14 +91,14 @@
     "instrument_list": [
         "inst0",
         "inst1",
+        null,
+        null,
         "inst2",
         null,
         null,
-        null,
+		null,
         "inst3",
         "inst4",
-        null,
-        null,
         "inst5",
         "inst6"
     ]
