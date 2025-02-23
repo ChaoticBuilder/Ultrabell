@@ -890,7 +890,7 @@ s32 update_8_directions_camera(UNUSED struct Camera *c, Vec3f focus, Vec3f pos) 
 void radial_camera_move(struct Camera *c) {
     s16 maxAreaYaw = DEGREES(60);
     s16 minAreaYaw = DEGREES(-60);
-    s16 rotateSpeed = 0x400;
+    s16 rotateSpeed = 0x800;
     s16 avoidYaw;
     f32 areaDistX = sMarioCamState->pos[0] - c->areaCenX;
     f32 areaDistZ = sMarioCamState->pos[2] - c->areaCenZ;
@@ -923,7 +923,7 @@ void radial_camera_move(struct Camera *c) {
     }
 
     if (gCameraMovementFlags & CAM_MOVE_ENTERED_ROTATE_SURFACE) {
-        rotateSpeed = 0x50;
+        rotateSpeed = 0x100;
     }
 
     if (c->mode == CAMERA_MODE_OUTWARD_RADIAL) {
