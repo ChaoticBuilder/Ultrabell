@@ -465,9 +465,16 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
+            switch (animation) {
+                case MARIO_ANIM_SLIDEFLIP:
+                    if (!(gLuigiToggle)) {
+                        set_mario_anim_with_accel(m, animation, 0x18800);
+                    }
+                    break;
+                }
             if (gLuigiToggle == TRUE && m->input & INPUT_A_DOWN && m->vel[1] < 0.0f &&
                 (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
-                set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x000BFFFF);
+                set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xBFFFF);
             } else {
                 set_mario_animation(m, animation);
             }
@@ -700,7 +707,7 @@ s32 act_side_flip(struct MarioState *m) {
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, 0);
 
-    if (common_air_action_step(m, ACT_SIDE_FLIP_LAND, MARIO_ANIM_FORWARD_FLIP, AIR_STEP_CHECK_LEDGE_GRAB)
+    if (common_air_action_step(m, ACT_SIDE_FLIP_LAND, MARIO_ANIM_SLIDEFLIP, AIR_STEP_CHECK_LEDGE_GRAB)
         != AIR_STEP_GRABBED_LEDGE) {
         m->marioObj->header.gfx.angle[1] += 0x8000;
     }
