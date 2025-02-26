@@ -18,12 +18,12 @@ ALIGNED8 static const Texture snowman_seg5_texture_05008C70[] = {
 
 // 0x05009470
 ALIGNED8 static const Texture snowman_seg5_texture_05009470[] = {
-#include "actors/snowman/mr_blizzard_left_side.rgba16.inc.c"
+#include "actors/snowman/mr_blizzard_left_side.custom.rgba16.inc.c"
 };
 
 // 0x0500A470
 ALIGNED8 static const Texture snowman_seg5_texture_0500A470[] = {
-#include "actors/snowman/mr_blizzard_right_side.rgba16.inc.c"
+#include "actors/snowman/mr_blizzard_right_side.custom.rgba16.inc.c"
 };
 
 // 0x0500B470

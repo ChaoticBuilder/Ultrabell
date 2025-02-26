@@ -10,32 +10,32 @@
 
 // 0x05002DE0
 ALIGNED8 static const Texture penguin_seg5_texture_eye_open[] = {
-#include "actors/penguin/penguin_eye_open.rgba16.inc.c"
+#include "actors/penguin/penguin_eye_open.custom.ia16.inc.c"
 };
 
 // 0x050035E0
 ALIGNED8 static const Texture penguin_seg5_texture_eye_half_closed[] = {
-#include "actors/penguin/penguin_eye_half_closed.rgba16.inc.c"
+#include "actors/penguin/penguin_eye_half_closed.custom.ia16.inc.c"
 };
 
 // 0x05003DE0
 ALIGNED8 static const Texture penguin_seg5_texture_eye_closed[] = {
-#include "actors/penguin/penguin_eye_closed.rgba16.inc.c"
+#include "actors/penguin/penguin_eye_closed.custom.ia16.inc.c"
 };
 
 // 0x050045E0
 ALIGNED8 static const Texture penguin_seg5_texture_eye_angry[] = {
-#include "actors/penguin/penguin_eye_angry.rgba16.inc.c"
+#include "actors/penguin/penguin_eye_angry.custom.ia16.inc.c"
 };
 
 // 0x05004DE0
 ALIGNED8 static const Texture penguin_seg5_texture_eye_sad[] = {
-#include "actors/penguin/penguin_eye_angry_unused.rgba16.inc.c"
+#include "actors/penguin/penguin_eye_sad.custom.ia16.inc.c"
 };
 
 // 0x050055E0
 ALIGNED8 static const Texture penguin_seg5_texture_beak[] = {
-#include "actors/penguin/penguin_beak.rgba16.inc.c"
+#include "actors/penguin/penguin_beak.custom.rgba16.inc.c"
 };
 
 // 0x05005DE0
@@ -208,7 +208,7 @@ const Gfx penguin_seg5_dl_head[] = {
 // 0x05006428 - 0x05006458
 const Gfx penguin_seg5_dl_head_eyes_open[] = {
     gsSPDisplayList(penguin_seg5_sub_dl_head_begin),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_open),
+    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_open),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPDisplayList(penguin_seg5_dl_head),
@@ -218,7 +218,7 @@ const Gfx penguin_seg5_dl_head_eyes_open[] = {
 // 0x05006458 - 0x05006488
 const Gfx penguin_seg5_dl_head_eyes_half_closed[] = {
     gsSPDisplayList(penguin_seg5_sub_dl_head_begin),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_half_closed),
+    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_half_closed),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPDisplayList(penguin_seg5_dl_head),
@@ -228,7 +228,7 @@ const Gfx penguin_seg5_dl_head_eyes_half_closed[] = {
 // 0x05006488 - 0x050064B8
 const Gfx penguin_seg5_dl_head_eyes_closed[] = {
     gsSPDisplayList(penguin_seg5_sub_dl_head_begin),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_closed),
+    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_closed),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPDisplayList(penguin_seg5_dl_head),
@@ -238,7 +238,7 @@ const Gfx penguin_seg5_dl_head_eyes_closed[] = {
 // 0x050064B8 - 0x050064E8
 const Gfx penguin_seg5_dl_head_eyes_angry[] = {
     gsSPDisplayList(penguin_seg5_sub_dl_head_begin),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_angry),
+    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_angry),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPDisplayList(penguin_seg5_dl_head),
@@ -248,7 +248,7 @@ const Gfx penguin_seg5_dl_head_eyes_angry[] = {
 // 0x050064E8 - 0x05006518
 const Gfx penguin_seg5_dl_head_eyes_sad[] = {
     gsSPDisplayList(penguin_seg5_sub_dl_head_begin),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_sad),
+    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, penguin_seg5_texture_eye_sad),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPDisplayList(penguin_seg5_dl_head),

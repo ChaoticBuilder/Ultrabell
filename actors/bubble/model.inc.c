@@ -10,7 +10,7 @@ static const Vtx bubble_seg4_vertex_0401CD20[] = {
 
 // 0x0401CD60
 ALIGNED8 static const Texture bubble_seg4_texture_0401CD60[] = {
-#include "actors/bubble/bubble.rgba16.inc.c"
+#include "actors/bubble/bubble.custom.rgba16.inc.c"
 };
 
 // 0x0401D560

@@ -4,12 +4,12 @@
 
 // 0x06015670
 ALIGNED8 static const Texture boo_castle_seg6_texture_06015670[] = {
-#include "actors/boo_castle/bbh_boo_eyes.rgba16.inc.c"
+#include "actors/boo_castle/bbh_boo_eyes.custom.rgba16.inc.c"
 };
 
 // 0x06016670
 ALIGNED8 static const Texture boo_castle_seg6_texture_06016670[] = {
-#include "actors/boo_castle/bbh_boo_mouth.rgba16.inc.c"
+#include "actors/boo_castle/bbh_boo_mouth.custom.rgba16.inc.c"
 };
 
 // 0x06016E70

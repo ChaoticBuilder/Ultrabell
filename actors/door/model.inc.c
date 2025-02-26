@@ -54,6 +54,7 @@ ALIGNED8 static const Texture door_seg3_texture_spooky_door_sides[] = {
 #include "actors/door/bbh_door_overlay.rgba16.inc.c"
 };
 
+/*
 // 0x03011D10
 ALIGNED8 static const Texture door_seg3_texture_zero_star_door_sign[] = {
 #include "actors/door/zero_star_door_sign.rgba16.inc.c"
@@ -68,6 +69,7 @@ ALIGNED8 static const Texture door_seg3_texture_one_star_door_sign[] = {
 ALIGNED8 static const Texture door_seg3_texture_three_star_door_sign[] = {
 #include "actors/door/three_star_door_sign.rgba16.inc.c"
 };
+*/
 
 // 0x03013510
 ALIGNED8 static const Texture door_seg3_texture_lock[] = {
@@ -301,6 +303,7 @@ const Gfx door_seg3_dl_cabin_door_far[] = {
 };
 
 // 0x03014140
+/*
 static const Vtx door_seg3_vertex_star_sign_near[] = {
     {{{   441,    850,     64}, 0, {   992,      0}, {0x00, 0x00, 0x7f, 0xff}}},
     {{{   141,    850,     64}, 0, {     0,      0}, {0x00, 0x00, 0x7f, 0xff}}},
@@ -400,6 +403,7 @@ const Gfx door_seg3_dl_three_stars_far[] = {
     gsSPVertex(door_seg3_vertex_star_sign_far, 4, 0),
     gsSPBranchList(door_seg3_vertex_star_sign_end),
 };
+*/
 
 static const Vtx door_seg3_vertex_key_door_sides[] = {
     {{{   -16,   1024,    -60}, 0, {     0,   2016}, {0x81, 0x00, 0x00, 0xff}}},

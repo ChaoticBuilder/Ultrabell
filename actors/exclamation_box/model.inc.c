@@ -14,32 +14,32 @@ ALIGNED8 static const Texture exclamation_box_seg8_texture_08013628[] = {
 
 // 0x08014628
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08014628[] = {
-#include "actors/exclamation_box/metal_cap_box_front.rgba16.inc.c"
+#include "actors/exclamation_box/metal_cap_box_front.custom.rgba16.inc.c"
 };
 
 // 0x08014E28
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08014E28[] = {
-#include "actors/exclamation_box/metal_cap_box_side.rgba16.inc.c"
+#include "actors/exclamation_box/metal_cap_box_side.custom.rgba16.inc.c"
 };
 
 // 0x08015E28
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08015E28[] = {
-#include "actors/exclamation_box/wing_cap_box_front.rgba16.inc.c"
+#include "actors/exclamation_box/wing_cap_box_front.custom.rgba16.inc.c"
 };
 
 // 0x08016628
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08016628[] = {
-#include "actors/exclamation_box/wing_cap_box_side.rgba16.inc.c"
+#include "actors/exclamation_box/wing_cap_box_side.custom.rgba16.inc.c"
 };
 
 // 0x08017628
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08017628[] = {
-#include "actors/exclamation_box/exclamation_box_front.rgba16.inc.c"
+#include "actors/exclamation_box/exclamation_box_front.custom.rgba16.inc.c"
 };
 
 // 0x08017E28
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08017E28[] = {
-#include "actors/exclamation_box/exclamation_box_side.rgba16.inc.c"
+#include "actors/exclamation_box/exclamation_box_side.custom.rgba16.inc.c"
 };
 
 // 0x08018E28
@@ -189,10 +189,10 @@ const Gfx exclamation_box_seg8_dl_08019318[] = {
     gsSPDisplayList(exclamation_box_seg8_dl_08018FA8),
     gsDPTileSync(),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 6, G_TX_NOLOD, G_TX_CLAMP, 5, G_TX_NOLOD),
-    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (64 - 1) << G_TEXTURE_IMAGE_FRAC),
+    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, exclamation_box_seg8_texture_08016628),
     gsDPLoadSync(),
-    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 64 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPBranchList(exclamation_box_seg8_dl_08019008),
 };
 
@@ -204,11 +204,11 @@ const Gfx exclamation_box_seg8_dl_08019378[] = {
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPDisplayList(exclamation_box_seg8_dl_08019220),
     gsDPTileSync(),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
-    gsDPSetTileSize(0, 0, 0, (64 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
+    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, exclamation_box_seg8_texture_08014E28),
     gsDPLoadSync(),
-    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 64 * 32 - 1, CALC_DXT(64, G_IM_SIZ_16b_BYTES)),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPBranchList(exclamation_box_seg8_dl_08019280),
 };
 
@@ -221,10 +221,10 @@ const Gfx exclamation_box_seg8_dl_080193D8[] = {
     gsSPDisplayList(exclamation_box_seg8_dl_08018FA8),
     gsDPTileSync(),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 6, G_TX_NOLOD, G_TX_CLAMP, 5, G_TX_NOLOD),
-    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (64 - 1) << G_TEXTURE_IMAGE_FRAC),
+    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, exclamation_box_seg8_texture_08013628),
     gsDPLoadSync(),
-    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 64 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPBranchList(exclamation_box_seg8_dl_08019008),
 };
 
@@ -236,10 +236,10 @@ const Gfx exclamation_box_seg8_dl_08019438[] = {
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPDisplayList(exclamation_box_seg8_dl_08019220),
     gsDPTileSync(),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
-    gsDPSetTileSize(0, 0, 0, (64 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
+    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, exclamation_box_seg8_texture_08017E28),
     gsDPLoadSync(),
-    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 64 * 32 - 1, CALC_DXT(64, G_IM_SIZ_16b_BYTES)),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPBranchList(exclamation_box_seg8_dl_08019280),
 };
