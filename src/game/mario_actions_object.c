@@ -67,7 +67,7 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
             }
 
             if (m->input & INPUT_B_PRESSED) {
-                m->actionArg = ACT_ARG_PUNCH_SEQUENCE_WAH;
+                m->actionArg = ACT_ARG_PUNCH_SEQUENCE_GROUND_KICK;
             }
 
             if (is_anim_at_end(m)) {
@@ -78,6 +78,7 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
         case ACT_ARG_PUNCH_SEQUENCE_WAH:
             play_sound(SOUND_MARIO_PUNCH_WAH, m->marioObj->header.gfx.cameraToObject);
             // fallthrough
+        /*
         case ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH:
             set_mario_animation(m, MARIO_ANIM_SECOND_PUNCH);
             if (is_anim_past_end(m)) {
@@ -109,6 +110,7 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
                 set_mario_action(m, endAction, 0);
             }
             break;
+        */
 
         case ACT_ARG_PUNCH_SEQUENCE_GROUND_KICK:
             play_mario_action_sound(m, SOUND_MARIO_PUNCH_HOO, 1);
@@ -162,7 +164,7 @@ s32 act_punching(struct MarioState *m) {
         m->actionTimer = 7;
     }
 
-    mario_set_forward_vel(m, sPunchingForwardVelocities[m->actionTimer]);
+    // mario_set_forward_vel(m, sPunchingForwardVelocities[m->actionTimer]);
     if (m->actionTimer > 0) {
         m->actionTimer--;
     }

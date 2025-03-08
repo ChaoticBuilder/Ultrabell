@@ -745,7 +745,7 @@ u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *
     }
 #endif
 #ifdef ENABLE_LIVES
-    if (gMarioState->numCoins >= 100) {
+    if (gMarioState->numCoins >= 100 && gMarioState->numCoins != 1996) {
     gMarioState->numLives++;
     play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
     gMarioState->numCoins = 0;

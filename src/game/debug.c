@@ -16,14 +16,6 @@
 #include "types.h"
 
 #ifdef VANILLA_DEBUG
-
-enum DebugInfoFlags {
-    DEBUG_INFO_NOFLAGS      = (0 << 0),
-    DEBUG_INFO_FLAG_DPRINT  = (1 << 0),
-    DEBUG_INFO_FLAG_LSELECT = (1 << 1),
-    DEBUG_INFO_FLAG_ALL     = 0xFF
-};
-
 s16 gDebugPrintState1[6]; // prints top-down?
 s16 gDebugPrintState2[6]; // prints bottom-up?
 

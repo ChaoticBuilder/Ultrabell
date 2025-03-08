@@ -30,7 +30,7 @@ void bhv_mips_init(void) {
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 #endif
-    o->oInteractionSubtype = INT_SUBTYPE_HOLDABLE_NPC;
+    o->oInteractType = INTERACT_GRABBABLE;
 
     o->oGravity = 15.0f;
     o->oFriction = 0.89f;
@@ -221,7 +221,7 @@ void bhv_mips_held(void) {
         if (set_mario_npc_dialog(MARIO_DIALOG_LOOK_FRONT) == MARIO_DIALOG_STATUS_SPEAK) {
             o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
             if (cutscene_object_with_dialog(CUTSCENE_DIALOG, o, dialogID)) {
-                o->oInteractionSubtype |= INT_SUBTYPE_DROP_IMMEDIATELY;
+                // o->oInteractionSubtype |= INT_SUBTYPE_DROP_IMMEDIATELY;
                 o->activeFlags &= ~ACTIVE_FLAG_INITIATED_TIME_STOP;
                 o->oMipsStarStatus = MIPS_STAR_STATUS_SHOULD_SPAWN_STAR;
                 set_mario_npc_dialog(MARIO_DIALOG_STOP);

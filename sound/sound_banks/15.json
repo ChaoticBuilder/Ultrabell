@@ -67,7 +67,7 @@
         "inst0": {
             "release_rate": 34,
             "envelope": "envelope0",
-            "sound": "3C_acoustic_guitar"
+            "sound": "41_pan_flute"
         },
         "inst1": {
             "release_rate": 208,
@@ -84,9 +84,9 @@
             "sound": "21_sine_bass"
         },
         "inst3": {
-            "release_rate": 208,
+            "release_rate": 1,
             "envelope": "envelope3",
-            "sound": "3C_acoustic_guitar"
+            "sound": "37_square_synth"
         },
         "inst4": {
             "release_rate": 114,

@@ -20,6 +20,7 @@ void tuxies_mother_act_received_baby(void) {
             o->oForwardVel = 10.0f;
             if (cur_obj_lateral_dist_from_mario_to_home() > 800.0f) {
                 o->oSubAction = MOTHER_PENGUIN_SUB_ACT_STOP_CHASING_MARIO;
+                // eventual evil path code here :3
             }
             cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
         } else {
@@ -55,7 +56,7 @@ void tuxies_mother_act_receiving_baby(void) {
                     o->oSubAction = dialogID == DIALOG_058
                         ? MOTHER_PENGUIN_SUB_ACT_CORRECT_BABY
                         : MOTHER_PENGUIN_SUB_ACT_WRONG_BABY;
-                    o->prevObj->oInteractionSubtype |= INT_SUBTYPE_DROP_IMMEDIATELY;
+                    // o->prevObj->oInteractionSubtype |= INT_SUBTYPE_DROP_IMMEDIATELY;
                 }
             } else {
                 cur_obj_init_animation_with_sound(PENGUIN_ANIM_WALK);
@@ -64,7 +65,7 @@ void tuxies_mother_act_receiving_baby(void) {
 
         case MOTHER_PENGUIN_SUB_ACT_CORRECT_BABY:
             if (o->prevObj->oHeldState == HELD_FREE) {
-                o->prevObj->oInteractionSubtype &= ~INT_SUBTYPE_DROP_IMMEDIATELY;
+                // o->prevObj->oInteractionSubtype &= ~INT_SUBTYPE_DROP_IMMEDIATELY;
                 obj_set_behavior(o->prevObj, bhvSmallPenguinReturned);
                 cur_obj_spawn_star_at_y_offset(3167.0f, -4300.0f, 5108.0f, 200.0f);
                 o->oAction = MOTHER_PENGUIN_SUB_ACT_WRONG_BABY;

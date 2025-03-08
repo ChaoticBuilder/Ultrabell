@@ -485,11 +485,11 @@ UNUSED static void record_demo(void) {
 
     // If the stick is in deadzone, set its value to 0 to
     // nullify the effects. We do not record deadzone inputs.
-    if (rawStickX > -8 && rawStickX < 8) {
+    if (rawStickX > -4 && rawStickX < 4) {
         rawStickX = 0;
     }
 
-    if (rawStickY > -8 && rawStickY < 8) {
+    if (rawStickY > -4 && rawStickY < 4) {
         rawStickY = 0;
     }
 
@@ -562,19 +562,19 @@ void adjust_analog_stick(struct Controller *controller) {
     controller->stickY = 0;
 
     // Modulate the rawStickX and rawStickY to be the new f32 values by adding/subtracting 6.
-    if (controller->rawStickX <= -8) {
+    if (controller->rawStickX <= -4) {
         controller->stickX = controller->rawStickX + 6;
     }
 
-    if (controller->rawStickX >= 8) {
+    if (controller->rawStickX >= 4) {
         controller->stickX = controller->rawStickX - 6;
     }
 
-    if (controller->rawStickY <= -8) {
+    if (controller->rawStickY <= -4) {
         controller->stickY = controller->rawStickY + 6;
     }
 
-    if (controller->rawStickY >= 8) {
+    if (controller->rawStickY >= 4) {
         controller->stickY = controller->rawStickY - 6;
     }
 
@@ -827,7 +827,7 @@ void thread5_game_loop(UNUSED void *arg) {
         if (gShowDebugText) {
             // subtract the end of the gfx pool with the display list to obtain the
             // amount of free space remaining.
-            print_text_fmt_int(180, 20, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
+            print_text_fmt_int(180, 16, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
         }
 #endif
 #if 0

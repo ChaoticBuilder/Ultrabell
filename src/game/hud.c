@@ -18,6 +18,8 @@
 #include "puppycam2.h"
 #include "puppyprint.h"
 #include "menu/star_select.h"
+#include "main.h"
+#include "object_list_processor.h"
 
 #include "config.h"
 
@@ -118,6 +120,15 @@ s32 sBreathMeterVisibleTimer = 0;
 
 static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
 
+s32 gHudShakeX;
+s32 gHudShakeY;
+
+void hud_shake(void) {
+    // print_text_fmt_int(268, 178, "%d", gHudShakeX);
+    // print_text_fmt_int(268, 161, "%d", gHudShakeY);
+    // print_text(136 + gHudShakeX, 112 + gHudShakeY, "TEST");
+}
+
 /**
  * Renders a rgba16 16x16 glyph texture from a table list.
  */
@@ -184,7 +195,7 @@ void render_dl_power_meter(s16 numHealthWedges) {
         return;
     }
 
-    guTranslate(mtx, (f32) sPowerMeterHUD.x, (f32) sPowerMeterHUD.y, 0);
+    guTranslate(mtx, (f32) sPowerMeterHUD.x + gHudShakeX, (f32) sPowerMeterHUD.y + gHudShakeY, 0);
 
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx++),
               G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
@@ -408,10 +419,25 @@ void render_hud_breath_meter(void) {
 /**
  * Renders the amount of lives Mario has.
  */
+s32 hurtShake = FALSE;
+
 void render_hud_mario_lives(void) {
-    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_TOP_Y, ","); // 'Mario Head' glyph
-    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(31), HUD_TOP_Y, "*"); // 'X' glyph
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46), HUD_TOP_Y, "%d", gHudDisplay.lives);
+    if (gMarioState->hurtCounter != 0) {
+        hurtShake = TRUE;
+    }
+    if ((gHudShakeX || gHudShakeY) != 0 && hurtShake == TRUE) {
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "ROLA!");
+    } else {
+        hurtShake = FALSE;
+        if (!(gLuigiToggle)) {
+            print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ","); // 'Mario' glyph
+        } else {
+            print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ";"); // 'Luigi' glyph
+        }
+
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(31) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives);
+    }
 }
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
@@ -430,9 +456,14 @@ void render_debug_mode(void) {
  * Renders the amount of coins collected.
  */
 void render_hud_coins(void) {
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X), (HUD_TOP_Y - 17), "$"); // 'Coin' glyph
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)), (HUD_TOP_Y - 17), "*"); // 'X' glyph
-    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)), (HUD_TOP_Y - 17), "%d", gHudDisplay.coins);
+    if (gHudDisplay.coins == 1996) {
+        // Thank you-a so much for-a playing my game!
+        print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X)) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "%d", gHudDisplay.coins);
+    } else {
+        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "$"); // 'Coin' glyph
+        print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "*"); // 'X' glyph
+        print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "%d", gHudDisplay.coins);
+    }
 }
 
 /**
@@ -441,9 +472,9 @@ void render_hud_coins(void) {
  */
 void render_hud_stars(void) {
     // if (gHudFlash == HUD_FLASH_STARS && gGlobalTimer & 0x8) return;
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X), HUD_TOP_Y, "^"); // 'Star' glyph
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)), HUD_TOP_Y, "*"); // 'X' glyph
-    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)), HUD_TOP_Y, "%d", gHudDisplay.stars);
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "^"); // 'Star' glyph
+    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
+    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.stars);
 }
 
 /**
@@ -475,17 +506,17 @@ void render_hud_timer(void) {
         case LANGUAGE_GERMAN:  print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(138), HUD_BOTTOM_Y,  "ZEIT"); break;
     }
 #else
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(138), HUD_BOTTOM_Y, "TIME");
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(138) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "TIME");
 #endif
 
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(88), HUD_BOTTOM_Y, "%0d", timerMins);
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(66), HUD_BOTTOM_Y, "%02d", timerSecs);
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(32), HUD_BOTTOM_Y, "%d", timerFracSecs);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(88) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "%0d", timerMins);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(66) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "%02d", timerSecs);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(32) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "%d", timerFracSecs);
 
     gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77), (HUD_TOP_Y - 5), (*hudLUT)[GLYPH_APOSTROPHE]);
-    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(43), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77) + gHudShakeX, (HUD_TOP_Y + 4) + gHudShakeY, (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(77) + gHudShakeX, (HUD_TOP_Y - 5) + gHudShakeY, (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(43) + gHudShakeX, (HUD_TOP_Y + 4) + gHudShakeY, (*hudLUT)[GLYPH_APOSTROPHE]);
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
@@ -527,16 +558,16 @@ void render_hud_demo_timer(void) {
     #endif
     // Really disappointing, I hope I can fix the code soon..
     
-    if (gTimeAttackToggle == FALSE) {
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "DEMO");
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", timerMinutes % 30);
+    if (!(gTimeAttackToggle)) {
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "DEMO");
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "%02d", timerMinutes % 30);
         // print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(160), HUD_BOTTOM_Y, "%02d", testvariable);
-        if (gSecondsToggle == TRUE) {
-            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", timerCount % 60);
+        if (gSecondsToggle) {
+            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "%02d", timerCount % 60);
 
             gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 4), (*hudLUT)[GLYPH_APOSTROPHE]);
-            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 5), (*hudLUT)[GLYPH_APOSTROPHE]);
+            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91) + gHudShakeX, (HUD_TOP_Y + 4) + gHudShakeY, (*hudLUT)[GLYPH_APOSTROPHE]);
+            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91) + gHudShakeX, (HUD_TOP_Y - 5) + gHudShakeY, (*hudLUT)[GLYPH_APOSTROPHE]);
             gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
         }
     }
@@ -549,6 +580,17 @@ void render_luigi_test_output(void) {
     if (gLuigiToggle == TRUE) {
         print_text(70, (HUD_BOTTOM_Y + 40), "LUIGI IS HERE");
     }
+}
+*/
+
+/*
+void unregistered_hypercam(void) {
+    print_text(32, 80, "UNREGISTERED HYPERCAM");
+}
+*/
+/*
+void ttc(void) {
+    print_text_fmt_int(120, 16, "state %d", gTTCSpeedSetting);
 }
 */
 
@@ -601,10 +643,6 @@ void render_hud_camera_status(void) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 */
-void render_mario_speed(void) {
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(96), (HUD_BOTTOM_Y + 17), "SPD");
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(56), (HUD_BOTTOM_Y + 17), "%d", gMarioStates[0].forwardVel);
-}
 
 /**
  * Render HUD strings using hudDisplayFlags with it's render functions,
@@ -640,9 +678,11 @@ void render_hud(void) {
         create_dl_ortho_matrix();
 #endif
 
+        /*
         if (gCurrentArea != NULL && gCurrentArea->camera->mode == CAMERA_MODE_INSIDE_CANNON) {
             render_hud_cannon_reticle();
         }
+        */
 
 #ifdef ENABLE_LIVES
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES) {
@@ -681,8 +721,14 @@ void render_hud(void) {
             render_hud_timer();
         }
             render_hud_demo_timer();
-            render_mario_speed();
-            // render_luigi_test_output();
+            // render_mario_speed(); I am so dumb why did I even make this there's literally a speed thing built in lmaooo
+            // render_luigi_test_output(); ah, pre-v0.07, lmao
+            // unregistered_hypercam(); THIS WILL BE MARIO IN 2013
+
+            // ttc(); displays the clock's current state, technically I could've kept it in but nah
+            // what makes me mad tho is the fact I had to do this in the first place
+            // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal
+            hud_shake();
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

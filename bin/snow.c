@@ -5,7 +5,7 @@
 
 // 0x09000000
 ALIGNED8 const Texture snow_09000000[] = {
-#include "textures/snow/ccm_textures.00000.rgba16.inc.c"
+#include "textures/snow/ccm_textures.00000.custom.rgba16.inc.c"
 };
 
 // 0x09000800
@@ -65,7 +65,7 @@ ALIGNED8 const Texture snow_09006000[] = {
 
 // 0x09006800
 ALIGNED8 const Texture snow_09006800[] = {
-#include "textures/snow/ccm_textures.06800.rgba16.inc.c"
+#include "textures/snow/ccm_textures.06800.custom.rgba16.inc.c"
 };
 
 // 0x09007000
@@ -80,7 +80,7 @@ ALIGNED8 const Texture snow_09008000[] = {
 
 // 0x09008800
 ALIGNED8 const Texture snow_09008800[] = {
-#include "textures/snow/ccm_textures.08800.rgba16.inc.c"
+#include "textures/snow/ccm_textures.08800.custom.rgba16.inc.c"
 };
 
 // 0x09009000

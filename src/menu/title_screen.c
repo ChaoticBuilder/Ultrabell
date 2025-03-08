@@ -85,6 +85,7 @@ s32 run_level_id_or_demo(s32 level) {
 
 u8 gLevelSelectHoldKeyIndex = 0;
 u8 gLevelSelectHoldKeyTimer = 0;
+u8 gLevelSelectExitTimer = 0;
 
 /**
  * Level select intro function, updates the selected stage
@@ -93,6 +94,22 @@ u8 gLevelSelectHoldKeyTimer = 0;
  */
 s32 intro_level_select(void) {
     u32 index = 0;
+
+    if (gPlayer1Controller->buttonDown == Z_TRIG) { // quit level select
+        gLevelSelectExitTimer++;
+        print_text_centered(136, 104, "EXITING");
+        print_text_fmt_int(184, 104, "%2d", gLevelSelectExitTimer);
+        if (gLevelSelectExitTimer > 0 && gLevelSelectExitTimer < 50) {
+            play_sound(SOUND_GENERAL_COIN, gGlobalSoundSource);
+        }
+        if (gLevelSelectExitTimer >= 60) {
+            gDebugLevelSelect = FALSE;
+            return LEVEL_RESTART_GAME;
+        }
+    } else {
+        gLevelSelectExitTimer = 0;
+    }
+
     if (gPlayer1Controller->rawStickY < -60
         || gPlayer1Controller->rawStickX < -60
         || gPlayer1Controller->buttonDown & (D_CBUTTONS | D_JPAD | L_CBUTTONS | L_JPAD)
@@ -105,6 +122,15 @@ s32 intro_level_select(void) {
         || gPlayer1Controller->buttonDown & (U_CBUTTONS | U_JPAD | R_CBUTTONS | R_JPAD)
     ) {
             index += 2;
+    }
+
+    if (gPlayer1Controller->buttonPressed & L_TRIG) {
+        play_sound(SOUND_GENERAL_LEVEL_SELECT_CHANGE, gGlobalSoundSource);
+        gCurrActNum += 1;
+        // I would've loved to modulo here but it keeps throwing compiler errors so
+        if (gCurrActNum > 6) {
+            gCurrActNum = 0;
+        }
     }
 
     if (((index ^ gLevelSelectHoldKeyIndex) & index) == 2) {
@@ -145,21 +171,17 @@ s32 intro_level_select(void) {
     if (gCurrLevelNum < LEVEL_MIN) gCurrLevelNum = LEVEL_MAX; // exceeded min. set to max.
     // Use file 4 and last act as a test
     gCurrSaveFileNum = 4;
-    gCurrActNum = 6;
 
-    print_text_centered(160, 80, "SELECT A LEVEL!");
-    print_text_centered(160, 30, "PRESS START TO ENTER!");
+    print_text_centered(160, 84, "DEVELOPER TEST 96");
+    print_text_centered(160, 36, "PRESS START TO TEST!");
+    print_text_centered(140, 16, "CURRENT ACT");
+
     print_text_fmt_int(40, 60, "%2d", gCurrLevelNum);
+    print_text_fmt_int(200, 16, "%2d", gCurrActNum);
     print_text(80, 60, sLevelSelectStageNames[gCurrLevelNum - 1]); // print stage name
 
-    // start being pressed signals the stage to be started. that is, unless...
+    // start being pressed signals the stage to be started.
     if (gPlayer1Controller->buttonPressed & (START_BUTTON | A_BUTTON)) {
-        // ... the level select quit combo is being pressed, which uses START. If this
-        // is the case, quit the menu instead.
-        if (gPlayer1Controller->buttonDown == (Z_TRIG | START_BUTTON | L_CBUTTONS)) { // quit level select
-            gDebugLevelSelect = FALSE;
-            return LEVEL_RESTART_GAME;
-        }
         play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
         return gCurrLevelNum;
     }
@@ -246,7 +268,7 @@ s32 intro_game_over(void) {
  * Plays the casual "It's a me mario" when the game stars.
  */
 s32 intro_play_its_a_me_mario(void) {
-    play_sound(SOUND_MENU_COIN_ITS_A_ME_MARIO, gGlobalSoundSource);
+    play_sound(SOUND_GENERAL_COIN, gGlobalSoundSource);
     return LEVEL_NONE + 1;
 }
 

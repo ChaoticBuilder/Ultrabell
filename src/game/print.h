@@ -22,12 +22,13 @@ enum PrintfGlyphs {
     GLYPH_RED_COIN        = 50,
     GLYPH_SILVER_COIN     = 51,
     GLYPH_MARIO_HEAD      = 52,
-    GLYPH_STAR            = 53,
-    GLYPH_PERIOD          = 54,
-    GLYPH_BETA_KEY        = 55,
-    GLYPH_APOSTROPHE      = 56,
-    GLYPH_DOUBLE_QUOTE    = 57,
-    GLYPH_UMLAUT          = 58,
+    GLYPH_LUIGI_HEAD      = 53,
+    GLYPH_STAR            = 54,
+    GLYPH_PERIOD          = 55,
+    GLYPH_BETA_KEY        = 56,
+    GLYPH_APOSTROPHE      = 57,
+    GLYPH_DOUBLE_QUOTE    = 58,
+    GLYPH_UMLAUT          = 59,
 };
 
 void print_text_fmt_int(s32 x, s32 y, const char *str, s32 n);

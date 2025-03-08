@@ -344,6 +344,10 @@ s32 char_to_glyph_index(char c) {
         return GLYPH_MARIO_HEAD; // Imagine I drew Mario's head
     }
 
+    if (c == ';') {
+        return GLYPH_LUIGI_HEAD; // Imagine L being real
+    }
+
     if (c == '^') {
         return GLYPH_STAR; // star
     }

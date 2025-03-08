@@ -104,17 +104,17 @@ Gfx *geo_draw_mario_head_goddard(s32 callContext, struct GraphNode *node, UNUSED
 #endif
 
 static void toad_message_faded(void) {
-    if (o->oDistanceToMario > 700.0f) {
+    if (o->oDistanceToMario > 200.0f) {
         o->oToadMessageRecentlyTalked = FALSE;
     }
-    if (!o->oToadMessageRecentlyTalked && o->oDistanceToMario < 600.0f) {
-        o->oToadMessageState = TOAD_MESSAGE_OPACIFYING;
+    if (!o->oToadMessageRecentlyTalked && o->oDistanceToMario < 200.0f) {
+        o->oToadMessageState = TOAD_MESSAGE_OPAQUE;
     }
 }
 
 static void toad_message_opaque(void) {
-    if (o->oDistanceToMario > 700.0f) {
-        o->oToadMessageState = TOAD_MESSAGE_FADING;
+    if (o->oDistanceToMario > 200.0f) {
+        o->oToadMessageState = TOAD_MESSAGE_FADED;
     } else if (!o->oToadMessageRecentlyTalked) {
         o->oInteractionSubtype = INT_SUBTYPE_NPC;
         if (o->oInteractStatus & INT_STATUS_INTERACTED) {
@@ -127,9 +127,9 @@ static void toad_message_opaque(void) {
 
 static void toad_message_talking(void) {
     if (cur_obj_update_dialog_with_cutscene(MARIO_DIALOG_LOOK_DOWN,
-        DIALOG_FLAG_TURN_TO_MARIO, CUTSCENE_DIALOG, o->oToadMessageDialogId)) {
+        DIALOG_FLAG_TEXT_DEFAULT, CUTSCENE_DIALOG, o->oToadMessageDialogId)) {
         o->oToadMessageRecentlyTalked = TRUE;
-        o->oToadMessageState = TOAD_MESSAGE_FADING;
+        o->oToadMessageState = TOAD_MESSAGE_FADED;
         switch (o->oToadMessageDialogId) {
             case TOAD_STAR_1_DIALOG:
                 o->oToadMessageDialogId = TOAD_STAR_1_DIALOG_AFTER;
@@ -147,6 +147,7 @@ static void toad_message_talking(void) {
     }
 }
 
+/*
 static void toad_message_opacifying(void) {
     if ((o->oOpacity += 6) == 255) {
         o->oToadMessageState = TOAD_MESSAGE_OPAQUE;
@@ -158,6 +159,7 @@ static void toad_message_fading(void) {
         o->oToadMessageState = TOAD_MESSAGE_FADED;
     }
 }
+*/
 
 void bhv_toad_message_loop(void) {
     if (o->header.gfx.node.flags & GRAPH_RENDER_ACTIVE) {
@@ -169,12 +171,14 @@ void bhv_toad_message_loop(void) {
             case TOAD_MESSAGE_OPAQUE:
                 toad_message_opaque();
                 break;
+            /*
             case TOAD_MESSAGE_OPACIFYING:
                 toad_message_opacifying();
                 break;
             case TOAD_MESSAGE_FADING:
                 toad_message_fading();
                 break;
+            */
             case TOAD_MESSAGE_TALKING:
                 toad_message_talking();
                 break;
@@ -216,7 +220,7 @@ void bhv_toad_message_init(void) {
         o->oToadMessageDialogId = dialogId;
         o->oToadMessageRecentlyTalked = FALSE;
         o->oToadMessageState = TOAD_MESSAGE_FADED;
-        o->oOpacity = 81;
+        o->oOpacity = 255;
     } else {
         obj_mark_for_deletion(o);
     }
@@ -294,23 +298,6 @@ void bhv_unlock_door_star_loop(void) {
             o->header.gfx.cameraToObject); // Play a sound every time the star spins once
     }
 }
-
-/*
-Gfx *geo_switch_mario_character(s32 callContext, UNUSED struct GraphNode *node, UNUSED Mat4 *mtx) {
-    if (callContext == GEO_CONTEXT_RENDER) {
-        if (gLuigiToggle == TRUE) {
-            // TODO: ADD LUIGI SWITCHING CODE HERE
-            gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LUIGI];
-        } else {
-            // AND THEN SWITCH BACK TO MARIO HERE
-            // also tbh if I'm being honest, this feature will probably not be implemented for a long time
-            // I suck at coding -w-
-            gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_MARIO];
-        }
-    }
-    return NULL;
-}
-*/
 
 /**
  * Generate a display list that sets the correct blend mode and color for mirror Mario.

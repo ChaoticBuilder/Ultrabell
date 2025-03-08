@@ -634,10 +634,8 @@ s16 find_floor_slope(struct MarioState *m, s16 yawOffset) {
     }
 */
 #else
-    forwardFloorY  = find_floor(m->pos[0] + x, m->pos[1] + 100.0f, m->pos[2] + z, &floor);
-    if (floor == NULL)  forwardFloorY = m->floorHeight; // handle OOB slopes
-    backwardFloorY = find_floor(m->pos[0] - x, m->pos[1] + 100.0f, m->pos[2] - z, &floor);
-    if (floor == NULL) backwardFloorY = m->floorHeight; // handle OOB slopes
+    forwardFloorY  = get_surface_height_at_location(m->pos[0] + x, m->pos[2] + z, floor);
+    backwardFloorY = get_surface_height_at_location(m->pos[0] - x, m->pos[2] - z, floor);
 #endif
 
     forwardYDelta = forwardFloorY - m->pos[1];
@@ -729,7 +727,7 @@ void set_mario_y_vel_based_on_fspeed(struct MarioState *m, f32 initialVelY, f32 
     // It was likely trampoline related based on code location.
     m->vel[1] = initialVelY + get_additive_y_vel_for_jumps() + m->forwardVel * multiplier;
 
-    if (m->quicksandDepth > 1.0f) {
+    if (m->squishTimer != 0 || m->quicksandDepth > 1.0f) {
         m->vel[1] *= 0.5f;
     }
 }
@@ -825,7 +823,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_LONG_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
             set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
-            m->marioObj->oMarioLongJumpIsSlow = m->forwardVel > 16.0f ? FALSE : TRUE;
+            // m->marioObj->oMarioLongJumpIsSlow = m->forwardVel > 16.0f ? FALSE : TRUE;
 
             //! (BLJ's) This properly handles long jumps from getting forward speed with
             //  too much velocity, but misses backwards longs allowing high negative speeds.
@@ -1200,12 +1198,13 @@ void debug_print_speed_action_normal(struct MarioState *m) {
         steepness = sqrtf(sqr(m->floor->normal.x) + sqr(m->floor->normal.z));
         floor_nY = m->floor->normal.y;
 
-        print_text_fmt_int(210, 88, "ANG %d", (atan2s(floor_nY, steepness) * 180.0f) / 32768.0f);
+        print_text_fmt_int(180, 102, "ANG %d", (atan2s(floor_nY, steepness) * 180.0f) / 32768.0f);
 
-        print_text_fmt_int(210, 72, "SPD %d", m->forwardVel);
+        print_text_fmt_int(180, 86, "SPD %d", m->forwardVel);
+        print_text_fmt_int(180, 70, "VSP %d", m->vel[1]);
 
         // STA short for "status," the official action name via SMS map.
-        print_text_fmt_int(210, 56, "STA %x", (m->action & ACT_ID_MASK));
+        print_text_fmt_int(180, 54, "STA %x", (m->action & ACT_ID_MASK));
     }
 }
 #endif
@@ -1407,7 +1406,9 @@ void set_submerged_cam_preset_and_spawn_bubbles(struct MarioState *m) {
             // of the water with his head out, spawn bubbles.
             if (!(m->action & ACT_FLAG_INTANGIBLE)) {
                 if ((m->pos[1] < (f32)(m->waterLevel - 160)) || (m->faceAngle[0] < -0x800)) {
-                    m->particleFlags |= PARTICLE_BUBBLE;
+                    if (gGlobalTimer % 15 == 0) {
+                        m->particleFlags |= PARTICLE_BUBBLE;
+                    }
                 }
             }
         }
@@ -1895,5 +1896,4 @@ void init_mario_from_save_file(void) {
 
     gHudDisplay.coins = 0;
     gHudDisplay.wedges = 8;
-    create_dialog_box(DIALOG_033);
 }

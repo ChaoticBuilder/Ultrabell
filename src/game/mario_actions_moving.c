@@ -73,15 +73,19 @@ void align_with_floor(struct MarioState *m) {
     if ((floor != NULL) && (m->pos[1] < (m->floorHeight + 80.0f))) {
         m->pos[1] = m->floorHeight;
 #ifdef FAST_FLOOR_ALIGN
-        if (absf(m->forwardVel) > FAST_FLOOR_ALIGN) {
+        // if (absf(m->forwardVel) > FAST_FLOOR_ALIGN) {
             Vec3f floorNormal;
             surface_normal_to_vec3f(floorNormal, floor);
             mtxf_align_terrain_normal(sFloorAlignMatrix[m->playerID], floorNormal, m->pos, m->faceAngle[1]);
+        /*
         } else {
             mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerID], m->pos, m->faceAngle[1], 40.0f);
         }
+        */
 #else
-        mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerID], m->pos, m->faceAngle[1], 40.0f);
+    Vec3f floorNormal;
+    surface_normal_to_vec3f(floorNormal, floor);
+    mtxf_align_terrain_normal(sFloorAlignMatrix[m->playerID], floorNormal, m->pos, m->faceAngle[1]);
 #endif
         m->marioObj->header.gfx.throwMatrix = &sFloorAlignMatrix[m->playerID];
     }
@@ -492,7 +496,7 @@ s32 analog_stick_held_back(struct MarioState *m) {
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
-        if (m->forwardVel > 12.0f && (!(m->input & INPUT_A_DOWN))) {
+        if (m->forwardVel > 16.0f && (!(m->input & INPUT_A_DOWN))) {
             return set_mario_action(m, ACT_DIVE, 1);
         }
 
@@ -535,13 +539,13 @@ void anim_and_audio_for_walk(struct MarioState *m) {
             switch (m->actionTimer) {
                 // I recreated beta walking to the best of my ability using a single gif on tcrf.net
                 case WALK_SPEED_WALKING:
-                    if (intendedSpeed > 10.0f) {
+                    if (intendedSpeed > 12.0f) {
                         m->actionTimer = WALK_SPEED_RUNNING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
                         animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);
-                        set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, animSpeed);
-                        play_step_sound(m, 10, 49);
+                        set_mario_anim_with_accel(m, MARIO_ANIM_START_TIPTOE, animSpeed);
+                        play_step_sound(m, 7, 22);
                         targetPitch = tilt_body_running(m);
                         if (is_anim_past_frame(m, 30)) {
                             m->actionTimer = WALK_SPEED_TIPTOE;
@@ -568,7 +572,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                     break;
 
                 case WALK_SPEED_RUNNING:
-                    if (intendedSpeed < 8.0f) {
+                    if (intendedSpeed < 10.0f) {
                         m->actionTimer = WALK_SPEED_WALKING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
@@ -678,7 +682,9 @@ void push_or_sidle_wall(struct MarioState *m, Vec3f startPos) {
 
         if (m->marioObj->header.gfx.animInfo.animFrame < 20) {
             play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
-            m->particleFlags |= PARTICLE_DUST;
+            if (gGlobalTimer % 2 == 0) {
+                m->particleFlags |= PARTICLE_DUST;
+            }
         }
 
         if (m->forwardVel > 6.0f) {
@@ -802,7 +808,9 @@ s32 act_walking(struct MarioState *m) {
         case GROUND_STEP_NONE:
             anim_and_audio_for_walk(m);
             if (m->intendedMag - m->forwardVel > 16.0f) {
-                m->particleFlags |= PARTICLE_DUST;
+                if (gGlobalTimer % 6 == 0) {
+                    m->particleFlags |= PARTICLE_DUST;
+                }
             }
             break;
 
@@ -845,7 +853,9 @@ s32 act_move_punching(struct MarioState *m) {
             break;
 
         case GROUND_STEP_NONE:
-            m->particleFlags |= PARTICLE_DUST;
+            if (gGlobalTimer % 12 == 0) {
+                m->particleFlags |= PARTICLE_DUST;
+            }
             break;
     }
 
@@ -900,7 +910,9 @@ s32 act_hold_walking(struct MarioState *m) {
     anim_and_audio_for_hold_walk(m);
 
     if (0.4f * m->intendedMag - m->forwardVel > 10.0f) {
-        m->particleFlags |= PARTICLE_DUST;
+        if (gGlobalTimer % 6 == 0) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
     }
 
     return FALSE;
@@ -970,7 +982,9 @@ s32 act_turning_around(struct MarioState *m) {
             break;
 
         case GROUND_STEP_NONE:
-            m->particleFlags |= PARTICLE_DUST;
+            if (gGlobalTimer % 3 == 0) {
+                m->particleFlags |= PARTICLE_DUST;
+            }
             break;
     }
 
@@ -1050,7 +1064,9 @@ s32 act_braking(struct MarioState *m) {
             break;
 
         case GROUND_STEP_NONE:
-            m->particleFlags |= PARTICLE_DUST;
+            if (gGlobalTimer % 3 == 0) {
+                m->particleFlags |= PARTICLE_DUST;
+            }
             break;
 
         case GROUND_STEP_HIT_WALL:
@@ -1111,7 +1127,9 @@ s32 act_decelerating(struct MarioState *m) {
         set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
         play_sound(SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend, m->marioObj->header.gfx.cameraToObject);
         adjust_sound_for_speed(m);
-        m->particleFlags |= PARTICLE_DUST;
+        if (gGlobalTimer % 3 == 0) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
     } else {
         // (Speed Crash) Crashes if speed exceeds 2^17.
         s32 animSpeed = (s32)(m->forwardVel / 4.0f * 0x10000);
@@ -1177,7 +1195,9 @@ s32 act_hold_decelerating(struct MarioState *m) {
         set_mario_animation(m, MARIO_ANIM_IDLE_WITH_LIGHT_OBJ);
         play_sound(SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend, m->marioObj->header.gfx.cameraToObject);
         adjust_sound_for_speed(m);
-        m->particleFlags |= PARTICLE_DUST;
+        if (gGlobalTimer % 3 == 0) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
     } else {
         //! (Speed Crash) This crashes if Mario has more speed than 2^15 speed.
         s32 animSpeed = (s32)(m->forwardVel * 0x10000);
@@ -1316,7 +1336,7 @@ s32 act_burning_ground(struct MarioState *m) {
         m->forwardVel = 48.0f;
     }
 
-    m->forwardVel = approach_f32(m->forwardVel, 48.0f, 48.0f, 48.0f);
+    m->forwardVel = approach_f32(m->forwardVel, 48.0f, 6.0f, 6.0f);
 
     if (m->input & INPUT_NONZERO_ANALOG) {
         m->faceAngle[1] = approach_angle(m->faceAngle[1], m->intendedYaw, 0x600);
@@ -1331,6 +1351,7 @@ s32 act_burning_ground(struct MarioState *m) {
     set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, (s32)(m->forwardVel / 2.0f * 0x10000));
     play_step_sound(m, 9, 45);
 
+    set_camera_shake_from_hit(SHAKE_BURN);
     m->particleFlags |= PARTICLE_FIRE;
     play_sound(SOUND_MOVING_LAVA_BURN, m->marioObj->header.gfx.cameraToObject);
 
@@ -1375,7 +1396,9 @@ void common_slide_action(struct MarioState *m, u32 endAction, u32 airAction, s32
         case GROUND_STEP_NONE:
             set_mario_animation(m, animation);
             align_with_floor(m);
-            m->particleFlags |= PARTICLE_DUST;
+            if (gGlobalTimer % 2 == 0) {
+                m->particleFlags |= PARTICLE_DUST;
+            }
             break;
 
         case GROUND_STEP_HIT_WALL:
@@ -1515,7 +1538,9 @@ s32 act_slide_kick_slide(struct MarioState *m) {
     }
 
     play_sound(SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend, m->marioObj->header.gfx.cameraToObject);
-    m->particleFlags |= PARTICLE_DUST;
+    if (gGlobalTimer % 2 == 0) {
+        m->particleFlags |= PARTICLE_DUST;
+    }
     return FALSE;
 }
 
@@ -1746,7 +1771,9 @@ u32 common_landing_action(struct MarioState *m, s16 animation, u32 airAction) {
     }
 
     if (m->forwardVel > 16.0f) {
-        m->particleFlags |= PARTICLE_DUST;
+        if (gGlobalTimer % 2 == 0) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
     }
 
     set_mario_animation(m, animation);

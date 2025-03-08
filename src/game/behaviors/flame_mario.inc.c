@@ -39,7 +39,7 @@ void bhv_black_smoke_mario_loop(void) {
 void bhv_flame_mario_loop(void) {
     cur_obj_scale(2.0f);
 
-    if (o->oTimer & 1) {
+    if (o->oTimer % 4 == 0) {
         spawn_object(o, MODEL_BURN_SMOKE, bhvBlackSmokeMario);
     }
 

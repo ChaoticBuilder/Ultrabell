@@ -70,8 +70,8 @@ void king_bobomb_act_active(void) { // act 2
         }
 
         if (o->oKingBobombPlayerGrabEscapeCooldown == 0) {
-            o->oForwardVel = 10.0f;
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
+            o->oForwardVel = 8.0f;
+            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x320);
         } else {
             o->oForwardVel = 0.0f;
             o->oKingBobombPlayerGrabEscapeCooldown--;
@@ -143,7 +143,7 @@ void king_bobomb_act_activate(void) { // act 1
 
     cur_obj_init_animation_with_sound(KING_BOBOMB_ANIM_WALKING);
 
-    o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, o->oAngleToMario, 0x200);
+    o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, o->oAngleToMario, 0x100);
 
     if (o->oDistanceToMario < 2500.0f) {
         o->oAction = KING_BOBOMB_ACT_ACTIVE;
@@ -186,8 +186,9 @@ void king_bobomb_act_hit_ground(void) { // act 6
         }
     } else {
         cur_obj_init_animation_with_sound(KING_BOBOMB_ANIM_WALKING);
+        cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
 
-        if (cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x800)) {
+        if ((o->oMoveAngleYaw >= o->oAngleToMario - 0x3000) && (o->oMoveAngleYaw <= o->oAngleToMario + 0x3000)) {
             o->oAction = KING_BOBOMB_ACT_ACTIVE;
         }
     }

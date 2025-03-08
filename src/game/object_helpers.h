@@ -118,6 +118,8 @@ f32 cur_obj_dist_to_nearest_object_with_behavior(const BehaviorScript* behavior)
 struct Object *cur_obj_find_nearest_object_with_behavior(const BehaviorScript * behavior, f32 *dist);
 struct Object *find_unimportant_object(void);
 s32 count_unimportant_objects(void);
+struct Object *find_lowpriority_object(void);
+s32 count_lowpriority_objects(void);
 s32 count_objects_with_behavior(const BehaviorScript *behavior);
 struct Object *cur_obj_find_nearby_held_actor(const BehaviorScript *behavior, f32 maxDist);
 void cur_obj_change_action(s32 action);

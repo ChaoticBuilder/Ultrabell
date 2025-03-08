@@ -1681,6 +1681,55 @@ static void advance_cutscene_step(struct MarioState *m) {
     m->actionArg++;
 }
 
+static void beta_intro_wait_for_dialog(struct MarioState *m) {
+    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+
+    if (m->actionTimer++ == 0) {
+        m->statusForCamera->cameraEvent = CAM_EVENT_BETA_INTRO;
+    }
+
+    if (m->actionTimer == 60) {
+        create_dialog_box(33);
+        enable_time_stop();
+    } else if (m->actionTimer > 60) {
+        if (get_dialog_id() >= 0) {
+            m->actionTimer--;
+        } else {
+            disable_time_stop();
+            advance_cutscene_step(m);
+        }
+    }
+
+    stop_and_set_height_to_floor(m);
+}
+
+static void beta_intro_set_mario_to_idle(struct MarioState *m) {
+    if (gCamera->cutscene == CUTSCENE_NONE) {
+        gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
+        gObjCutsceneDone = TRUE;
+        set_mario_action(m, ACT_FIRST_PERSON, 0);
+    }
+
+    stop_and_set_height_to_floor(m);
+}
+
+enum {
+    BETA_INTRO_WAIT_FOR_DIALOG,
+    BETA_INTRO_SET_MARIO_TO_IDLE
+};
+
+static s32 act_beta_intro(struct MarioState *m) {
+    switch (m->actionArg) {
+        case BETA_INTRO_WAIT_FOR_DIALOG:
+            beta_intro_wait_for_dialog(m);
+            break;
+        case BETA_INTRO_SET_MARIO_TO_IDLE:
+            beta_intro_set_mario_to_idle(m);
+            break;
+    }
+    return FALSE;
+}
+
 static void intro_cutscene_hide_hud_and_mario(struct MarioState *m) {
     gHudDisplay.flags = HUD_DISPLAY_NONE;
     m->statusForCamera->cameraEvent = CAM_EVENT_START_INTRO;
@@ -2650,6 +2699,7 @@ s32 mario_execute_cutscene_action(struct MarioState *m) {
     switch (m->action) {
         case ACT_DISAPPEARED:                cancel = act_disappeared(m);                break;
         case ACT_INTRO_CUTSCENE:             cancel = act_intro_cutscene(m);             break;
+        case ACT_BETA_INTRO:                 cancel = act_beta_intro(m);                 break;
         case ACT_STAR_DANCE_EXIT:            cancel = act_star_dance(m);                 break;
         case ACT_STAR_DANCE_NO_EXIT:         cancel = act_star_dance(m);                 break;
         case ACT_STAR_DANCE_WATER:           cancel = act_star_dance_water(m);           break;

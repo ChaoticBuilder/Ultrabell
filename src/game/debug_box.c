@@ -129,7 +129,7 @@ extern Mat4 gMatStack[32]; // XXX: Hack
 /**
  * The debug boxes' default transparency
  */
-#define DBG_BOX_ALPHA     0x7F
+#define DBG_BOX_ALPHA     0xBF
 /**
  * The debug boxes' default color. sCurBoxColor is reset to this every frame.
  */
@@ -212,12 +212,12 @@ void iterate_surfaces_visual(s32 x, s32 z, Vtx *verts) {
         switch (i) {
             case 0: node = gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WALLS ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_GREEN ); break;
             case 1: node =  gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WALLS ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_GREEN ); break;
-            case 2: node = gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_FLOORS]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_BLUE  ); break;
-            case 3: node =  gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_FLOORS]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_BLUE  ); break;
+            case 2: node = gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_FLOORS]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_SKY  ); break;
+            case 3: node =  gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_FLOORS]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_SKY  ); break;
             case 4: node = gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_CEILS ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_RED   ); break;
             case 5: node =  gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_CEILS ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_RED   ); break;
-            case 6: node = gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WATER ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_YELLOW); break;
-            case 7: node =  gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WATER ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_YELLOW); break;
+            case 6: node = gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WATER ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_MAGENTA); break;
+            case 7: node =  gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WATER ]; colorRGB_copy(col, (ColorRGB)COLOR_RGB_MAGENTA); break;
         }
 
         while (node != NULL) {
@@ -241,7 +241,7 @@ void iterate_surfaces_visual(s32 x, s32 z, Vtx *verts) {
 
 void iterate_surfaces_envbox(Vtx *verts) {
     TerrainData *p = gEnvironmentRegions;
-    ColorRGB col = COLOR_RGB_YELLOW;
+    ColorRGB col = COLOR_RGB_MAGENTA;
     s32 i = 0;
 
     if (p != NULL) {

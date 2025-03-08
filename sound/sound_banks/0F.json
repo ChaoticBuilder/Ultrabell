@@ -25,6 +25,12 @@
             [1, 32700],
             [32700, 29430],
             "hang"
+        ],
+		"envelope4": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
         ]
     },
     "instruments": {
@@ -43,20 +49,26 @@
             "sound": "22_boys_choir"
         },
         "inst2": {
-            "release_rate": 90,
+            "release_rate": 45,
             "envelope": "envelope2",
             "sound": "28_sitar_1"
         },
         "inst3": {
-            "release_rate": 10,
+			"release_rate": 10,
             "envelope": "envelope3",
             "sound": "39_sitar_2"
+        },
+		"inst4": {
+            "release_rate": 10,
+            "envelope": "envelope3",
+            "sound": "28_sitar_1"
         }
     },
     "instrument_list": [
         "inst0",
         "inst1",
         "inst2",
-        "inst3"
+        "inst3",
+		"inst4"
     ]
 }

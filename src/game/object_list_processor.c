@@ -174,6 +174,7 @@ s8 sObjectListUpdateOrder[] = { OBJ_LIST_SPAWNER,
                                 OBJ_LIST_DESTRUCTIVE,
                                 OBJ_LIST_LEVEL,
                                 OBJ_LIST_DEFAULT,
+                                OBJ_LIST_LOWPRIO,
                                 OBJ_LIST_UNIMPORTANT,
                                 -1 };
 
@@ -574,6 +575,14 @@ void update_non_terrain_objects(void) {
     }
 }
 
+void count_unimportant_lowprio_objects(void) {
+    s32 unimportantCount = count_unimportant_objects();
+    s32 lowPrioCount = count_lowpriority_objects();
+
+    gUnimportantCounter = unimportantCount;
+    gLowPrioCounter = lowPrioCount;
+}
+
 /**
  * Unload deactivated objects in any object list.
  */
@@ -661,6 +670,8 @@ void update_objects(UNUSED s32 unused) {
 
     // Update all other objects that haven't been updated yet
     update_non_terrain_objects();
+
+    count_unimportant_lowprio_objects();
     
     // Take a snapshot of the current collision processing time.
     UNUSED u32 firstPoint = profiler_get_delta(PROFILER_DELTA_COLLISION); 

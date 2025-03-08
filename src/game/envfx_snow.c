@@ -65,18 +65,18 @@ s32 envfx_init_snow(s32 mode) {
             return FALSE;
 
         case ENVFX_SNOW_NORMAL:
-            gSnowParticleMaxCount = 140;
-            gSnowParticleCount = 5;
+            gSnowParticleMaxCount = 60;
+            gSnowParticleCount = 10;
             break;
 
         case ENVFX_SNOW_WATER:
-            gSnowParticleMaxCount = 30;
-            gSnowParticleCount = 30;
+            gSnowParticleMaxCount = 60;
+            gSnowParticleCount = 60;
             break;
 
         case ENVFX_SNOW_BLIZZARD:
-            gSnowParticleMaxCount = 140;
-            gSnowParticleCount = 140;
+            gSnowParticleMaxCount = 120;
+            gSnowParticleCount = 120;
             break;
     }
 
@@ -105,8 +105,8 @@ void envfx_update_snowflake_count(s32 mode, Vec3s marioPos) {
     switch (mode) {
         case ENVFX_SNOW_NORMAL:
             if (gSnowParticleMaxCount > gSnowParticleCount) {
-                if (!(globalTimer & 63)) {
-                    gSnowParticleCount += 5;
+                if (globalTimer % 10 == 0) {
+                    gSnowParticleCount += 1;
                 }
             }
             break;

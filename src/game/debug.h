@@ -3,6 +3,13 @@
 
 #include <PR/ultratypes.h>
 
+enum DebugInfoFlags {
+    DEBUG_INFO_NOFLAGS      = (0 << 0),
+    DEBUG_INFO_FLAG_DPRINT  = (1 << 0),
+    DEBUG_INFO_FLAG_LSELECT = (1 << 1),
+    DEBUG_INFO_FLAG_ALL     = 0xFF
+};
+
 enum DebugPage {
     DEBUG_PAGE_OBJECTINFO,       // 0: objectinfo
     DEBUG_PAGE_CHECKSURFACEINFO, // 1: checkinfo/surfaceinfo

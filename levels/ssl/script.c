@@ -108,7 +108,7 @@ const LevelScript level_ssl_entry[] = {
         JUMP_LINK(script_func_local_3),
         TERRAIN(/*terrainData*/ ssl_seg7_area_1_collision),
         MACRO_OBJECTS(/*objList*/ ssl_seg7_area_1_macro_objs),
-        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0000, /*seq*/ SEQ_LEVEL_HOT),
+        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0000, /*seq*/ SEQ_CUSTOM_DESERT),
         TERRAIN_TYPE(/*terrainType*/ TERRAIN_SAND),
     END_AREA(),
 
@@ -128,7 +128,7 @@ const LevelScript level_ssl_entry[] = {
         INSTANT_WARP(/*index*/ 3, /*destArea*/ 3, /*displace*/ 0, 0, 0),
         TERRAIN(/*terrainData*/ ssl_seg7_area_2_collision),
         MACRO_OBJECTS(/*objList*/ ssl_seg7_area_2_macro_objs),
-        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0004, /*seq*/ SEQ_LEVEL_UNDERGROUND),
+        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0004, /*seq*/ SEQ_CUSTOM_DESERT),
         TERRAIN_TYPE(/*terrainType*/ TERRAIN_STONE),
     END_AREA(),
 

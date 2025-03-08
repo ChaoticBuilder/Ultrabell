@@ -39,7 +39,7 @@ void bhv_whirlpool_loop(void) {
         o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
 
         // not sure if actually an array
-        gEnvFxBubbleConfig[ENVFX_STATE_PARTICLECOUNT] = 60;
+        gEnvFxBubbleConfig[ENVFX_STATE_PARTICLECOUNT] = 25;
         gEnvFxBubbleConfig[ENVFX_STATE_SRC_X] = o->oPosX;
         gEnvFxBubbleConfig[ENVFX_STATE_SRC_Z] = o->oPosZ;
         gEnvFxBubbleConfig[ENVFX_STATE_DEST_X] = o->oPosX;
@@ -64,7 +64,7 @@ void bhv_whirlpool_loop(void) {
 
 void bhv_jet_stream_loop(void) {
     if (o->oDistanceToMario < 5000.0f) {
-        gEnvFxBubbleConfig[ENVFX_STATE_PARTICLECOUNT] = 60;
+        gEnvFxBubbleConfig[ENVFX_STATE_PARTICLECOUNT] = 35;
         gEnvFxBubbleConfig[ENVFX_STATE_SRC_X] = o->oPosX;
         gEnvFxBubbleConfig[ENVFX_STATE_SRC_Y] = o->oPosY;
         gEnvFxBubbleConfig[ENVFX_STATE_SRC_Z] = o->oPosZ;

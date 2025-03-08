@@ -596,9 +596,7 @@ Gfx *geo_movtex_draw_water_regions(s32 callContext, struct GraphNode *node, UNUS
         asGenerated = (struct GraphNodeGenerated *) node;
         if (asGenerated->parameter == JRB_MOVTEX_INITIAL_MIST) {
             if (gLakituState.goalPos[1] < 1024.0f) { // if camera under water
-                return NULL;
-            }
-            if (gCurrActNum != 1) {
+                // !! shows up a few frames before the camera actually surfaces. should this be the actual pos instead?
                 return NULL;
             }
         } else if (asGenerated->parameter == HMC_MOVTEX_TOXIC_MAZE_MIST) {

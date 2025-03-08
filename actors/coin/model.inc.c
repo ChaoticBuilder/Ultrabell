@@ -462,19 +462,19 @@ ALIGNED8 static const Texture coin_seg3_texture_tilt_left[] = {
 };
 #else
 ALIGNED8 static const Texture coin_seg3_texture_front[] = {
-#include "actors/coin/coin_front.ia16.inc.c"
+#include "actors/coin/coin_front.custom.ia16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_seg3_texture_tilt_right[] = {
-#include "actors/coin/coin_tilt_right.ia16.inc.c"
+#include "actors/coin/coin_tilt_right.custom.ia16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_seg3_texture_side[] = {
-#include "actors/coin/coin_side.ia16.inc.c"
+#include "actors/coin/coin_side.custom.ia16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_seg3_texture_tilt_left[] = {
-#include "actors/coin/coin_tilt_left.ia16.inc.c"
+#include "actors/coin/coin_tilt_left.custom.ia16.inc.c"
 };
 #endif
 

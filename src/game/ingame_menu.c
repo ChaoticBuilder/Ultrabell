@@ -26,6 +26,8 @@
 #include "config.h"
 #include "puppycam2.h"
 #include "main.h"
+#include "object_list_processor.h"
+#include "debug.h"
 
 #ifdef VERSION_EU
 #undef LANGUAGE_FUNCTION
@@ -1579,6 +1581,16 @@ void luigi_launcher_9000(void) {
     }
 }
 
+void debug_text(void) {
+    if (gShowDebugText == FALSE && gPlayer1Controller->buttonPressed & Z_TRIG) {
+        gShowDebugText = TRUE;
+        gDebugInfoFlags = DEBUG_INFO_FLAG_ALL;
+    } else if (gShowDebugText == TRUE && gPlayer1Controller->buttonPressed & Z_TRIG) {
+        gShowDebugText = FALSE;
+        gDebugInfoFlags = DEBUG_INFO_NOFLAGS;
+    }
+}
+
 #if defined(VERSION_JP) || defined(VERSION_SH)
     #define CRS_NUM_X1 93
 #elif defined(VERSION_US)
@@ -1952,6 +1964,7 @@ s32 render_pause_courses_and_castle(void) {
         render_widescreen_setting();
 #endif
         luigi_launcher_9000();
+        debug_text();
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
     }

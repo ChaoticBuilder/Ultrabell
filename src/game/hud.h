@@ -16,6 +16,9 @@
 #define HUD_STARS_X 84 // This starts counting from the right edge
 #define HUD_CAMERA_X 54 // This starts counting from the right edge
 
+extern s32 gHudShakeX;
+extern s32 gHudShakeY;
+
 enum PowerMeterAnimation {
     POWER_METER_HIDDEN,
     POWER_METER_EMPHASIZED,

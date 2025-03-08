@@ -62,6 +62,10 @@ u8 sTextBaseAlpha = 0;
 // sCursorPos[0]: X | sCursorPos[1]: Y
 f32 sCursorPos[] = {0, 0};
 
+// 2D position of the cursor on the screen.
+// sCursorPos[0]: X | sCursorPos[1]: Y
+f32 sCursorVel[] = {0, 0};
+
 // Determines which graphic to use for the cursor.
 s16 sCursorClickingTimer = 0;
 
@@ -1205,32 +1209,52 @@ void handle_cursor_button_input(void) {
 void handle_controller_cursor_input(void) {
     s16 rawStickX = gPlayer1Controller->rawStickX;
     s16 rawStickY = gPlayer1Controller->rawStickY;
+    // Nintendo is dumb, I would've used intendedMag, but apparently, that's for the MarioObject only, so I have to CODE IN ANOTHER VELOCITY SYSTEM! :D
 
     // Handle deadzone
-    if (rawStickY > -1 && rawStickY < 1) {
-        rawStickY = 0;
-    }
-    if (rawStickX > -1 && rawStickX < 1) {
+    if (rawStickX > -4 && rawStickX < 4) {
         rawStickX = 0;
+        sCursorVel[0] = approach_f32(sCursorVel[0], 0, ABS(sCursorVel[0] / 1.25), ABS(sCursorVel[0] / 1.25));
+    }
+    if (rawStickY > -4 && rawStickY < 4) {
+        rawStickY = 0;
+        sCursorVel[1] = approach_f32(sCursorVel[1], 0, ABS(sCursorVel[1] / 1.25), ABS(sCursorVel[1] / 1.25));
+    }
+    if ((rawStickX > 0 && sCursorVel[0] < 0) || (rawStickX < 0 && sCursorVel[0] > 0)) {
+        sCursorVel[0] = approach_f32(sCursorVel[0], CLAMP(rawStickX, -12, 12), ABS(rawStickX / 18 + 0.25), ABS(rawStickX / 16 + 0.25));
+    }
+    if ((rawStickY > 0 && sCursorVel[1] < 0) || (rawStickY < 0 && sCursorVel[1] > 0)) {
+        sCursorVel[1] = approach_f32(sCursorVel[1], CLAMP(rawStickY, -10, 10), ABS(rawStickY / 18 + 0.25), ABS(rawStickY / 16 + 0.25));
     }
 
     // Move cursor
-    sCursorPos[0] += rawStickX / 8;
-    sCursorPos[1] += rawStickY / 8;
+    sCursorVel[0] = approach_f32(sCursorVel[0], CLAMP(rawStickX, -12, 12), ABS(rawStickX / 24 + 0.25), ABS(rawStickX / 24 + 0.25));
+    sCursorVel[1] = approach_f32(sCursorVel[1], CLAMP(rawStickY, -11, 11), ABS(rawStickY / 24 + 0.25), ABS(rawStickY / 24 + 0.25));
+    sCursorPos[0] += sCursorVel[0];
+    sCursorPos[1] += sCursorVel[1];
+
+    /*
+    print_text_fmt_int(200, 96, "PLRX %d", rawStickX);
+    print_text_fmt_int(200, 80, "PLRY %d", rawStickY);
+    print_text_fmt_int(200, 64, "VELX %d", sCursorVel[0]);
+    print_text_fmt_int(200, 48, "VELY %d", sCursorVel[1]);
+    print_text_fmt_int(200, 32, "POSX %d", sCursorPos[0]);
+    print_text_fmt_int(200, 16, "POSY %d", sCursorPos[1]);
+    */
 
     // Stop cursor from going offscreen
-    if (sCursorPos[0] > 132.0f) {
-        sCursorPos[0] = 132.0f;
+    if (sCursorPos[0] > 129.0f) {
+        sCursorPos[0] = 129.0f;
     }
-    if (sCursorPos[0] < -132.0f) {
-        sCursorPos[0] = -132.0f;
+    if (sCursorPos[0] < -151.0f) {
+        sCursorPos[0] = -151.0f;
     }
 
-    if (sCursorPos[1] > 90.0f) {
-        sCursorPos[1] = 90.0f;
+    if (sCursorPos[1] > 116.0f) {
+        sCursorPos[1] = 116.0f;
     }
-    if (sCursorPos[1] < -90.0f) {
-        sCursorPos[1] = -90.0f;
+    if (sCursorPos[1] < -95.0f) {
+        sCursorPos[1] = -95.0f;
     }
 
     if (sCursorClickingTimer == 0) {

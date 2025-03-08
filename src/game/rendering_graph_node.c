@@ -1067,10 +1067,10 @@ void geo_process_object(struct Object *node) {
         if (isInvisible && noThrowMatrix) {
             mtxf_translate(gMatStack[gMatStackIndex + 1], node->header.gfx.pos);
         }
-        else{ /* also kaze
+        else{
             if (!noThrowMatrix) {
                 mtxf_scale_vec3f(gMatStack[gMatStackIndex + 1], *node->header.gfx.throwMatrix, node->header.gfx.scale);
-            } else */ if (node->header.gfx.node.flags & GRAPH_RENDER_BILLBOARD) {
+            } else if (node->header.gfx.node.flags & GRAPH_RENDER_BILLBOARD) {
                 mtxf_billboard(gMatStack[gMatStackIndex + 1], gMatStack[gMatStackIndex],
                             node->header.gfx.pos, node->header.gfx.scale, gCurGraphNodeCamera->roll);
             } else {

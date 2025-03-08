@@ -12,6 +12,7 @@
 #include "object_list_processor.h"
 #include "spawn_object.h"
 #include "types.h"
+#include "debug.h"
 
 /**
  * Attempt to allocate an object from freeList (singly linked) and append it
@@ -120,11 +121,20 @@ struct Object *allocate_object(struct ObjectNode *objList) {
     if (obj == NULL) {
         // Look for an unimportant object to kick out.
         struct Object *unimportantObj = find_unimportant_object();
+        struct Object *lowprioObj = find_lowpriority_object();
 
-        // If no unimportant object exists, then the object pool is exhausted.
+        // that's a lot of objects! There aren't any unimportant ones, so kick out a low priority object
         if (unimportantObj == NULL) {
-            // We've met with a terrible fate.
-            while (TRUE) {
+            // if there are no unimportant or low priority objects, then the object pool is exhausted.
+            if (lowprioObj == NULL) {
+                // Ripperoni in pepperonis Mario is now gonnaroni
+                error("Tried to load in >240 objects, Mario is now dead.");
+            } else {
+                unload_object(lowprioObj);
+                obj = try_allocate_object(objList, &gFreeObjectList);
+                if (gCurrentObject == obj) {
+                    error("A fatal error has occured whilst attempting to unload an object!");
+                }
             }
         } else {
             // If an unimportant object does exist, unload it and take its slot.
