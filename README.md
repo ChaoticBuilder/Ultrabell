@@ -16,6 +16,7 @@ CREDITS:
 spongelover6996 on Discord for the Time Attack idea,
 
 xbciom also on Discord for future level ideas and music, (yeah amazing fork, the first 2 credits listed aren't even implemented yet lmao)
+also xbc thought of the cool fov visualizer in intense areas peak
 
 Kaze Emanuar, for making amazing videos on SM64 optimizations,
 

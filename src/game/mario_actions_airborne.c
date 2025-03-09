@@ -101,14 +101,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 
     return FALSE;
 }
-/*
-s32 check_kick_or_dive_in_air(struct MarioState *m) {
-    if (m->input & INPUT_B_PRESSED) {
-            set_mario_action(m, ACT_JUMP_KICK, 0);
-    }
-    return FALSE;
-}
-*/
+
 #ifdef NO_GETTING_BURIED
 s32 should_get_stuck_in_ground(UNUSED struct MarioState *m) {
     return FALSE;
@@ -386,16 +379,16 @@ void update_flying(struct MarioState *m) {
         m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) + 0.25f;
     }
     // m->forwardVel = 48.0f; // DEBUG
-    /*
+    /* DEBUG
     if (m->forwardVel < 96) {
         m->forwardVel = 96.0f; // DEBUG
     }
     */
 
-    // nintendo's code sucks like wtf is this shit
-    // why on earth would it be taking the yaw accel into account when doing the flying physics
+    /* OLD CODE:
     // m->forwardVel -= 2.0f * ((f32) m->faceAngle[0] / 0x4000) + 0.1f;
     // m->forwardVel -= 0.5f * (1.0f - coss(m->angleVel[1]));
+    */
 
     if (spin == FALSE) {
     // "you can't clamp mario's roll whilst also having the forwardvel spin" - sm64

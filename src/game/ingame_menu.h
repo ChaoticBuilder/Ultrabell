@@ -4,6 +4,7 @@
 #include <PR/ultratypes.h>
 
 extern s32 gLuigiToggle;
+extern s32 sFovSlider;
 
 #define ASCII_TO_DIALOG(asc)                                       \
     (((asc) >= '0' && (asc) <= '9') ? ((asc) - '0') :              \
@@ -51,7 +52,7 @@ enum HUDFlashModes {
     HUD_FLASH_KEYS
 };
 
-extern s8 gHudFlash;
+// extern s8 gHudFlash;
 
 extern s8 gDialogCourseActNum;
 extern s16 gInGameLanguage;

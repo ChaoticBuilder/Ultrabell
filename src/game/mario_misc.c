@@ -147,7 +147,7 @@ static void toad_message_talking(void) {
     }
 }
 
-/*
+/* DISABLED FEATURE:
 static void toad_message_opacifying(void) {
     if ((o->oOpacity += 6) == 255) {
         o->oToadMessageState = TOAD_MESSAGE_OPAQUE;
@@ -171,14 +171,6 @@ void bhv_toad_message_loop(void) {
             case TOAD_MESSAGE_OPAQUE:
                 toad_message_opaque();
                 break;
-            /*
-            case TOAD_MESSAGE_OPACIFYING:
-                toad_message_opacifying();
-                break;
-            case TOAD_MESSAGE_FADING:
-                toad_message_fading();
-                break;
-            */
             case TOAD_MESSAGE_TALKING:
                 toad_message_talking();
                 break;

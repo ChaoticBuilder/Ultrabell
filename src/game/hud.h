@@ -14,7 +14,7 @@
 
 // #define HUD_COINS_X 168
 #define HUD_STARS_X 84 // This starts counting from the right edge
-#define HUD_CAMERA_X 54 // This starts counting from the right edge
+// #define HUD_CAMERA_X 54 // This starts counting from the right edge
 
 extern s32 gHudShakeX;
 extern s32 gHudShakeY;
@@ -36,6 +36,7 @@ enum BreathMeterAnimation {
 };
 #endif
 
+/* DISABLED FEATURE:
 enum CameraHUDLUT {
     GLYPH_CAM_CAMERA,
     GLYPH_CAM_MARIO_HEAD,
@@ -44,8 +45,9 @@ enum CameraHUDLUT {
     GLYPH_CAM_ARROW_UP,
     GLYPH_CAM_ARROW_DOWN
 };
+*/
 
-void set_hud_camera_status(s16 status);
+// void set_hud_camera_status(s16 status);
 void render_hud(void);
 
 #endif // HUD_H

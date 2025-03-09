@@ -1581,6 +1581,22 @@ void luigi_launcher_9000(void) {
     }
 }
 
+void fov_slider(void) {
+    if (gGlobalTimer % 2 == 0) {
+        if (gPlayer1Controller->buttonDown == L_JPAD) {
+            sFovSlider -= 1;
+        } else if (gPlayer1Controller->buttonDown == R_JPAD) {
+            sFovSlider += 1;
+        }
+    }
+    if (gPlayer1Controller->buttonDown == D_JPAD) {
+        sFovSlider = 0;
+    }
+    sFovSlider = CLAMP(sFovSlider, -25, 45);
+
+    print_text_fmt_int(216, 24, "FOV %d", sFovSlider + 45);
+}
+
 void debug_text(void) {
     if (gShowDebugText == FALSE && gPlayer1Controller->buttonPressed & Z_TRIG) {
         gShowDebugText = TRUE;
@@ -1798,7 +1814,7 @@ void render_pause_castle_course_stars(s16 x, s16 y, s16 fileIndex, s16 courseInd
 
     u16 nextStar = 0;
 
-    /*
+    /* DIOSABLED FEATURE:
     if (starFlags & STAR_FLAG_ACT_100_COINS) {
         starCount--;
         print_generic_string(x + 89, y - 5, textStar);
@@ -1964,6 +1980,7 @@ s32 render_pause_courses_and_castle(void) {
         render_widescreen_setting();
 #endif
         luigi_launcher_9000();
+        fov_slider();
         debug_text();
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
@@ -1990,17 +2007,12 @@ enum HUDCourseCompleteStringIDs {
 };
 
 void print_hud_course_complete_string(UNUSED s8 str) {
-    /*
-    u8 textHiScore[] = { TEXT_HUD_HI_SCORE };
-    u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS };
-    */
-
     u8 colorFade = sins(gDialogColorFadeTimer) * 50.0f + 200.0f;
 
     // gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, colorFade, colorFade, colorFade, 255);
 
-    /*
+    /* DISABLED FEATURE:
     if (str == HUD_PRINT_HISCORE) {
         print_hud_lut_string(HUD_LUT_GLOBAL, TXT_HISCORE_X,  TXT_HISCORE_Y,  LANGUAGE_ARRAY(textHiScore));
     } else { // HUD_PRINT_CONGRATULATIONS
@@ -2031,7 +2043,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
         gCourseCompleteCoinsEqual = TRUE;
         gCourseCompleteCoins = gHudDisplay.coins;
 
-        /*
+        /* DISABLED FEATURE:
         if (gGotFileCoinHiScore) {
             print_hud_course_complete_string(HUD_PRINT_HISCORE);
         }
@@ -2048,7 +2060,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
     }
 }
 
-/*
+/* DISABLED FEATURE:
 void play_star_fanfare_and_flash_hud(s32 arg, u8 starNum) {
     if (gHudDisplay.coins == gCourseCompleteCoins && (gCurrCourseStarFlags & starNum) == 0 && gHudFlash == HUD_FLASH_NONE) {
         play_star_fanfare();
@@ -2065,22 +2077,9 @@ void play_star_fanfare_and_flash_hud(s32 arg, u8 starNum) {
 // #define TXT_CLEAR_X2 TXT_CLEAR_X1 - 2
 
 void render_course_complete_lvl_info_and_hud_str(void) {
-    /*
-    u8 textClear[] = { TEXT_CLEAR };
-    u8 textCourse[] = { TEXT_COURSE };
-    u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
-
-    u8 *name;
-
-    u8 strCourseNum[4];
-
-    void **actNameTbl    = segmented_to_virtual(languageTable[gInGameLanguage][2]);
-    void **courseNameTbl = segmented_to_virtual(languageTable[gInGameLanguage][1]);
-    */
-
     if (gLastCompletedCourseNum <= COURSE_STAGES_MAX) { // Main courses
         print_hud_course_complete_coins(118, 103);
-        /*
+        /* DISABLED FEATURE:
         play_star_fanfare_and_flash_hud(HUD_FLASH_STARS, (1 << (gLastCompletedStarNum - 1)));
 
         if (gLastCompletedStarNum == 7) {
@@ -2105,7 +2104,7 @@ void render_course_complete_lvl_info_and_hud_str(void) {
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
         */
     } else if (gLastCompletedCourseNum == COURSE_BITDW || gLastCompletedCourseNum == COURSE_BITFS) { // Bowser courses
-        /*
+        /* DISABLED FEATURE:
         name = segmented_to_virtual(courseNameTbl[COURSE_NUM_TO_INDEX(gLastCompletedCourseNum)]);
 
         // Print course name and clear text
@@ -2132,7 +2131,7 @@ void render_course_complete_lvl_info_and_hud_str(void) {
     }
 
     // Print star glyph
-    /*
+    /* DISABLED FEATURE:
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
 
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);

@@ -77,11 +77,6 @@ void align_with_floor(struct MarioState *m) {
             Vec3f floorNormal;
             surface_normal_to_vec3f(floorNormal, floor);
             mtxf_align_terrain_normal(sFloorAlignMatrix[m->playerID], floorNormal, m->pos, m->faceAngle[1]);
-        /*
-        } else {
-            mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerID], m->pos, m->faceAngle[1], 40.0f);
-        }
-        */
 #else
     Vec3f floorNormal;
     surface_normal_to_vec3f(floorNormal, floor);
@@ -1646,24 +1641,15 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
         }
         set_mario_action(m, ACT_IDLE, 0);
     } else if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) {
-        mario_bonk_reflection(m, TRUE); // this took me FOREVER TO FIGURE OUT
-        // apparently like because of the way bonking works, mario gets stuck on the wall, unless you do something to move him off it
-        // if you try to fix this for backward kb, forward kb breaks, and vice versa.
-        // THE ONLY WAY TO PREVENT THIS FROM HAPPENING IS TO PREVENT MARIO FROM EVEN TOUCHING THE WALL IN THE FIRST PLACE
-        // so that's why mario bonks when being knocked into a wall now :3
+        mario_bonk_reflection(m, TRUE);
+        // mario bonks because if not he gets stuck bc game dumb
     } else if (perform_ground_step(m) == GROUND_STEP_NONE) {  
         if (is_anim_at_end(m)) {
             set_mario_action(m, ACT_IDLE, 0);
             m->forwardVel = 24.0f;
-        /*
-        if (m->health < 0x100) {
-                set_mario_action(m, ACT_STANDING_DEATH, 0);
-            } else {
-        */
             if (actionArg > 0) {
                 m->invincTimer = 30;
             }
-            // set_mario_action(m, ACT_IDLE, 0);
         }
     }
     return animFrame;
@@ -1878,11 +1864,9 @@ s32 act_hold_freefall_land(struct MarioState *m) {
 s32 act_long_jump_land(struct MarioState *m) {
 #if defined (VERSION_SH) || defined(DISABLE_BLJ)
     // BLJ (Backwards Long Jump) speed build up fix, crushing SimpleFlips's dreams since July 1997
-    /*
     if (m->forwardVel < 0.0f) {
         m->forwardVel = 0.0f;
     }
-    */
 #endif
 
     sLongJumpLandAction.aPressedAction = m->input & INPUT_Z_DOWN ? ACT_LONG_JUMP : ACT_JUMP;

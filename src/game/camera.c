@@ -410,6 +410,8 @@ u8 sCutsceneDialogResponse = DIALOG_RESPONSE_NONE;
 struct PlayerCameraState *sMarioCamState = &gPlayerCameraState[0];
 Vec3f sFixedModeBasePosition    = { 646.0f, 143.0f, -1513.0f };
 
+s32 sFovSlider;
+
 s32 update_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos);
 s32 update_outward_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos);
 s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos);
@@ -10933,32 +10935,30 @@ void shake_camera_fov(struct GraphNodePerspective *perspective) {
     }
 }
 
-/*
 void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
-    f32 phasetest = 1.0f;
-    f32 amplitudetest = 90.0f;
-    f32 decaytest = 0.0f;
-    if (amplitudetest != 0.0f) {
-        approach_f32(decaytest, 0, 1.0f, 1.0f);
-        // testing values, change later
-        sFOVState.fovOffset = coss(phasetest) * amplitudetest;
-        camera_approach_f32_symmetric_bool(&amplitudetest, decaytest, 0.01f);
-        perspective->fov += sFOVState.fovOffset;
-    } else {
-        amplitudetest = 90.0f;
-        decaytest = 90.0f;
+    sFOVState.multiplier = 15; // duration
+    u16 timer1;
+    f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
+    if (!(gCurrLevelNum & (LEVEL_BOWSER_1 || LEVEL_BOWSER_2 || LEVEL_BOWSER_3))) {
+        if ((gGlobalTimer % sFOVState.multiplier) >= (sFOVState.multiplier / (sFOVState.multiplier / 2))) {
+            timer1 = 65535;
+        } else {
+            timer1 = 0;
+        }
+        sFOVState.inc = approach_f32(sFOVState.inc, timer1, ((sFOVState.inc / 2) /* controls exponentially I think */ + 1), 65535);
+        sFOVState.velocity = approach_f32(sFOVState.velocity, timer2, (sFOVState.inc / 64), (sFOVState.inc / 64));
+    
+        perspective->fov -= (sFOVState.velocity - sFOVState.multiplier);
+        print_text_fmt_int(160, 56, "vel %d", sFOVState.velocity);
+        print_text_fmt_int(160, 40, "inc %d", sFOVState.inc);
+        print_text_fmt_int(160, 24, "time%d", timer2);
+        print_text_fmt_int(160, 8, "fov %d", perspective->fov);
     }
-
-    print_text_fmt_int(160, 48, "%d", phasetest);
-    print_text_fmt_int(160, 32, "%d", amplitudetest);
-    print_text_fmt_int(160, 16, "%d", decaytest);
 }
-*/
 
-// if amplitude (multiplier) not 0 uh the current fov pos is the cosine of (phase, idfk what that is) multiplied by the amplitude / 256
-// then the phase has it's duration added to it
-// then uh the amplitude smoothly approaches the decay (which I assume goes down?)
-// and then finally the fov gets the thing added
+void fov_changer(struct GraphNodePerspective *perspective) {
+    perspective->fov += sFovSlider;
+}
 
 static UNUSED void unused_deactivate_sleeping_camera(UNUSED struct MarioState *m) {
     sStatusFlags &= ~CAM_FLAG_SLEEPING;
@@ -11104,7 +11104,8 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
 
     perspective->fov = sFOVState.fov;
     shake_camera_fov(perspective);
-    // epic_fov_visualizer(perspective);
+    epic_fov_visualizer(perspective);
+    fov_changer(perspective);
     return NULL;
 }
 

@@ -118,15 +118,17 @@ static struct PowerMeterHUD sBreathMeterHUD = {
 s32 sBreathMeterVisibleTimer = 0;
 #endif
 
-static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
+//static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
 
 s32 gHudShakeX;
 s32 gHudShakeY;
 
 void hud_shake(void) {
-    // print_text_fmt_int(268, 178, "%d", gHudShakeX);
-    // print_text_fmt_int(268, 161, "%d", gHudShakeY);
-    // print_text(136 + gHudShakeX, 112 + gHudShakeY, "TEST");
+    /* DISABLED FEATURE:
+    print_text_fmt_int(268, 178, "%d", gHudShakeX);
+    print_text_fmt_int(268, 161, "%d", gHudShakeY);
+    print_text(136 + gHudShakeX, 112 + gHudShakeY, "TEST");
+    */
 }
 
 /**
@@ -574,21 +576,16 @@ void render_hud_demo_timer(void) {
 }
 #endif
 
-/*
-void render_luigi_test_output(void) {
-    // DEBUG PURPOSES, REMOVE LATER
-    if (gLuigiToggle == TRUE) {
-        print_text(70, (HUD_BOTTOM_Y + 40), "LUIGI IS HERE");
-    }
-}
-*/
+// welcome to disabled feature city
+// the residents here welcome your stay
 
-/*
+/* DISABLED FEATURE: (for now until 2013!!1!1!)
 void unregistered_hypercam(void) {
     print_text(32, 80, "UNREGISTERED HYPERCAM");
 }
 */
-/*
+
+/* DISABLED FEATURE:
 void ttc(void) {
     print_text_fmt_int(120, 16, "state %d", gTTCSpeedSetting);
 }
@@ -598,15 +595,17 @@ void ttc(void) {
  * Sets HUD status camera value depending of the actions
  * defined in update_camera_status.
  */
+/* DISABLED FEATURE:
 void set_hud_camera_status(s16 status) {
     sCameraHUD.status = status;
 }
+*/
 
 /**
  * Renders camera HUD glyphs using a table list, depending of
  * the camera status called, a defined glyph is rendered.
  */
-/*
+/* DISABLED FEATURE:
 void render_hud_camera_status(void) {
     Texture *(*cameraLUT)[6] = segmented_to_virtual(&main_hud_camera_lut);
     s32 x = GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_CAMERA_X);
@@ -678,12 +677,6 @@ void render_hud(void) {
         create_dl_ortho_matrix();
 #endif
 
-        /*
-        if (gCurrentArea != NULL && gCurrentArea->camera->mode == CAMERA_MODE_INSIDE_CANNON) {
-            render_hud_cannon_reticle();
-        }
-        */
-
 #ifdef ENABLE_LIVES
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES) {
             render_hud_mario_lives();
@@ -708,22 +701,12 @@ void render_hud(void) {
 
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_CAMERA_AND_POWER) {
             render_hud_power_meter();
-#ifdef PUPPYCAM
-            if (!gPuppyCam.enabled) {
-#endif
-//            render_hud_camera_status();
-#ifdef PUPPYCAM
-            }
-#endif
         }
 
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
             render_hud_timer();
         }
             render_hud_demo_timer();
-            // render_mario_speed(); I am so dumb why did I even make this there's literally a speed thing built in lmaooo
-            // render_luigi_test_output(); ah, pre-v0.07, lmao
-            // unregistered_hypercam(); THIS WILL BE MARIO IN 2013
 
             // ttc(); displays the clock's current state, technically I could've kept it in but nah
             // what makes me mad tho is the fact I had to do this in the first place

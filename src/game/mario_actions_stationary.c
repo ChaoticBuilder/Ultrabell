@@ -219,22 +219,12 @@ s32 act_start_sleeping(struct MarioState *m) {
             break;
     }
 
-//    play_anim_sound(m, ACT_STATE_START_SLEEPING_SCRATCH, 41, SOUND_ACTION_PAT_BACK);
-//    play_anim_sound(m, ACT_STATE_START_SLEEPING_SCRATCH, 49, SOUND_ACTION_PAT_BACK);
     play_anim_sound(m, ACT_STATE_START_SLEEPING_SITTING, 15, m->terrainSoundAddend + SOUND_ACTION_TERRAIN_BODY_HIT_GROUND);
 
     if (is_anim_at_end(m)) {
         m->actionState++;
     }
-/*
-    if (m->actionState == ACT_STATE_START_SLEEPING_YAWN && animFrame == -1) {
-        play_sound(SOUND_MARIO_YAWNING, m->marioObj->header.gfx.cameraToObject);
-    }
 
-    if (m->actionState == ACT_STATE_START_SLEEPING_SCRATCH && animFrame == -1) {
-        play_sound(SOUND_MARIO_IMA_TIRED, m->marioObj->header.gfx.cameraToObject);
-    }
-*/
     stationary_ground_step(m);
     return FALSE;
 }

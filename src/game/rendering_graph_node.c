@@ -495,7 +495,7 @@ void geo_process_perspective(struct GraphNodePerspective *node) {
         gCurGraphNodeCamFrustum = NULL;
     }
 }
-/* unused
+/* DISABLED FEATURE:
 static f32 get_dist_from_camera(Vec3f pos) {
     return -((gCameraTransform[0][2] * pos[0])
            + (gCameraTransform[1][2] * pos[1])
@@ -510,7 +510,7 @@ static f32 get_dist_from_camera(Vec3f pos) {
  * range of this node.
  */
 void geo_process_level_of_detail(struct GraphNodeLevelOfDetail UNUSED *node) {
-/* 
+/* DISABLED FEATURE:
 #ifdef AUTO_LOD
     f32 distanceFromCam = (gEmulator & EMU_CONSOLE) ? get_dist_from_camera(gMatStack[gMatStackIndex][3]) : 50.0f;
 #else
@@ -523,7 +523,6 @@ void geo_process_level_of_detail(struct GraphNodeLevelOfDetail UNUSED *node) {
         geo_process_node_and_siblings(node->node.children);
     }
 */
-    // always true, thanks kaze :3 (also, this breaks some things like the visual rotation of the pyramid platforms in bitfs, but you can just blame it on "beta weirdness" :333)
     geo_process_node_and_siblings(node->node.children);
 }
 
