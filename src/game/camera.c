@@ -10950,11 +10950,14 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
         sFOVState.velocity = approach_f32(sFOVState.velocity, timer2, (sFOVState.inc / 64), (sFOVState.inc / 64));
     
         perspective->fov -= (sFOVState.velocity - sFOVState.multiplier);
+        /*
         print_text_fmt_int(160, 56, "vel %d", sFOVState.velocity);
         print_text_fmt_int(160, 40, "inc %d", sFOVState.inc);
         print_text_fmt_int(160, 24, "time%d", timer2);
-        print_text_fmt_int(160, 8, "fov %d", perspective->fov);
+        */
     }
+    f32 fovtxt = perspective->fov + sFovSlider;
+    print_text_fmt_int(16, 26, "FOV %d", fovtxt);
 }
 
 void fov_changer(struct GraphNodePerspective *perspective) {

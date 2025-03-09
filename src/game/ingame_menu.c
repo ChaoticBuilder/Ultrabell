@@ -1593,8 +1593,6 @@ void fov_slider(void) {
         sFovSlider = 0;
     }
     sFovSlider = CLAMP(sFovSlider, -25, 45);
-
-    print_text_fmt_int(216, 24, "FOV %d", sFovSlider + 45);
 }
 
 void debug_text(void) {
