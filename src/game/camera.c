@@ -10939,7 +10939,8 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
     sFOVState.multiplier = 15; // duration
     u16 timer1;
     f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
-    if (!(gCurrLevelNum & (LEVEL_BOWSER_1 || LEVEL_BOWSER_2 || LEVEL_BOWSER_3))) {
+    if (gCurrLevelNum == LEVEL_BOWSER_1 || gCurrLevelNum == LEVEL_BOWSER_2 || gCurrLevelNum == LEVEL_BOWSER_3 || gCurrLevelNum == LEVEL_PSS || gCurrLevelNum == LEVEL_CCM
+        || gCurrLevelNum == LEVEL_SL) {
         if ((gGlobalTimer % sFOVState.multiplier) >= (sFOVState.multiplier / (sFOVState.multiplier / 2))) {
             timer1 = 65535;
         } else {
