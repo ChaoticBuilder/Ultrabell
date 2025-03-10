@@ -1592,7 +1592,7 @@ void fov_slider(void) {
     if (gPlayer1Controller->buttonDown == D_JPAD) {
         sFovSlider = 0;
     }
-    sFovSlider = CLAMP(sFovSlider, -25, 45);
+    sFovSlider = CLAMP(sFovSlider, -20, 45);
 }
 
 void debug_text(void) {
@@ -1852,6 +1852,7 @@ void render_pause_castle_main_strings(s16 x, s16 y) {
     u8 strVal[8];
     s16 prevCourseIndex = gDialogLineNum;
 
+    char courseNum[2];
 
     handle_menu_scrolling(
         MENU_SCROLL_VERTICAL, &gDialogLineNum,
@@ -1902,9 +1903,14 @@ void render_pause_castle_main_strings(s16 x, s16 y) {
         print_generic_string(x + 60, y + 13, strVal);
     }
 
-    print_generic_string(x - 9, y + 30, courseName);
+    print_generic_string(get_str_x_pos_from_center(160, courseName, 10.0f), y + 30, courseName);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+
+    if (gDialogLineNum <= COURSE_NUM_TO_INDEX(COURSE_STAGES_MAX)) { // cute bit of code to display the level num uncentered whilst also having the level name centered :3
+        sprintf(courseNum, "%2d",(gDialogLineNum + 1));
+        print_small_text_light(x - 22, y + 76, courseNum, PRINT_ALL, PRINT_ALL, FONT_VANILLA);
+    }
 }
 
 s8 gCourseCompleteCoinsEqual = FALSE;

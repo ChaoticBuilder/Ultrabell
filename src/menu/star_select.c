@@ -361,8 +361,8 @@ void print_act_selector_strings(void) {
 #if MULTILANG
     print_generic_string(get_str_x_pos_from_center(160, (currLevelName + 3), 10.0f), 33, currLevelName + 3);
 #else
-    lvlNameX = get_str_x_pos_from_center(160, currLevelName + 3, 10.0f);
-    print_generic_string(lvlNameX, 33, currLevelName + 3);
+    lvlNameX = get_str_x_pos_from_center(160, currLevelName, 10.0f);
+    print_generic_string(lvlNameX, 33, currLevelName);
 #endif
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);

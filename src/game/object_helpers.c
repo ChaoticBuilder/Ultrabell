@@ -1691,7 +1691,6 @@ void cur_obj_spawn_particles(struct SpawnParticlesInfo *info) {
         // We're close to running out of object slots, so don't spawn particles at all
         numParticles = 0;
     }
-    print_text_fmt_int(140, 16, "%d", numParticles);
 
     for (i = 0; i < numParticles; i++) {
         scale = random_float() * (info->sizeRange * 0.1f) + info->sizeBase * 0.1f;

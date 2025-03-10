@@ -12,7 +12,6 @@
 #include "segment2.h"
 #include "area.h"
 #include "save_file.h"
-#include "print.h"
 #include "engine/surface_load.h"
 #include "engine/math_util.h"
 #include "puppycam2.h"
@@ -524,17 +523,12 @@ void render_hud_timer(void) {
 
 #ifdef DEMO_TIMER
 void render_hud_demo_timer(void) {
-    Texture *(*hudLUT)[58] = segmented_to_virtual(&main_hud_lut);
-    u16 timerCount = gGlobalTimer / 30;
-    u16 timerMinutes = timerCount / 60;
+    char clockBytes[9];
+    int timerCount = gGlobalTimer / 30;
+    int timerMinutes = timerCount / 60;
+    int timerDisplay = timerCount % 60;
+    sprintf(clockBytes, "Clock: %02d : %02d", timerMinutes, timerDisplay);
     // u16 timerHours;
-    /*
-    u16 testvariable = 0;
-    while (TRUE) {
-        testvariable++;
-        wait(1);
-    }
-    */
     #ifdef TIME_ATTACK
         u16 timeAttackCount = gGlobalTimer;
         u16 timeAttackSeconds = (gGlobalTimer / 30);
@@ -561,17 +555,8 @@ void render_hud_demo_timer(void) {
     // Really disappointing, I hope I can fix the code soon..
     
     if (!(gTimeAttackToggle)) {
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "DEMO");
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "%02d", timerMinutes % 30);
-        // print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(160), HUD_BOTTOM_Y, "%02d", testvariable);
-        if (gSecondsToggle) {
-            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102) + gHudShakeX, HUD_BOTTOM_Y + gHudShakeY, "%02d", timerCount % 60);
-
-            gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91) + gHudShakeX, (HUD_TOP_Y + 4) + gHudShakeY, (*hudLUT)[GLYPH_APOSTROPHE]);
-            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91) + gHudShakeX, (HUD_TOP_Y - 5) + gHudShakeY, (*hudLUT)[GLYPH_APOSTROPHE]);
-            gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
-        }
+        print_set_envcolour(0, 189, 255, 255);
+        print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 10) + gHudShakeY, clockBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     }
 }
 #endif
@@ -707,7 +692,7 @@ void render_hud(void) {
             render_hud_timer();
         }
             render_hud_demo_timer();
-
+            visualizer_display();
             // ttc(); displays the clock's current state, technically I could've kept it in but nah
             // what makes me mad tho is the fact I had to do this in the first place
             // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal

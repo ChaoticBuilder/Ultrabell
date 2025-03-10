@@ -28,6 +28,7 @@
 #include "config.h"
 #include "puppyprint.h"
 #include "profiling.h"
+#include "gfx_dimensions.h"
 
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
 
@@ -10935,33 +10936,40 @@ void shake_camera_fov(struct GraphNodePerspective *perspective) {
     }
 }
 
+void fov_changer(struct GraphNodePerspective *perspective) {
+    perspective->fov += sFovSlider;
+}
+
 void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
-    sFOVState.multiplier = 15; // duration
     u16 timer1;
     f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
     if (gCurrLevelNum == LEVEL_BOWSER_1 || gCurrLevelNum == LEVEL_BOWSER_2 || gCurrLevelNum == LEVEL_BOWSER_3 || gCurrLevelNum == LEVEL_PSS || gCurrLevelNum == LEVEL_CCM
-        || gCurrLevelNum == LEVEL_SL) {
+        || gCurrLevelNum == LEVEL_SL || gCurrLevelNum == LEVEL_TTC) {
+        sFOVState.multiplier = 15; // duration
         if ((gGlobalTimer % sFOVState.multiplier) >= (sFOVState.multiplier / (sFOVState.multiplier / 2))) {
             timer1 = 65535;
         } else {
             timer1 = 0;
         }
         sFOVState.inc = approach_f32(sFOVState.inc, timer1, ((sFOVState.inc / 2) /* controls exponentially I think */ + 1), 65535);
-        sFOVState.velocity = approach_f32(sFOVState.velocity, timer2, (sFOVState.inc / 64), (sFOVState.inc / 64));
+        sFOVState.velocity = approach_f32(sFOVState.velocity, timer2, (sFOVState.inc / 384), (sFOVState.inc / 384));
     
-        perspective->fov -= (sFOVState.velocity - sFOVState.multiplier);
+        perspective->fov -= sFOVState.velocity - sFOVState.multiplier;
         /*
         print_text_fmt_int(160, 56, "vel %d", sFOVState.velocity);
         print_text_fmt_int(160, 40, "inc %d", sFOVState.inc);
         print_text_fmt_int(160, 24, "time%d", timer2);
         */
     }
-    f32 fovtxt = perspective->fov + sFovSlider;
-    print_text_fmt_int(16, 26, "FOV %d", fovtxt);
 }
 
-void fov_changer(struct GraphNodePerspective *perspective) {
-    perspective->fov += sFovSlider;
+void visualizer_display(void) {
+    char fovBytes[2];
+    int fovTxt = sFOVState.fov + sFovSlider - (sFOVState.velocity - sFOVState.multiplier);
+    
+    sprintf(fovBytes, "FOV: %02d", fovTxt);
+    print_set_envcolour(0, 189, 255, 255);
+    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, fovBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
 static UNUSED void unused_deactivate_sleeping_camera(UNUSED struct MarioState *m) {
