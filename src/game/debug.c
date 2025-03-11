@@ -407,8 +407,6 @@ void try_print_debug_mario_object_info(void) {
         }
     }
 
-    print_debug_top_down_mapinfo("obj  %d", gObjectCounter);
-
     if (gNumFindFloorMisses != 0) {
         print_debug_bottom_up("NULLBG %d", gNumFindFloorMisses);
     }

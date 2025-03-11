@@ -146,7 +146,7 @@ const Gfx door_seg3_sub_dl_polished_wooden_door_near[] = {
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 64 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPLightColor(LIGHT_1, 0xffffffff),
-    gsSPLightColor(LIGHT_2, 0x7f7f7fff),
+    gsSPLightColor(LIGHT_2, 0x3f3f3fff),
     gsSPVertex(door_seg3_vertex_polished_wooden_door_near_sides, 16, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  3,  4,  5, 0x0),
     gsSP2Triangles( 3,  5,  6, 0x0,  7,  8,  9, 0x0),
@@ -164,7 +164,7 @@ const Gfx door_seg3_sub_dl_polished_wooden_door_near[] = {
 // 0x03013CC8 - 0x03013D78
 const Gfx door_seg3_sub_dl_polished_wooden_door_handle_1[] = {
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPVertex(door_seg3_vertex_polished_wooden_door_handle_1, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  2,  3,  4, 0x0),
     gsSP2Triangles( 2,  1,  3, 0x0,  5,  2,  4, 0x0),
@@ -181,7 +181,7 @@ const Gfx door_seg3_sub_dl_polished_wooden_door_handle_1[] = {
 // 0x03013D78 - 0x03013E28
 const Gfx door_seg3_sub_dl_polished_wooden_door_handle_2[] = {
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPVertex(door_seg3_vertex_polished_wooden_door_handle_2, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  0,  2,  3, 0x0),
     gsSP2Triangles( 0,  3,  4, 0x0,  0,  5,  1, 0x0),
@@ -280,7 +280,7 @@ const Gfx door_seg3_sub_dl_polished_wooden_door_far[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPVertex(door_seg3_vertex_polished_wooden_door_far_handle, 8, 0),
     gsSP2Triangles( 4,  5,  6, 0x0,  4,  7,  5, 0x0),
     gsSPSetGeometryMode(G_SHADING_SMOOTH),
@@ -685,7 +685,7 @@ const Gfx door_seg3_dl_rough_wooden_door_near[] = {
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPSetGeometryMode(G_SHADING_SMOOTH),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_near),
 };
 
@@ -711,7 +711,7 @@ const Gfx door_seg3_dl_rough_wooden_door2_near[] = {
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPSetGeometryMode(G_SHADING_SMOOTH),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_near),
 };
 
@@ -737,7 +737,7 @@ const Gfx door_seg3_dl_metal_door_near[] = {
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPSetGeometryMode(G_SHADING_SMOOTH),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_near),
 };
 
@@ -763,7 +763,7 @@ const Gfx door_seg3_dl_cave_door_near[] = {
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPSetGeometryMode(G_SHADING_SMOOTH),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_near),
 };
 
@@ -789,7 +789,7 @@ const Gfx door_seg3_dl_haunted_door_near[] = {
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPSetGeometryMode(G_SHADING_SMOOTH),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_near),
 };
 
@@ -860,7 +860,7 @@ const Gfx door_seg3_dl_rough_wooden_door_far[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_far),
 };
 
@@ -878,7 +878,7 @@ const Gfx door_seg3_dl_rough_wooden_door2_far[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_far),
 };
 
@@ -896,7 +896,7 @@ const Gfx door_seg3_dl_metal_door_far[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_far),
 };
 
@@ -914,7 +914,7 @@ const Gfx door_seg3_dl_cave_door_far[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_far),
 };
 
@@ -932,6 +932,6 @@ const Gfx door_seg3_dl_haunted_door_far[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x553800ff),
+    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
     gsSPBranchList(door_seg3_sub_dl_themed_handle_far),
 };

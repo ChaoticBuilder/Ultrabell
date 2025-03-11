@@ -160,7 +160,7 @@ s32 calculate_skybox_scaled_y(s8 player, UNUSED f32 fov) {
     f32 pitchInDegrees = (f32) sSkyBoxInfo[player].pitch * 360.0f / 65535.0f;
 
     // Scale by 360 / fov
-    f32 degreesToScale = 360.0f * pitchInDegrees / fov;
+    f32 degreesToScale = 360.0f * pitchInDegrees / 90.0f;
     s32 roundedY = roundf(degreesToScale);
 
     // Since pitch can be negative, and the tile grid starts 1 octant above the camera's focus, add
@@ -302,15 +302,13 @@ Gfx *create_skybox_facing_camera(s8 player, s8 background, f32 fov, Vec3f pos, V
 
     //! fov is always set to 90.0f. If this line is removed, then the game crashes because fov is 0 on
     //! the first frame, which causes a floating point divide by 0
-    if (fov == 0) {
-        fov = 90.0f;
-    }
+    fov = 90.0f;
     s16 yaw;
     f32 dist;
     vec3f_get_dist_and_angle(pos, focus, &dist, &sSkyBoxInfo[player].pitch, &yaw);
     sSkyBoxInfo[player].yaw = yaw;
-    sSkyBoxInfo[player].scaledX = calculate_skybox_scaled_x(player, ((fov / 8) + (78.75f)));
-    sSkyBoxInfo[player].scaledY = calculate_skybox_scaled_y(player, 90.0f);
+    sSkyBoxInfo[player].scaledX = calculate_skybox_scaled_x(player, fov);
+    sSkyBoxInfo[player].scaledY = calculate_skybox_scaled_y(player, fov);
     sSkyBoxInfo[player].upperLeftTile = get_top_left_tile_idx(player);
 
     return init_skybox_display_list(player, background, colorIndex);

@@ -479,7 +479,7 @@ struct CameraFOVStatus {
     /// How much to decrease shakeAmplitude each frame.
     /*0x18*/ s16 decay;
 
-    u8 multiplier;
+    u16 multiplier;
     f32 velocity;
     f32 inc;
 };

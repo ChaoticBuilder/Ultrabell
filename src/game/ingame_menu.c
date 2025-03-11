@@ -1598,10 +1598,8 @@ void fov_slider(void) {
 void debug_text(void) {
     if (gShowDebugText == FALSE && gPlayer1Controller->buttonPressed & Z_TRIG) {
         gShowDebugText = TRUE;
-        gDebugInfoFlags = DEBUG_INFO_FLAG_ALL;
     } else if (gShowDebugText == TRUE && gPlayer1Controller->buttonPressed & Z_TRIG) {
         gShowDebugText = FALSE;
-        gDebugInfoFlags = DEBUG_INFO_NOFLAGS;
     }
 }
 

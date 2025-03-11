@@ -5,6 +5,8 @@
 
 #include "types.h"
 
+extern s16 sTerminalVelocity;
+
 struct BullyCollisionData {
   /*0x00*/ f32 conversionRatio;
   /*0x04*/ f32 radius;

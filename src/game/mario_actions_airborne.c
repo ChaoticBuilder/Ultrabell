@@ -65,6 +65,9 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 #ifdef NO_FALL_DAMAGE
     return FALSE;
 #endif
+    if (m->flags & MARIO_METAL_CAP) {
+        return FALSE;
+    }
 
     f32 fallHeight = m->peakHeight - m->pos[1];
 
@@ -77,26 +80,28 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     }
 
     if (m->action != ACT_TWIRLING && m->action != ACT_SOFT_BONK && m->floor->type != SURFACE_BURNING) {
-        if (m->vel[1] < -55.0f) {
-            if (fallHeight > FALL_DAMAGE_HEIGHT_LARGE) {
-                m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 16 : 24;
+        if (sTerminalVelocity == TRUE && fallHeight > FALL_DAMAGE_HEIGHT_LARGE) {
+            m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 16 : 24;
 #if ENABLE_RUMBLE
-                queue_rumble_data(5, 80);
+            queue_rumble_data(5, 80);
 #endif
-                set_camera_shake_from_hit(SHAKE_FALL_DAMAGE);
-                play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
-                m->squishTimer = 60;
-                return drop_and_set_mario_action(m, hardFallAction, 4);
-            } else if (fallHeight > damageHeight && !mario_floor_is_slippery(m)) {
-                m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 8 : 12;
-                m->squishTimer = 30;
+            set_camera_shake_from_hit(SHAKE_FALL_DAMAGE);
+            play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
+            m->squishTimer = 60;
+            return drop_and_set_mario_action(m, hardFallAction, 4);
+        } else if (fallHeight > damageHeight && !mario_floor_is_slippery(m)) {
+            m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 8 : 12;
+            m->squishTimer = 30;
 #if ENABLE_RUMBLE
-                queue_rumble_data(5, 80);
+            queue_rumble_data(5, 80);
 #endif
-                set_camera_shake_from_hit(SHAKE_FALL_DAMAGE);
-                play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
-            }
+            set_camera_shake_from_hit(SHAKE_FALL_DAMAGE);
+            play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
         }
+    }
+
+    if (m->marioBodyState->wingFlutter == TRUE) {
+        m->hurtCounter /= 2;
     }
 
     return FALSE;

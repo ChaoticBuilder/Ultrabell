@@ -822,6 +822,7 @@ void thread5_game_loop(UNUSED void *arg) {
 #endif
 
         display_and_vsync();
+/*
 #ifdef VANILLA_DEBUG
         // when debug info is enabled, print the "BUF %d" information.
         if (gShowDebugText) {
@@ -830,6 +831,7 @@ void thread5_game_loop(UNUSED void *arg) {
             print_text_fmt_int(180, 16, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
         }
 #endif
+*/
 #if 0
         if (gPlayer1Controller->buttonPressed & L_TRIG) {
             osStartThread(&hvqmThread);

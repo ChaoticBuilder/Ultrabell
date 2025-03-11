@@ -1189,13 +1189,13 @@ void debug_print_speed_action_normal(struct MarioState *m) {
         steepness = sqrtf(sqr(m->floor->normal.x) + sqr(m->floor->normal.z));
         floor_nY = m->floor->normal.y;
 
-        print_text_fmt_int(180, 102, "ANG %d", (atan2s(floor_nY, steepness) * 180.0f) / 32768.0f);
+        print_text_fmt_int(219, 60, "ANG %d", (atan2s(floor_nY, steepness) * 180.0f) / 32768.0f);
 
-        print_text_fmt_int(180, 86, "SPD %d", m->forwardVel);
-        print_text_fmt_int(180, 70, "VSP %d", m->vel[1]);
+        print_text_fmt_int(219, 43, "SPD %d", m->forwardVel);
+        print_text_fmt_int(219, 26, "VSP %d", m->vel[1]);
 
         // STA short for "status," the official action name via SMS map.
-        print_text_fmt_int(180, 54, "STA %x", (m->action & ACT_ID_MASK));
+        print_text_fmt_int(219, 9, "STA %x", (m->action & ACT_ID_MASK));
     }
 }
 #endif

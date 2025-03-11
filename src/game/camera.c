@@ -10941,6 +10941,7 @@ void fov_changer(struct GraphNodePerspective *perspective) {
 }
 
 void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
+    sFOVState.multiplier = 1;
     u16 timer1;
     f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
     if (gCurrLevelNum == LEVEL_BOWSER_1 || gCurrLevelNum == LEVEL_BOWSER_2 || gCurrLevelNum == LEVEL_BOWSER_3 || gCurrLevelNum == LEVEL_PSS || gCurrLevelNum == LEVEL_CCM
@@ -10964,7 +10965,7 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
 }
 
 void visualizer_display(void) {
-    char fovBytes[2];
+    char fovBytes[1];
     int fovTxt = sFOVState.fov + sFovSlider - (sFOVState.velocity - sFOVState.multiplier);
     
     sprintf(fovBytes, "FOV: %02d", fovTxt);

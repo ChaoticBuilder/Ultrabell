@@ -14,6 +14,7 @@
 #include "config.h"
 
 static s16 sMovingSandSpeeds[] = { 12, 8, 4, 0 };
+s16 sTerminalVelocity;
 
 struct Surface gWaterSurfacePseudoFloor = {
     SURFACE_VERY_SLIPPERY,      // type
@@ -610,59 +611,85 @@ u32 should_strengthen_gravity_for_jump_ascent(struct MarioState *m) {
 }
 
 void apply_gravity(struct MarioState *m) {
+    f32 normalMax = -80.0f;
+    sTerminalVelocity = FALSE;
+    // did a thing where the terminal velocity isn't a hard cap, it's instead a multiplier (aka more resistance the more velocity you have)
+    // it's not uncapped though, since eventually you reach a point where the velocity gain is so small it's basically 0
+
     if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) {
         apply_twirl_gravity(m);
     } else if (m->action == ACT_SHOT_FROM_CANNON) {
         m->vel[1] -= 1.0f;
-        if (m->vel[1] < -75.0f) {
-            m->vel[1] = -75.0f;
-        }
+        if (m->vel[1] < normalMax) {
+            m->vel[1] += 0.5f;
+            m->vel[1] -= (m->vel[1] / 80);
+            sTerminalVelocity = TRUE;
+        } else { sTerminalVelocity = FALSE; }
     } else if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK
                || m->action == ACT_BBH_ENTER_SPIN) {
         m->vel[1] -= 2.5f;
-        if (m->vel[1] < -80.0f) {
-            m->vel[1] = -80.0f;
-        }
+        if (m->vel[1] < normalMax) {
+            m->vel[1] += 1.5f;
+            m->vel[1] -= (m->vel[1] / 80);
+            sTerminalVelocity = TRUE;
+        } else { sTerminalVelocity = FALSE; }
     } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_FALL_AFTER_STAR_GRAB) {
-        m->vel[1] -= 3.5f;
+        m->vel[1] -= 4.0f;
         if (m->vel[1] < -64.0f) {
-            m->vel[1] = -64.0f;
-        }
+            m->vel[1] += 2.0f;
+            m->vel[1] -= (m->vel[1] / 20);
+            sTerminalVelocity = TRUE;
+        } else { sTerminalVelocity = FALSE; }
     } else if (m->action == ACT_GETTING_BLOWN) {
         m->vel[1] -= m->windGravity;
-        if (m->vel[1] < -80.0f) {
-            m->vel[1] = -80.0f;
-        }
+        if (m->vel[1] < normalMax) {
+            m->vel[1] += 2.0f;
+            m->vel[1] -= (m->vel[1] / 32);
+            sTerminalVelocity = TRUE;
+        } else { sTerminalVelocity = FALSE; }
     } else if (should_strengthen_gravity_for_jump_ascent(m)) {
         m->vel[1] /= 5.0f;
     } else if (m->action & ACT_FLAG_METAL_WATER) {
-        m->vel[1] -= 2.0f;
-        if (m->vel[1] < -16.0f) {
-            m->vel[1] = -16.0f;
+        m->vel[1] -= 0.0f;
+        if (m->vel[1] < -24.0f) {
+            m->vel[1] = -24.0f;
         }
     } else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
 
         m->vel[1] -= 2.5f;
         if (m->vel[1] < -40.0f) {
-            if ((m->vel[1] += 4.0f) > -40.0f) {
-                m->vel[1] = -40.0f;
-            }
-        }
+            m->vel[1] += 1.25f;
+            m->vel[1] -= (m->vel[1] / 36);
+            sTerminalVelocity = TRUE;
+        } else { sTerminalVelocity = FALSE; }
     } else {
         m->vel[1] -= 5.0f;
-        if (m->vel[1] < -80.0f) {
-            m->vel[1] = -80.0f;
-        }
+        if (m->vel[1] < normalMax) {
+            m->vel[1] += 2.5f;
+            m->vel[1] -= (m->vel[1] / 40);
+            sTerminalVelocity = TRUE;
+        } else { sTerminalVelocity = FALSE; }
+    }
+    if (m->vel[1] >= 0) { sTerminalVelocity = FALSE; } // safeguard just incase
+    if (m->flags & MARIO_METAL_CAP && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
+        m->vel[1] -= 2.0f;
     }
     if (gLuigiToggle == TRUE) {
         if (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN) {
             m->vel[1] += 1.5f;
+            if (m->flags & MARIO_METAL_CAP) {
+                m->vel[1] -= 0.5f;
+            }
             if (m->vel[1] < 0.0f) {
-                if (m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
-                    m->vel[1] += 2.5f;
+                if (sTerminalVelocity == TRUE) {
+                    m->vel[1] -= 1.5f;
                 } else {
-                    m->vel[1] -= 0.5f;
+                    if ((m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) && m->flags != MARIO_WING_CAP) {
+                        m->vel[1] += 2.5f;
+                    } else {
+                        m->vel[1] -= 0.5f;
+                    }
                 }
             }
         }
