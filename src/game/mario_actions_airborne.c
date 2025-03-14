@@ -79,7 +79,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
         damageHeightLarge += 1024.0f;
     }
 
-    if (m->action != ACT_TWIRLING && m->action != ACT_SOFT_BONK && m->floor->type != SURFACE_BURNING) {
+    if (m->action != ACT_TWIRLING && m->action != ACT_WALL_SLIDE && m->floor->type != SURFACE_BURNING) {
         if (sTerminalVelocity == TRUE && fallHeight > FALL_DAMAGE_HEIGHT_LARGE) {
             m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 16 : 24;
 #if ENABLE_RUMBLE
@@ -231,7 +231,7 @@ void update_air_without_turn(struct MarioState *m) {
                     m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1024.0f;
                 }
             } else {
-                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 80.0f;
+                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 96.0f;
             }
             sidewaysSpeed = intendedMag * sins(intendedDYaw) * 10.0f;
         }
@@ -245,7 +245,7 @@ void update_air_without_turn(struct MarioState *m) {
                 if (m->forwardVel > -28.0f) {
                     m->forwardVel -= (m->forwardVel / 15);
                 } else {
-                    m->forwardVel /= 1.03125f;
+                    m->forwardVel /= 1.028125f;
                 }
             }
         }
@@ -378,12 +378,16 @@ void update_flying(struct MarioState *m) {
     update_flying_yaw(m);
     update_flying_roll(m);
 
-    if (m->flags & MARIO_WING_CAP) {
-        m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) - 0.5f;
+    if (!gDebugLevelSelect) {
+        if (m->flags & MARIO_WING_CAP) {
+            m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) - 0.5f;
+        } else {
+            m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) + 0.25f;
+        }
     } else {
-        m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) + 0.25f;
+        m->forwardVel = 64.0f; // DEBUG
     }
-    // m->forwardVel = 48.0f; // DEBUG
+    
     /* DEBUG
     if (m->forwardVel < 96) {
         m->forwardVel = 96.0f; // DEBUG
@@ -845,6 +849,10 @@ s32 act_twirling(struct MarioState *m) {
 }
 
 s32 act_dive(struct MarioState *m) {
+    if (m->input & INPUT_A_PRESSED) {
+        set_mario_action(m, ACT_SOFT_BONK, 0);
+    }
+    
     if (m->actionArg == 0) {
         play_mario_sound(m, SOUND_ACTION_THROW, SOUND_MARIO_HOOHOO);
     } else {
@@ -1350,6 +1358,29 @@ s32 act_thrown_forward(struct MarioState *m) {
 }
 
 s32 act_soft_bonk(struct MarioState *m) {
+    play_knockback_sound(m);
+
+    update_air_without_turn(m);
+
+    switch (perform_air_step(m, 0)) {
+        case AIR_STEP_NONE:
+            set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
+            break;
+        case AIR_STEP_LANDED:
+            if (!check_fall_damage_or_get_stuck(m, ACT_HARD_BACKWARD_GROUND_KB)) {
+                set_mario_action(m, ACT_FREEFALL_LAND, 0);
+            }
+            break;
+
+        case AIR_STEP_HIT_WALL:
+            mario_set_forward_vel(m, 0.0f);
+            break;
+    }
+
+    return FALSE;
+}
+
+s32 act_wall_slide (struct MarioState *m) {
     play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
     if (gGlobalTimer % 2 == 0) {
         m->particleFlags |= PARTICLE_DUST;
@@ -1420,7 +1451,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
     if (++(m->actionTimer) <= 60) {
         m->vel[1] += 0.5f + (m->forwardVel / 192) - (m->vel[1] / 96);
     } else {
-        set_mario_action(m, ACT_SOFT_BONK, 0);
+        set_mario_action(m, ACT_WALL_SLIDE, 0);
     }
 
     m->particleFlags |= PARTICLE_VERTICAL_STAR;
@@ -2182,6 +2213,7 @@ s32 mario_execute_airborne_action(struct MarioState *m) {
         case ACT_HARD_FORWARD_AIR_KB:  cancel = act_hard_forward_air_kb(m);  break;
         case ACT_HARD_BACKWARD_AIR_KB: cancel = act_hard_backward_air_kb(m); break;
         case ACT_SOFT_BONK:            cancel = act_soft_bonk(m);            break;
+        case ACT_WALL_SLIDE:           cancel = act_wall_slide(m);           break;
         case ACT_AIR_HIT_WALL:         cancel = act_air_hit_wall(m);         break;
         case ACT_FORWARD_ROLLOUT:      cancel = act_forward_rollout(m);      break;
         case ACT_SHOT_FROM_CANNON:     cancel = act_shot_from_cannon(m);     break;

@@ -456,7 +456,7 @@ static const Gfx inside_castle_seg7_dl_070684E8[] = {
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 64 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPLightColor(LIGHT_1, 0xcdb297ff),
-    gsSPLightColor(LIGHT_2, 0x4c4238ff),
+    gsSPLightColor(LIGHT_2, 0x332c25ff),
     gsSPVertex(inside_castle_seg7_vertex_070677B0, 16, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  0,  2,  3, 0x0),
     gsSP2Triangles( 4,  5,  6, 0x0,  7,  8,  9, 0x0),

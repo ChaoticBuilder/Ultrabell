@@ -52,7 +52,7 @@ enum HUDFlashModes {
     HUD_FLASH_KEYS
 };
 
-extern s8 gHudFlash;
+// extern s8 gHudFlash;
 
 extern s8 gDialogCourseActNum;
 extern s16 gInGameLanguage;

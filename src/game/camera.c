@@ -10941,12 +10941,11 @@ void fov_changer(struct GraphNodePerspective *perspective) {
 }
 
 void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
-    sFOVState.multiplier = 1;
+    sFOVState.multiplier = 15; // duration
     u16 timer1;
     f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
     if (gCurrLevelNum == LEVEL_BOWSER_1 || gCurrLevelNum == LEVEL_BOWSER_2 || gCurrLevelNum == LEVEL_BOWSER_3 || gCurrLevelNum == LEVEL_PSS || gCurrLevelNum == LEVEL_CCM
         || gCurrLevelNum == LEVEL_SL || gCurrLevelNum == LEVEL_TTC) {
-        sFOVState.multiplier = 15; // duration
         if ((gGlobalTimer % sFOVState.multiplier) >= (sFOVState.multiplier / (sFOVState.multiplier / 2))) {
             timer1 = 65535;
         } else {
@@ -11008,7 +11007,7 @@ void fov_default(struct MarioState *m) {
 
     // Apparently Mario's idle was a sleeping state?
     if ((m->action == ACT_IDLE) || (m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
-        if (m->sleepTimer < 465) {
+        if (m->sleepTimer < 400) {
             m->sleepTimer++; // Increase the timer
             camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 30.f);
         } else { // Gradually set the FOV to 30 if the threshold is reached

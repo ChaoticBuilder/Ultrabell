@@ -32,6 +32,7 @@
 #include "puppyprint.h"
 #include "level_commands.h"
 #include "debug.h"
+#include "print.h"
 
 #include "config.h"
 

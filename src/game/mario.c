@@ -33,7 +33,6 @@
 #include "sound_init.h"
 #include "rumble_init.h"
 #include "ingame_menu.h"
-#include "dialog_ids.h"
 
 /**************************************************
  *                    ANIMATIONS                  *
@@ -574,6 +573,9 @@ s32 mario_floor_is_slope(struct MarioState *m) {
  */
 s32 mario_floor_is_steep(struct MarioState *m) {
     f32 normY;
+    if (m->floor->type == SURFACE_SUPER_SLIPPERY)
+    return TRUE;
+
 #ifdef JUMP_KICK_FIX
     if (m->floor->type == SURFACE_NOT_SLIPPERY) {
         return FALSE;
@@ -625,8 +627,10 @@ s16 find_floor_slope(struct MarioState *m, s16 yawOffset) {
     forwardFloorY  = get_surface_height_at_location(m->pos[0] + x, m->pos[2] + z, floor);
     backwardFloorY = get_surface_height_at_location(m->pos[0] - x, m->pos[2] - z, floor);
 #else
-    forwardFloorY  = get_surface_height_at_location(m->pos[0] + x, m->pos[2] + z, floor);
-    backwardFloorY = get_surface_height_at_location(m->pos[0] - x, m->pos[2] - z, floor);
+    forwardFloorY  = find_floor(m->pos[0] + x, m->pos[1] + 100.0f, m->pos[2] + z, &floor);
+    if (floor == NULL)  forwardFloorY = m->floorHeight; // handle OOB slopes
+    backwardFloorY = find_floor(m->pos[0] - x, m->pos[1] + 100.0f, m->pos[2] - z, &floor);
+    if (floor == NULL) backwardFloorY = m->floorHeight; // handle OOB slopes
 #endif
 
     forwardYDelta = forwardFloorY - m->pos[1];

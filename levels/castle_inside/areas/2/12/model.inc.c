@@ -18,8 +18,8 @@ static const Vtx inside_castle_seg7_vertex_07051A50[] = {
 
 // 0x07051B10 - 0x07051B60
 static const Gfx inside_castle_seg7_dl_07051B10[] = {
-    gsSPLightColor(LIGHT_1, 0xbfaa3fff),
-    gsSPLightColor(LIGHT_2, 0x473f17ff),
+    gsSPLightColor(LIGHT_1, 0x708bdfff),
+    gsSPLightColor(LIGHT_2, 0x252e4aff),
     gsSPVertex(inside_castle_seg7_vertex_07051A50, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  0,  2,  3, 0x0),
     gsSP2Triangles( 4,  5,  6, 0x0,  4,  6,  7, 0x0),

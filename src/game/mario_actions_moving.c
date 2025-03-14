@@ -355,7 +355,7 @@ void update_shell_speed(struct MarioState *m) {
 
     if (m->forwardVel <= 0.0f) {
         m->forwardVel += 2.0f;
-    } else if (m->forwardVel <= targetSpeed) {
+    } else if (m->forwardVel <= targetSpeed /* > 0.0f */) {
         m->forwardVel += 0.625f;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.0625f;
@@ -427,6 +427,7 @@ void update_walking_speed(struct MarioState *m) {
     }
 
     targetSpeed = m->intendedMag < maxTargetSpeed ? m->intendedMag : maxTargetSpeed;
+    // targetSpeed = m->intendedMag;
 
     if (m->quicksandDepth > 10.0f) {
         targetSpeed *= 6.25f / m->quicksandDepth;
@@ -435,7 +436,7 @@ void update_walking_speed(struct MarioState *m) {
     if (m->forwardVel <= 0.0f) {
         // Slow down if moving backwards
         m->forwardVel += 1.0f;
-    } else if (m->forwardVel <= targetSpeed) {
+    } else if (m->forwardVel <= targetSpeed /* > 0.0f */) {
         // If accelerating
         m->forwardVel += 0.625f;
     } else if (m->floor->normal.y >= 0.95f) {
@@ -1868,8 +1869,15 @@ s32 act_long_jump_land(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 #endif
-
-    sLongJumpLandAction.aPressedAction = m->input & INPUT_Z_DOWN ? ACT_LONG_JUMP : ACT_JUMP;
+    if (m->input & INPUT_Z_DOWN) {
+        if (m->input & INPUT_A_PRESSED)
+            return set_mario_action(m, ACT_LONG_JUMP, 0);
+        if (m->input & INPUT_A_DOWN) {
+            if (gGlobalTimer % 2 == 0) {
+                return set_mario_action(m, ACT_LONG_JUMP, 0);
+            }
+        }
+    }
 
     if (common_landing_cancels(m, &sLongJumpLandAction, set_jumping_action)) {
         return TRUE;
@@ -1910,8 +1918,8 @@ s32 act_triple_jump_land(struct MarioState *m) {
 }
 
 s32 act_backflip_land(struct MarioState *m) {
-    if (!(m->input & INPUT_Z_DOWN)) {
-        m->input &= ~INPUT_A_PRESSED;
+    if ((m->input & INPUT_Z_DOWN) && (m->input & INPUT_A_DOWN)) {
+        return set_mario_action(m, ACT_BACKFLIP, 0);
     }
 
     if (common_landing_cancels(m, &sBackflipLandAction, set_jumping_action)) {
