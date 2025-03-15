@@ -8,9 +8,9 @@
  * Initial angle acceleration.
  */
 static f32 sTTCPendulumInitialAccels[] = {
-    /* TTC_SPEED_SLOW    */ 13.0f,
-    /* TTC_SPEED_FAST    */ 22.0f,
-    /* TTC_SPEED_RANDOM  */ 13.0f,
+    /* TTC_SPEED_SLOW    */ 16.0f,
+    /* TTC_SPEED_FAST    */ 24.0f,
+    /* TTC_SPEED_RANDOM  */ 16.0f,
     /* TTC_SPEED_STOPPED */ 0.0f,
 };
 
@@ -20,9 +20,9 @@ static f32 sTTCPendulumInitialAccels[] = {
 void bhv_ttc_pendulum_init(void) {
     if (gTTCSpeedSetting != TTC_SPEED_STOPPED) {
         o->oTTCPendulumAngleAccel = sTTCPendulumInitialAccels[gTTCSpeedSetting];
-        o->oTTCPendulumAngle = 6500.0f;
+        o->oTTCPendulumAngle = -6144.0f;
     } else {
-        o->oTTCPendulumAngle = 6371.5557f;
+        o->oTTCPendulumAngle = 4096.0f;
     }
 }
 
@@ -47,6 +47,8 @@ void bhv_ttc_pendulum_update(void) {
             // Accelerate in the direction that moves angle to zero
             if (o->oTTCPendulumAngle * o->oTTCPendulumAccelDir > 0.0f) {
                 o->oTTCPendulumAccelDir = -o->oTTCPendulumAccelDir;
+                //! my dingaling go swinging infintely
+                //  these mfs forgot to do a CLAMP(o->oTTCPendulumAccelDir, -100, 100) didn't they huh
             }
             o->oTTCPendulumAngleVel += o->oTTCPendulumAngleAccel * o->oTTCPendulumAccelDir;
 
@@ -55,21 +57,25 @@ void bhv_ttc_pendulum_update(void) {
             //! If the pendulum is moving fast enough, the vel could fail to
             //  be a multiple of angle accel, and so the pendulum would continue
             //  oscillating forever
+            // pannenkoek moment
             if (o->oTTCPendulumAngleVel == 0.0f) {
                 if (gTTCSpeedSetting == TTC_SPEED_RANDOM) {
                     // Select a new acceleration
                     //! By manipulating this, we can cause the pendulum to reach
                     //  extreme angles and speeds
                     if (random_u16() % 3 != 0) {
-                        o->oTTCPendulumAngleAccel = 13.0f;
+                        o->oTTCPendulumAngleAccel = 16.0f;
                     } else {
-                        o->oTTCPendulumAngleAccel = 42.0f;
+                        o->oTTCPendulumAngleAccel = 48.0f;
                     }
+                    // rng manipulating pendulums to spin forever is such a good meme
 
                     // Pick a random delay
+                    /* nah who needs delays tbh
                     if (random_u16() % 2 == 0) {
                         o->oTTCPendulumDelay = random_linear_offset(5, 30);
                     }
+                    */
                 }
 
                 // Play the sound 15 frames after beginning to move

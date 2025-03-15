@@ -1870,12 +1870,8 @@ s32 act_long_jump_land(struct MarioState *m) {
     }
 #endif
     if (m->input & INPUT_Z_DOWN) {
-        if (m->input & INPUT_A_PRESSED)
+        if ((m->input & INPUT_A_PRESSED) || (m->input & INPUT_A_DOWN && m->forwardVel < 0.0f && gGlobalTimer % 2 == 0)) {
             return set_mario_action(m, ACT_LONG_JUMP, 0);
-        if (m->input & INPUT_A_DOWN) {
-            if (gGlobalTimer % 2 == 0) {
-                return set_mario_action(m, ACT_LONG_JUMP, 0);
-            }
         }
     }
 

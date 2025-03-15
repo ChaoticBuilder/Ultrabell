@@ -1675,9 +1675,9 @@ void render_pause_my_score_coins(void) {
         }
 
         print_generic_string(ACT_NAME_X, 140, actName);
-        print_generic_string(LVL_NAME_X, 157, &courseName[3]);
+        print_generic_string(LVL_NAME_X, 157, courseName);
     } else {
-        print_generic_string(SECRET_LVL_NAME_X, 157, &courseName[3]);
+        print_generic_string(SECRET_LVL_NAME_X, 157, courseName);
     }
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);

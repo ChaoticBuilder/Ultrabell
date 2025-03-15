@@ -114,9 +114,11 @@ void tuxies_mother_act_idle(void) {
         }
     }
 
+    /*
     if (cur_obj_check_anim_frame(1)) {
         cur_obj_play_sound_2(SOUND_OBJ_BIG_PENGUIN_YELL);
     }
+    */
 }
 
 ObjActionFunc sTuxiesMotherActions[] = {
@@ -273,9 +275,11 @@ void bhv_small_penguin_loop(void) {
                 obj_set_behavior(o, bhvSmallPenguin);
             }
             obj_copy_pos(o, gMarioObject);
+            /*
             if (!(gGlobalTimer & 0x1F)) {
                 play_sound(SOUND_OBJ2_BABY_PENGUIN_YELL, gMarioObject->header.gfx.cameraToObject);
             }
+            */
             break;
         case HELD_THROWN:
             cur_obj_get_thrown_or_placed(0.0f, 0.0f, SMALL_PENGUIN_ACT_WALKING);

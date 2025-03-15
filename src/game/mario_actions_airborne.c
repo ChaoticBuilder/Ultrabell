@@ -176,12 +176,11 @@ s32 check_horizontal_wind(struct MarioState *m) {
 }
 
 void update_air_with_turn(struct MarioState *m) {
-    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
+        // dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -193,15 +192,11 @@ void update_air_with_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > dragThreshold) {
+        if (m->forwardVel > 48.0f) {
             m->forwardVel -= 1.0f;
         }
         if (m->forwardVel < -16.0f) {
-            if (m->forwardVel > -28.0f) {
-                m->forwardVel -= (m->forwardVel / 15);
-            } else {
-                m->forwardVel /= 1.03125f;
-            }
+            m->forwardVel += 1.5f;
         }
 
         m->vel[0] = m->slideVelX = m->forwardVel * sins(m->faceAngle[1]);
@@ -211,12 +206,11 @@ void update_air_with_turn(struct MarioState *m) {
 
 void update_air_without_turn(struct MarioState *m) {
     f32 sidewaysSpeed = 0.0f;
-    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
+        // dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -237,17 +231,14 @@ void update_air_without_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > dragThreshold) {
+        if (m->forwardVel > 48.0f) {
             m->forwardVel -= 1.0f;
         }
         if (m->action != ACT_LONG_JUMP_LAND) {
             if (m->forwardVel < -16.0f) {
-                if (m->forwardVel > -28.0f) {
-                    m->forwardVel -= (m->forwardVel / 15);
-                } else {
-                    m->forwardVel /= 1.028125f;
-                }
+                m->forwardVel += 1.5f;
             }
+            // I used to have an entire system for trying to help bljs but it kinda just made it worse tbh so I reverted it to vanilla behavior
         }
 
         m->slideVelX = m->forwardVel * sins(m->faceAngle[1]);

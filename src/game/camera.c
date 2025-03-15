@@ -10940,17 +10940,26 @@ void fov_changer(struct GraphNodePerspective *perspective) {
     perspective->fov += sFovSlider;
 }
 
+u8 visualizerOn;
 void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
+    // this code is such a mess still I really need to fix it later on
+    // it's so bad there's this weird bug where if you let mario sleep, then exit that, the fov is like 1 less than before, and I have no idea why
+    // 45 > 30 > 44
     sFOVState.multiplier = 15; // duration
+    visualizerOn = FALSE;
     u16 timer1;
     f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
     if (gCurrLevelNum == LEVEL_BOWSER_1 || gCurrLevelNum == LEVEL_BOWSER_2 || gCurrLevelNum == LEVEL_BOWSER_3 || gCurrLevelNum == LEVEL_PSS || gCurrLevelNum == LEVEL_CCM
         || gCurrLevelNum == LEVEL_SL || gCurrLevelNum == LEVEL_TTC) {
+        visualizerOn = TRUE;
         if ((gGlobalTimer % sFOVState.multiplier) >= (sFOVState.multiplier / (sFOVState.multiplier / 2))) {
             timer1 = 65535;
         } else {
             timer1 = 0;
         }
+        // this part specifically is like the most scuffed
+        // it's used for the "exponentialness" but like if you set the duration a bit too high then like it can easily overflow
+        // and also like grahhh it kinda sucks regardless
         sFOVState.inc = approach_f32(sFOVState.inc, timer1, ((sFOVState.inc / 2) /* controls exponentially I think */ + 1), 65535);
         sFOVState.velocity = approach_f32(sFOVState.velocity, timer2, (sFOVState.inc / 384), (sFOVState.inc / 384));
     
@@ -10960,12 +10969,20 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
         print_text_fmt_int(160, 40, "inc %d", sFOVState.inc);
         print_text_fmt_int(160, 24, "time%d", timer2);
         */
+    } else {
+        visualizerOn = FALSE;
     }
 }
 
 void visualizer_display(void) {
     char fovBytes[1];
-    int fovTxt = sFOVState.fov + sFovSlider - (sFOVState.velocity - sFOVState.multiplier);
+    int fovTxt;
+    if (visualizerOn == TRUE) {
+        fovTxt = sFOVState.fov + sFovSlider - (sFOVState.velocity - sFOVState.multiplier);
+    } else {
+        fovTxt = sFOVState.fov + sFovSlider;
+    }
+    // absolutely amazing I know, blame real hardware and it trying to divide by 0 or whatever the fuck it's doing
     
     sprintf(fovBytes, "FOV: %02d", fovTxt);
     print_set_envcolour(0, 189, 255, 255);
