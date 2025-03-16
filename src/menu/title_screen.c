@@ -169,16 +169,16 @@ s32 intro_level_select(void) {
     if ((index & 0x3) == 0) gLevelSelectHoldKeyTimer = 0;
     if (gCurrLevelNum > LEVEL_MAX) gCurrLevelNum = LEVEL_MIN; // exceeded max. set to min.
     if (gCurrLevelNum < LEVEL_MIN) gCurrLevelNum = LEVEL_MAX; // exceeded min. set to max.
-    // Use file 4 and last act as a test
+    // Use file 4 as a test
     gCurrSaveFileNum = 4;
 
-    print_text_centered(160, 84, "DEVELOPER TEST 96");
-    print_text_centered(160, 36, "PRESS START TO TEST!");
-    print_text_centered(140, 16, "CURRENT ACT");
+    print_text_centered(160, 96, "DEVELOPER TEST 96");
+    print_text_centered(160, 56, "PRESS START TO TEST!");
+    print_text_centered(142, 16, "CURRENT ACT");
 
-    print_text_fmt_int(40, 60, "%2d", gCurrLevelNum);
-    print_text_fmt_int(200, 16, "%2d", gCurrActNum);
-    print_text(80, 60, sLevelSelectStageNames[gCurrLevelNum - 1]); // print stage name
+    print_text_fmt_int(138, 36, "%2d", gCurrLevelNum);
+    print_text_fmt_int(206, 16, "%2d", gCurrActNum);
+    print_text(40, 76, sLevelSelectStageNames[gCurrLevelNum - 1]); // print stage name
 
     // start being pressed signals the stage to be started.
     if (gPlayer1Controller->buttonPressed & (START_BUTTON | A_BUTTON)) {

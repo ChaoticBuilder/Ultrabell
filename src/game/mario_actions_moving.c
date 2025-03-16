@@ -46,7 +46,7 @@ Mat4 sFloorAlignMatrix[2];
 
 s16 tilt_body_running(struct MarioState *m) {
     s16 pitch = find_floor_slope(m, 0);
-    pitch = pitch * m->forwardVel / 40.0f;
+    // pitch = pitch * m->forwardVel / 64.0f;
     return -pitch;
 }
 
@@ -707,12 +707,12 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
         s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
         if (gLuigiToggle == TRUE) {
-            nextBodyPitch = -(s16)(m->forwardVel * DEGREES(0.5));
+            nextBodyPitch = -(s16)((m->forwardVel - 12) * 192);
         } else {
-            nextBodyPitch = -(s16)(m->forwardVel * DEGREES(0.25));
+            nextBodyPitch = -(s16)((m->forwardVel - 12) * 96);
         }
 
-        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(15), 0);
+        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(30), 0);
 
         marioBodyState->torsoAngle[2] = approach_s32(marioBodyState->torsoAngle[2], nextBodyRoll, 0x400, 0x400);
         marioBodyState->torsoAngle[0] = approach_s32(marioBodyState->torsoAngle[0], nextBodyPitch, 0x400, 0x400);
