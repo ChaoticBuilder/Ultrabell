@@ -10988,7 +10988,7 @@ void visualizer_display(void) {
     
     sprintf(fovBytes, "FOV: %02d", fovTxt);
     print_set_envcolour(0, 189, 255, 255);
-    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, fovBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y - 1) + gHudShakeY, fovBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
 static UNUSED void unused_deactivate_sleeping_camera(UNUSED struct MarioState *m) {
@@ -11051,17 +11051,8 @@ void approach_fov_60(UNUSED struct MarioState *m) {
     camera_approach_f32_symmetric_bool(&sFOVState.fov, 60.f, 1.f);
 }
 
-void approach_fov_45(struct MarioState *m) {
-    // literally the exact same as the bbh fov below can probably just merge the 2 later
-    f32 targetFoV = sFOVState.fov;
-
-    if (m->area->camera->mode == CAMERA_MODE_FIXED && m->area->camera->cutscene == 0) {
-        targetFoV = 45.f;
-    } else {
-        targetFoV = 45.f;
-    }
-
-    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, 2.f, 2.f);
+void approach_fov_45(UNUSED struct MarioState *m) {
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, 2.f);
 }
 
 void approach_fov_80(UNUSED struct MarioState *m) {

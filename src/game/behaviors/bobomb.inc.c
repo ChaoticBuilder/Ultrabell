@@ -13,7 +13,7 @@ static struct ObjectHitbox sBobombHitbox = {
 };
 
 void bhv_bobomb_init(void) {
-    o->oGravity = 2.5f;
+    o->oGravity = 4.0f;
     o->oFriction = 0.8f;
     o->oBuoyancy = 1.3f;
     o->oInteractionSubtype = INT_SUBTYPE_KICKABLE;
@@ -32,7 +32,7 @@ void bobomb_act_explode(void) {
         cur_obj_scale(1.0f + ((f32) o->oTimer / 6.0f));
     } else {
         struct Object *explosion = spawn_object(o, MODEL_EXPLOSION, bhvExplosion);
-        explosion->oGraphYOffset += 100.0f;
+        explosion->oGraphYOffset += 50.0f;
 
         bobomb_spawn_coin();
         create_respawner(MODEL_BLACK_BOBOMB, bhvBobomb, 3000);
@@ -283,7 +283,7 @@ void bhv_bobomb_fuse_smoke_init(void) {
 }
 
 void bhv_bobomb_buddy_init(void) {
-    o->oGravity = 2.5f;
+    o->oGravity = 4.0f;
     o->oFriction = 0.8f;
     o->oBuoyancy = 1.3f;
     o->oInteractionSubtype = INT_SUBTYPE_NPC;
@@ -291,22 +291,27 @@ void bhv_bobomb_buddy_init(void) {
 
 void bobomb_buddy_act_idle(void) {
     s16 animFrame = o->header.gfx.animInfo.animFrame;
+    o->oForwardVel = 5.0f;
 
     // vec3f_copy(&o->oBobombBuddyPosCopyVec, &o->oPosVec);
 
-    object_step();
+    s16 collisionFlags = object_step();
 
     if (animFrame == 5 || animFrame == 16) {
         cur_obj_play_sound_2(SOUND_OBJ_BOBOMB_WALK);
     }
 
+    /*
     if (o->oDistanceToMario < 1000.0f) {
         o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, o->oAngleToMario, 0x140);
     }
+    */
+    obj_return_home_if_safe(o, o->oHomeX, o->oHomeY, o->oHomeZ, 0);
 
     if (o->oInteractStatus == INT_STATUS_INTERACTED) {
         o->oAction = BOBOMB_BUDDY_ACT_TURN_TO_TALK;
     }
+    obj_check_floor_death(collisionFlags, sObjFloor);
 }
 
 /**

@@ -12,17 +12,18 @@
  * Hitbox for water bombs that are spawned by a water bomb spawner. The water
  * bombs that are shot from cannons are intangible.
  */
-static struct ObjectHitbox sWaterBombHitbox = {
-    /* interactType:      */ INTERACT_MR_BLIZZARD,
-    /* downOffset:        */ 25,
-    /* damageOrCoinValue: */ 1,
-    /* health:            */ 99,
-    /* numLootCoins:      */ 0,
-    /* radius:            */ 80,
-    /* height:            */ 50,
-    /* hurtboxRadius:     */ 60,
-    /* hurtboxHeight:     */ 50,
-};
+
+// static struct ObjectHitbox sWaterBombHitbox = {
+//    /* interactType:      */ INTERACT_MR_BLIZZARD,
+//    /* downOffset:        */ 25,
+//    /* damageOrCoinValue: */ 1,
+//    /* health:            */ 99,
+//    /* numLootCoins:      */ 0,
+//    /* radius:            */ 80,
+//    /* height:            */ 50,
+//    /* hurtboxRadius:     */ 60,
+//    /* hurtboxHeight:     */ 50,
+//};
 
 /**
  * Update function for bhvWaterBombSpawner.
@@ -105,7 +106,7 @@ static void water_bomb_act_init(void) {
 static void water_bomb_act_drop(void) {
     f32 stretch;
 
-    obj_set_hitbox(o, &sWaterBombHitbox);
+    // obj_set_hitbox(o, &sWaterBombHitbox);
 
     // Explode if touched or if hit water
     if ((o->oInteractStatus & INT_STATUS_INTERACTED) || (o->oMoveFlags & OBJ_MOVE_ENTERED_WATER)) {

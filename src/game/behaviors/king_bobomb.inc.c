@@ -71,7 +71,7 @@ void king_bobomb_act_active(void) { // act 2
 
         if (o->oKingBobombPlayerGrabEscapeCooldown == 0) {
             o->oForwardVel = 8.0f;
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x320);
+            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x280);
         } else {
             o->oForwardVel = 0.0f;
             o->oKingBobombPlayerGrabEscapeCooldown--;

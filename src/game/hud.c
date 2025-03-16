@@ -526,8 +526,9 @@ void render_hud_demo_timer(void) {
     char clockBytes[9];
     int timerCount = gGlobalTimer / 30;
     int timerMinutes = timerCount / 60;
+    int timerHours = timerMinutes / 60;
     int timerDisplay = timerCount % 60;
-    sprintf(clockBytes, "Clock: %02d : %02d", timerMinutes, timerDisplay);
+    sprintf(clockBytes, "Clock: %02d : %02d . %02d", timerHours, timerMinutes, timerDisplay);
     // u16 timerHours;
     #ifdef TIME_ATTACK
         u16 timeAttackCount = gGlobalTimer;
@@ -556,7 +557,7 @@ void render_hud_demo_timer(void) {
     
     if (!(gTimeAttackToggle)) {
         print_set_envcolour(0, 189, 255, 255);
-        print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 10) + gHudShakeY, clockBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+        print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 9) + gHudShakeY, clockBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     }
 }
 #endif

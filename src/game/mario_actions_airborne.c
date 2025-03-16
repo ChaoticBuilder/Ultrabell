@@ -176,11 +176,12 @@ s32 check_horizontal_wind(struct MarioState *m) {
 }
 
 void update_air_with_turn(struct MarioState *m) {
+    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        // dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
+        dragThreshold = m->action == (m->flags & MARIO_METAL_CAP) ? 64.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -192,7 +193,7 @@ void update_air_with_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > 48.0f) {
+        if (m->forwardVel > dragThreshold) {
             m->forwardVel -= 1.0f;
         }
         if (m->forwardVel < -16.0f) {
@@ -206,11 +207,12 @@ void update_air_with_turn(struct MarioState *m) {
 
 void update_air_without_turn(struct MarioState *m) {
     f32 sidewaysSpeed = 0.0f;
+    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        // dragThreshold = m->action == ACT_LONG_JUMP ? 48.0f : 32.0f;
+        dragThreshold = m->action == (m->flags & MARIO_METAL_CAP) ? 64.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -231,7 +233,7 @@ void update_air_without_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > 48.0f) {
+        if (m->forwardVel > dragThreshold) {
             m->forwardVel -= 1.0f;
         }
         if (m->action != ACT_LONG_JUMP_LAND) {
@@ -376,7 +378,11 @@ void update_flying(struct MarioState *m) {
             m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 4096)) + 0.25f;
         }
     } else {
-        m->forwardVel = 64.0f; // DEBUG
+        if (m->flags & MARIO_WING_CAP) {
+            m->forwardVel = 80.0f;
+        } else {
+            m->forwardVel = 64.0f; // DEBUG
+        }
     }
     
     /* DEBUG

@@ -97,8 +97,8 @@ s32 intro_level_select(void) {
 
     if (gPlayer1Controller->buttonDown == Z_TRIG) { // quit level select
         gLevelSelectExitTimer++;
-        print_text_centered(136, 104, "EXITING");
-        print_text_fmt_int(184, 104, "%2d", gLevelSelectExitTimer);
+        print_text_centered(136, 16, "EXITING");
+        print_text_fmt_int(186, 16, "%2d", gLevelSelectExitTimer);
         if (gLevelSelectExitTimer > 0 && gLevelSelectExitTimer < 50) {
             play_sound(SOUND_GENERAL_COIN, gGlobalSoundSource);
         }
@@ -172,13 +172,13 @@ s32 intro_level_select(void) {
     // Use file 4 as a test
     gCurrSaveFileNum = 4;
 
-    print_text_centered(160, 96, "DEVELOPER TEST 96");
-    print_text_centered(160, 56, "PRESS START TO TEST!");
-    print_text_centered(142, 16, "CURRENT ACT");
+    print_text_centered(158, 96, "DEVELOPER TEST 96");
+    print_text_centered(158, 56, "PRESS START TO TEST!");
+    print_text_centered(140, 36, "CURRENT ACT");
 
-    print_text_fmt_int(138, 36, "%2d", gCurrLevelNum);
-    print_text_fmt_int(206, 16, "%2d", gCurrActNum);
-    print_text(40, 76, sLevelSelectStageNames[gCurrLevelNum - 1]); // print stage name
+    print_text_fmt_int(222, 76, "%2d", gCurrLevelNum);
+    print_text_fmt_int(218, 36, "%2d", gCurrActNum);
+    print_text(38, 76, sLevelSelectStageNames[gCurrLevelNum - 1]); // print stage name
 
     // start being pressed signals the stage to be started.
     if (gPlayer1Controller->buttonPressed & (START_BUTTON | A_BUTTON)) {

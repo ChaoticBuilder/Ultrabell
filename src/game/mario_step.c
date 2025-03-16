@@ -673,22 +673,20 @@ void apply_gravity(struct MarioState *m) {
     }
     if (m->vel[1] >= 0) { sTerminalVelocity = FALSE; } // safeguard just incase
     if (m->flags & MARIO_METAL_CAP && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
-        m->vel[1] -= 2.0f;
+        m->vel[1] -= 1.5f;
+        if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) {
+            m->vel[1] += 0.5f;
+        }
     }
     if (gLuigiToggle == TRUE) {
         if (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN) {
-            m->vel[1] += 1.5f;
-            if (m->flags & MARIO_METAL_CAP) {
-                m->vel[1] -= 0.5f;
-            }
+            m->vel[1] += 1.0f;
             if (m->vel[1] < 0.0f) {
                 if (sTerminalVelocity == TRUE) {
-                    m->vel[1] -= 1.5f;
+                    m->vel[1] -= 1.0f;
                 } else {
                     if ((m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) && m->flags != MARIO_WING_CAP) {
-                        m->vel[1] += 2.5f;
-                    } else {
-                        m->vel[1] -= 0.5f;
+                        m->vel[1] += 3.0f;
                     }
                 }
             }

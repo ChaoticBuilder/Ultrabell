@@ -45,7 +45,7 @@ struct LandingAction     sBackflipLandAction = {         4,               0,    
 Mat4 sFloorAlignMatrix[2];
 
 s16 tilt_body_running(struct MarioState *m) {
-    s16 pitch = find_floor_slope(m, 0);
+    s16 pitch = (find_floor_slope(m, 0)) / 1.5;
     // pitch = pitch * m->forwardVel / 64.0f;
     return -pitch;
 }
@@ -443,8 +443,8 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel -= 0.0625f;
     }
 
-    if (m->forwardVel > 48.0f) {
-        m->forwardVel = 48.0f;
+    if (m->forwardVel > 64.0f) {
+        m->forwardVel = 64.0f;
     }
 
 #ifdef VELOCITY_BASED_TURN_SPEED
@@ -510,7 +510,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if (gLuigiToggle == TRUE || (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80)) {
+    if ((gLuigiToggle == TRUE && !(m->flags & MARIO_METAL_CAP)) || (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80)) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -524,6 +524,10 @@ void anim_and_audio_for_walk(struct MarioState *m) {
     s16 targetPitch = 0;
 
     f32 intendedSpeed = MAX(m->intendedMag, m->forwardVel);
+
+    if (intendedSpeed < 1.0f) {
+        intendedSpeed = 1.0f;
+    }
 
     if (m->quicksandDepth > 50.0f) {
         animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);
@@ -594,8 +598,8 @@ void anim_and_audio_for_hold_walk(struct MarioState *m) {
 
     f32 intendedSpeed = MAX(m->intendedMag, m->forwardVel);
 
-    if (intendedSpeed < 2.0f) {
-        intendedSpeed = 2.0f;
+    if (intendedSpeed < 1.0f) {
+        intendedSpeed = 1.0f;
     }
 
     while (inLoop) {
@@ -707,12 +711,12 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
         s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
         if (gLuigiToggle == TRUE) {
-            nextBodyPitch = -(s16)((m->forwardVel - 12) * 192);
+            nextBodyPitch = -(s16)((m->forwardVel - 15) * 144);
         } else {
-            nextBodyPitch = -(s16)((m->forwardVel - 12) * 96);
+            nextBodyPitch = -(s16)((m->forwardVel - 15) * 96);
         }
 
-        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(30), 0);
+        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(15), 0);
 
         marioBodyState->torsoAngle[2] = approach_s32(marioBodyState->torsoAngle[2], nextBodyRoll, 0x400, 0x400);
         marioBodyState->torsoAngle[0] = approach_s32(marioBodyState->torsoAngle[0], nextBodyPitch, 0x400, 0x400);

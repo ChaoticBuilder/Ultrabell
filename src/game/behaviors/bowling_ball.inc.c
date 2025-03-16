@@ -149,9 +149,11 @@ void bhv_bowling_ball_loop(void) {
             break;
     }
 
+    /*
     if (o->oBehParams2ndByte != BBALL_BP_STYPE_THI_SMALL) {
         set_camera_shake_from_point(SHAKE_POS_BOWLING_BALL, o->oPosX, o->oPosY, o->oPosZ);
     }
+    */
 
     set_object_visibility(o, 4000);
 }
@@ -226,7 +228,7 @@ void bhv_bob_pit_bowling_ball_loop(void) {
         o->oForwardVel = 28.0f;
     }
     bowling_ball_set_hitbox();
-    set_camera_shake_from_point(SHAKE_POS_BOWLING_BALL, o->oPosX, o->oPosY, o->oPosZ);
+    // set_camera_shake_from_point(SHAKE_POS_BOWLING_BALL, o->oPosX, o->oPosY, o->oPosZ);
     cur_obj_play_sound_1(SOUND_ENV_BOWLING_BALL_ROLL);
     set_object_visibility(o, 3000);
 }
