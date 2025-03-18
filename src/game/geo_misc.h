@@ -57,7 +57,7 @@ ALWAYS_INLINE void make_simple_vertex(Vtx *vtx, s32 n, s16 x, s16 y, s16 z, s16 
 }
 
 extern Gfx *geo_exec_inside_castle_light(s32 callContext, struct GraphNode *node, UNUSED Mat4 mtx);
-extern Gfx *geo_exec_flying_carpet_timer_update(s32 callContext, struct GraphNode *node, UNUSED Mat4 mtx);
+// extern Gfx *geo_exec_flying_carpet_timer_update(s32 callContext, struct GraphNode *node, UNUSED Mat4 mtx);
 extern Gfx *geo_exec_flying_carpet_create(s32 callContext, struct GraphNode *node, UNUSED Mat4 mtx);
 extern Gfx *geo_exec_cake_end_screen(s32 callContext, struct GraphNode *node, UNUSED Mat4 mtx);
 

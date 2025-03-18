@@ -11051,8 +11051,16 @@ void approach_fov_60(UNUSED struct MarioState *m) {
     camera_approach_f32_symmetric_bool(&sFOVState.fov, 60.f, 1.f);
 }
 
-void approach_fov_45(UNUSED struct MarioState *m) {
-    camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, 2.f);
+void approach_fov_45(struct MarioState *m) {
+    f32 targetFoV = sFOVState.fov;
+
+    if (m->area->camera->mode == CAMERA_MODE_FIXED && m->area->camera->cutscene == 0) {
+        targetFoV = 45.f;
+    } else {
+        targetFoV = 45.f;
+    }
+
+    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, 2.f, 2.f);
 }
 
 void approach_fov_80(UNUSED struct MarioState *m) {

@@ -930,13 +930,35 @@ s32 act_entering_star_door(struct MarioState *m) {
 }
 
 s32 act_going_through_door(struct MarioState *m) {
+    f32 rand = random_float();
+    u8 troll = FALSE;
+    u8 troll2 = FALSE;
+    u8 doorTroll = FALSE;
+    if (rand < 0.0625f) {
+        troll = TRUE;
+    } else {
+        troll = FALSE;
+    }
+    if (rand > 0.9375f) {
+        troll2 = TRUE;
+    } else {
+        troll2 = FALSE;
+    }
     if (m->actionTimer == 0) {
         if (m->actionArg & WARP_FLAG_DOOR_PULLED) {
             m->interactObj->oInteractStatus = INT_STATUS_DOOR_PULLED;
-            set_mario_animation(m, MARIO_ANIM_PULL_DOOR_WALK_IN);
+            if (!(troll)) {
+                set_mario_animation(m, MARIO_ANIM_PULL_DOOR_WALK_IN);
+            } else {
+                set_mario_animation(m, MARIO_ANIM_PUSH_DOOR_WALK_IN);
+            }
         } else {
             m->interactObj->oInteractStatus = INT_STATUS_DOOR_PUSHED;
-            set_mario_animation(m, MARIO_ANIM_PUSH_DOOR_WALK_IN);
+            if (!(troll)) {
+                set_mario_animation(m, MARIO_ANIM_PUSH_DOOR_WALK_IN);
+            } else {
+                set_mario_animation(m, MARIO_ANIM_PULL_DOOR_WALK_IN);
+            }
         }
     }
     m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
@@ -947,8 +969,18 @@ s32 act_going_through_door(struct MarioState *m) {
     stop_and_set_height_to_floor(m);
 
     if (m->actionArg & WARP_FLAG_DOOR_IS_WARP) {
-        if (m->actionTimer == 16) {
-            level_trigger_warp(m, WARP_OP_WARP_DOOR);
+        if (troll2) {
+            doorTroll = TRUE;
+        }
+        if (!doorTroll) {
+            if (m->actionTimer == 16) {
+                level_trigger_warp(m, WARP_OP_WARP_DOOR);
+            }
+        } else {
+            if (m->actionTimer >= 300) {
+                level_trigger_warp(m, WARP_OP_WARP_DOOR);
+                doorTroll = FALSE;
+            }
         }
     } else if (is_anim_at_end(m)) {
         if (m->actionArg & WARP_FLAG_DOOR_FLIP_MARIO) {
