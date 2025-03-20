@@ -4969,6 +4969,9 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
             case CAM_EVENT_START_INTRO:
                 cutscene = CUTSCENE_INTRO_PEACH;
                 break;
+            case CAM_EVENT_BETA_INTRO:
+                cutscene = CUTSCENE_BETA_INTRO;
+                break;
             case CAM_EVENT_START_GRAND_STAR:
                 cutscene = CUTSCENE_GRAND_STAR;
                 break;
@@ -9311,6 +9314,31 @@ void cutscene_intro_peach_letter(struct Camera *c) {
 
     clamp_pitch(c->pos, c->focus, 0x3B00, -0x3B00);
 }
+void beta_intro_init(struct Camera *c) {
+    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, -0x350, 0, 0); // 0x310
+}
+
+void beta_intro_camera_rotate(struct Camera *c) {
+    c->pos[1] = 384.0f; // 368
+    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, 0, 0, -0x214);
+    if (gCutsceneTimer >= 60) {
+        c->pos[0] = -1329.0f;
+    }
+}
+void beta_intro(struct Camera *c) {
+    cutscene_event(beta_intro_init, c, 0, 0);
+    cutscene_event(beta_intro_camera_rotate, c, 0, 60);
+}
+
+void beta_intro_end(struct Camera *c) {
+    if (get_dialog_id() == DIALOG_NONE) {
+        vec3f_copy(gLakituState.goalPos, c->pos);
+        vec3f_copy(gLakituState.goalFocus, c->focus);
+        sStatusFlags |= (CAM_FLAG_SMOOTH_MOVEMENT | CAM_FLAG_UNUSED_CUTSCENE_ACTIVE);
+        gCutsceneTimer = CUTSCENE_STOP;
+        c->cutscene = 0;
+    }
+} 
 
 /**
  * Reset the spline progress.
@@ -10170,13 +10198,19 @@ struct Cutscene sCutsceneUnusedExit[] = {
 struct Cutscene sCutsceneIntroPeach[] = {
     { cutscene_intro_peach_letter, CUTSCENE_LOOP },
     { cutscene_intro_peach_reset_fov, 35 },
+/*
 #ifdef VERSION_EU
     { cutscene_intro_peach_fly_to_pipe, 675 },
 #else
+*/
     { cutscene_intro_peach_fly_to_pipe, 820 },
-#endif
     { cutscene_intro_peach_mario_appears, 270 },
     { cutscene_intro_peach_dialog, CUTSCENE_LOOP }
+};
+
+struct Cutscene sCutsceneBetaIntro[] = {
+    { beta_intro, 90 },
+    { beta_intro_end, CUTSCENE_LOOP }
 };
 
 /**
@@ -10818,6 +10852,7 @@ void play_cutscene(struct Camera *c) {
         CUTSCENE(CUTSCENE_EXIT_PAINTING_SUCC,   sCutsceneExitPaintingSuccess)
         CUTSCENE(CUTSCENE_UNUSED_EXIT,          sCutsceneUnusedExit)
         CUTSCENE(CUTSCENE_INTRO_PEACH,          sCutsceneIntroPeach)
+        CUTSCENE(CUTSCENE_BETA_INTRO,           sCutsceneBetaIntro)
         CUTSCENE(CUTSCENE_ENTER_BOWSER_ARENA,   sCutsceneEnterBowserArena)
         CUTSCENE(CUTSCENE_DANCE_ROTATE,         sCutsceneDanceDefaultRotate)
         CUTSCENE(CUTSCENE_DANCE_DEFAULT,        sCutsceneDanceDefaultRotate)
