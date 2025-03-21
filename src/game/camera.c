@@ -1603,7 +1603,7 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
  * type exits the course or not.
  */
 u8 sDanceCutsceneTable[] = {
-    CUTSCENE_DANCE_FLY_AWAY, CUTSCENE_DANCE_ROTATE, CUTSCENE_DANCE_CLOSEUP, CUTSCENE_KEY_DANCE, CUTSCENE_DANCE_DEFAULT,
+    CUTSCENE_DANCE_DEFAULT, CUTSCENE_DANCE_ROTATE, CUTSCENE_DANCE_CLOSEUP, CUTSCENE_KEY_DANCE, CUTSCENE_DANCE_DEFAULT,
     CUTSCENE_NONE,           CUTSCENE_NONE,         CUTSCENE_NONE,          CUTSCENE_NONE,      CUTSCENE_NONE,
 };
 
@@ -4864,33 +4864,7 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
         cutscene = sObjectCutscene;
         sObjectCutscene = CUTSCENE_NONE;
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR) {
-            switch (gCurrLevelArea) {
-                case AREA_CASTLE_LOBBY:
-                    //! doorStatus is never DOOR_ENTER_LOBBY when cameraEvent == 6, because
-                    //! doorStatus is only used for the star door in the lobby, which uses
-                    //! ACT_ENTERING_STAR_DOOR
-                    /*
-                    if (c->mode == CAMERA_MODE_SPIRAL_STAIRS || c->mode == CAMERA_MODE_CLOSE || c->doorStatus == DOOR_ENTER_LOBBY) {
-                        cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-                    } else {
-                    */
-                    cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-                    // }
-                    break;
-                case AREA_BBH:
-                    //! Castle Lobby uses 0 to mean 'no special modes', but BBH uses 1...
-                    /*
-                    if (c->doorStatus == DOOR_LEAVING_SPECIAL) {
-                        cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-                    } else {
-                    */
-                    cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-                    // }
-                    break;
-                default:
-                    cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-                    break;
-            }
+            cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
         }
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR_WARP) {
             cutscene = CUTSCENE_DOOR_WARP;
@@ -4956,10 +4930,10 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
                 cutscene = CUTSCENE_STANDING_DEATH;
                 break;
             case ACT_STAR_DANCE_EXIT:
-                cutscene = determine_dance_cutscene(c);
+                cutscene = CUTSCENE_DANCE_DEFAULT;
                 break;
             case ACT_STAR_DANCE_WATER:
-                cutscene = determine_dance_cutscene(c);
+                cutscene = CUTSCENE_DANCE_DEFAULT;
                 break;
             case ACT_STAR_DANCE_NO_EXIT:
                 cutscene = CUTSCENE_DANCE_DEFAULT;
@@ -7366,7 +7340,7 @@ void cutscene_dance_move_to_mario(struct Camera *c) {
     f32 dist;
 
     vec3f_get_dist_and_angle(sMarioCamState->pos, c->pos, &dist, &pitch, &yaw);
-    approach_f32_asymptotic_bool(&dist, 600.f, 0.3f);
+    approach_f32_asymptotic_bool(&dist, 1024.f, 0.3f);
     approach_s16_asymptotic_bool(&pitch, 0x1000, 0x10);
     vec3f_set_dist_and_angle(sMarioCamState->pos, c->pos, dist, pitch, yaw);
 }
@@ -7403,9 +7377,11 @@ void cutscene_dance_rotate_focus_mario(struct Camera *c) {
     focus_in_front_of_mario(c, -200.f, 0.03f);
 }
 
+/*
 void cutscene_dance_shake_fov(UNUSED struct Camera *c) {
     set_fov_shake(0x200, 0x28, 0x8000);
 }
+*/
 
 /**
  * Handles both the default and rotate dance cutscenes.
@@ -7535,9 +7511,11 @@ void cutscene_dance_closeup_zoom(UNUSED struct Camera *c) {
 /**
  * Shake fov, starts on the first frame Mario has the peace sign up.
  */
+/*
 void cutscene_dance_closeup_shake_fov(UNUSED struct Camera *c) {
     set_fov_shake(0x300, 0x30, 0x8000);
 }
+*/
 
 /**
  * The camera moves in for a closeup on Mario. Used for stars that are underwater or in tight places.
@@ -7551,7 +7529,7 @@ void cutscene_dance_closeup(struct Camera *c) {
         cutscene_event(cutscene_dance_closeup_fly_above, c, 0, 62);
         cutscene_event(cutscene_dance_closeup_fly_closer, c, 63, -1);
         cutscene_event(cutscene_dance_closeup_zoom, c, 63, 63);
-        cutscene_event(cutscene_dance_closeup_shake_fov, c, 70, 70);
+        // cutscene_event(cutscene_dance_closeup_shake_fov, c, 70, 70);
     } else {
         cutscene_event(cutscene_dance_closeup_start, c, 0, 0);
         cutscene_event(cutscene_dance_closeup_focus_mario, c, 0, -1);
@@ -7559,7 +7537,7 @@ void cutscene_dance_closeup(struct Camera *c) {
         cutscene_event(cutscene_dance_closeup_fly_above, c, 0, 32);
         cutscene_event(cutscene_dance_closeup_fly_closer, c, 33, -1);
         cutscene_event(cutscene_dance_closeup_zoom, c, 33, 33);
-        cutscene_event(cutscene_dance_closeup_shake_fov, c, 40, 40);
+        // cutscene_event(cutscene_dance_closeup_shake_fov, c, 40, 40);
     }
     set_handheld_shake(HAND_CAM_SHAKE_CUTSCENE);
 }
@@ -7640,9 +7618,11 @@ void cutscene_dance_fly_away_rotate_while_flying(struct Camera *c) {
     rotate_and_move_vec3f(c->pos, sMarioCamState->pos, 0, 0, 0x80);
 }
 
+/*
 void cutscene_dance_fly_away_shake_fov(UNUSED struct Camera *c) {
     set_fov_shake(0x400, 0x30, 0x8000);
 }
+*/
 
 /**
  * After collecting the star, Lakitu flies upwards out of the course.
@@ -7654,7 +7634,7 @@ void cutscene_dance_fly_away(struct Camera *c) {
     cutscene_event(cutscene_dance_fly_away_approach_mario, c, 0, 30);
     cutscene_event(cutscene_dance_fly_rotate_around_mario, c, 55, 124);
     cutscene_event(cutscene_dance_fly_away_rotate_while_flying, c, 55, 124);
-    cutscene_event(cutscene_dance_fly_away_shake_fov, c, 40, 40);
+    // cutscene_event(cutscene_dance_fly_away_shake_fov, c, 40, 40);
     set_fov_function(CAM_FOV_DEFAULT);
     set_handheld_shake(HAND_CAM_SHAKE_STAR_DANCE);
 }
@@ -7702,9 +7682,11 @@ void cutscene_key_dance_jump_last(UNUSED struct Camera *c) {
     vec3f_set(sCutsceneVars[7].point, -20.f, 135.f, -198.f);
 }
 
+/*
 void cutscene_key_dance_shake_fov(UNUSED struct Camera *c) {
     set_fov_shake(0x180, 0x30, 0x8000);
 }
+*/
 
 void cutscene_key_dance_handheld_shake(UNUSED struct Camera *c) {
     set_handheld_shake(HAND_CAM_SHAKE_CUTSCENE);
@@ -7726,7 +7708,7 @@ void cutscene_key_dance(struct Camera *c) {
     cutscene_event(cutscene_key_dance_jump_above, c, 35, 35);
     cutscene_event(cutscene_key_dance_jump_last, c, 52, 52);
     cutscene_event(cutscene_key_dance_jump_cvar, c, 11, -1);
-    cutscene_event(cutscene_key_dance_shake_fov, c, 54, 54);
+    // cutscene_event(cutscene_key_dance_shake_fov, c, 54, 54);
     cutscene_event(cutscene_key_dance_handheld_shake, c, 52, -1);
 }
 
@@ -8803,7 +8785,7 @@ void cutscene_non_painting_set_cam_pos(struct Camera *c) {
 
         default:
             offset_rotated(c->pos, sCutsceneVars[7].point, sCutsceneVars[5].point, sCutsceneVars[7].angle);
-            c->pos[1] = find_floor(c->pos[0], c->pos[1] + 1000.f, c->pos[2], &floor) + 125.f;
+            c->pos[1] = find_floor(c->pos[0], c->pos[1] + 1000.f, c->pos[2], &floor) + 32.f;
             break;
     }
 }
@@ -8820,7 +8802,8 @@ void cutscene_non_painting_set_cam_focus(struct Camera *c) {
         c->focus[1] = c->pos[1] + (sMarioCamState->pos[1] - c->pos[1]) * 0.4f;
         c->focus[2] = c->pos[2] + (sMarioCamState->pos[2] - c->pos[2]) * 0.7f;
     } else {
-        c->focus[1] = c->pos[1] + (sMarioCamState->pos[1] - c->pos[1]) * 0.2f;
+        c->focus[1] = (c->pos[1] + (sMarioCamState->pos[1] - c->pos[1]) * 0.1f) + 96.f;
+        // beta had the focus slightly higher than mario, possibly to have less carpet visible?
     }
 }
 
@@ -8855,7 +8838,7 @@ void cutscene_exit_succ_shake_landing(UNUSED struct Camera *c) {
 void cutscene_exit_bowser_succ(struct Camera *c) {
     cutscene_event(cutscene_exit_succ_start, c, 0, 0);
     cutscene_event(cutscene_non_painting_set_cam_pos, c, 0, -1);
-    cutscene_event(cutscene_exit_bowser_succ_focus_left, c, 18, -1);
+    // cutscene_event(cutscene_exit_bowser_succ_focus_left, c, 18, -1);
     cutscene_event(cutscene_non_painting_set_cam_focus, c, 0, -1);
     cutscene_event(cutscene_exit_bowser_key_toss_shake, c, 125, 125);
     cutscene_event(cutscene_exit_succ_shake_landing, c, 41, 41);
@@ -8909,9 +8892,10 @@ void cutscene_exit_non_painting_succ(struct Camera *c) {
  * set cvar5 to the pos offset from Mario. (This is always overwritten)
  */
 void cutscene_non_painting_death_start(UNUSED struct Camera *c) {
+    // set_fov_function(CAM_FOV_APP_60);
     vec3f_copy(sCutsceneVars[7].point, sMarioCamState->pos);
     vec3s_copy(sCutsceneVars[7].angle, sMarioCamState->faceAngle);
-    vec3f_set(sCutsceneVars[6].point, -42.f, 350.f, 727.f);
+    vec3f_set(sCutsceneVars[6].point, 0.f, 350.f, 832.f);
     // This is always overwritten, except in the unused cutscene_exit_bowser_death()
     vec3f_set(sCutsceneVars[5].point, 107.f, 226.f, 1187.f);
 }
@@ -8943,7 +8927,7 @@ void cutscene_non_painting_death_override_offset(UNUSED struct Camera *c) {
             vec3f_set(sCutsceneVars[5].point, 187.f, 369.f, -197.f);
             break;
         default:
-            vec3f_set(sCutsceneVars[5].point, 107.f, 246.f, 1307.f);
+            vec3f_set(sCutsceneVars[5].point, 107.f, 0.f, 1307.f);
             break;
     }
 }
@@ -9315,11 +9299,11 @@ void cutscene_intro_peach_letter(struct Camera *c) {
     clamp_pitch(c->pos, c->focus, 0x3B00, -0x3B00);
 }
 void beta_intro_init(struct Camera *c) {
-    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, -0x350, 0, 0); // 0x310
+    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, -0x450, 0, 0); // 0x310
 }
 
 void beta_intro_camera_rotate(struct Camera *c) {
-    c->pos[1] = 384.0f; // 368
+    c->pos[1] = 512.0f; // 368
     rotate_and_move_vec3f(c->pos, sMarioCamState->pos, 0, 0, -0x214);
     if (gCutsceneTimer >= 60) {
         c->pos[0] = -1329.0f;
@@ -10982,12 +10966,13 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
     // this code is such a mess still I really need to fix it later on
     // it's so bad there's this weird bug where if you let mario sleep, then exit that, the fov is like 1 less than before, and I have no idea why
     // 45 > 30 > 44
-    sFOVState.multiplier = 15; // duration
+    sFOVState.multiplier = 11; // duration (add 1 to your duration because modulo)
     visualizerOn = FALSE;
     u16 timer1;
     f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
-    if (gCurrLevelNum == LEVEL_BOWSER_1 || gCurrLevelNum == LEVEL_BOWSER_2 || gCurrLevelNum == LEVEL_BOWSER_3 || gCurrLevelNum == LEVEL_PSS || gCurrLevelNum == LEVEL_CCM
-        || gCurrLevelNum == LEVEL_SL || gCurrLevelNum == LEVEL_TTC) {
+
+    if ((get_current_background_music() == SEQ_LEVEL_BOSS_KOOPA || get_current_background_music() == SEQ_LEVEL_SNOW || get_current_background_music() == SEQ_LEVEL_SLIDE
+     || get_current_background_music() == SEQ_LEVEL_KOOPA_ROAD) || gCurrLevelNum == LEVEL_COTMC) {
         visualizerOn = TRUE;
         if ((gGlobalTimer % sFOVState.multiplier) >= (sFOVState.multiplier / (sFOVState.multiplier / 2))) {
             timer1 = 65535;
@@ -10998,7 +10983,7 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
         // it's used for the "exponentialness" but like if you set the duration a bit too high then like it can easily overflow
         // and also like grahhh it kinda sucks regardless
         sFOVState.inc = approach_f32(sFOVState.inc, timer1, ((sFOVState.inc / 2) /* controls exponentially I think */ + 1), 65535);
-        sFOVState.velocity = approach_f32(sFOVState.velocity, timer2, (sFOVState.inc / 384), (sFOVState.inc / 384));
+        sFOVState.velocity = approach_f32(sFOVState.velocity, timer2, (sFOVState.inc / 16), (sFOVState.inc / 16));
     
         perspective->fov -= sFOVState.velocity - sFOVState.multiplier;
         /*

@@ -373,15 +373,15 @@ void update_flying(struct MarioState *m) {
 
     if (!gDebugLevelSelect) {
         if (m->flags & MARIO_WING_CAP) {
-            m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 6144)) - 0.5f;
+            m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 5120)) - 0.625f;
         } else {
-            m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 6144)) + 0.25f;
+            m->forwardVel -= (1.0f * ((f32) m->faceAngle[0] / 5120)) + 0.125f;
         }
     } else {
         if (m->flags & MARIO_WING_CAP) {
-            m->forwardVel = 80.0f;
+            m->forwardVel = 80.0f; // DEBUG
         } else {
-            m->forwardVel = 64.0f; // DEBUG
+            m->forwardVel = 60.0f; // DEBUG
         }
     }
     
@@ -410,34 +410,35 @@ void update_flying(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 
-    if (m->forwardVel < 8) {
-        m->faceAngle[0] -= (m->faceAngle[0] / 10 + 1536);
-    } else if (m->forwardVel > 256) {
-        m->forwardVel = 256;
+    if (m->forwardVel < 16) {
+        m->faceAngle[0] -= (m->faceAngle[0] / 16 + 448);
+    } else if (m->forwardVel > 192) {
+        m->forwardVel = 192;
     }
 
-    if (m->flags & MARIO_WING_CAP) {
-        if (m->forwardVel > 32) {
-            m->forwardVel -= 0.25;
-            if (m->forwardVel > 64) {
+    if (!gDebugLevelSelect) {
+        if (m->flags & MARIO_WING_CAP) {
+            if (m->forwardVel > 32) {
+                m->forwardVel -= 0.25;
+                if (m->forwardVel > 64) {
+                    m->forwardVel -= 0.375;
+                    if (m->forwardVel > 96) {
+                        m->forwardVel -= 0.625;
+                    }
+                }
+            }
+        } else {
+            if (m->forwardVel > 32) {
                 m->forwardVel -= 0.375;
-                if (m->forwardVel > 96) {
+                if (m->forwardVel > 64) {
                     m->forwardVel -= 0.625;
-                }
-            }
-        }
-    } else {
-        if (m->forwardVel > 32) {
-            m->forwardVel -= 0.375;
-            if (m->forwardVel > 64) {
-                m->forwardVel -= 0.625;
-                if (m->forwardVel > 96) {
-                    m->forwardVel -= 0.75;
+                    if (m->forwardVel > 96) {
+                        m->forwardVel -= 0.75;
+                    }
                 }
             }
         }
     }
-
 
     m->faceAngle[0] += m->angleVel[0];
 

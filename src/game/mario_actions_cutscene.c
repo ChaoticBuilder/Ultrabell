@@ -872,12 +872,23 @@ s32 act_entering_star_door(struct MarioState *m) {
     f32 targetDX;
     f32 targetDZ;
     s16 targetAngle;
+    f32 rand = random_float();
+    u8 troll = FALSE;
+    if (rand < 0.03125f) {
+        troll = TRUE;
+    } else {
+        troll = FALSE;
+    }
 
     if (m->actionTimer++ == 0) {
         m->interactObj->oInteractStatus = INT_STATUS_DOOR_PULLED;
 
         // ~30 degrees / 1/12 rot
         targetAngle = m->usedObj->oMoveAngleYaw + DEGREES(30);
+        if (troll) {
+            targetAngle += DEGREES(150);
+        }
+        
         if (m->actionArg & WARP_FLAG_DOOR_FLIP_MARIO) {
             targetAngle += 0x5556; // ~120 degrees / 1/3 rot (total 150d / 5/12)
         }
@@ -885,8 +896,8 @@ s32 act_entering_star_door(struct MarioState *m) {
         // targetDX and targetDZ are the offsets to add to Mario's position to
         // have Mario stand 150 units in front of the door
 
-        targetDX = m->usedObj->oPosX + 150.0f * sins(targetAngle) - m->pos[0];
-        targetDZ = m->usedObj->oPosZ + 150.0f * coss(targetAngle) - m->pos[2];
+        targetDX = m->usedObj->oPosX + 300.0f * sins(targetAngle) - m->pos[0];
+        targetDZ = m->usedObj->oPosZ + 300.0f * coss(targetAngle) - m->pos[2];
 
         m->marioObj->oMarioReadingSignDPosX = targetDX / 20.0f;
         m->marioObj->oMarioReadingSignDPosZ = targetDZ / 20.0f;
@@ -895,16 +906,16 @@ s32 act_entering_star_door(struct MarioState *m) {
     }
 
     // set Mario's animation
-    if (m->actionTimer < 15) {
-        set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+    if (m->actionTimer < 20) {
+        set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
     }
 
     // go through door? for 20 frames
-    else if (m->actionTimer < 35) {
+    else if (m->actionTimer < 30) {
         m->pos[0] += m->marioObj->oMarioReadingSignDPosX;
         m->pos[2] += m->marioObj->oMarioReadingSignDPosZ;
 
-        set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 0x00028000);
+        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00050000);
     }
 
     else {
@@ -914,15 +925,15 @@ s32 act_entering_star_door(struct MarioState *m) {
             m->faceAngle[1] += 0x8000;
         }
 
-        m->pos[0] += 12.0f * sins(m->faceAngle[1]);
-        m->pos[2] += 12.0f * coss(m->faceAngle[1]);
+        m->pos[0] += 24.0f * sins(m->faceAngle[1]);
+        m->pos[2] += 24.0f * coss(m->faceAngle[1]);
 
-        set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 0x00028000);
+        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00050000);
     }
 
     stop_and_set_height_to_floor(m);
 
-    if (m->actionTimer == 48) {
+    if (m->actionTimer >= 45) {
         set_mario_action(m, ACT_IDLE, 0);
     }
 
@@ -934,12 +945,12 @@ s32 act_going_through_door(struct MarioState *m) {
     u8 troll = FALSE;
     u8 troll2 = FALSE;
     u8 doorTroll = FALSE;
-    if (rand < 0.0625f) {
+    if (rand < 0.03125f) {
         troll = TRUE;
     } else {
         troll = FALSE;
     }
-    if (rand > 0.9375f) {
+    if (rand > 0.96875f) {
         troll2 = TRUE;
     } else {
         troll2 = FALSE;
@@ -973,7 +984,7 @@ s32 act_going_through_door(struct MarioState *m) {
             doorTroll = TRUE;
         }
         if (!doorTroll) {
-            if (m->actionTimer == 16) {
+            if (m->actionTimer == 20) {
                 level_trigger_warp(m, WARP_OP_WARP_DOOR);
             }
         } else {
@@ -1300,7 +1311,7 @@ s32 act_special_death_exit(struct MarioState *m) {
         return FALSE;
     }
 
-    if (launch_mario_until_land(m, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -24.0f)) {
+    if (launch_mario_until_land(m, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -20.0f)) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif

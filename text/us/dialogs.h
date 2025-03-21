@@ -236,13 +236,13 @@ go! Shred those enemies!"))
 
 DEFINE_DIALOG(DIALOG_017, 1, 4, 30, 200, _("\
 Hello there, Mustache! I\n\
-am King Bob-omb! King\n\
-of the Mountain!\n\
+am King Bob-omb! King of\n\
+the Mountain!\n\
 What brings you here?\n\
 A Power Star? That's\n\
 BLAST-phemy! If you want\n\
-to collect my Star, we\n\
-are going to DUEL!"))
+to collect my Star, we are\n\
+going to DUEL!"))
 
 DEFINE_DIALOG(DIALOG_018, 1, 4, 30, 200, _("\
 I'm sleeping because...\n\
@@ -366,7 +366,7 @@ Use the [C] Buttons to look\n\
 around while flying, and\n\
 press [Z] to land."))
 
-DEFINE_DIALOG(DIALOG_033, 1, 6, 30, 200, _("\
+DEFINE_DIALOG(DIALOG_033, 1, 5, 30, 200, _("\
 Ciao! Welcome to Mario's\n\
 Kingdom! It's quite nice\n\
 here, isn't it? If you like\n\
@@ -1337,23 +1337,20 @@ after all. I won't gravel,\n\
 er, grovel. Here, you win.\n\
 Take this with you!"))
 
-DEFINE_DIALOG(DIALOG_116, 1, 5, 95, 200, _("\
-What?!\n\
-It seems I under-\n\
-estimated you, foe.\n\
-\n\
-You're better than I\n\
-anticipated! My troops\n\
-could learn something\n\
-from you!\n\
-Regardless, if you want\n\
-want to save the\n\
-Princess, then you'll\n\
-have to pick up the pace!\n\
-Continue returning the\n\
-Power Stars, and may luck\n\
-be on your side when\n\
-taking on the Koopa King!\n\
+DEFINE_DIALOG(DIALOG_116, 1, 7, 95, 200, _("\
+What?! How could I\n\
+under-estimate such a\n\
+tiny foe?!\n\
+Well, my troops could\n\
+really learn from you!\n\
+You fought like a Knight\n\
+on duty!\n\
+Feel free to retry this\n\
+Battle in the Star Select,\n\
+and make sure to practice\n\
+your throwing! You'll\n\
+need it when taking on\n\
+the Royal Koopa King!\n\
 Farewell, friend."))
 
 DEFINE_DIALOG(DIALOG_117, 1, 1, 95, 200, _("\

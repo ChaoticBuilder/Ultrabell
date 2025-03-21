@@ -525,10 +525,12 @@ void render_hud_timer(void) {
 void render_hud_demo_timer(void) {
     char clockBytes[9];
     int timerCount = gGlobalTimer / 30;
-    int timerMinutes = timerCount / 60;
-    int timerHours = timerMinutes / 60;
-    int timerDisplay = timerCount % 60;
-    sprintf(clockBytes, "Clock: %02d : %02d . %02d", timerHours, timerMinutes, timerDisplay);
+    int timerCount2 = timerCount / 60;
+    int timerCount3 = timerCount2 / 60;
+    int timerSeconds = timerCount % 60;
+    int timerMinutes = timerCount2 % 60;
+    int timerHours = timerCount3 % 99; // just incase if the globaltimer even lasts for this long tbh
+    sprintf(clockBytes, "Clock: %02d : %02d . %02d", timerHours, timerMinutes, timerSeconds);
     // u16 timerHours;
     #ifdef TIME_ATTACK
         u16 timeAttackCount = gGlobalTimer;

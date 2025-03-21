@@ -711,12 +711,15 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
         s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
         if (gLuigiToggle == TRUE) {
-            nextBodyPitch = -(s16)((m->forwardVel - 15) * 144);
+            nextBodyPitch = -(s16)((m->forwardVel - 15) * 120);
         } else {
-            nextBodyPitch = -(s16)((m->forwardVel - 15) * 96);
+            nextBodyPitch = -(s16)((m->forwardVel - 15) * 80);
+        }
+        if (nextBodyPitch <= -1024) {
+            nextBodyPitch -= (nextBodyPitch / 8);
         }
 
-        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(15), 0);
+        nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(45), 0);
 
         marioBodyState->torsoAngle[2] = approach_s32(marioBodyState->torsoAngle[2], nextBodyRoll, 0x400, 0x400);
         marioBodyState->torsoAngle[0] = approach_s32(marioBodyState->torsoAngle[0], nextBodyPitch, 0x400, 0x400);
@@ -1631,7 +1634,7 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
 
     s32 animFrame = set_mario_animation(m, animation);
     if (animFrame < checkFrame) {
-        apply_landing_accel(m, 0.9f);
+        apply_landing_accel(m, 0.875f);
     } else if (m->forwardVel >= 0.0f) {
         mario_set_forward_vel(m, 0.1f);
     } else {

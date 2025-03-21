@@ -1,5 +1,5 @@
 // Define lists for list of level for macros. Each of the following fields are described:
-// Argument 1: Internal ROM name of the level.
+// Argument 1: Internal ROM name of the level. 15 characters max.
 // Argument 2: Level enumerator for enum used to identify the level ID.
 // Argument 3: Course enumerator for enum used to identify the course ID.
 // Argument 4: Shorthand name of the level which should be the name of the levels/ folder of the level.
@@ -15,7 +15,7 @@
 // todo: remove the stub levels for new levels in the future
 // also shoutouts to yandex translate it's goated fr
 
-//          (Level name         Internal Level Name     Internal Course  Level Folder      Actors    Stuff I haven't figured out         Camera type)   // Name Translations
+//          (Arg 1              Arg 2                   Arg 3            Arg 4             Arg 5     Arg 6   Arg 7 - Arg 9    Arg 10     Arg 11)        // Name Translations
 STUB_LEVEL(  "",                LEVEL_UNKNOWN_1,        COURSE_NONE,                                 20000, 0x00, 0x00, 0x00, _,         _)             // CASTLE
 STUB_LEVEL(  "",                LEVEL_UNKNOWN_2,        COURSE_NONE,                                 20000, 0x00, 0x00, 0x00, _,         _)             // ATHLETIC
 STUB_LEVEL(  "",                LEVEL_UNKNOWN_3,        COURSE_NONE,                                 20000, 0x00, 0x00, 0x00, _,         _)             // DONJON
