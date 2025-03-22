@@ -524,7 +524,7 @@ void render_hud_timer(void) {
 
 #ifdef DEMO_TIMER
 void render_hud_demo_timer(void) {
-    char clockBytes[9];
+    char clockBytes[12];
     int timerCount = gGlobalTimer / 30;
     int timerCount2 = timerCount / 60;
     int timerCount3 = timerCount2 / 60;

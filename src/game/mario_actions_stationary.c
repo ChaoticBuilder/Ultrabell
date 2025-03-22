@@ -16,6 +16,7 @@
 #include "sound_init.h"
 #include "surface_terrains.h"
 #include "rumble_init.h"
+#include "ingame_menu.h"
 
 s32 check_common_idle_cancels(struct MarioState *m) {
     mario_drop_held_object(m);
@@ -492,8 +493,10 @@ s32 act_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED) {
-        return set_jumping_action(m, ACT_BACKFLIP, 0);
+    if (!g95Toggle) {
+        if (m->input & INPUT_A_PRESSED) {
+            return set_jumping_action(m, ACT_BACKFLIP, 0);
+        }
     }
 
     if (m->input & INPUT_OFF_FLOOR) {
@@ -662,8 +665,10 @@ s32 act_start_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED) {
-        return set_jumping_action(m, ACT_BACKFLIP, 0);
+    if (!g95Toggle) {
+        if (m->input & INPUT_A_PRESSED) {
+            return set_jumping_action(m, ACT_BACKFLIP, 0);
+        }
     }
 
     if (m->input & INPUT_ABOVE_SLIDE) {
@@ -687,8 +692,10 @@ s32 act_stop_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED) {
-        return set_jumping_action(m, ACT_BACKFLIP, 0);
+    if (!g95Toggle) {
+        if (m->input & INPUT_A_PRESSED) {
+            return set_jumping_action(m, ACT_BACKFLIP, 0);
+        }
     }
 
     if (m->input & INPUT_ABOVE_SLIDE) {

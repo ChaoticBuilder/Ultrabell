@@ -10997,7 +10997,7 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
 }
 
 void visualizer_display(void) {
-    char fovBytes[1];
+    char fovBytes[3];
     f32 fovTxt;
     if (visualizerOn == TRUE) {
         fovTxt = sFOVState.fov + sFovSlider - (sFOVState.velocity - sFOVState.multiplier);

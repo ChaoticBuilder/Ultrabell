@@ -9,6 +9,7 @@
 #include "interaction.h"
 #include "engine/math_util.h"
 #include "rumble_init.h"
+#include "ingame_menu.h"
 
 /**
  * Used by act_punching() to determine Mario's forward velocity during each
@@ -129,18 +130,22 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
             break;
 
         case ACT_ARG_PUNCH_SEQUENCE_BREAKDANCE:
-            play_mario_action_sound(m, SOUND_MARIO_PUNCH_HOO, 1);
-            set_mario_animation(m, MARIO_ANIM_BREAKDANCE);
-            animFrame = m->marioObj->header.gfx.animInfo.animFrame;
+            if (g95Toggle) {
+                break;
+            } else {
+                play_mario_action_sound(m, SOUND_MARIO_PUNCH_HOO, 1);
+                set_mario_animation(m, MARIO_ANIM_BREAKDANCE);
+                animFrame = m->marioObj->header.gfx.animInfo.animFrame;
 
-            if (animFrame >= 2 && animFrame < 8) {
-                m->flags |= MARIO_TRIPPING;
-            }
+                if (animFrame >= 2 && animFrame < 8) {
+                    m->flags |= MARIO_TRIPPING;
+                }
 
-            if (is_anim_at_end(m)) {
-                set_mario_action(m, crouchEndAction, 0);
+                if (is_anim_at_end(m)) {
+                    set_mario_action(m, crouchEndAction, 0);
+                }
+                break;
             }
-            break;
     }
 
     return FALSE;

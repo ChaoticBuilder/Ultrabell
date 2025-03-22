@@ -438,7 +438,11 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel += 1.0f;
     } else if (m->forwardVel <= targetSpeed /* > 0.0f */) {
         // If accelerating
-        m->forwardVel += 0.625f;
+        if (!g95Toggle) {
+            m->forwardVel += 0.625f;
+        } else {
+            m->forwardVel += 0.5f; // gotta love how the beta accel is just slightly too slow in my opinion so like I have to make this tiny change for shoshinkai mode
+        }
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.0625f;
     }
@@ -1485,22 +1489,26 @@ s32 act_crouch_slide(struct MarioState *m) {
         return set_mario_action(m, ACT_BUTT_SLIDE, 0);
     }
 
-    if (m->actionTimer < 30) {
-        m->actionTimer++;
-        if (m->input & INPUT_A_PRESSED) {
-            if (m->forwardVel > 10.0f) {
-                return set_jumping_action(m, ACT_LONG_JUMP, 0);
+    if (!g95Toggle) {
+        if (m->actionTimer < 30) {
+            m->actionTimer++;
+            if (m->input & INPUT_A_PRESSED) {
+                if (m->forwardVel > 10.0f) {
+                    return set_jumping_action(m, ACT_LONG_JUMP, 0);
+                }
             }
         }
     }
 
-    if (m->input & INPUT_B_PRESSED) {
-        if (m->forwardVel >= 10.0f) {
-            return set_mario_action(m, ACT_SLIDE_KICK, 0);
-        } else {
-            return set_mario_action(m, ACT_MOVE_PUNCHING, 0x9);
+        if (m->input & INPUT_B_PRESSED) {
+            if (!g95Toggle) {
+                if (m->forwardVel >= 10.0f) {
+                    return set_mario_action(m, ACT_SLIDE_KICK, 0);
+                } else {
+                    return set_mario_action(m, ACT_MOVE_PUNCHING, 0x9);
+                }
+            }
         }
-    }
 
     if (m->input & INPUT_A_PRESSED) {
         return set_jumping_action(m, ACT_JUMP, 0);

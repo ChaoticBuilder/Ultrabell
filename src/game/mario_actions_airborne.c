@@ -786,15 +786,26 @@ s32 act_twirling(struct MarioState *m) {
     s16 yawVelTarget;
 
 #ifdef Z_TWIRL
-    if (m->input & INPUT_Z_DOWN) {
-        yawVelTarget = 0x2500;
+        if (m->input & INPUT_Z_DOWN) {
+            if (!g95Toggle) {
+                yawVelTarget = 0x2800;
+            } else {
+                yawVelTarget = 0x2800;
+            }
         if (gGlobalTimer % 2 == 0) {
             m->particleFlags |= PARTICLE_DUST;
         }
     }
 #endif
-
+    if (g95Toggle) {
+        if (m->input & INPUT_A_DOWN) {
+            yawVelTarget = 0x2000;
+        } else {
+            yawVelTarget = 0x1800;
+        }
+    } else {
         yawVelTarget = 0x1250;
+    }
 
     m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
     m->twirlYaw += m->angleVel[1];
@@ -1379,21 +1390,26 @@ s32 act_soft_bonk(struct MarioState *m) {
 }
 
 s32 act_wall_slide (struct MarioState *m) {
-    play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
-    if (gGlobalTimer % 2 == 0) {
-        m->particleFlags |= PARTICLE_DUST;
-    }
-    mario_set_forward_vel(m, -0.1f);
-    m->vel[1] -= 1.0f;
+    if (g95Toggle && m->wallKickTimer == 0 && m->prevAction == ACT_AIR_HIT_WALL) {
+        set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
+        return set_mario_action(m, ACT_SOFT_BONK, 0);
+    } else {
+        play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
+        if (gGlobalTimer % 2 == 0) {
+            m->particleFlags |= PARTICLE_DUST;
+        }
+        mario_set_forward_vel(m, -0.1f);
+        m->vel[1] -= 1.0f;
 
-    if (check_wall_kick(m)) {
-        return TRUE;
-    }
+        if (check_wall_kick(m)) {
+            return TRUE;
+        }
 
-    play_knockback_sound(m);
-    common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
-    m->marioObj->header.gfx.angle[1] += 0x8000;
-    return FALSE;
+        play_knockback_sound(m);
+        common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
+        m->marioObj->header.gfx.angle[1] += 0x8000;
+        return FALSE;
+    }
 }
 
 s32 act_getting_blown(struct MarioState *m) {
@@ -1450,6 +1466,9 @@ s32 act_air_hit_wall(struct MarioState *m) {
         m->vel[1] += 0.5f + (m->forwardVel / 192) - (m->vel[1] / 96);
     } else {
         set_mario_action(m, ACT_WALL_SLIDE, 0);
+        if (g95Toggle) {
+            m->wallKickTimer = 10;
+        }
     }
 
     m->particleFlags |= PARTICLE_VERTICAL_STAR;
