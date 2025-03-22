@@ -874,10 +874,12 @@ s32 act_entering_star_door(struct MarioState *m) {
     s16 targetAngle;
     f32 rand = random_float();
     u8 troll = FALSE;
-    if (rand < 0.03125f) {
-        troll = TRUE;
-    } else {
-        troll = FALSE;
+    if (!gTrollToggle) {
+        if (rand < 0.03125f) {
+            troll = TRUE;
+        } else {
+            troll = FALSE;
+        }
     }
 
     if (m->actionTimer++ == 0) {
@@ -945,16 +947,19 @@ s32 act_going_through_door(struct MarioState *m) {
     u8 troll = FALSE;
     u8 troll2 = FALSE;
     u8 doorTroll = FALSE;
-    if (rand < 0.03125f) {
-        troll = TRUE;
-    } else {
-        troll = FALSE;
+    if (!gTrollToggle) {
+        if (rand < 0.03125f) {
+            troll = TRUE;
+        } else {
+            troll = FALSE;
+        }
+        if (rand > 0.96875f) {
+            troll2 = TRUE;
+        } else {
+            troll2 = FALSE;
+        }
     }
-    if (rand > 0.96875f) {
-        troll2 = TRUE;
-    } else {
-        troll2 = FALSE;
-    }
+    
     if (m->actionTimer == 0) {
         if (m->actionArg & WARP_FLAG_DOOR_PULLED) {
             m->interactObj->oInteractStatus = INT_STATUS_DOOR_PULLED;

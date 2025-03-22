@@ -678,7 +678,7 @@ void apply_gravity(struct MarioState *m) {
             m->vel[1] += 0.5f;
         }
     }
-    if (gLuigiToggle == TRUE) {
+    if (gLuigiToggle) {
         if (m->marioBodyState->wingFlutter == FALSE && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
             m->vel[1] += 1.0f;
             if (m->vel[1] < 0.0f) {

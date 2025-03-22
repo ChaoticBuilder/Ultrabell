@@ -3,8 +3,13 @@
 
 #include <PR/ultratypes.h>
 
-extern s32 gLuigiToggle;
-extern s32 sFovSlider;
+extern u8 gConfigOpen;
+    extern u8 gConfigScroll;
+    extern u8 gDiveToggle;
+    extern u8 gLuigiToggle;
+    extern u8 gHudToggle;
+    extern u8 gTrollToggle;
+    extern f32 sFovSlider;
 
 #define ASCII_TO_DIALOG(asc)                                       \
     (((asc) >= '0' && (asc) <= '9') ? ((asc) - '0') :              \

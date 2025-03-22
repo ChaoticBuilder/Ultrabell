@@ -411,7 +411,7 @@ u8 sCutsceneDialogResponse = DIALOG_RESPONSE_NONE;
 struct PlayerCameraState *sMarioCamState = &gPlayerCameraState[0];
 Vec3f sFixedModeBasePosition    = { 646.0f, 143.0f, -1513.0f };
 
-s32 sFovSlider;
+f32 sFovSlider;
 
 s32 update_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos);
 s32 update_outward_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos);
@@ -10998,7 +10998,7 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
 
 void visualizer_display(void) {
     char fovBytes[1];
-    int fovTxt;
+    f32 fovTxt;
     if (visualizerOn == TRUE) {
         fovTxt = sFOVState.fov + sFovSlider - (sFOVState.velocity - sFOVState.multiplier);
     } else {
@@ -11006,7 +11006,7 @@ void visualizer_display(void) {
     }
     // absolutely amazing I know, blame real hardware and it trying to divide by 0 or whatever the fuck it's doing
     
-    sprintf(fovBytes, "FOV: %02d", fovTxt);
+    sprintf(fovBytes, "FOV: %2.1f", fovTxt);
     print_set_envcolour(0, 189, 255, 255);
     print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y - 1) + gHudShakeY, fovBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }

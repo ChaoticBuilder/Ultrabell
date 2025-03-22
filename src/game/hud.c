@@ -23,8 +23,9 @@
 #include "config.h"
 
 s32 gTimeAttackToggle = FALSE;
-s32 gLuigiToggle = FALSE;
+u8 gLuigiToggle = 0;
 s32 gSecondsToggle = TRUE;
+u8 gHudToggle;
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -430,7 +431,7 @@ void render_hud_mario_lives(void) {
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "ROLA!");
     } else {
         hurtShake = FALSE;
-        if (!(gLuigiToggle)) {
+        if (!gLuigiToggle) {
             print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ","); // 'Mario' glyph
         } else {
             print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ";"); // 'Luigi' glyph
@@ -637,74 +638,75 @@ void render_hud_camera_status(void) {
  */
 void render_hud(void) {
     s16 hudDisplayFlags = gHudDisplay.flags;
-
-    if (hudDisplayFlags == HUD_DISPLAY_NONE) {
-        sPowerMeterHUD.animation = POWER_METER_HIDDEN;
-        sPowerMeterStoredHealth = 8;
-        sPowerMeterVisibleTimer = 0;
+    if (!gHudToggle) {
+        if (hudDisplayFlags == HUD_DISPLAY_NONE) {
+            sPowerMeterHUD.animation = POWER_METER_HIDDEN;
+            sPowerMeterStoredHealth = 8;
+            sPowerMeterVisibleTimer = 0;
 #ifdef BREATH_METER
-        sBreathMeterHUD.animation = BREATH_METER_HIDDEN;
-        sBreathMeterStoredValue = 8;
-        sBreathMeterVisibleTimer = 0;
+            sBreathMeterHUD.animation = BREATH_METER_HIDDEN;
+            sBreathMeterStoredValue = 8;
+            sBreathMeterVisibleTimer = 0;
 #endif
-    } else {
+        } else {
 #ifdef VERSION_EU
-        // basically create_dl_ortho_matrix but guOrtho screen width is different
-        Mtx *mtx = alloc_display_list(sizeof(*mtx));
+            // basically create_dl_ortho_matrix but guOrtho screen width is different
+            Mtx *mtx = alloc_display_list(sizeof(*mtx));
 
-        if (mtx == NULL) {
-            return;
-        }
+            if (mtx == NULL) {
+                return;
+            }
 
-        create_dl_identity_matrix();
-        guOrtho(mtx, -16.0f, SCREEN_WIDTH + 16, 0, SCREEN_HEIGHT, -10.0f, 10.0f, 1.0f);
-        gSPPerspNormalize(gDisplayListHead++, 0xFFFF);
-        gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx),
-                  G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
+            create_dl_identity_matrix();
+            guOrtho(mtx, -16.0f, SCREEN_WIDTH + 16, 0, SCREEN_HEIGHT, -10.0f, 10.0f, 1.0f);
+            gSPPerspNormalize(gDisplayListHead++, 0xFFFF);
+            gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx),
+                    G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 #else
-        create_dl_ortho_matrix();
+            create_dl_ortho_matrix();
 #endif
 
 #ifdef ENABLE_LIVES
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES) {
-            render_hud_mario_lives();
-        }
+            if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES) {
+                render_hud_mario_lives();
+            }
 #endif
 
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_COIN_COUNT) {
-            render_hud_coins();
-        }
+            if (hudDisplayFlags & HUD_DISPLAY_FLAG_COIN_COUNT) {
+                render_hud_coins();
+            }
 
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_STAR_COUNT) {
-            render_hud_stars();
-        }
+            if (hudDisplayFlags & HUD_DISPLAY_FLAG_STAR_COUNT) {
+                render_hud_stars();
+            }
 
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_KEYS) {
-            render_hud_keys();
-        }
+            if (hudDisplayFlags & HUD_DISPLAY_FLAG_KEYS) {
+                render_hud_keys();
+            }
 
 #ifdef BREATH_METER
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_BREATH_METER) render_hud_breath_meter();
+            if (hudDisplayFlags & HUD_DISPLAY_FLAG_BREATH_METER) render_hud_breath_meter();
 #endif
 
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_CAMERA_AND_POWER) {
-            render_hud_power_meter();
-        }
+            if (hudDisplayFlags & HUD_DISPLAY_FLAG_CAMERA_AND_POWER) {
+                render_hud_power_meter();
+            }
 
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
-            render_hud_timer();
-        }
-            render_hud_demo_timer();
-            visualizer_display();
-            // ttc(); displays the clock's current state, technically I could've kept it in but nah
-            // what makes me mad tho is the fact I had to do this in the first place
-            // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal
-            hud_shake();
+            if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
+                render_hud_timer();
+            }
+                render_hud_demo_timer();
+                visualizer_display();
+                // ttc(); displays the clock's current state, technically I could've kept it in but nah
+                // what makes me mad tho is the fact I had to do this in the first place
+                // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal
+                hud_shake();
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
-        if (gCustomDebugMode) {
-            render_debug_mode();
-        }
+            if (gCustomDebugMode) {
+                render_debug_mode();
+            }
 #endif
+        }
     }
 }
