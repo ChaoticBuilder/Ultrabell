@@ -7391,9 +7391,9 @@ void cutscene_dance_shake_fov(UNUSED struct Camera *c) {
 void cutscene_dance_default_rotate(struct Camera *c) {
     sStatusFlags |= CAM_FLAG_SMOOTH_MOVEMENT;
     sYawSpeed = 0;
-    set_fov_function(CAM_FOV_DEFAULT);
+    set_fov_function(CAM_FOV_APP_30_FAST);
     cutscene_event(cutscene_dance_default_focus_mario, c, 0, 20);
-    cutscene_event(cutscene_dance_move_to_mario, c, 0, 39);
+    // cutscene_event(cutscene_dance_move_to_mario, c, 0, 39);
 
     if (c->cutscene != CUTSCENE_DANCE_DEFAULT) { // CUTSCENE_DANCE_ROTATE
         cutscene_event(cutscene_dance_rotate_focus_mario, c, 75, 102);
@@ -11066,6 +11066,9 @@ void fov_default(struct MarioState *m) {
 void approach_fov_30(UNUSED struct MarioState *m) {
     camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, 1.f);
 }
+void approach_fov_30_fast(UNUSED struct MarioState *m) {
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, 2.f);
+}
 
 void approach_fov_60(UNUSED struct MarioState *m) {
     camera_approach_f32_symmetric_bool(&sFOVState.fov, 60.f, 1.f);
@@ -11145,6 +11148,9 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
                 break;
             case CAM_FOV_APP_30:
                 approach_fov_30(marioState);
+                break;
+            case CAM_FOV_APP_30_FAST:
+                approach_fov_30_fast(marioState);
                 break;
             case CAM_FOV_APP_60:
                 approach_fov_60(marioState);

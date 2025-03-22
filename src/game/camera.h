@@ -327,6 +327,7 @@ enum CameraFov {
     CAM_FOV_UNUSED_8,
     CAM_FOV_APP_80,
     CAM_FOV_APP_30,
+    CAM_FOV_APP_30_FAST,
     CAM_FOV_APP_60,
     CAM_FOV_ZOOM_30,
     CAM_FOV_SET_29

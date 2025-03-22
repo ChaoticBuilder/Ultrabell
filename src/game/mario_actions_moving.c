@@ -21,6 +21,8 @@
 
 #include "config.h"
 
+u8 gTurboToggle = FALSE;
+
 struct LandingAction {
     s16 numFrames;
     s16 doubleJumpTimer;
@@ -1501,12 +1503,10 @@ s32 act_crouch_slide(struct MarioState *m) {
     }
 
         if (m->input & INPUT_B_PRESSED) {
-            if (!g95Toggle) {
-                if (m->forwardVel >= 10.0f) {
-                    return set_mario_action(m, ACT_SLIDE_KICK, 0);
-                } else {
-                    return set_mario_action(m, ACT_MOVE_PUNCHING, 0x9);
-                }
+            if (!g95Toggle && m->forwardVel >= 16.0f) {
+                return set_mario_action(m, ACT_SLIDE_KICK, 0);
+            } else {
+                return set_mario_action(m, ACT_DIVE, 0);
             }
         }
 
@@ -1885,9 +1885,10 @@ s32 act_long_jump_land(struct MarioState *m) {
     }
 #endif
     if (m->input & INPUT_Z_DOWN) {
-        if ((m->input & INPUT_A_PRESSED) || (m->input & INPUT_A_DOWN && m->forwardVel < 0.0f && gGlobalTimer % 2 == 0)) {
+        if ((m->input & INPUT_A_PRESSED))
             return set_mario_action(m, ACT_LONG_JUMP, 0);
-        }
+        if (gTurboToggle && (m->input & INPUT_A_DOWN && m->forwardVel < 0.0f && gGlobalTimer % 2 == 0))
+            return set_mario_action(m, ACT_LONG_JUMP, 0);
     }
 
     if (common_landing_cancels(m, &sLongJumpLandAction, set_jumping_action)) {

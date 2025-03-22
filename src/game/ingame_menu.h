@@ -10,6 +10,8 @@ extern u8 gConfigOpen;
     extern u8 gLuigiToggle;
     extern u8 gHudToggle;
     extern u8 g95Toggle;
+    extern u8 gTurboToggle;
+    extern u8 gFlightToggle;
     extern u8 gTrollToggle;
     extern f32 sFovSlider;
 

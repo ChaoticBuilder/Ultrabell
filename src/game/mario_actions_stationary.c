@@ -493,9 +493,11 @@ s32 act_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }
 
-    if (!g95Toggle) {
-        if (m->input & INPUT_A_PRESSED) {
+    if (m->input & INPUT_A_PRESSED) {
+        if (!g95Toggle) {
             return set_jumping_action(m, ACT_BACKFLIP, 0);
+        } else {
+            return set_jumping_action(m, ACT_JUMP, 0);
         }
     }
 
@@ -519,8 +521,13 @@ s32 act_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_START_CRAWLING, 0);
     }
 
+    
     if (m->input & INPUT_B_PRESSED) {
-        return set_mario_action(m, ACT_PUNCHING, 9);
+        if (!g95Toggle) {
+            return set_mario_action(m, ACT_PUNCHING, 9);
+        } else {
+            return set_mario_action(m, ACT_PUNCHING, 0);
+        }
     }
 
     stationary_ground_step(m);
@@ -665,9 +672,11 @@ s32 act_start_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 
-    if (!g95Toggle) {
-        if (m->input & INPUT_A_PRESSED) {
+    if (m->input & INPUT_A_PRESSED) {
+        if (!g95Toggle) {
             return set_jumping_action(m, ACT_BACKFLIP, 0);
+        } else {
+            return set_jumping_action(m, ACT_JUMP, 0);
         }
     }
 
@@ -692,9 +701,11 @@ s32 act_stop_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 
-    if (!g95Toggle) {
-        if (m->input & INPUT_A_PRESSED) {
+    if (m->input & INPUT_A_PRESSED) {
+        if (!g95Toggle) {
             return set_jumping_action(m, ACT_BACKFLIP, 0);
+        } else {
+            return set_jumping_action(m, ACT_JUMP, 0);
         }
     }
 
