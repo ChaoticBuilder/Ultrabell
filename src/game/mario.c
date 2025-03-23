@@ -793,7 +793,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_SIDE_FLIP:
             if (!g95Toggle) {
-                set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.0f);
+                set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f);
             } else {
                 set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f);
             }

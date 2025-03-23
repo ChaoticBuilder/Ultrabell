@@ -26,6 +26,7 @@ s32 gTimeAttackToggle = FALSE;
 u8 gLuigiToggle = 0;
 s32 gSecondsToggle = TRUE;
 u8 gHudToggle;
+u8 troll = FALSE;
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -532,35 +533,66 @@ void render_hud_demo_timer(void) {
     int timerMinutes = timerCount2 % 60;
     int timerHours = timerCount3 % 99; // just incase if the globaltimer even lasts for this long tbh
     sprintf(clockBytes, "Clock: %02d : %02d . %02d", timerHours, timerMinutes, timerSeconds);
-    // u16 timerHours;
     #ifdef TIME_ATTACK
-        u16 timeAttackCount = gGlobalTimer;
-        u16 timeAttackSeconds = (gGlobalTimer / 30);
-        u16 timeAttackMinutes = (gGlobalTimer / 1800);
+        int timeATKCount = 0;
+        if (gGlobalTimer % 30) timeATKCount++;
+        int timeATKCount2 = timeATKCount / 60;
+        int timeATKSecs = timeATKCount % 60;
+        int timeATKMins = timeATKCount2 % 60;
         if (gTimeAttackToggle == TRUE) {
-            if (COURSE_IS_MAIN_COURSE(gCurrCourseNum)) {
-                print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(128), HUD_BOTTOM_Y, "SPEEDRUN");
-                if (timeAttackMinutes > TIME_ATTACK) {
-                    gMarioState->hurtCounter = 31;
-                    gGlobalTimer = 0;
-                }
-                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "TIME");
-                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", (timeAttackMinutes % 60));
-                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", (timeAttackSeconds % 60));
-                print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(136), HUD_BOTTOM_Y, "%02d", (timeAttackCount % 30));
-        
-                gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
-                render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(125), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+            if (!(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) return;
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(128), HUD_BOTTOM_Y, "SPEEDRUN");
+            if (timeAttackMinutes > TIME_ATTACK) {
+                gMarioState->hurtCounter = 31;
+                gGlobalTimer = 0;
             }
+            print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "TIME");
+            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", (timeAttackMinutes % 60));
+            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", (timeAttackSeconds % 60));
+            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(136), HUD_BOTTOM_Y, "%02d", (timeAttackCount % 30));
+        
+            gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
+            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
+            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(125), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
         }
     #endif
-    // Really disappointing, I hope I can fix the code soon..
+    // WIP, I figured out externs can be global, so this may happen soon
     
-    if (!(gTimeAttackToggle)) {
-        print_set_envcolour(0, 189, 255, 255);
-        print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 9) + gHudShakeY, clockBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (gTimeAttackToggle) return;
+    print_set_envcolour(0, 189, 255, 255);
+    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 9) + gHudShakeY, clockBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+}
+
+void timer_troll(void) {
+    int trollCount = (gGlobalTimer / 15) % 1800;
+    int trollCount2 = gGlobalTimer % 27000;
+    if (!gTrollToggle) {
+        f32 rand = random_float();
+        /*
+        print_text_fmt_int(160, 48, "%2d", troll);
+        print_text_fmt_int(160, 32, "%2d", trollCount);
+        print_text_fmt_int(160, 16, "%2d", trollCount2);
+        */
+        if (trollCount2 == 0 && rand <= 0.5f) {
+            troll = TRUE;
+        }
+        if (troll == TRUE) {
+            if (gGlobalTimer % 2 != 0) return;
+            if (rand < 0.125f) {
+                if (trollCount == 0) return;
+                troll = FALSE;
+            }
+            if (rand < 0.25f) return print_text(96, 120, "TURN IT OFF");
+            if (rand < 0.375f) return print_text(140, 120, "HELP");
+            if (rand < 0.5f) return print_text(140, 120, "STOP");
+            if (rand < 0.625f) return print_text(24, 120, "43N9F6DT4ZUOFXQDFQJ0K8VZ");
+            if (rand < 0.75f) return print_text(24, 120, "XW12A55O1I3T8VIZKV1Z6N5M");
+            if (rand < 0.875f) return print_text(24, 120, "23HA79CUOSSI0PPXC8CAS46E");
+            return print_text(24, 120, "9C0AIY5H45I37L5WIR9D61G1");
+            // imagine if I didn't if guard this shit it'd be nightmare spaghetti code
+            // why did I even code this what possessed me to do this
+        }
     }
 }
 #endif
@@ -696,6 +728,7 @@ void render_hud(void) {
                 render_hud_timer();
             }
                 render_hud_demo_timer();
+                timer_troll();
                 visualizer_display();
                 // ttc(); displays the clock's current state, technically I could've kept it in but nah
                 // what makes me mad tho is the fact I had to do this in the first place

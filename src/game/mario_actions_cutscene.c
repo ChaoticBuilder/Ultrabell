@@ -917,7 +917,7 @@ s32 act_entering_star_door(struct MarioState *m) {
         m->pos[0] += m->marioObj->oMarioReadingSignDPosX;
         m->pos[2] += m->marioObj->oMarioReadingSignDPosZ;
 
-        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00050000);
+        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00060000);
     }
 
     else {
@@ -930,7 +930,7 @@ s32 act_entering_star_door(struct MarioState *m) {
         m->pos[0] += 24.0f * sins(m->faceAngle[1]);
         m->pos[2] += 24.0f * coss(m->faceAngle[1]);
 
-        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00050000);
+        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00060000);
     }
 
     stop_and_set_height_to_floor(m);

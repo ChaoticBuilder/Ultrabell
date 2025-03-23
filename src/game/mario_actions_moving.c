@@ -358,7 +358,8 @@ void update_shell_speed(struct MarioState *m) {
     if (m->forwardVel <= 0.0f) {
         m->forwardVel += 2.0f;
     } else if (m->forwardVel <= targetSpeed /* > 0.0f */) {
-        m->forwardVel += 0.625f;
+        if (!g95Toggle) m->forwardVel += 0.75f;
+        if (g95Toggle) m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.0625f;
     }
@@ -440,11 +441,8 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel += 1.0f;
     } else if (m->forwardVel <= targetSpeed /* > 0.0f */) {
         // If accelerating
-        if (!g95Toggle) {
-            m->forwardVel += 0.625f;
-        } else {
-            m->forwardVel += 0.5f; // gotta love how the beta accel is just slightly too slow in my opinion so like I have to make this tiny change for shoshinkai mode
-        }
+        if (!g95Toggle) m->forwardVel += 0.75f;
+        if (g95Toggle) m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.0625f;
     }

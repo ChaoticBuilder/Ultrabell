@@ -181,7 +181,7 @@ void update_air_with_turn(struct MarioState *m) {
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        dragThreshold = m->action == (m->flags & MARIO_METAL_CAP) ? 64.0f : 32.0f;
+        dragThreshold = m->flags & MARIO_METAL_CAP ? 80.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -194,7 +194,7 @@ void update_air_with_turn(struct MarioState *m) {
 
         //! Uncapped air speed. Net positive when moving forward.
         if (m->forwardVel > dragThreshold) {
-            m->forwardVel -= 1.0f;
+            m->forwardVel -= 1.125f;
         }
         if (m->forwardVel < -16.0f) {
             m->forwardVel += 1.5f;
@@ -212,7 +212,7 @@ void update_air_without_turn(struct MarioState *m) {
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        dragThreshold = m->action == (m->flags & MARIO_METAL_CAP) ? 64.0f : 32.0f;
+        dragThreshold = m->flags & MARIO_METAL_CAP ? 80.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.35f, 0.35f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -234,7 +234,7 @@ void update_air_without_turn(struct MarioState *m) {
 
         //! Uncapped air speed. Net positive when moving forward.
         if (m->forwardVel > dragThreshold) {
-            m->forwardVel -= 1.0f;
+            m->forwardVel -= 1.125f;
         }
         if (m->action != ACT_LONG_JUMP_LAND) {
             if (m->forwardVel < -16.0f) {
@@ -481,7 +481,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
                 }
             if (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] < 0.0f &&
                 (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
-                set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xFFFFF);
+                set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xE0000);
             } else {
                 set_mario_animation(m, animation);
             }

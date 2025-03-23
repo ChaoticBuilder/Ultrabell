@@ -18,6 +18,14 @@
 
 extern s32 gHudShakeX;
 extern s32 gHudShakeY;
+extern u8 troll;
+
+#ifdef TIME_ATTACK
+    extern int timeATKCount;
+    extern int timeATKCount2;
+    extern int timeATKSecs;
+    extern int timeATKMins;
+#endif
 
 enum PowerMeterAnimation {
     POWER_METER_HIDDEN,

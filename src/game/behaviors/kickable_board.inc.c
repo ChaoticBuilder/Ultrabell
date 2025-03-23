@@ -43,12 +43,9 @@ void bhv_kickable_board_loop(void) {
             if (o->oTimer > 30) {
                 attackValue = check_mario_attacking();
                 if (attackValue) {
-                    if (gMarioObject->oPosY > o->oPosY + 160.0f && attackValue == WF_ATTACK_AIR) {
-                        o->oAction++;
-                        cur_obj_play_sound_2(SOUND_GENERAL_BUTTON_PRESS_2);
-                    } else {
-                        o->oTimer = 0;
-                    }
+                    // I literally had to remove the y pos and air attack check otherwise it'd be literally impossible to knock over the board in shoshinkai + always dive mode
+                    o->oAction++;
+                    cur_obj_play_sound_2(SOUND_GENERAL_BUTTON_PRESS_2);
                 }
             }
 
