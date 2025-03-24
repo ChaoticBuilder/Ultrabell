@@ -574,11 +574,8 @@ s32 perform_air_quarter_step(struct MarioState *m, Vec3f intendedPos, u32 stepAr
 void apply_twirl_gravity(struct MarioState *m) {
 #ifdef Z_TWIRL
     f32 Zmodifier;
-    if (!g95Toggle) {
-        Zmodifier = m->input & INPUT_Z_DOWN ? 8.75f : 1.25f;
-    } else {
-        Zmodifier = m->input & INPUT_Z_DOWN ? 4.0f : 1.0f;
-    }
+    if (!g95Toggle) Zmodifier = m->input & INPUT_Z_DOWN ? 10.0f : 1.625f;
+    if (g95Toggle) Zmodifier = m->input & INPUT_Z_DOWN ? 7.5f : 1.0f;
 #endif
     f32 heaviness = 1.0f;
 
@@ -684,7 +681,7 @@ void apply_gravity(struct MarioState *m) {
         }
     }
     if (gLuigiToggle) {
-        if (m->marioBodyState->wingFlutter == FALSE && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
+        if (m->marioBodyState->wingFlutter == FALSE && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN && m->action != ACT_TWIRLING)) {
             m->vel[1] += 1.0f;
             if (m->vel[1] < 0.0f) {
                 if (sTerminalVelocity == TRUE) {

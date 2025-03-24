@@ -800,27 +800,20 @@ s32 act_twirling(struct MarioState *m) {
     s16 startTwirlYaw = m->twirlYaw;
     s16 yawVelTarget;
 
+    if (m->input & INPUT_A_DOWN) {
+        if (!g95Toggle) yawVelTarget = 0x1C00;
+        if (g95Toggle) yawVelTarget = 0x2000;  
+    } else {
+        if (!g95Toggle) yawVelTarget = 0x1500;
+        if (g95Toggle) yawVelTarget = 0x1800;
+    }
 #ifdef Z_TWIRL
-        if (m->input & INPUT_Z_DOWN) {
-            if (!g95Toggle) {
-                yawVelTarget = 0x2800;
-            } else {
-                yawVelTarget = 0x2800;
-            }
-        if (gGlobalTimer % 2 == 0) {
-            m->particleFlags |= PARTICLE_DUST;
-        }
+    if (m->input & INPUT_Z_DOWN) {
+        if (!g95Toggle) yawVelTarget = 0x3000;
+        if (g95Toggle) yawVelTarget = 0x2800;
+        if (gGlobalTimer % 2 == 0) m->particleFlags |= PARTICLE_DUST;
     }
 #endif
-    if (g95Toggle) {
-        if (m->input & INPUT_A_DOWN) {
-            yawVelTarget = 0x2000;
-        } else {
-            yawVelTarget = 0x1800;
-        }
-    } else {
-        yawVelTarget = 0x1250;
-    }
 
     m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
     m->twirlYaw += m->angleVel[1];
@@ -1305,7 +1298,7 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
 
 s32 check_wall_kick(struct MarioState *m) {
     if ((m->input & INPUT_A_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL) {
-        if (m->vel[1] >= 0) {
+        if (!g95Toggle && m->vel[1] >= 0) {
             m->forwardVel += (m->vel[1] / 2) + 32;
         }
         m->faceAngle[1] += 0x8000;
@@ -1419,15 +1412,20 @@ s32 act_wall_slide (struct MarioState *m) {
         if (gGlobalTimer % 2 == 0) {
             m->particleFlags |= PARTICLE_DUST;
         }
-        mario_set_forward_vel(m, -0.1f);
+        if (!g95Toggle) mario_set_forward_vel(m, -0.01f);
+        
         m->vel[1] -= 1.0f;
 
         if (check_wall_kick(m)) {
             return TRUE;
         }
 
-        common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
-        m->marioObj->header.gfx.angle[1] += 0x8000;
+        if (!g95Toggle) {
+            common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
+            m->marioObj->header.gfx.angle[1] += 0x8000;
+        } else {
+            common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -10.0f);
+        }
         return FALSE;
     }
 }
@@ -1487,7 +1485,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
     } else {
         set_mario_action(m, ACT_WALL_SLIDE, 0);
         if (g95Toggle) {
-            m->wallKickTimer = 6;
+            m->wallKickTimer = 8;
         }
     }
 

@@ -88,7 +88,7 @@ void format_integer(s32 n, s32 base, char *dest, s32 *totalLength, u8 width, s8 
 
         // Use 'M' prefix to indicate negative numbers.
         if (negative == TRUE) {
-            dest[len] = 'M';
+            dest[len] = '-';
             len++;
         }
 
