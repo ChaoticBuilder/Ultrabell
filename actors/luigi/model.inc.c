@@ -5823,8 +5823,8 @@ Gfx luigi_000_displaylist_005_mesh_layer_1_tri_0[] = {
 
 
 Gfx mat_luigi_body_v3[] = {
-	gsSPLightColor(LIGHT_1, 0x4F00FFFF),
-	gsSPLightColor(LIGHT_2, 0x1A0055FF),
+	gsSPLightColor(LIGHT_1, 0x6A00FFFF),
+	gsSPLightColor(LIGHT_2, 0x150054FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5865,8 +5865,8 @@ Gfx mat_revert_luigi_metal_v3_001[] = {
 };
 
 Gfx mat_luigi_cap_v3[] = {
-	gsSPLightColor(LIGHT_1, 0x00DF00FF),
-	gsSPLightColor(LIGHT_2, 0x004A00FF),
+	gsSPLightColor(LIGHT_1, 0x00D700FF),
+	gsSPLightColor(LIGHT_2, 0x004718FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5887,7 +5887,7 @@ Gfx mat_revert_luigi_cap_v3[] = {
 
 Gfx mat_luigi_face_0___eye_open_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_2, 0x543928FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5908,7 +5908,7 @@ Gfx mat_revert_luigi_face_0___eye_open_v3_001[] = {
 
 Gfx mat_luigi_mustache_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_2, 0x543928FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5929,7 +5929,7 @@ Gfx mat_revert_luigi_mustache_v3_001[] = {
 
 Gfx mat_luigi_hair_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0x730600FF),
-	gsSPLightColor(LIGHT_2, 0x260200FF),
+	gsSPLightColor(LIGHT_2, 0x260003FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5945,7 +5945,7 @@ Gfx mat_revert_luigi_hair_v3_001[] = {
 
 Gfx mat_luigi_sideburns_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_2, 0x543928FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5967,7 +5967,7 @@ Gfx mat_revert_luigi_sideburns_v3_001[] = {
 Gfx mat_luigi_ear_inner_v3[] = {
 	gsSPGeometryMode(G_CULL_BACK, 0),
 	gsSPLightColor(LIGHT_1, 0xFF7F7FFF),
-	gsSPLightColor(LIGHT_2, 0x552A2AFF),
+	gsSPLightColor(LIGHT_2, 0x542934FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5985,7 +5985,7 @@ Gfx mat_revert_luigi_ear_inner_v3[] = {
 Gfx mat_luigi_ear_v3[] = {
 	gsSPGeometryMode(G_CULL_BACK, 0),
 	gsSPLightColor(LIGHT_1, 0x9FFF00FF),
-	gsSPLightColor(LIGHT_2, 0x355500FF),
+	gsSPLightColor(LIGHT_2, 0x1C5400FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6002,7 +6002,7 @@ Gfx mat_revert_luigi_ear_v3[] = {
 
 Gfx mat_luigi_face_1___eye_half_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_2, 0x543928FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6023,7 +6023,7 @@ Gfx mat_revert_luigi_face_1___eye_half_v3_001[] = {
 
 Gfx mat_luigi_face_2___eye_closed_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_2, 0x543928FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6044,7 +6044,7 @@ Gfx mat_revert_luigi_face_2___eye_closed_v3_001[] = {
 
 Gfx mat_luigi_face_7___eye_X_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_2, 0x543928FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6107,7 +6107,7 @@ Gfx mat_revert_luigi_wing_1_v3_001[] = {
 
 Gfx mat_luigi_gloves_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFFFFFFFF),
-	gsSPLightColor(LIGHT_2, 0x555555FF),
+	gsSPLightColor(LIGHT_2, 0x484B54FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6122,8 +6122,8 @@ Gfx mat_revert_luigi_gloves_v3_001[] = {
 };
 
 Gfx mat_luigi_cap_inside[] = {
-	gsSPLightColor(LIGHT_1, 0x7F0000FF),
-	gsSPLightColor(LIGHT_2, 0x3C0000FF),
+	gsSPLightColor(LIGHT_1, 0x004700FF),
+	gsSPLightColor(LIGHT_2, 0x00170BFF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6139,7 +6139,7 @@ Gfx mat_revert_luigi_cap_inside[] = {
 
 Gfx mat_luigi_shoes_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0x721C0EFF),
-	gsSPLightColor(LIGHT_2, 0x260904FF),
+	gsSPLightColor(LIGHT_2, 0x260407FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),

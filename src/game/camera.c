@@ -30,6 +30,8 @@
 #include "profiling.h"
 #include "gfx_dimensions.h"
 
+u8 dirCheck = FALSE;
+
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
 
 /**
@@ -468,6 +470,7 @@ void set_camera_shake_from_hit(s16 shake) {
 
         case SHAKE_FALL_DAMAGE:
             set_camera_pitch_shake(0x60, 0x3, 0x8000);
+            set_camera_roll_shake(0x60, 0x3, 0x8000);
             break;
 
         case SHAKE_GROUND_POUND:
@@ -857,7 +860,7 @@ s32 update_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
 
     sAreaYaw = camYaw - sModeOffsetYaw;
     calc_y_to_curr_floor(&posY, 1.f, 200.f, &focusY, 0.9f, 200.f);
-    focus_on_mario(focus, pos, posY + yOff, focusY + yOff, sLakituDist + baseDist, pitch, camYaw);
+    focus_on_mario(focus, pos, posY, focusY + yOff, sLakituDist + baseDist, pitch, camYaw);
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
     camYaw = find_in_bounds_yaw_wdw_bob_thi(pos, focus, camYaw);
 #endif
@@ -877,8 +880,7 @@ s32 update_8_directions_camera(UNUSED struct Camera *c, Vec3f focus, Vec3f pos) 
 
     sAreaYaw = camYaw;
     calc_y_to_curr_floor(&posY, 1.f, 200.f, &focusY, 0.9f, 200.f);
-    focus_on_mario(focus, pos, posY + yOff, focusY + yOff, sLakituDist + baseDist, pitch, camYaw);
-    // pan_ahead_of_player(c);
+    focus_on_mario(focus, pos, posY, focusY + yOff, sLakituDist + baseDist, pitch, camYaw);
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
     if (gCurrLevelArea == AREA_DDD_SUB) {
         camYaw = clamp_positions_and_find_yaw(pos, focus, 6839.f, 995.f, 5994.f, -3945.f);
@@ -1098,7 +1100,6 @@ void mode_radial_camera(struct Camera *c) {
         pos[1] += 500.f;
     }
     set_camera_height(c, pos[1]);
-    // pan_ahead_of_player(c);
 }
 
 s32 snap_to_45_degrees(s16 angle) {
@@ -1120,9 +1121,6 @@ s32 snap_to_45_degrees(s16 angle) {
  * A mode that only has 8 camera angles, 45 degrees apart
  */
 void mode_8_directions_camera(struct Camera *c) {
-    if (gPlayer1Controller->buttonPressed & U_CBUTTONS) {
-        gCameraMovementFlags = CAM_MOVE_ZOOMED_OUT;
-    }
     Vec3f pos;
     s16 oldAreaYaw = sAreaYaw;
 
@@ -1178,7 +1176,7 @@ s32 update_outward_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
 
     sAreaYaw = camYaw - sModeOffsetYaw - DEGREES(180);
     calc_y_to_curr_floor(&posY, 1.f, 200.f, &focusY, 0.9f, 200.f);
-    focus_on_mario(focus, pos, posY + yOff, focusY + yOff, sLakituDist + baseDist, pitch, camYaw);
+    focus_on_mario(focus, pos, posY, focusY + yOff, sLakituDist + baseDist, pitch, camYaw);
 
     return camYaw;
 }
@@ -1200,8 +1198,10 @@ void mode_outward_radial_camera(struct Camera *c) {
     c->pos[0] = pos[0];
     c->pos[2] = pos[2];
     sAreaYawChange = sAreaYaw - oldAreaYaw;
+    if (sMarioCamState->action == ACT_RIDING_HOOT) {
+        pos[1] += 500.f;
+    }
     set_camera_height(c, pos[1]);
-    // pan_ahead_of_player(c);
 }
 
 /**
@@ -1410,7 +1410,6 @@ s32 update_fixed_camera(struct Camera *c, Vec3f focus, UNUSED Vec3f pos) {
     }
 
     handle_c_button_movement(c);
-    play_camera_buzz_if_cdown();
 
     calc_y_to_curr_floor(&focusFloorOff, 1.f, 200.f, &focusFloorOff, 0.9f, 200.f);
     vec3f_copy(focus, sMarioCamState->pos);
@@ -1647,7 +1646,7 @@ void mode_fixed_camera(UNUSED struct Camera *c) {
     } else if (gCurrLevelNum == LEVEL_CASTLE) {
         set_fov_function(CAM_FOV_CASTLE);
     } else {
-        set_fov_function(CAM_FOV_APP_45);
+        set_fov_function(CAM_FOV_APP_60);
     }
 #else
     set_fov_function(CAM_FOV_APP_45);
@@ -1664,12 +1663,10 @@ void mode_fixed_camera(UNUSED struct Camera *c) {
  */
 s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     f32 dist;
-    UNUSED s16 absPitch;
     s16 pitch;
     s16 yaw;
     s16 goalPitch = -sMarioCamState->faceAngle[0];
     s16 marioYaw = sMarioCamState->faceAngle[1] + DEGREES(180);
-    UNUSED s16 goalYawOff = 0;
     s16 yawSpeed = 192;
     s16 pitchInc = 384;
     f32 maxDist = 1000.f;
@@ -1847,7 +1844,6 @@ s32 mode_behind_mario(struct Camera *c) {
         distCamToFocus = 1600.f;
         vec3f_set_dist_and_angle(c->focus, c->pos, distCamToFocus, camPitch, camYaw);
     }
-    // pan_ahead_of_player(c);
 
     return yaw;
 }
@@ -1979,7 +1975,6 @@ s16 update_default_camera(struct Camera *c) {
     s16 avoidYaw;
     s16 pitch;
     s16 yaw;
-    // s16 yawGoal = sMarioCamState->faceAngle[1] + DEGREES(180);
     f32 posHeight;
     f32 focHeight;
     f32 distFromWater;
@@ -2000,16 +1995,13 @@ s16 update_default_camera(struct Camera *c) {
     vec3f_get_dist_and_angle(sMarioCamState->pos, c->pos, &dist, &pitch, &yaw);
 
     // If C-Down is active, determine what distance the camera should be from Mario
-    if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
-        //! In Mario mode, the camera is zoomed out further than in Lakitu mode (1400 vs 1200)
-        if (set_cam_angle(0) == CAM_ANGLE_MARIO) {
-            zoomDist = gCameraZoomDist + 800;
-        } else {
-            zoomDist = gCameraZoomDist + 400;
-        }
+    if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT && c->mode == CAMERA_MODE_CLOSE) {
+        zoomDist = gCameraZoomDist + 400;
     } else {
         zoomDist = gCameraZoomDist;
     }
+    if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT && set_cam_angle(0) == CAM_ANGLE_MARIO) zoomDist = gCameraZoomDist + 650;
+    // In Mario mode, the camera is zoomed out further than in Lakitu mode (1400 vs 1200)
 
     /*
     if (sMarioCamState->action & ACT_FLAG_HANGING ||
@@ -2280,6 +2272,12 @@ s16 update_default_camera(struct Camera *c) {
         yaw = clamp_positions_and_find_yaw(c->pos, c->focus, 2254.f, -3789.f, 3790.f, -2253.f);
     }
 #endif
+    if (c->mode != CAMERA_MODE_CLOSE) {
+        lakitu_zoom(400.f, 0x600);
+        vec3f_set_dist_and_angle(c->pos, c->pos, sLakituDist, sLakituPitch + 0x1000, yaw);
+    }
+
+    set_camera_height(c, c->pos[1] - 125.0f);
     return yaw;
 }
 
@@ -2290,7 +2288,6 @@ s16 update_default_camera(struct Camera *c) {
 void mode_default_camera(struct Camera *c) {
     set_fov_function(CAM_FOV_DEFAULT);
     c->nextYaw = update_default_camera(c);
-    // pan_ahead_of_player(c);
 }
 
 /**
@@ -2882,7 +2879,6 @@ void update_lakitu(struct Camera *c) {
 void update_camera(struct Camera *c) {
     PROFILER_GET_SNAPSHOT_TYPE(PROFILER_DELTA_COLLISION);
     gCamera = c;
-    // update_camera_hud_status(c);
     if (c->cutscene == CUTSCENE_NONE
 #ifdef PUPPYCAM
         && !gPuppyCam.enabled
@@ -2895,14 +2891,17 @@ void update_camera(struct Camera *c) {
             play_sound_rbutton_changed();
         } else
         */
+        
+        if (!dirCheck && c->mode != CAMERA_MODE_8_DIRECTIONS) dirCheck = TRUE;
         if (gPlayer1Controller->buttonPressed & L_TRIG) {
+            if (!dirCheck) return;
             if (c->mode != CAMERA_MODE_8_DIRECTIONS) {
                 set_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 1);
-                play_sound_rbutton_changed();
             } else {
                 set_camera_mode(c, -1, 1);
-                play_sound_rbutton_changed();
             }
+
+            play_sound_rbutton_changed();
         }
         if (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) {
             if (gPlayer1Controller->buttonPressed & R_TRIG) {
@@ -3441,7 +3440,6 @@ void update_graph_node_camera(struct GraphNodeCamera *gc) {
     gc->rollScreen = gLakituState.roll;
     vec3f_copy(gc->pos, gLakituState.pos);
     vec3f_copy(gc->focus, gLakituState.focus);
-    // zoom_out_if_paused_and_outside(gc);
 }
 
 Gfx *geo_camera_main(s32 callContext, struct GraphNode *g, void *context) {

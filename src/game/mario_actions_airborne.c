@@ -101,7 +101,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     }
 
     if (m->marioBodyState->wingFlutter == TRUE) {
-        m->hurtCounter /= 2;
+        m->hurtCounter -= 1;
     }
 
     return FALSE;

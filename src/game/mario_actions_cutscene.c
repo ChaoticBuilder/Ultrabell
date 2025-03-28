@@ -533,7 +533,7 @@ s32 act_debug_free_move(struct MarioState *m) {
     }
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
         vec3_zero(m->vel);
-        m->forwardVel = 0.0f;
+        // m->forwardVel = 0.0f;
 
         set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
         m->input &= ~INPUT_A_PRESSED;

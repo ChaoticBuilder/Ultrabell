@@ -1339,7 +1339,7 @@ void update_mario_inputs(struct MarioState *m) {
 #ifdef VANILLA_DEBUG
     debug_print_speed_action_normal(m);
 #endif
-    if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
+    if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE && gCamera->mode != CAMERA_MODE_8_DIRECTIONS) {
         if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
             m->input |= INPUT_FIRST_PERSON;
         } else {

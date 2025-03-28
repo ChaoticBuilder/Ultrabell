@@ -5823,7 +5823,7 @@ Gfx mario_000_displaylist_005_mesh_layer_1_tri_0[] = {
 
 
 Gfx mat_mario_body_v3[] = {
-	gsSPLightColor(LIGHT_1, 0x0000FFFF),
+	gsSPLightColor(LIGHT_1, 0x002AFFFF),
 	gsSPLightColor(LIGHT_2, 0x000055FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
@@ -5866,7 +5866,7 @@ Gfx mat_revert_mario_metal_v3_001[] = {
 
 Gfx mat_mario_cap_v3[] = {
 	gsSPLightColor(LIGHT_1, 0xFF0000FF),
-	gsSPLightColor(LIGHT_2, 0x550000FF),
+	gsSPLightColor(LIGHT_2, 0x54001CFF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5886,8 +5886,8 @@ Gfx mat_revert_mario_cap_v3[] = {
 };
 
 Gfx mat_mario_face_0___eye_open_v3_001[] = {
-	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_1, 0xFFBA6BFF),
+	gsSPLightColor(LIGHT_2, 0x543623FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5907,8 +5907,8 @@ Gfx mat_revert_mario_face_0___eye_open_v3_001[] = {
 };
 
 Gfx mat_mario_mustache_v3_001[] = {
-	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_1, 0xFFBA6BFF),
+	gsSPLightColor(LIGHT_2, 0x543623FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5929,7 +5929,7 @@ Gfx mat_revert_mario_mustache_v3_001[] = {
 
 Gfx mat_mario_hair_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0x730600FF),
-	gsSPLightColor(LIGHT_2, 0x260200FF),
+	gsSPLightColor(LIGHT_2, 0x260003FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5944,8 +5944,8 @@ Gfx mat_revert_mario_hair_v3_001[] = {
 };
 
 Gfx mat_mario_sideburns_v3_001[] = {
-	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_1, 0xFFBA6BFF),
+	gsSPLightColor(LIGHT_2, 0x543623FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5967,7 +5967,7 @@ Gfx mat_revert_mario_sideburns_v3_001[] = {
 Gfx mat_mario_ear_inner_v3[] = {
 	gsSPGeometryMode(G_CULL_BACK, 0),
 	gsSPLightColor(LIGHT_1, 0xFF7F7FFF),
-	gsSPLightColor(LIGHT_2, 0x552A2AFF),
+	gsSPLightColor(LIGHT_2, 0x542934FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -5985,7 +5985,7 @@ Gfx mat_revert_mario_ear_inner_v3[] = {
 Gfx mat_mario_ear_v3[] = {
 	gsSPGeometryMode(G_CULL_BACK, 0),
 	gsSPLightColor(LIGHT_1, 0xFF7F00FF),
-	gsSPLightColor(LIGHT_2, 0x552A00FF),
+	gsSPLightColor(LIGHT_2, 0x541500FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6001,8 +6001,8 @@ Gfx mat_revert_mario_ear_v3[] = {
 };
 
 Gfx mat_mario_face_1___eye_half_v3_001[] = {
-	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_1, 0xFFBA6BFF),
+	gsSPLightColor(LIGHT_2, 0x543623FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6022,8 +6022,8 @@ Gfx mat_revert_mario_face_1___eye_half_v3_001[] = {
 };
 
 Gfx mat_mario_face_2___eye_closed_v3_001[] = {
-	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_1, 0xFFBA6BFF),
+	gsSPLightColor(LIGHT_2, 0x543623FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6043,8 +6043,8 @@ Gfx mat_revert_mario_face_2___eye_closed_v3_001[] = {
 };
 
 Gfx mat_mario_face_7___eye_X_v3_001[] = {
-	gsSPLightColor(LIGHT_1, 0xFEC179FF),
-	gsSPLightColor(LIGHT_2, 0x544028FF),
+	gsSPLightColor(LIGHT_1, 0xFFBA6BFF),
+	gsSPLightColor(LIGHT_2, 0x543623FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6107,7 +6107,7 @@ Gfx mat_revert_mario_wing_1_v3_001[] = {
 
 Gfx mat_mario_gloves_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFFFFFFFF),
-	gsSPLightColor(LIGHT_2, 0x555555FF),
+	gsSPLightColor(LIGHT_2, 0x484E54FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6122,8 +6122,8 @@ Gfx mat_revert_mario_gloves_v3_001[] = {
 };
 
 Gfx mat_mario_cap_inside[] = {
-	gsSPLightColor(LIGHT_1, 0x7F0000FF),
-	gsSPLightColor(LIGHT_2, 0x3C0000FF),
+	gsSPLightColor(LIGHT_1, 0x550000FF),
+	gsSPLightColor(LIGHT_2, 0x1C0015FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -6139,7 +6139,7 @@ Gfx mat_revert_mario_cap_inside[] = {
 
 Gfx mat_mario_shoes_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0x721C0EFF),
-	gsSPLightColor(LIGHT_2, 0x260904FF),
+	gsSPLightColor(LIGHT_2, 0x260407FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
