@@ -1086,7 +1086,7 @@ s32 act_ground_pound(struct MarioState *m) {
         play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
         play_sound(SOUND_MARIO_GROUND_POUND_WAH, m->marioObj->header.gfx.cameraToObject);
         if (!g95Toggle) {
-            m->vel[1] = ABS(m->vel[1]);
+            m->vel[1] = ABS(m->vel[1] / 1.375);
         } else {
             m->vel[1] = -40.0f;
         }
@@ -1299,7 +1299,7 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
 s32 check_wall_kick(struct MarioState *m) {
     if ((m->input & INPUT_A_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL) {
         if (!g95Toggle && m->vel[1] >= 0) {
-            m->forwardVel += (m->vel[1] / 2) + 32;
+            m->forwardVel += (m->vel[1] / 3) + 30;
         }
         m->faceAngle[1] += 0x8000;
         return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
@@ -1405,8 +1405,7 @@ s32 act_soft_bonk(struct MarioState *m) {
 s32 act_wall_slide (struct MarioState *m) {
     if (g95Toggle && m->wallKickTimer == 0 && m->prevAction == ACT_AIR_HIT_WALL) {
         play_sound(SOUND_MARIO_UH, m->marioObj->header.gfx.cameraToObject);
-        set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
-        return set_mario_action(m, ACT_SOFT_BONK, 0);
+        return set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
     } else {
         play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
         if (gGlobalTimer % 2 == 0) {
@@ -1424,7 +1423,7 @@ s32 act_wall_slide (struct MarioState *m) {
             common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
             m->marioObj->header.gfx.angle[1] += 0x8000;
         } else {
-            common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -10.0f);
+            common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -8.0f);
         }
         return FALSE;
     }
@@ -1480,12 +1479,15 @@ s32 act_air_hit_wall(struct MarioState *m) {
         mario_drop_held_object(m);
     }
 
-    if (++(m->actionTimer) <= 60) {
-        m->vel[1] += 0.5f + (m->forwardVel / 192) - (m->vel[1] / 96);
-    } else {
+    if (g95Toggle) {
+        m->vel[1] = 24.0f;
+        m->wallKickTimer = 8;
         set_mario_action(m, ACT_WALL_SLIDE, 0);
-        if (g95Toggle) {
-            m->wallKickTimer = 8;
+    } else {
+        if (++(m->actionTimer) <= 60) {
+            m->vel[1] += 0.5f + (m->forwardVel / 64) - ABS(m->vel[1] / 128);
+        } else {
+            set_mario_action(m, ACT_WALL_SLIDE, 0);
         }
     }
 
