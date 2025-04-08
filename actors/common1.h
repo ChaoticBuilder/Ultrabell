@@ -125,7 +125,6 @@ extern const Gfx door_seg3_dl_cabin_door_near[];
 extern const Gfx door_seg3_sub_dl_polished_wooden_door_far[];
 extern const Gfx door_seg3_dl_polished_wooden_door_far[];
 extern const Gfx door_seg3_dl_cabin_door_far[];
-/*
 extern const Gfx door_seg3_vertex_star_sign_begin[];
 extern const Gfx door_seg3_vertex_star_sign_end[];
 extern const Gfx door_seg3_dl_zero_star_near[];
@@ -134,7 +133,6 @@ extern const Gfx door_seg3_dl_one_star_near[];
 extern const Gfx door_seg3_dl_one_star_far[];
 extern const Gfx door_seg3_dl_three_stars_near[];
 extern const Gfx door_seg3_dl_three_stars_far[];
-*/
 extern const Gfx door_seg3_dl_key_door[];
 extern const Gfx door_seg3_sub_dl_themed_handle_near[];
 extern const Gfx door_seg3_sub_dl_themed_door_sides[];
