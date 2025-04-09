@@ -2817,7 +2817,7 @@ void update_lakitu(struct Camera *c) {
                                          gLakituState.focHSpeed, gLakituState.focVSpeed,
                                          gLakituState.focHSpeed);
         // Adjust Lakitu's speed back to normal
-        set_or_approach_f32_asymptotic(&gLakituState.focHSpeed, 0.5f, 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.focHSpeed, 0.75f, 0.05f);
         set_or_approach_f32_asymptotic(&gLakituState.focVSpeed, 0.375f, 0.05f);
         set_or_approach_f32_asymptotic(&gLakituState.posHSpeed, 0.25f, 0.05f);
         set_or_approach_f32_asymptotic(&gLakituState.posVSpeed, 0.25f, 0.05f);
@@ -3212,9 +3212,9 @@ void init_camera(struct Camera *c) {
     sFramesPaused = 0;
     gLakituState.mode = c->mode;
     gLakituState.defMode = c->defMode;
-    gLakituState.posHSpeed = 0.3125f;
-    gLakituState.posVSpeed = 0.125f;
-    gLakituState.focHSpeed = 0.5f;
+    gLakituState.posHSpeed = 0.25f;
+    gLakituState.posVSpeed = 0.25f;
+    gLakituState.focHSpeed = 0.75f;
     gLakituState.focVSpeed = 0.375f;
     gLakituState.roll = 0;
     gLakituState.keyDanceRoll = 0;
@@ -4862,7 +4862,11 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
         cutscene = sObjectCutscene;
         sObjectCutscene = CUTSCENE_NONE;
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR) {
-            cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
+            if (gCurrLevelArea == AREA_CASTLE_LOBBY) {
+                cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH);
+            } else {
+                cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
+            }
         }
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR_WARP) {
             cutscene = CUTSCENE_DOOR_WARP;
@@ -5080,9 +5084,9 @@ void offset_rotated_coords(Vec3f dst, Vec3f from, Vec3s rotation, f32 xTo, f32 y
 
 void determine_pushing_or_pulling_door(s16 *rotation) {
     if (sMarioCamState->action == ACT_PULLING_DOOR) {
-        *rotation = DEGREES(0);
+        *rotation = 0;
     } else {
-        *rotation = DEGREES(-180);
+        *rotation = DEGREES(180);
     }
 }
 
@@ -6282,13 +6286,12 @@ s16 camera_course_processing(struct Camera *c) {
                         if (gCurrActNum == 1) {
                             set_camera_mode_boss_fight(c);
                         } else {
-                            set_camera_mode_radial(c, 60);
+                            set_camera_mode_8_directions(c);
                         }
                         break;
                     default:
-                        set_camera_mode_radial(c, 60);
+                        set_camera_mode_8_directions(c);
                 }
-            // }
             break;
 
             case AREA_BBH:
@@ -6300,23 +6303,8 @@ s16 camera_course_processing(struct Camera *c) {
                 }
                 break;
 
-            case AREA_SSL_PYRAMID:
-                set_mode_if_not_set_by_surface(c, CAMERA_MODE_OUTWARD_RADIAL);
-                break;
-
-            case AREA_SSL_OUTSIDE:
-                set_mode_if_not_set_by_surface(c, CAMERA_MODE_RADIAL);
-                break;
-
-            case AREA_THI_HUGE:
-                break;
-
             case AREA_THI_TINY:
                 surface_type_modes_thi(c);
-                break;
-
-            case AREA_TTC:
-                set_mode_if_not_set_by_surface(c, CAMERA_MODE_OUTWARD_RADIAL);
                 break;
 
             case AREA_BOB:
@@ -6325,50 +6313,19 @@ s16 camera_course_processing(struct Camera *c) {
                         set_camera_mode_boss_fight(c);
                     } else {
                         if (c->mode == CAMERA_MODE_CLOSE) {
-                            transition_to_camera_mode(c, CAMERA_MODE_RADIAL, 60);
+                            transition_to_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 60);
                         } else {
-                            set_camera_mode_radial(c, 60);
+                            set_camera_mode_8_directions(c);
                         }
                     }
                 }
-                break;
-
-            case AREA_WDW_MAIN:
-                switch (sMarioGeometry.currFloorType) {
-                    case SURFACE_INSTANT_WARP_1B:
-                        c->defMode = CAMERA_MODE_RADIAL;
-                        break;
-                }
-                break;
-
-            case AREA_WDW_TOWN:
-                switch (sMarioGeometry.currFloorType) {
-                    case SURFACE_INSTANT_WARP_1C:
-                        c->defMode = CAMERA_MODE_CLOSE;
-                        break;
-                }
-                break;
-
-            case AREA_DDD_WHIRLPOOL:
-                //! @bug this does nothing
-                gLakituState.defMode = CAMERA_MODE_OUTWARD_RADIAL;
                 break;
 
             case AREA_DDD_SUB:
-                if ((c->mode != CAMERA_MODE_BEHIND_MARIO)
-                    && (c->mode != CAMERA_MODE_WATER_SURFACE)) {
-                    if (((sMarioCamState->action & ACT_FLAG_ON_POLE) != 0)
-                        || (sMarioGeometry.currFloorHeight > 800.f)) {
-                        transition_to_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 60);
-
-                    } else {
-                        if (sMarioCamState->pos[1] < 800.f) {
-                            transition_to_camera_mode(c, CAMERA_MODE_FREE_ROAM, 60);
-                        }
-                    }
+                if ((c->mode != CAMERA_MODE_BEHIND_MARIO) &&
+                    (c->mode != CAMERA_MODE_WATER_SURFACE)) {
+                    transition_to_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 60);
                 }
-                //! @bug this does nothing
-                gLakituState.defMode = CAMERA_MODE_FREE_ROAM;
                 break;
         }
     }
@@ -9903,9 +9860,9 @@ void cutscene_door_fix_cam(struct Camera *c) {
  */
 void cutscene_door_loop(struct Camera *c) {
     //! bitwise AND instead of boolean
-    if ((sMarioCamState->action != ACT_PULLING_DOOR) & (sMarioCamState->action != ACT_PUSHING_DOOR)) {
+    if ((sMarioCamState->action != ACT_PULLING_DOOR) && (sMarioCamState->action != ACT_PUSHING_DOOR)) {
         gCutsceneTimer = CUTSCENE_STOP;
-        c->cutscene = 0;
+        c->cutscene = CUTSCENE_NONE;
     }
 }
 
@@ -9994,7 +9951,7 @@ void cutscene_door_mode(struct Camera *c) {
         sMarioCamState->action != ACT_PULLING_DOOR &&
         sMarioCamState->action != ACT_PUSHING_DOOR) {
         gCutsceneTimer = CUTSCENE_STOP;
-        c->cutscene = 0;
+        c->cutscene = CUTSCENE_NONE;
     }
 }
 

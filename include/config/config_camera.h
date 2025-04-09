@@ -17,7 +17,7 @@
  * Changes hardcoded camera mode reverting to instead use the area's default mode (defMode).
  * If you're using a FORCED_CAMERA_MODE, this must be on for it to work.
  */
-#define USE_COURSE_DEFAULT_MODE
+// #define USE_COURSE_DEFAULT_MODE
 
 /***** Movement specific camera modes: *****/
 /**

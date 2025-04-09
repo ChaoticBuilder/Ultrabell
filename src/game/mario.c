@@ -731,7 +731,7 @@ void set_mario_y_vel_based_on_fspeed(struct MarioState *m, f32 initialVelY, f32 
  * Transitions for a variety of airborne actions.
  */
 u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
-    f32 forwardVel;
+    UNUSED f32 forwardVel;
 
     if ((m->squishTimer != 0 || m->quicksandDepth >= 1.0f)
         && (action == ACT_DOUBLE_JUMP || action == ACT_TWIRLING)) {
@@ -812,11 +812,19 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_DIVE:
-            m->vel[1] = 32.0f;
-            if ((forwardVel = m->forwardVel + 15.0f) > 48.0f) {
-                forwardVel = 48.0f;
+            if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
+            m->vel[1] /= 2;
+            m->vel[1] += 30.0f;
+            if (m->forwardVel >= 0) {
+                if (m->forwardVel < 20.0f) {
+                    m->forwardVel = 20.0f;
+                } else {
+                    m->forwardVel += (m->forwardVel / 3);
+                }
             }
-            mario_set_forward_vel(m, forwardVel);
+            s16 spdcap = 56;
+            if (gFlightToggle || m->flags & MARIO_METAL_CAP) spdcap = 96;
+            if (m->forwardVel > spdcap) m->forwardVel = spdcap;
             break;
 
         case ACT_LONG_JUMP:
@@ -841,7 +849,9 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_JUMP_KICK:
-            m->vel[1] = 32.0f;
+            if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
+            m->vel[1] /= 2;
+            m->vel[1] += 30.0f;
             break;
     }
 

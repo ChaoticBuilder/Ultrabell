@@ -39,9 +39,9 @@ void play_far_fall_sound(struct MarioState *m) {
 
 void play_knockback_sound(struct MarioState *m) {
     if (m->actionArg == 0 && (m->forwardVel <= -28.0f || m->forwardVel >= 28.0f)) {
-        play_sound_if_no_flag(m, SOUND_MARIO_DOH, MARIO_MARIO_SOUND_PLAYED);
+        // play_sound_if_no_flag(m, SOUND_MARIO_DOH, MARIO_MARIO_SOUND_PLAYED);
     } else {
-        play_sound_if_no_flag(m, SOUND_MARIO_UH, MARIO_MARIO_SOUND_PLAYED);
+        // play_sound_if_no_flag(m, SOUND_MARIO_UH, MARIO_MARIO_SOUND_PLAYED);
     }
 }
 
@@ -590,25 +590,16 @@ s32 act_double_jump(struct MarioState *m) {
 
 s32 act_triple_jump(struct MarioState *m) {
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_WAHA);
+
     if (gSpecialTripleJump) {
         return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
-    }
-
-    if (m->input & INPUT_B_PRESSED) {
-        return set_mario_action(m, ACT_JUMP_KICK, 0);
-    }
-
-    if (m->input & INPUT_Z_PRESSED) {
-        return set_mario_action(m, ACT_GROUND_POUND, 0);
-    } else {
-        return set_mario_action(m, ACT_TWIRLING, 0);
     }
 #if ENABLE_RUMBLE
     if (m->action == ACT_TRIPLE_JUMP_LAND) {
         queue_rumble_data(5, 40);
     }
 #endif
-    play_flip_sounds(m, 2, 8, 20);
+    set_mario_action(m, ACT_TWIRLING, 0);
     return FALSE;
 }
 
@@ -808,7 +799,7 @@ s32 act_twirling(struct MarioState *m) {
         if (g95Toggle) yawVelTarget = 0x1800;
     }
 #ifdef Z_TWIRL
-    if (m->input & INPUT_Z_DOWN) {
+    if (m->input & INPUT_Z_DOWN && m->actionArg == 2) {
         if (!g95Toggle) yawVelTarget = 0x3000;
         if (g95Toggle) yawVelTarget = 0x2800;
         if (gGlobalTimer % 2 == 0) m->particleFlags |= PARTICLE_DUST;
@@ -836,6 +827,16 @@ s32 act_twirling(struct MarioState *m) {
         case 2:
             set_mario_animation(m, MARIO_ANIM_TWIRL);
             break;
+    }
+
+    if (m->actionArg != 2) {
+        if (m->input & INPUT_B_PRESSED) {
+            return set_mario_action(m, ACT_JUMP_KICK, 0);
+        }
+
+        if (m->input & INPUT_Z_PRESSED) {
+            return set_mario_action(m, ACT_GROUND_POUND, 0);
+        }
     }
 
     if (startTwirlYaw > m->twirlYaw) {
@@ -866,9 +867,10 @@ s32 act_twirling(struct MarioState *m) {
 }
 
 s32 act_dive(struct MarioState *m) {
+    m->actionTimer++;
     if (gDiveToggle == 2)
         return set_mario_action(m, ACT_JUMP_KICK, 0);
-    if (m->input & INPUT_A_PRESSED) {
+    if (m->input & INPUT_A_PRESSED && m->actionTimer >= 2) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
     
@@ -1063,9 +1065,11 @@ s32 act_steep_jump(struct MarioState *m) {
 s32 act_ground_pound(struct MarioState *m) {
     u32 stepResult;
     f32 yOffset;
-    if (m->input & INPUT_A_PRESSED) {
+    s32 forwardVel = m->forwardVel;
+
+    if (m->input & INPUT_A_PRESSED && m->actionTimer >= 8) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
-    } 
+    }
 
     play_sound_if_no_flag(m, SOUND_ACTION_THROW, MARIO_ACTION_SOUND_PLAYED);
 
@@ -1078,13 +1082,13 @@ s32 act_ground_pound(struct MarioState *m) {
         }
     }
 
-    mario_set_forward_vel(m, 0.0f);
+    forwardVel = approach_s32(forwardVel, 0, 1, 1);
+    mario_set_forward_vel(m, forwardVel);
 
     set_mario_animation(m, m->actionArg == ACT_ARG_GROUND_POUND_NORMAL ? MARIO_ANIM_START_GROUND_POUND
                                                                        : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND);
     if (m->actionTimer == 0) {
         play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
-        play_sound(SOUND_MARIO_GROUND_POUND_WAH, m->marioObj->header.gfx.cameraToObject);
         if (!g95Toggle) {
             m->vel[1] = ABS(m->vel[1] / 1.375);
         } else {
@@ -1093,6 +1097,7 @@ s32 act_ground_pound(struct MarioState *m) {
     }
 
     m->actionTimer++;
+
     if (m->actionTimer >= m->marioObj->header.gfx.animInfo.curAnim->loopEnd + 4) {
         m->actionState = 1;
     }
@@ -1778,9 +1783,10 @@ s32 act_slide_kick(struct MarioState *m) {
 }
 
 s32 act_jump_kick(struct MarioState *m) {
+    m->actionTimer++;
     if (gDiveToggle == 1)
         return set_mario_action(m, ACT_DIVE, 0);
-    if (m->input & INPUT_A_PRESSED) {
+    if (m->input & INPUT_A_PRESSED && m->actionTimer >= 2) {
         if (gDiveToggle != 2) {
             set_mario_action(m, ACT_DIVE, 0);
         } else {
@@ -1789,7 +1795,7 @@ s32 act_jump_kick(struct MarioState *m) {
     } 
 
     if (m->actionState == ACT_STATE_JUMP_KICK_PLAY_SOUND_AND_ANIM) {
-        play_mario_sound(m, SOUND_MARIO_PUNCH_HOO, MARIO_ACTION_SOUND_PLAYED);
+        play_sound_if_no_flag(m, SOUND_MARIO_PUNCH_HOO, MARIO_ACTION_SOUND_PLAYED);
         m->marioObj->header.gfx.animInfo.animID = -1;
         set_mario_animation(m, MARIO_ANIM_AIR_KICK);
         m->actionState = ACT_STATE_JUMP_KICK_KICKING;
