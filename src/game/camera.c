@@ -30,7 +30,7 @@
 #include "profiling.h"
 #include "gfx_dimensions.h"
 
-u8 dirCheck = FALSE;
+UNUSED u8 dirCheck = FALSE;
 
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
 
@@ -2888,21 +2888,22 @@ void update_camera(struct Camera *c) {
         /*
         if (gPlayer1Controller->buttonPressed & D_JPAD) {
             gMarioState->faceAngle[1] = gLakituState.yaw;
-            play_sound_rbutton_changed();
-        } else
-        */
-        
-        if (!dirCheck && c->mode != CAMERA_MODE_8_DIRECTIONS) dirCheck = TRUE;
-        if (gPlayer1Controller->buttonPressed & L_TRIG) {
-            if (!dirCheck) return;
-            if (c->mode != CAMERA_MODE_8_DIRECTIONS) {
-                set_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 1);
-            } else {
-                set_camera_mode(c, -1, 1);
-            }
-
-            play_sound_rbutton_changed();
         }
+        */
+       
+        if (gPlayer1Controller->buttonPressed & L_TRIG) {
+            if (c->mode == CAMERA_MODE_8_DIRECTIONS && sModeInfo.lastMode == 0) {
+                play_sound_button_change_blocked();
+            } else { // I wish there was a way to use break; with if statements that aren't a loop because this is dumb
+                if (c->mode != CAMERA_MODE_8_DIRECTIONS) {
+                    set_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 1);
+                } else {
+                    set_camera_mode(c, -1, 1);
+                }
+                play_sound_rbutton_changed();
+            }
+        }
+
         if (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) {
             if (gPlayer1Controller->buttonPressed & R_TRIG) {
                 if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {

@@ -100,10 +100,6 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
         }
     }
 
-    if (m->marioBodyState->wingFlutter == TRUE) {
-        m->hurtCounter -= 1;
-    }
-
     return FALSE;
 }
 
@@ -1082,7 +1078,7 @@ s32 act_ground_pound(struct MarioState *m) {
         }
     }
 
-    forwardVel = approach_s32(forwardVel, 0, 1, 1);
+    forwardVel = approach_s32(forwardVel, 0, 2, 2);
     mario_set_forward_vel(m, forwardVel);
 
     set_mario_animation(m, m->actionArg == ACT_ARG_GROUND_POUND_NORMAL ? MARIO_ANIM_START_GROUND_POUND
@@ -1092,7 +1088,7 @@ s32 act_ground_pound(struct MarioState *m) {
         if (!g95Toggle) {
             m->vel[1] = ABS(m->vel[1] / 1.375);
         } else {
-            m->vel[1] = -40.0f;
+            m->vel[1] = -32.0f;
         }
     }
 

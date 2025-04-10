@@ -2,6 +2,7 @@
 
 #include "src/game/main.h"
 #include "src/game/ingame_menu.h"
+#include "src/game/print.h"
 
 void bhv_1up_interact(void) {
     f32 rand = random_float();
@@ -14,11 +15,11 @@ void bhv_1up_interact(void) {
 #endif
 #endif
 #ifdef ENABLE_LIVES
-    if (rand < 0.0625f && !gDebugLevelSelect && !gTrollToggle) {
-        // small chance to get epicly trolled if level select is off and troll events are still on
-        gMarioState->hurtCounter = 31;
-    }
-    else {
+    if (!gDebugLevelSelect && !gTrollToggle) {
+        if (rand < 0.0625f) {
+            gMarioState->hurtCounter = 31;
+        }
+    } else {
         gMarioState->numLives++;
     }
 #endif

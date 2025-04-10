@@ -245,7 +245,7 @@ void play_sound_if_no_flag(struct MarioState *m, u32 soundBits, u32 flags) {
  * Plays a jump sound if one has not been played since the last action change.
  */
 void play_mario_jump_sound(struct MarioState *m) {
-    if (!(m->flags & MARIO_MARIO_SOUND_PLAYED)) {
+    if (!(m->flags & MARIO_MARIO_SOUND_PLAYED) && !(m->flags & MARIO_METAL_CAP)) {
         if (m->action == ACT_TRIPLE_JUMP) {
             play_sound(SOUND_MARIO_YAHOO_WAHA_YIPPEE + ((gAudioRandom % 5) << 16),
                        m->marioObj->header.gfx.cameraToObject);
