@@ -928,13 +928,13 @@ u32 interact_warp(struct MarioState *m, UNUSED u32 interactType, struct Object *
 
 u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
     u32 doorAction = ACT_UNINITIALIZED;
-#ifndef UNLOCK_ALL
+// #ifndef UNLOCK_ALL
     u32 saveFlags = save_file_get_flags();
     s16 warpDoorId = (obj->oBehParams >> 24);
-#endif
+// #endif
 
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
-#ifndef UNLOCK_ALL
+// #ifndef UNLOCK_ALL
         if (warpDoorId == 1 && !(saveFlags & SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR)) {
             if (!(saveFlags & SAVE_FLAG_HAVE_KEY_2)) {
                 if (!sDisplayingDoorText) {
@@ -963,7 +963,7 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
 
             doorAction = ACT_UNLOCKING_KEY_DOOR;
         }
-#endif
+// #endif
 
         if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
             u32 actionArg = should_push_or_pull_door(m, obj) + WARP_FLAG_DOOR_IS_WARP;
@@ -989,12 +989,16 @@ u32 get_door_save_file_flag(struct Object *door) {
     u32 saveFileFlag = 0;
     s16 requiredNumStars = door->oBehParams >> 24;
 
+    /*
     s16 isCcmDoor = door->oPosX < 0.0f;
     s16 isPssDoor = door->oPosY > 500.0f;
+    */
 
     switch (requiredNumStars) {
+        /*
         case  1: saveFileFlag = (isPssDoor ? SAVE_FLAG_UNLOCKED_PSS_DOOR : SAVE_FLAG_UNLOCKED_WF_DOOR ); break;
         case  3: saveFileFlag = (isCcmDoor ? SAVE_FLAG_UNLOCKED_CCM_DOOR : SAVE_FLAG_UNLOCKED_JRB_DOOR); break;
+        */
         case  8: saveFileFlag = SAVE_FLAG_UNLOCKED_BITDW_DOOR;                                           break;
         case 30: saveFileFlag = SAVE_FLAG_UNLOCKED_BITFS_DOOR;                                           break;
         case 50: saveFileFlag = SAVE_FLAG_UNLOCKED_50_STAR_DOOR;                                         break;
@@ -1005,13 +1009,13 @@ u32 get_door_save_file_flag(struct Object *door) {
 
 u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
     s16 requiredNumStars = (obj->oBehParams >> 24);
-#ifndef UNLOCK_ALL
+// #ifndef UNLOCK_ALL
     s16 numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
-#endif
+// #endif
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
-#ifndef UNLOCK_ALL
+// #ifndef UNLOCK_ALL
         if (numStars >= requiredNumStars) {
-#endif
+// #endif
             u32 actionArg = should_push_or_pull_door(m, obj);
             u32 enterDoorAction;
 
@@ -1021,9 +1025,9 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
                 enterDoorAction = ACT_PUSHING_DOOR;
             }
 
-#ifndef UNLOCK_ALL
+// #ifndef UNLOCK_ALL
             u32 doorSaveFileFlag = get_door_save_file_flag(obj);
-#endif
+// #endif
             m->interactObj = obj;
             m->usedObj     = obj;
 
@@ -1031,19 +1035,21 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
                 enterDoorAction = ACT_ENTERING_STAR_DOOR;
             }
 
-#ifndef UNLOCK_ALL
+// #ifndef UNLOCK_ALL
             if (doorSaveFileFlag != 0 && !(save_file_get_flags() & doorSaveFileFlag)) {
                 enterDoorAction = ACT_UNLOCKING_STAR_DOOR;
             }
-#endif
+// #endif
             return set_mario_action(m, enterDoorAction, actionArg);
-#ifndef UNLOCK_ALL
+// #ifndef UNLOCK_ALL
         } else if (!sDisplayingDoorText) {
             u32 text = DIALOG_022 << 16;
 
             switch (requiredNumStars) {
+                /*
                 case  1: text = DIALOG_024 << 16; break;
                 case  3: text = DIALOG_025 << 16; break;
+                */
                 case  8: text = DIALOG_026 << 16; break;
                 case 30: text = DIALOG_027 << 16; break;
                 case 50: text = DIALOG_028 << 16; break;
@@ -1055,7 +1061,7 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
             sDisplayingDoorText = TRUE;
             return set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, text);
         }
-#endif
+// #endif
     } else if (m->action == ACT_IDLE && sDisplayingDoorText == TRUE && requiredNumStars == 70) {
         m->interactObj = obj;
         m->usedObj     = obj;

@@ -1214,22 +1214,22 @@ void handle_controller_cursor_input(void) {
     // Handle deadzone
     if (rawStickX > -4 && rawStickX < 4) {
         rawStickX = 0;
-        sCursorVel[0] = approach_f32(sCursorVel[0], 0, ABS(sCursorVel[0] / 1.25), ABS(sCursorVel[0] / 1.25));
+        sCursorVel[0] = approach_f32(sCursorVel[0], 0, ABS(sCursorVel[0] / 1.125), ABS(sCursorVel[0] / 1.125));
     }
     if (rawStickY > -4 && rawStickY < 4) {
         rawStickY = 0;
-        sCursorVel[1] = approach_f32(sCursorVel[1], 0, ABS(sCursorVel[1] / 1.25), ABS(sCursorVel[1] / 1.25));
+        sCursorVel[1] = approach_f32(sCursorVel[1], 0, ABS(sCursorVel[1] / 1.125), ABS(sCursorVel[1] / 1.125));
     }
     if ((rawStickX > 0 && sCursorVel[0] < 0) || (rawStickX < 0 && sCursorVel[0] > 0)) {
-        sCursorVel[0] = approach_f32(sCursorVel[0], CLAMP(rawStickX, -12, 12), ABS(rawStickX / 18 + 0.25), ABS(rawStickX / 16 + 0.25));
+        sCursorVel[0] = approach_f32(sCursorVel[0], CLAMP(rawStickX, -12, 12), ABS(rawStickX / 12), ABS(rawStickX / 12));
     }
     if ((rawStickY > 0 && sCursorVel[1] < 0) || (rawStickY < 0 && sCursorVel[1] > 0)) {
-        sCursorVel[1] = approach_f32(sCursorVel[1], CLAMP(rawStickY, -10, 10), ABS(rawStickY / 18 + 0.25), ABS(rawStickY / 16 + 0.25));
+        sCursorVel[1] = approach_f32(sCursorVel[1], CLAMP(rawStickY, -11, 11), ABS(rawStickY / 12), ABS(rawStickY / 12));
     }
 
     // Move cursor
-    sCursorVel[0] = approach_f32(sCursorVel[0], CLAMP(rawStickX, -12, 12), ABS(rawStickX / 24 + 0.25), ABS(rawStickX / 24 + 0.25));
-    sCursorVel[1] = approach_f32(sCursorVel[1], CLAMP(rawStickY, -11, 11), ABS(rawStickY / 24 + 0.25), ABS(rawStickY / 24 + 0.25));
+    sCursorVel[0] = approach_f32(sCursorVel[0], CLAMP(rawStickX, -12, 12), ABS(rawStickX / 24), ABS(rawStickX / 24));
+    sCursorVel[1] = approach_f32(sCursorVel[1], CLAMP(rawStickY, -11, 11), ABS(rawStickY / 24), ABS(rawStickY / 24));
     sCursorPos[0] += sCursorVel[0];
     sCursorPos[1] += sCursorVel[1];
 
