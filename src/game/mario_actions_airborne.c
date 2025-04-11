@@ -1061,7 +1061,6 @@ s32 act_steep_jump(struct MarioState *m) {
 s32 act_ground_pound(struct MarioState *m) {
     u32 stepResult;
     f32 yOffset;
-    s32 forwardVel = m->forwardVel;
 
     if (m->input & INPUT_A_PRESSED && m->actionTimer >= 8) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
@@ -1078,8 +1077,8 @@ s32 act_ground_pound(struct MarioState *m) {
         }
     }
 
-    forwardVel = approach_s32(forwardVel, 0, 2, 2);
-    mario_set_forward_vel(m, forwardVel);
+    m->forwardVel = approach_f32(m->forwardVel, 0, (m->forwardVel / 12), (m->forwardVel / 12));
+    mario_set_forward_vel(m, m->forwardVel); // why do I have to do this..
 
     set_mario_animation(m, m->actionArg == ACT_ARG_GROUND_POUND_NORMAL ? MARIO_ANIM_START_GROUND_POUND
                                                                        : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND);

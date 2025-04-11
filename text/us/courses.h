@@ -1,6 +1,6 @@
 COURSE_ACTS(COURSE_BOB, _("BOB-OMB PLAINS"),
-       _("KING BOB-OMB'S SUMMIT")         , _("KOOPA TROOPA RACE!")            , _("FLOATING ISLAND UP ABOVE"),
-       _("FIND THE 8 RED COINS!")         , _("MARIO'S FLIGHT")                , _("BEHIND CHAIN CHOMP'S GATE"))
+       _("KING BOB-OMB'S SUMMIT")         , _("KOOPA TROOPA RACE!")            , _("FIND THE 8 RED COINS!"),
+       _("SECRET OF THE HILL")            , _("CHOMPING CHAIN CHOMP")          , _(""))
 
 COURSE_ACTS(COURSE_WF, _("MOUNTAIN TOWER FORT"),
        _("THE WHOMP KING")                , _("TO THE TOP OF THE FORTRESS")    , _("SKY HIGH WALL KICKS"),

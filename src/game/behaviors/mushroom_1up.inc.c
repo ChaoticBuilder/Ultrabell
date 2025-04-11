@@ -15,10 +15,8 @@ void bhv_1up_interact(void) {
 #endif
 #endif
 #ifdef ENABLE_LIVES
-    if (!gDebugLevelSelect && !gTrollToggle) {
-        if (rand < 0.0625f) {
-            gMarioState->hurtCounter = 31;
-        }
+    if (rand < 0.0625f && !gDebugLevelSelect && !gTrollToggle) {
+        gMarioState->hurtCounter = 31;
     } else {
         gMarioState->numLives++;
     }

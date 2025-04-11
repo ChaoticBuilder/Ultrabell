@@ -192,8 +192,8 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
     //! Speed is capped a frame late (butt slide HSG)
     m->forwardVel = sqrtf(sqr(m->slideVelX) + sqr(m->slideVelZ));
     if (m->forwardVel > 112.0f) {
-        m->slideVelX /= 1.035f;
-        m->slideVelZ /= 1.035f;
+        m->slideVelX /= 1.03f;
+        m->slideVelZ /= 1.03f;
     }
 
     if (newFacingDYaw < -0x4000 || newFacingDYaw > 0x4000) {
@@ -220,22 +220,22 @@ s32 update_sliding(struct MarioState *m, f32 stopSpeed) {
 
     switch (mario_get_floor_class(m)) {
         case SURFACE_CLASS_VERY_SLIPPERY:
-            accel = 20.0f;
+            accel = 15.0f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.98f;
             break;
 
         case SURFACE_CLASS_SLIPPERY:
-            accel = 16.0f;
+            accel = 12.0f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.96f;
             break;
 
         default:
-            accel = 14.0f;
+            accel = 10.5f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
             break;
 
         case SURFACE_CLASS_NOT_SLIPPERY:
-            accel = 10.0f;
+            accel = 7.5f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
             break;
     }
@@ -494,7 +494,7 @@ s32 analog_stick_held_back(struct MarioState *m) {
 }
 
 s32 check_ground_dive_or_punch(struct MarioState *m) {
-    if (m->input & INPUT_B_PRESSED) {
+    if ((m->input & INPUT_B_PRESSED) || (gTurboToggle && (m->input & INPUT_B_DOWN) && gGlobalTimer % 2 == 0)) {
         //! Speed kick (shoutouts to SimpleFlips)
         if (m->forwardVel > 20.0f && (!(m->input & INPUT_A_DOWN))) {
             return set_mario_action(m, ACT_DIVE, 1);
@@ -1587,7 +1587,7 @@ s32 act_hold_stomach_slide(struct MarioState *m) {
 }
 
 s32 act_dive_slide(struct MarioState *m) {
-    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
+    if ((m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) || (gTurboToggle && (m->input & INPUT_B_DOWN) && gGlobalTimer % 2 == 0)) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif

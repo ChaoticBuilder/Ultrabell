@@ -87,16 +87,15 @@ waiting for you. Be sure\n\
 to talk to them--they'll\n\
 set up cannons for you."))
 
-DEFINE_DIALOG(DIALOG_004, 1, 3, 95, 200, _("\
-We're peace-loving\n\
-Bob-ombs, so we don't use\n\
-cannons.\n\
-But if you'd like\n\
-to blast off, we don't\n\
-mind. Help yourself.\n\
-We'll prepare all of the\n\
-cannons in this course for\n\
-you to use. Bon Voyage!"))
+DEFINE_DIALOG(DIALOG_004, 1, 2, 95, 200, _("\
+Welcome to the Plains,\n\
+Mario!\n\
+We don't use our cannons,\n\
+so feel free to blast off!\n\
+...\n\
+\n\
+(this totally isn't because\n\
+Fast64 is a nightmare..)"))
 
 DEFINE_DIALOG(DIALOG_005, 1, 3, 30, 200, _("\
 Hey, Mario! Is it true\n\
