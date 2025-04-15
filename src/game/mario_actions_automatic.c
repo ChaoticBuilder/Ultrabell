@@ -17,6 +17,7 @@
 #include "level_table.h"
 #include "rumble_init.h"
 #include "game_init.h"
+#include "ingame_menu.h"
 
 #include "config.h"
 
@@ -304,6 +305,8 @@ s32 update_hang_moving(struct MarioState *m) {
     Vec3f nextPos;
 #ifdef BETTER_HANGING
     f32 maxSpeed = (m->intendedMag / 2.0f);
+    if (g95Toggle) maxSpeed /= 2.0f;
+    if (gRealToggle) maxSpeed /= 2.0f;
 #else
     f32 maxSpeed = HANGING_SPEED;
 #endif
@@ -382,7 +385,7 @@ s32 act_start_hanging(struct MarioState *m) {
     }
 
     // Only let go if A or B has been pressed
-    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
+    if (m->input & INPUT_A_PRESSED || (m->input & INPUT_B_PRESSED && !gGrapple)) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 #else
@@ -422,7 +425,7 @@ s32 act_hanging(struct MarioState *m) {
 
 #ifdef BETTER_HANGING
     // Only let go if A or B is pressed
-    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
+    if (m->input & INPUT_A_PRESSED || (m->input & INPUT_B_PRESSED && !gGrapple)) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 #else

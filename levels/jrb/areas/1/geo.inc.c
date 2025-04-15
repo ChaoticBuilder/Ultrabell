@@ -11,7 +11,7 @@ const GeoLayout jrb_geo_000A18[] = {
       GEO_CLOSE_NODE(),
       GEO_ZBUFFER(1),
       GEO_OPEN_NODE(),
-         GEO_CAMERA_FRUSTUM_WITH_FUNC(45, 100, 25000, geo_camera_fov),
+         GEO_CAMERA_FRUSTUM_WITH_FUNC(45, 120, 16000, geo_camera_fov),
          GEO_OPEN_NODE(),
             GEO_CAMERA(CAMERA_MODE_FREE_ROAM, 0, 2000, 6000, 0, 0, 0, geo_camera_main),
             GEO_OPEN_NODE(),

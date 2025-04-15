@@ -1,5 +1,6 @@
 const MacroObject bob_area_1_macro_objs[] = {
 	MACRO_OBJECT(macro_bobomb, 0, 512, 1120, -2560),
+	MACRO_OBJECT_WITH_BEH_PARAM(macro_wooden_signpost, 0, -4096, 0, 5120, DIALOG_003),
 	MACRO_OBJECT_WITH_BEH_PARAM(macro_cannon_closed, 0, -5694, 128, 5600, 0x00000000),
 	MACRO_OBJECT(macro_coin_line_horizontal, 90, -400, 512, 5600),
 	MACRO_OBJECT(macro_coin_ring_horizontal, 0, -5694, 128, 5600),

@@ -533,8 +533,8 @@ s32 act_debug_free_move(struct MarioState *m) {
         pos[1] -= 16.0f * speed;
     }
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
-        vec3_zero(m->vel);
-        m->forwardVel = m->forwardVel / 4;
+        if (m->vel[1] < 0) m->vel[1] = 0;
+        m->forwardVel = 0;
 
         set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
         m->input &= ~INPUT_A_PRESSED;
@@ -544,7 +544,7 @@ s32 act_debug_free_move(struct MarioState *m) {
             return set_mario_action(m, ACT_IDLE, 0);
         } else {
             // slight upwards boost to get you some hover time
-            m->vel[1] = 20.0f;
+            m->vel[1] = 40.0f;
             gPlayer1Controller->buttonDown &= ~U_JPAD;
             return set_mario_action(m, ACT_FREEFALL, 0);
         }
@@ -802,16 +802,16 @@ s32 act_unlocking_key_door(struct MarioState *m) {
         spawn_obj_at_mario_rel_yaw(m, MODEL_BOWSER_KEY_CUTSCENE, bhvBowserKeyUnlockDoor, 0);
         set_mario_animation(m, MARIO_ANIM_UNLOCK_DOOR);
     }
-    if (m->actionTimer == 135) set_mario_animation(m, ACT_JUMP_LAND);
+    if (m->actionTimer == 135) set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
     if (m->actionTimer >= 136) {
         if (m->actionTimer < 142) {
             m->faceAngle[1] -= DEGREES(15);
-        } else if (m->actionTimer < 149) {
+        } else if (m->actionTimer < 148) {
             set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 0x00050000);
             m->pos[0] += 12.0f * sins(m->faceAngle[1]);
             m->pos[2] += 12.0f * coss(m->faceAngle[1]);
-        } else if (m->actionTimer <= 155) {
-            set_mario_animation(m, ACT_JUMP_LAND);
+        } else if (m->actionTimer <= 153) {
+            set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
             m->faceAngle[1] += DEGREES(15);
         }
     }
@@ -828,7 +828,7 @@ s32 act_unlocking_key_door(struct MarioState *m) {
     if (m->actionTimer < 135) update_mario_pos_for_anim(m);
     stop_and_set_height_to_floor(m);
 
-    if (m->actionTimer >= 155) {
+    if (m->actionTimer >= 153) {
         if (GET_BPARAM1(m->usedObj->oBehParams) == KEY_DOOR_BP1_UPSTAIRS) {
             save_file_set_flags(SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR);
             save_file_clear_flags(SAVE_FLAG_HAVE_KEY_2);

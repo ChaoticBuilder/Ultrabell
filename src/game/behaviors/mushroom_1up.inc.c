@@ -15,10 +15,12 @@ void bhv_1up_interact(void) {
 #endif
 #endif
 #ifdef ENABLE_LIVES
-    if (rand < 0.0625f && !gDebugLevelSelect && !gTrollToggle) {
-        gMarioState->hurtCounter = 31;
-    } else {
-        gMarioState->numLives++;
+    if (!gRealToggle) {
+        if (rand < 0.0625f && !gDebugLevelSelect && !gTrollToggle) {
+            gMarioState->hurtCounter = 31;
+        } else {
+            gMarioState->numLives++;
+        }
     }
 #endif
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;

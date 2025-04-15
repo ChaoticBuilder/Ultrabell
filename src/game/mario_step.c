@@ -623,57 +623,70 @@ void apply_gravity(struct MarioState *m) {
     } else if (m->action == ACT_SHOT_FROM_CANNON) {
         m->vel[1] -= 1.0f;
         if (m->vel[1] < normalMax) {
-            m->vel[1] += 0.5f;
-            m->vel[1] -= (m->vel[1] / 80);
+            if (!gRealToggle) {
+                m->vel[1] += 0.5f;
+                m->vel[1] -= (m->vel[1] / 80);
+            }
             sTerminalVelocity = TRUE;
-        } else { sTerminalVelocity = FALSE; }
+        }
     } else if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK
                || m->action == ACT_BBH_ENTER_SPIN) {
         m->vel[1] -= 2.5f;
         if (m->vel[1] < normalMax) {
-            m->vel[1] += 1.5f;
-            m->vel[1] -= (m->vel[1] / 80);
+            if (!gRealToggle) {
+                m->vel[1] += 1.5f;
+                m->vel[1] -= (m->vel[1] / 80);
+            }
             sTerminalVelocity = TRUE;
-        } else { sTerminalVelocity = FALSE; }
+        }
     } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_FALL_AFTER_STAR_GRAB) {
         m->vel[1] -= 4.0f;
         if (m->vel[1] < -64.0f) {
-            m->vel[1] += 2.0f;
-            m->vel[1] -= (m->vel[1] / 20);
+            if (!gRealToggle) {
+                m->vel[1] += 2.0f;
+                m->vel[1] -= (m->vel[1] / 20);
+            }
             sTerminalVelocity = TRUE;
-        } else { sTerminalVelocity = FALSE; }
+        }
     } else if (m->action == ACT_GETTING_BLOWN) {
         m->vel[1] -= m->windGravity;
         if (m->vel[1] < normalMax) {
-            m->vel[1] += 2.0f;
-            m->vel[1] -= (m->vel[1] / 32);
+            if (!gRealToggle) {
+                m->vel[1] += 2.0f;
+                m->vel[1] -= (m->vel[1] / 32);
+            }
             sTerminalVelocity = TRUE;
-        } else { sTerminalVelocity = FALSE; }
+        }
     } else if (should_strengthen_gravity_for_jump_ascent(m)) {
         m->vel[1] /= 5.0f;
     } else if (m->action & ACT_FLAG_METAL_WATER) {
         m->vel[1] -= 0.0f;
         if (m->vel[1] < -24.0f) {
             m->vel[1] = -24.0f;
+            if (gRealToggle) { sTerminalVelocity = TRUE; }
         }
     } else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
 
         m->vel[1] -= 2.5f;
         if (m->vel[1] < -40.0f) {
-            m->vel[1] += 1.25f;
-            m->vel[1] -= (m->vel[1] / 36);
+            if (!gRealToggle) {
+                m->vel[1] += 1.25f;
+                m->vel[1] -= (m->vel[1] / 36);
+            }
             sTerminalVelocity = TRUE;
-        } else { sTerminalVelocity = FALSE; }
+        }
     } else {
         m->vel[1] -= 5.0f;
         if (m->vel[1] < normalMax) {
-            m->vel[1] += 2.5f;
-            m->vel[1] -= (m->vel[1] / 40);
+            if (!gRealToggle) {
+                m->vel[1] += 2.5f;
+                m->vel[1] -= (m->vel[1] / 40);
+            }
             sTerminalVelocity = TRUE;
-        } else { sTerminalVelocity = FALSE; }
+        }
     }
-    if (m->vel[1] >= 0) { sTerminalVelocity = FALSE; } // safeguard just incase
+    if (m->vel[1] >= 0) sTerminalVelocity = FALSE;
     if (m->flags & MARIO_METAL_CAP && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
         m->vel[1] -= 1.5f;
         if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) {
@@ -683,7 +696,7 @@ void apply_gravity(struct MarioState *m) {
     if (gLuigiToggle) {
         if (m->marioBodyState->wingFlutter == FALSE && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN && m->action != ACT_TWIRLING)) {
             m->vel[1] += 1.0f;
-            if (m->vel[1] < 0.0f) {
+            if (m->vel[1] < 16.0f) {
                 if (sTerminalVelocity == TRUE) {
                     m->vel[1] -= 1.0f;
                 } else {

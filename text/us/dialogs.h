@@ -71,31 +71,36 @@ and we're on your side.\n\
 You can talk to us\n\
 whenever you'd like to!"))
 
-DEFINE_DIALOG(DIALOG_003, 1, 5, 95, 200, _("\
-Thank you, Mario! The Big\n\
-Bob-omb is nothing but a\n\
-big dud now! But the\n\
-battle for the castle has\n\
-just begun.\n\
-Other enemies are holding\n\
-the other Power Stars. If\n\
-you recover more Stars,\n\
-you can open new doors\n\
-that lead to new worlds!\n\
-My Bob-omb Buddies are\n\
-waiting for you. Be sure\n\
-to talk to them--they'll\n\
-set up cannons for you."))
+DEFINE_DIALOG(DIALOG_003, 1, 4, 95, 200, _("\
+Hey uh, sorry to disappoint\n\
+but I haven't added\n\
+info here yet, sorry!\n\
+TODO: ADD Q&A"))
 
-DEFINE_DIALOG(DIALOG_004, 1, 2, 95, 200, _("\
+DEFINE_DIALOG(DIALOG_004, 1, 4, 95, 200, _("\
+Hello there, Mario!\n\
+Welcome to Ultrabell!\n\
+You're currently in\n\
+Bob-Omb Plains! (Demo)\n\
+There's tons of new details\n\
+and secrets to find!\n\
+You should try the water!\n\
+It's nice!\n\
+Just be careful of the\n\
+vicious Chain-Chomp..\n\
+You don't wanna become\n\
+it's Italian Lunch!\n\
+Lastly, if you want more\n\
+info on this hack,\n\
+read the sign nearby!\n\
+See ya later, Plumber!"))
+
+/*
 Welcome to the Plains,\n\
 Mario!\n\
 We don't use our cannons,\n\
-so feel free to blast off!\n\
-...\n\
-\n\
-(this totally isn't because\n\
-Fast64 is a nightmare..)"))
+so feel free to blast off!
+*/
 
 DEFINE_DIALOG(DIALOG_005, 1, 3, 30, 200, _("\
 Hey, Mario! Is it true\n\

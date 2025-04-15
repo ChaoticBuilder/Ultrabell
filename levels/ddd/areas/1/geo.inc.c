@@ -11,7 +11,7 @@ const GeoLayout ddd_geo_0004C0[] = {
       GEO_CLOSE_NODE(),
       GEO_ZBUFFER(1),
       GEO_OPEN_NODE(),
-         GEO_CAMERA_FRUSTUM_WITH_FUNC(45, 100, 12800, geo_camera_fov),
+         GEO_CAMERA_FRUSTUM_WITH_FUNC(45, 120, 8192, geo_camera_fov),
          GEO_OPEN_NODE(),
             GEO_CAMERA(CAMERA_MODE_OUTWARD_RADIAL, 0, 2000, 6000, 2560, 0, 512, geo_camera_main),
             GEO_OPEN_NODE(),

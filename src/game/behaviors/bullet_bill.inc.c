@@ -15,6 +15,12 @@ void bullet_bill_act_0(void) {
     o->oFaceAnglePitch = 0;
     o->oFaceAngleRoll = 0;
     o->oMoveFlags = OBJ_MOVE_NONE;
+    if (gRealToggle) {
+        o->oDamageOrCoinValue = 31;
+        o->hitboxHeight = 25;
+        o->hitboxRadius = 25;
+        cur_obj_scale(0.2f);
+    }
     cur_obj_set_pos_to_home();
     o->oAction = 1;
 }
@@ -27,13 +33,19 @@ void bullet_bill_act_1(void) {
 }
 
 void bullet_bill_act_2(void) {
+    s16 setting;
+    if (!gRealToggle) {
+        setting = 3;
+    } else {
+        setting = 6;
+    }
     if (o->oTimer < 40) {
-        o->oForwardVel = 3.0f;
+        o->oForwardVel = setting;
     } else if (o->oTimer < 50) {
         if (o->oTimer % 2) {
-            o->oForwardVel = 3.0f;
+            o->oForwardVel = setting;
         } else {
-            o->oForwardVel = -3.0f;
+            o->oForwardVel = -setting;
         }
     } else {
         if (o->oTimer > 70) {
@@ -41,10 +53,12 @@ void bullet_bill_act_2(void) {
         }
 
         spawn_object(o, MODEL_SMOKE, bhvWhitePuffSmoke);
-        o->oForwardVel = 30.0f;
+        if (!gRealToggle) o->oForwardVel = 30.0f;
+        if (gRealToggle) o->oForwardVel = 120.0f;
 
         if (o->oDistanceToMario > 300.0f) {
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
+            if (!gRealToggle) cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
+            if (gRealToggle) cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x200);
         }
 
         if (o->oTimer == 50) {
@@ -65,16 +79,12 @@ void bullet_bill_act_3(void) {
 
 void bullet_bill_act_4(void) {
     if (o->oTimer == 0) {
-        o->oForwardVel = -30.0f;
         cur_obj_become_intangible();
     }
 
-    o->oFaceAnglePitch += 0x1000;
-    o->oFaceAngleRoll += 0x1000;
-    o->oPosY += 20.0f;
-
     if (o->oTimer > 90) {
         o->oAction = 0;
+        spawn_mist_particles();
     }
 }
 

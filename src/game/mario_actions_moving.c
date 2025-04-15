@@ -443,6 +443,7 @@ void update_walking_speed(struct MarioState *m) {
         // If accelerating
         if (!g95Toggle) m->forwardVel += 0.75f;
         if (g95Toggle) m->forwardVel += 0.5f;
+        if (gRealToggle) m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.0625f;
     }
@@ -514,7 +515,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if ((gLuigiToggle == TRUE && !(m->flags & MARIO_METAL_CAP)) || (m->forwardVel >= 24.0f && m->floor->normal.y >= COS80)) {
+    if ((m->forwardVel >= 24.0f && m->floor->normal.y >= COS80) || (gLuigiToggle == TRUE && m->forwardVel >= 6.0f && !(m->flags & MARIO_METAL_CAP))) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -833,6 +834,8 @@ s32 act_walking(struct MarioState *m) {
 }
 
 s32 act_move_punching(struct MarioState *m) {
+    if (gGrapple)
+        return set_mario_action(m, ACT_GRAPPLE_HOOKED, 0);
     if (should_begin_sliding(m)) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
@@ -1610,11 +1613,7 @@ s32 act_dive_slide(struct MarioState *m) {
         set_mario_action(m, ACT_STOMACH_SLIDE_STOP, 0);
     }
 
-    if (mario_check_object_grab(m)) {
-        mario_grab_used_object(m);
-        m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
-        return TRUE;
-    }
+    mario_check_object_grab(m);
 
     common_slide_action(m, ACT_STOMACH_SLIDE_STOP, ACT_FREEFALL, MARIO_ANIM_DIVE);
     return FALSE;

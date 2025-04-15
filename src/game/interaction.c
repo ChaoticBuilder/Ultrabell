@@ -24,6 +24,7 @@
 #include "sound_init.h"
 #include "rumble_init.h"
 #include "config.h"
+#include "ingame_menu.h"
 
 u8  sDelayInvincTimer;
 s16 sInvulnerable;
@@ -338,6 +339,7 @@ Bool32 mario_lose_cap_to_enemy(UNUSED u32 enemyType) {
 }
 #else
 void mario_blow_off_cap(struct MarioState *m, f32 capSpeed) {
+    if (g95Toggle) return;
     struct Object *capObject;
 
     if (does_mario_have_normal_cap_on_head(m)) {
@@ -358,6 +360,7 @@ void mario_blow_off_cap(struct MarioState *m, f32 capSpeed) {
 }
 
 Bool32 mario_lose_cap_to_enemy(u32 enemyType) {
+    if (g95Toggle) return TRUE;
     if (does_mario_have_normal_cap_on_head(gMarioState)) {
         save_file_set_flags(enemyType == 1 ? SAVE_FLAG_CAP_ON_KLEPTO : SAVE_FLAG_CAP_ON_UKIKI);
         gMarioState->flags &= ~(MARIO_NORMAL_CAP | MARIO_CAP_ON_HEAD);
@@ -378,7 +381,7 @@ void mario_retrieve_cap(void) {
 u32 able_to_grab_object(struct MarioState *m, UNUSED struct Object *obj) {
     u32 action = m->action;
 
-    if (action == ACT_DIVE_SLIDE || action == ACT_DIVE) {
+    if (action == ACT_DIVE_SLIDE || action == ACT_DIVE || action == ACT_GRAPPLE_HOOKED) {
         if (!(obj->oInteractionSubtype & INT_SUBTYPE_GRABS_MARIO)) {
             return TRUE;
         }
@@ -794,7 +797,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 
 #ifdef POWER_STARS_HEAL
         m->hurtCounter = 0;
-        m->healCounter = 31;
+        m->healCounter = 127;
  #ifdef BREATH_METER
         m->breathCounter = 31;
  #endif
@@ -1909,7 +1912,7 @@ void mario_handle_special_floors(struct MarioState *m) {
 
     if (m->floor != NULL) {
         s32 floorType = m->floor->type;
-
+        
         switch (floorType) {
             case SURFACE_DEATH_PLANE:
             case SURFACE_VERTICAL_WIND:
@@ -1931,7 +1934,14 @@ void mario_handle_special_floors(struct MarioState *m) {
 
         if (!(m->action & (ACT_FLAG_AIR | ACT_FLAG_SWIMMING))) {
             if (floorType == SURFACE_BURNING) {
-                check_lava_boost(m);
+                if (!gRealToggle) check_lava_boost(m);
+                if (gRealToggle) {
+                    play_sound(SOUND_OBJ_BULLY_EXPLODE_LAVA, m->marioObj->header.gfx.cameraToObject);
+                    spawn_object(m->marioObj, MODEL_SMOKE, bhvBobombBullyDeathSmoke);
+
+                    m->floor->type = SURFACE_INSTANT_QUICKSAND;
+                    // insanity
+                }
             }
         }
     }

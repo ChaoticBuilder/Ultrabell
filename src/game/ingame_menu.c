@@ -48,6 +48,8 @@ u8 gDiveToggle = 0;
 u8 gFlightToggle = FALSE;
 u8 gTrollToggle = FALSE;
 u8 g95Toggle = FALSE;
+u8 gRealToggle = FALSE;
+u8 gGrapple = FALSE;
 /*
 #if defined(WIDE) && !defined(PUPPYCAM)
 u8 textCurrRatio43[] = { TEXT_HUD_CURRENT_RATIO_43 };
@@ -1594,9 +1596,9 @@ void config_options_scroll(void) {
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gConfigScroll < 2) {
-        gConfigScroll = 13;
+        gConfigScroll = 14;
     }
-    if (gConfigScroll > 13) {
+    if (gConfigScroll > 14) {
         gConfigScroll = 2;
     }
 }
@@ -1653,17 +1655,23 @@ void config_options(void) {
             play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
         if (gConfigScroll == 8) {
-            g95Toggle ^= 1;
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
-        if (gConfigScroll == 9) {
             gTurboToggle ^= 1;
             play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
+        if (gConfigScroll == 9) {
+            g95Toggle ^= 1;
+            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        }
         if (gConfigScroll == 10) {
+            gRealToggle ^= 1;
+            if (!gRealToggle) g95Toggle = FALSE;
+            if (gRealToggle) g95Toggle = TRUE;
             play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
         if (gConfigScroll == 11) {
+            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        }
+        if (gConfigScroll == 12) {
             // if (gHudDisplay.stars >= 100) {
                 gFlightToggle ^= 1;
                 play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
@@ -1673,7 +1681,11 @@ void config_options(void) {
             }
             */
         }
-        if (gConfigScroll == 12) {
+        if (gConfigScroll == 13) {
+            gGrapple ^= 1;
+            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        }
+        if (gConfigScroll == 14) {
             // if (gHudDisplay.stars >= 100) {
                 gTrollToggle ^= 1;
                 play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
@@ -1683,10 +1695,6 @@ void config_options(void) {
             }
             */
         }
-        if (gConfigScroll == 13) {
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
-
     }
 }
 
@@ -1744,7 +1752,7 @@ void config_options_box(void) {
     print_set_envcolour(255, 175, 127, 255);
     print_small_text_light(136, 56, "Gameplay", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     print_set_envcolour(255, 127, 255, 255);
-    print_small_text_light(140, 112, "Events", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    print_small_text_light(140, 124, "Events", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
 #ifdef WIDE
     if (!gConfig.widescreen) sprintf(currOption, "Ratio: 4:3");
@@ -1807,61 +1815,52 @@ void config_options_box(void) {
     
     print_small_text_light(192, 72, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
-    if (gConfigScroll == 8) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-    if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
-    if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
-
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 8) print_set_envcolour(127, 127, 127, 255);
-    
-    print_small_text_light(32, 84, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-
-    if (gConfigScroll == 9) print_small_text_light(160, 204, "I don't blame you if you enable this, I use it too.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 8) print_small_text_light(160, 204, "I don't blame you if you enable this, I use it too.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gTurboToggle) sprintf(currOption, "Turbo BLJ: Off");
     if (gTurboToggle) sprintf(currOption, "Turbo BLJ: On");
 
     print_set_envcolour(255, 255, 255, 255);
     
+    if (gConfigScroll != 8) print_set_envcolour(127, 127, 127, 255);
+    
+    print_small_text_light(32, 84, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+
+    if (gConfigScroll == 9) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
+    if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
+    if (gRealToggle) sprintf(currOption, "Automatically enabled.");
+
+    print_set_envcolour(255, 255, 255, 255);
     if (gConfigScroll != 9) print_set_envcolour(127, 127, 127, 255);
     
     print_small_text_light(192, 84, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
-    if (gConfigScroll == 10) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 10) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    if (!gRealToggle) sprintf(currOption, "Mario if he real: Off");
+    if (gRealToggle) sprintf(currOption, "Mario if he real: On");
+
+    print_set_envcolour(255, 255, 255, 255);
+    if (gConfigScroll != 10) print_set_envcolour(127, 127, 127, 255);
+    
+    print_small_text_light(32, 96, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+
+    if (gConfigScroll == 11) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     sprintf(currOption, "TEMP");
 
     print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 10) print_set_envcolour(127, 127, 127, 255);
-
-    print_small_text_light(32, 96, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-
-    if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 11) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        if (!gFlightToggle) sprintf(currOption, "Infinite Flight: On");
-        if (!gFlightToggle) sprintf(currOption, "Infinite Flight: Off");
-
-        print_set_envcolour(255, 255, 255, 255);
-        if (gConfigScroll != 11) print_set_envcolour(127, 127, 127, 255);
-    } else {
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == 11) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        sprintf(currOption, "Locked!");
-
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll != 11) print_set_envcolour(79, 79, 79, 255);
-    }
+    if (gConfigScroll != 11) print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(192, 96, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
     if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 12) print_small_text_light(160, 204, "Are those pesky doors annoying you? Look no further.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (gConfigScroll == 12) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-        if (!gTrollToggle) sprintf(currOption, "Troll Events: On");
-        if (gTrollToggle) sprintf(currOption, "Troll Events: Off");
+        if (!gFlightToggle) sprintf(currOption, "Infinite Flight: On");
+        if (!gFlightToggle) sprintf(currOption, "Infinite Flight: Off");
 
         print_set_envcolour(255, 255, 255, 255);
         if (gConfigScroll != 12) print_set_envcolour(127, 127, 127, 255);
@@ -1875,14 +1874,35 @@ void config_options_box(void) {
         if (gConfigScroll != 12) print_set_envcolour(79, 79, 79, 255);
     }
 
-    print_small_text_light(32, 128, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    
-    sprintf(currOption, "TEMP");
+    print_small_text_light(32, 108, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+
+    if (!gGrapple) sprintf(currOption, "GRAPPLE TEST OFF");
+    if (gGrapple) sprintf(currOption, "GRAPPLE TEST ON");
 
     print_set_envcolour(255, 255, 255, 255);
     if (gConfigScroll != 13) print_set_envcolour(127, 127, 127, 255);
 
-    print_small_text_light(192, 128, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    print_small_text_light(192, 108, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+
+    if (gHudDisplay.stars >= 100) {
+        if (gConfigScroll == 14) print_small_text_light(160, 204, "Are those pesky doors annoying you? Look no further.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        if (!gTrollToggle) sprintf(currOption, "Troll Events: On");
+        if (gTrollToggle) sprintf(currOption, "Troll Events: Off");
+
+        print_set_envcolour(255, 255, 255, 255);
+        if (gConfigScroll != 14) print_set_envcolour(127, 127, 127, 255);
+    } else {
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll == 14) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        sprintf(currOption, "Locked!");
+
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll != 14) print_set_envcolour(79, 79, 79, 255);
+    }
+
+    print_small_text_light(32, 128, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
