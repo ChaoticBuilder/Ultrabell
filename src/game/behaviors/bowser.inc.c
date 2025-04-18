@@ -1094,10 +1094,10 @@ void bowser_act_dance(void) {
  */
 void bowser_spawn_collectable(void) {
     if (o->oBehParams2ndByte == BOWSER_BP_BITS) {
-        obj_spawn_loot_yellow_coins(o, 20, 10.0f);
+        obj_spawn_loot_yellow_coins(o, 16, 16.0f);
         gSecondCameraFocus = spawn_object(o, MODEL_STAR, bhvGrandStar);
     } else {
-        obj_spawn_loot_yellow_coins(o, 20, 10.0f);
+        obj_spawn_loot_yellow_coins(o, 16, 16.0f);
         gSecondCameraFocus = spawn_object(o, MODEL_BOWSER_KEY, bhvBowserKey);
         cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_KEY);
     }

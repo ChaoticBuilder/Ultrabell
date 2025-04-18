@@ -1147,11 +1147,9 @@ static void play_metal_water_walking_sound(struct MarioState *m) {
 }
 
 static void update_metal_water_walking_speed(struct MarioState *m) {
-    f32 targetSpeed = m->intendedMag / 1.5f;
-
     if (m->forwardVel <= 0.0f) {
         m->forwardVel += 1.0f;
-    } else if (m->forwardVel <= targetSpeed) {
+    } else if (m->forwardVel <= m->intendedMag) {
         m->forwardVel += 1.0f;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.0625f;
@@ -1321,6 +1319,10 @@ static s32 act_metal_water_walking(struct MarioState *m) {
         return set_mario_action(m, ACT_METAL_WATER_JUMP, 0);
     }
 
+    if (m->input & INPUT_IDLE) {
+        return set_mario_action(m, ACT_METAL_WATER_STANDING, 0); // why did I even remove this in the first place??
+    }
+
     if ((animSpeed = (s32)(m->forwardVel / 4.0f * 0x10000)) < 0x1000) {
         animSpeed = 0x1000;
     }
@@ -1355,6 +1357,10 @@ static s32 act_hold_metal_water_walking(struct MarioState *m) {
 
     if (m->input & INPUT_A_PRESSED) {
         return set_mario_action(m, ACT_HOLD_METAL_WATER_JUMP, 0);
+    }
+
+    if (m->input & INPUT_IDLE) {
+        return set_mario_action(m, ACT_HOLD_METAL_WATER_STANDING, 0);
     }
 
     m->intendedMag *= 0.4f;

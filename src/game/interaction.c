@@ -810,6 +810,9 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
             m->breathCounter = 0;
  #endif
 #endif // !POWER_STARS_HEAL
+            if (m->capTimer > 60) {
+                m->capTimer = 64;
+            }
         }
 
         if (noExit) {
@@ -1017,7 +1020,8 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
 // #endif
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
 // #ifndef UNLOCK_ALL
-        if (numStars >= requiredNumStars) {
+        if (numStars >= requiredNumStars || obj->oInteractionSubtype != INT_SUBTYPE_STAR_DOOR) {
+            // forgot star doors and normal doors share the same code .w.
 // #endif
             u32 actionArg = should_push_or_pull_door(m, obj);
             u32 enterDoorAction;

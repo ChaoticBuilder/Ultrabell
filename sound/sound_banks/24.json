@@ -35,16 +35,18 @@
     },
     "instruments": {
         "inst0": {
-            "release_rate": 43,
-            "envelope": "envelope0",
-            "sound": "41_pan_flute"
+            "release_rate": 15,
+            "normal_range_lo": 27,
+            "normal_range_hi": 46,
+            "envelope": "envelope3",
+            "sound_lo": "23_strings_1",
+            "sound": "24_strings_2",
+            "sound_hi": "25_strings_3"
         },
         "inst1": {
-            "release_rate": 24,
-            "normal_range_lo": 42,
+            "release_rate": 15,
             "envelope": "envelope1",
-            "sound_lo": "14_strings_5",
-            "sound": "15_strings_4"
+            "sound": "05_acoustic_bass"
         },
         "inst2": {
             "release_rate": 43,
@@ -125,8 +127,8 @@
     },
     "instrument_list": [
         "inst0",
-        "inst2",
         "inst1",
+        "inst2",
         "inst3",
         null,
         null,

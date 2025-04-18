@@ -159,6 +159,10 @@ void stationary_bobomb_free_loop(void) {
 
     bobomb_check_interactions();
 
+    if (o->oBobombFuseTimer > 150) {
+        COND_BIT((o->oBobombFuseTimer & 0x1), o->header.gfx.node.flags, GRAPH_RENDER_INVISIBLE);
+    }
+
     if (o->oBobombFuseTimer > 180) {
         o->oAction = 3;
     }

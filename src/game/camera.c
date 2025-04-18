@@ -1995,7 +1995,7 @@ s16 update_default_camera(struct Camera *c) {
     vec3f_get_dist_and_angle(sMarioCamState->pos, c->pos, &dist, &pitch, &yaw);
 
     // If C-Down is active, determine what distance the camera should be from Mario
-    if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT && c->mode == CAMERA_MODE_CLOSE) {
+    if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT && (c->mode == CAMERA_MODE_CLOSE || c->mode == CAMERA_MODE_8_DIRECTIONS)) {
         zoomDist = gCameraZoomDist + 400;
     } else {
         zoomDist = gCameraZoomDist;
@@ -2272,7 +2272,7 @@ s16 update_default_camera(struct Camera *c) {
         yaw = clamp_positions_and_find_yaw(c->pos, c->focus, 2254.f, -3789.f, 3790.f, -2253.f);
     }
 #endif
-    if (c->mode != CAMERA_MODE_CLOSE) {
+    if (c->mode != CAMERA_MODE_CLOSE && c->mode != CAMERA_MODE_8_DIRECTIONS) {
         lakitu_zoom(400.f, 0x600);
         vec3f_set_dist_and_angle(c->pos, c->pos, sLakituDist, sLakituPitch + 0x1000, yaw);
     }
@@ -2892,14 +2892,15 @@ void update_camera(struct Camera *c) {
         */
        
         if (gPlayer1Controller->buttonPressed & L_TRIG) {
-            if (c->mode == CAMERA_MODE_8_DIRECTIONS && sModeInfo.lastMode == 0) {
+            if (c->mode == CAMERA_MODE_C_UP) {
                 play_sound_button_change_blocked();
-            } else { // I wish there was a way to use break; with if statements that aren't a loop because this is dumb
-                if (c->mode != CAMERA_MODE_8_DIRECTIONS) {
-                    set_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 1);
-                } else {
-                    set_camera_mode(c, -1, 1);
-                }
+            } else {
+                if ((c->mode == CAMERA_MODE_8_DIRECTIONS && sModeInfo.lastMode == 0) || sModeInfo.lastMode == CAMERA_MODE_C_UP)
+                    sModeInfo.lastMode = CAMERA_MODE_8_DIRECTIONS; // unintialized crash prevention && c_up fix :3
+                (c->mode == CAMERA_MODE_8_DIRECTIONS)
+                    ? set_camera_mode(c, -1, 1)                         // True
+                    : set_camera_mode(c, CAMERA_MODE_8_DIRECTIONS, 1);  // False
+                    
                 play_sound_rbutton_changed();
             }
         }
@@ -4437,12 +4438,12 @@ void increment_shake_offset(s16 *offset, s16 increment) {
 void shake_camera_pitch(Vec3f pos, Vec3f focus) {
     f32 dist;
     s16 pitch, yaw;
-    s16 x = ((random_float() - 0.5) * 20);
-    s16 y = ((random_float() - 0.5) * 8);
+    s16 x = ((random_float() - 0.5) * 14);
+    s16 y = ((random_float() - 0.5) * 6);
 
     if (gLakituState.shakeMagnitude[0] | gLakituState.shakeMagnitude[1]) {
-        gHudShakeX = approach_s16(gHudShakeX, x, 10, 10);
-        gHudShakeY = approach_s16(gHudShakeY, y, 4, 4);
+        gHudShakeX = approach_s16(gHudShakeX, x, 7, 7);
+        gHudShakeY = approach_s16(gHudShakeY, y, 3, 3);
         // I have no idea if this makes that much of a difference visually but
 
         vec3f_get_dist_and_angle(pos, focus, &dist, &pitch, &yaw);
@@ -4454,8 +4455,8 @@ void shake_camera_pitch(Vec3f pos, Vec3f focus) {
             gLakituState.shakePitchPhase = 0;
         }
     } else {
-        gHudShakeX = approach_s16(gHudShakeX, 0, 10, 10);
-        gHudShakeY = approach_s16(gHudShakeY, 0, 4, 4);
+        gHudShakeX = approach_s16(gHudShakeX, 0, 7, 7);
+        gHudShakeY = approach_s16(gHudShakeY, 0, 3, 3);
     }
 }
 
@@ -11108,6 +11109,9 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
                 break;
             case CAM_FOV_APP_60:
                 approach_fov_60(marioState);
+                break;
+            default:
+                set_fov_45(marioState);
                 break;
         }
     }

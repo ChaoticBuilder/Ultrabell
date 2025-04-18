@@ -4,10 +4,10 @@
 #include <PR/ultratypes.h>
 #include <PR/gbi.h>
 
-#define HUD_POWER_METER_X            140
-#define HUD_POWER_METER_EMPHASIZED_Y 166
-#define HUD_POWER_METER_Y            200
-#define HUD_POWER_METER_HIDDEN_Y     300
+#define HUD_POWER_METER_X            152
+#define HUD_POWER_METER_EMPHASIZED_Y 164
+#define HUD_POWER_METER_Y            202
+#define HUD_POWER_METER_HIDDEN_Y     266
 
 #define HUD_TOP_Y 212
 #define HUD_BOTTOM_Y 9

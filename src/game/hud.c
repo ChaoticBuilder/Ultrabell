@@ -124,14 +124,6 @@ s32 sBreathMeterVisibleTimer = 0;
 s32 gHudShakeX;
 s32 gHudShakeY;
 
-void hud_shake(void) {
-    /* DISABLED FEATURE:
-    print_text_fmt_int(268, 178, "%d", gHudShakeX);
-    print_text_fmt_int(268, 161, "%d", gHudShakeY);
-    print_text(136 + gHudShakeX, 112 + gHudShakeY, "TEST");
-    */
-}
-
 /**
  * Renders a rgba16 16x16 glyph texture from a table list.
  */
@@ -198,7 +190,7 @@ void render_dl_power_meter(s16 numHealthWedges) {
         return;
     }
 
-    guTranslate(mtx, (f32) sPowerMeterHUD.x + gHudShakeX, (f32) sPowerMeterHUD.y + gHudShakeY, 0);
+    guTranslate(mtx, (f32) sPowerMeterHUD.x  + gHudShakeX, (f32) sPowerMeterHUD.y  + gHudShakeY, 0);
 
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx++),
               G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
@@ -218,14 +210,14 @@ void render_dl_power_meter(s16 numHealthWedges) {
  * Checks its timer to later change into deemphasizing mode.
  */
 void animate_power_meter_emphasized(void) {
-    s16 hudDisplayFlags = gHudDisplay.flags;
-
-    if (!(hudDisplayFlags & HUD_DISPLAY_FLAG_EMPHASIZE_POWER)) {
-        if (sPowerMeterVisibleTimer == 30.0f) {
+    s16 speed = 26 - (sPowerMeterVisibleTimer * 4);
+    
+    if (speed <= 2) speed = 2;
+    approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_EMPHASIZED_Y, speed);
+    if (sPowerMeterHUD.y == HUD_POWER_METER_EMPHASIZED_Y) {
+        if (sPowerMeterVisibleTimer >= 30) {
             sPowerMeterHUD.animation = POWER_METER_DEEMPHASIZING;
         }
-    } else {
-        sPowerMeterVisibleTimer = 0;
     }
 }
 
@@ -234,11 +226,11 @@ void animate_power_meter_emphasized(void) {
  * Moves power meter y pos speed until it's at 200 to be visible.
  */
 static void animate_power_meter_deemphasizing(void) {
-    s16 speed = 5;
+    s16 speed = 4;
 
-    if (sPowerMeterHUD.y > HUD_POWER_METER_Y - 20) speed = 3;
-    if (sPowerMeterHUD.y > HUD_POWER_METER_Y - 10) speed = 2;
-    if (sPowerMeterHUD.y > HUD_POWER_METER_Y -  5) speed = 1;
+    if (sPowerMeterHUD.y > HUD_POWER_METER_Y - 24) speed = 3;
+    if (sPowerMeterHUD.y > HUD_POWER_METER_Y - 12) speed = 2;
+    if (sPowerMeterHUD.y > HUD_POWER_METER_Y -  6) speed = 1;
 
     sPowerMeterHUD.y += speed;
 
@@ -253,8 +245,10 @@ static void animate_power_meter_deemphasizing(void) {
  * Moves power meter y pos quickly until it's at 301 to be hidden.
  */
 static void animate_power_meter_hiding(void) {
-    sPowerMeterHUD.y += 20;
-    if (sPowerMeterHUD.y > HUD_POWER_METER_HIDDEN_Y) {
+    approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_HIDDEN_Y, sqr(sPowerMeterVisibleTimer));
+    // Yes, the power meter is on screen for such a small amount of time (~5 frames) we need to make it a power of itself, then multiply it by 2
+    // just so it can look smooth
+    if (sPowerMeterHUD.y >= HUD_POWER_METER_HIDDEN_Y) {
         sPowerMeterHUD.animation = POWER_METER_HIDDEN;
         sPowerMeterVisibleTimer = 0;
     }
@@ -268,17 +262,19 @@ void handle_power_meter_actions(s16 numHealthWedges) {
     if (numHealthWedges < 8 && sPowerMeterStoredHealth == 8
         && sPowerMeterHUD.animation == POWER_METER_HIDDEN) {
         sPowerMeterHUD.animation = POWER_METER_EMPHASIZED;
-        sPowerMeterHUD.y = HUD_POWER_METER_EMPHASIZED_Y;
+        sPowerMeterHUD.y = HUD_POWER_METER_HIDDEN_Y;
+        sPowerMeterVisibleTimer = 2;
     }
 
     // Show power meter if health is full, has 8
-    if (numHealthWedges == 8 && sPowerMeterStoredHealth == 7) {
+    if (numHealthWedges == 8 && sPowerMeterStoredHealth < 8) {
         sPowerMeterVisibleTimer = 0;
     }
 
     // After health is full, hide power meter
-    if (numHealthWedges == 8 && sPowerMeterVisibleTimer == 30.0f) {
+    if (numHealthWedges == 8 && sPowerMeterVisibleTimer >= 30) {
         sPowerMeterHUD.animation = POWER_METER_HIDING;
+        sPowerMeterVisibleTimer = 0;
     }
 
     // Update to match health value
@@ -733,7 +729,6 @@ void render_hud(void) {
                 // ttc(); displays the clock's current state, technically I could've kept it in but nah
                 // what makes me mad tho is the fact I had to do this in the first place
                 // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal
-                hud_shake();
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
             if (gCustomDebugMode) {

@@ -134,7 +134,7 @@ void slide_bonk(struct MarioState *m, UNUSED u32 fastAction, u32 slowAction) {
 s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 actionArg) {
     if (m->flags & MARIO_WING_CAP) {
         return set_mario_action(m, ACT_FLYING_TRIPLE_JUMP, 0);
-    } else if (m->forwardVel > 16.0f) {
+    } else if (m->forwardVel > 16.0f && !gRealToggle) {
         return set_mario_action(m, ACT_TRIPLE_JUMP, 0);
     } else {
         return set_mario_action(m, ACT_JUMP, 0);
@@ -430,7 +430,6 @@ void update_walking_speed(struct MarioState *m) {
     }
 
     targetSpeed = m->intendedMag < maxTargetSpeed ? m->intendedMag : maxTargetSpeed;
-    // targetSpeed = m->intendedMag;
 
     if (m->quicksandDepth > 10.0f) {
         targetSpeed *= 6.25f / m->quicksandDepth;
@@ -439,7 +438,7 @@ void update_walking_speed(struct MarioState *m) {
     if (m->forwardVel <= 0.0f) {
         // Slow down if moving backwards
         m->forwardVel += 1.0f;
-    } else if (m->forwardVel <= targetSpeed /* > 0.0f */) {
+    } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
         if (!g95Toggle) m->forwardVel += 0.75f;
         if (g95Toggle) m->forwardVel += 0.5f;
@@ -491,13 +490,13 @@ s32 should_begin_sliding(struct MarioState *m) {
 
 s32 analog_stick_held_back(struct MarioState *m) {
     s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
-    return intendedDYaw < -0x471C || intendedDYaw > 0x471C;
+    return intendedDYaw < -0x4000 || intendedDYaw > 0x4000;
 }
 
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if ((m->input & INPUT_B_PRESSED) || (gTurboToggle && (m->input & INPUT_B_DOWN) && gGlobalTimer % 2 == 0)) {
         //! Speed kick (shoutouts to SimpleFlips)
-        if (m->forwardVel > 20.0f && (!(m->input & INPUT_A_DOWN))) {
+        if (m->forwardVel > 24.0f && (!(m->input & INPUT_A_DOWN))) {
             return set_mario_action(m, ACT_DIVE, 1);
         }
 
@@ -515,7 +514,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if ((m->forwardVel >= 24.0f && m->floor->normal.y >= COS80) || (gLuigiToggle == TRUE && m->forwardVel >= 6.0f && !(m->flags & MARIO_METAL_CAP))) {
+    if ((m->forwardVel >= 24.0f /* && m->floor->normal.y >= COS80 */ ) || (gLuigiToggle == TRUE && m->forwardVel >= 6.0f && !(m->flags & MARIO_METAL_CAP))) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -809,8 +808,14 @@ s32 act_walking(struct MarioState *m) {
 
     switch (perform_ground_step(m)) {
         case GROUND_STEP_LEFT_GROUND:
-            set_mario_action(m, ACT_FREEFALL, 0);
-            set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
+            perform_air_step(m, 0);
+            m->vel[1] = 0;
+
+            m->actionTimer++;
+            if (m->actionTimer > 4) {
+                set_mario_action(m, ACT_FREEFALL, 0);
+                set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
+            }
             break;
 
         case GROUND_STEP_NONE:
@@ -1346,7 +1351,7 @@ s32 act_burning_ground(struct MarioState *m) {
         m->forwardVel = 48.0f;
     }
 
-    m->forwardVel = approach_f32(m->forwardVel, 48.0f, 6.0f, 6.0f);
+    m->forwardVel = approach_f32(m->forwardVel, 48.0f, 8.0f, 2.0f);
 
     if (m->input & INPUT_NONZERO_ANALOG) {
         m->faceAngle[1] = approach_angle(m->faceAngle[1], m->intendedYaw, 0x600);
@@ -1647,16 +1652,15 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
     }
 
     if (perform_ground_step(m) == GROUND_STEP_LEFT_GROUND) {
-        if (m->forwardVel >= -0.0001f) {
-            set_mario_action(m, ACT_FORWARD_GROUND_KB, actionArg);
+        m->forwardVel = (m->forwardVel * -0.25f);
+        if (m->forwardVel >= 0.0f) {
+            set_mario_action(m, ACT_FORWARD_AIR_KB, actionArg);
         } else {
-            set_mario_action(m, ACT_BACKWARD_GROUND_KB, actionArg);
+            set_mario_action(m, ACT_BACKWARD_AIR_KB, actionArg);
         }
-        set_mario_action(m, ACT_IDLE, 0);
     } else if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) {
         mario_bonk_reflection(m, TRUE);
-        // mario bonks because if not he gets stuck bc game dumb
-    } else if (perform_ground_step(m) == GROUND_STEP_NONE) {  
+    } else {
         if (is_anim_at_end(m)) {
             set_mario_action(m, ACT_IDLE, 0);
             m->forwardVel = 24.0f;
@@ -1761,7 +1765,13 @@ u32 common_landing_action(struct MarioState *m, s16 animation, u32 airAction) {
     stepResult = perform_ground_step(m);
     switch (stepResult) {
         case GROUND_STEP_LEFT_GROUND:
-            set_mario_action(m, airAction, 0);
+            perform_air_step(m, 0);
+            m->vel[1] = 0;
+
+            m->actionTimer++;
+            if (m->actionTimer > 4) {
+                set_mario_action(m, airAction, 0);
+            }
             break;
 
         case GROUND_STEP_HIT_WALL:

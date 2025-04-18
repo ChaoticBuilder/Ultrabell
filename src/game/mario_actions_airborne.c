@@ -589,8 +589,6 @@ s32 act_double_jump(struct MarioState *m) {
 s32 act_triple_jump(struct MarioState *m) {
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_WAHA);
 
-    if (gRealToggle) return set_mario_action(m, ACT_JUMP, 0);
-
     if (gSpecialTripleJump) {
         return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
     }
@@ -1306,9 +1304,7 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
 
 s32 check_wall_kick(struct MarioState *m) {
     if ((m->input & INPUT_A_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL) {
-        if (!g95Toggle && m->vel[1] >= 0) {
-            m->forwardVel += (m->vel[1] / 3) + 30;
-        }
+        if (!g95Toggle && m->vel[1] >= 0) m->forwardVel += (m->vel[1] / 3) + 12;
         m->faceAngle[1] += 0x8000;
         return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
     }
@@ -1321,7 +1317,6 @@ s32 act_backward_air_kb(struct MarioState *m) {
         return TRUE;
     }
 
-    play_knockback_sound(m);
     common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -16.0f);
     return FALSE;
 }
@@ -1331,7 +1326,6 @@ s32 act_forward_air_kb(struct MarioState *m) {
         return TRUE;
     }
 
-    play_knockback_sound(m);
     common_air_knockback_step(m, ACT_FORWARD_GROUND_KB, ACT_HARD_FORWARD_GROUND_KB, MARIO_ANIM_AIR_FORWARD_KB, 16.0f);
     return FALSE;
 }
@@ -1791,6 +1785,8 @@ s32 act_slide_kick(struct MarioState *m) {
     if (m->input & INPUT_A_PRESSED) {
         set_mario_action(m, ACT_DIVE, 0);
     } 
+
+    play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_HOOHOO);
 
     if (m->actionState == ACT_STATE_SLIDE_KICK_SLIDING && m->actionTimer == 0) {
         set_mario_animation(m, MARIO_ANIM_SLIDE_KICK);
