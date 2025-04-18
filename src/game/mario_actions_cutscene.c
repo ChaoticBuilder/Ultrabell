@@ -1136,7 +1136,7 @@ s32 act_exit_airborne(struct MarioState *m) {
     if (15 < m->actionTimer++
         && launch_mario_until_land(m, ACT_EXIT_LAND_SAVE_DIALOG, MARIO_ANIM_GENERAL_FALL, -32.0f)) {
         // heal Mario
-        m->healCounter = 31;
+        m->healCounter = 127;
     }
     // rotate him to face away from the entrance
     m->marioObj->header.gfx.angle[1] += 0x8000;
@@ -1150,7 +1150,7 @@ s32 act_falling_exit_airborne(struct MarioState *m) {
 #endif
     if (launch_mario_until_land(m, ACT_EXIT_LAND_SAVE_DIALOG, MARIO_ANIM_GENERAL_FALL, 0.0f)) {
         // heal Mario
-        m->healCounter = 31;
+        m->healCounter = 127;
     }
     // rotate Mario to face away from the entrance
     m->marioObj->header.gfx.angle[1] += 0x8000;
@@ -1248,7 +1248,7 @@ s32 act_death_exit(struct MarioState *m) {
         m->numLives--;
 #endif
         // restore 7.75 units of health
-        m->healCounter = 31;
+        m->healCounter = 127;
     }
     // one unit of health
     m->health = 0x0100;
@@ -1265,7 +1265,7 @@ s32 act_unused_death_exit(struct MarioState *m) {
         m->numLives--;
 #endif
         // restore 7.75 units of health
-        m->healCounter = 31;
+        m->healCounter = 127;
     }
     // one unit of health
     m->health = 0x0100;
@@ -1285,7 +1285,7 @@ s32 act_falling_death_exit(struct MarioState *m) {
         m->numLives--;
 #endif
         // restore 7.75 units of health
-        m->healCounter = 31;
+        m->healCounter = 127;
     }
     // one unit of health
     m->health = 0x0100;
@@ -1311,7 +1311,7 @@ s32 act_special_exit_airborne(struct MarioState *m) {
 
     if (launch_mario_until_land(m, ACT_EXIT_LAND_SAVE_DIALOG, MARIO_ANIM_SINGLE_JUMP, -24.0f)) {
         // heal Mario
-        m->healCounter = 31;
+        m->healCounter = 127;
         m->actionArg = 1;
     }
 
@@ -1339,7 +1339,7 @@ s32 act_special_death_exit(struct MarioState *m) {
 #ifdef ENABLE_LIVES
         m->numLives--;
 #endif
-        m->healCounter = 31;
+        m->healCounter = 127;
     }
     // show Mario
     marioObj->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
@@ -1928,7 +1928,7 @@ static s32 act_intro_cutscene(struct MarioState *m) {
 static void jumbo_star_cutscene_falling(struct MarioState *m) {
     if (m->actionState == ACT_STATE_JUMBO_STAR_CUTSCENE_FALLING_FALL) {
 #ifdef POWER_STARS_HEAL
-        m->healCounter = 31;
+        m->healCounter = 127;
 #ifdef BREATH_METER
         m->breathCounter = 31;
 #endif

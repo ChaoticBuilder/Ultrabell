@@ -797,7 +797,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 
 #ifdef POWER_STARS_HEAL
         m->hurtCounter = 0;
-        m->healCounter = 127;
+        (!gRealToggle) ? (m->healCounter = 31) : (m->healCounter = 127);
  #ifdef BREATH_METER
         m->breathCounter = 31;
  #endif
@@ -810,9 +810,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
             m->breathCounter = 0;
  #endif
 #endif // !POWER_STARS_HEAL
-            if (m->capTimer > 60) {
-                m->capTimer = 64;
-            }
+            m->capTimer = 0xFF;
         }
 
         if (noExit) {

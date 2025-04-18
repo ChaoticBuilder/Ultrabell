@@ -263,7 +263,7 @@ void handle_power_meter_actions(s16 numHealthWedges) {
         && sPowerMeterHUD.animation == POWER_METER_HIDDEN) {
         sPowerMeterHUD.animation = POWER_METER_EMPHASIZED;
         sPowerMeterHUD.y = HUD_POWER_METER_HIDDEN_Y;
-        sPowerMeterVisibleTimer = 2;
+        sPowerMeterVisibleTimer = 0;
     }
 
     // Show power meter if health is full, has 8
@@ -274,7 +274,7 @@ void handle_power_meter_actions(s16 numHealthWedges) {
     // After health is full, hide power meter
     if (numHealthWedges == 8 && sPowerMeterVisibleTimer >= 30) {
         sPowerMeterHUD.animation = POWER_METER_HIDING;
-        sPowerMeterVisibleTimer = 0;
+        sPowerMeterVisibleTimer = 2;
     }
 
     // Update to match health value
