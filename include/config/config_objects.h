@@ -110,7 +110,7 @@
 /**
  * The number of chain balls the Chain Chomp has. Vanilla is 5.
  */
-#define CHAIN_CHOMP_NUM_SEGMENTS 4
+#define CHAIN_CHOMP_NUM_SEGMENTS 5
 
 /***************
  * -- POKEY --

@@ -23,10 +23,10 @@ static struct ObjectHitbox sChainChompHitbox = {
     /* damageOrCoinValue: */ 3,
     /* health:            */ 1,
     /* numLootCoins:      */ 0,
-    /* radius:            */ 80,
-    /* height:            */ 160,
-    /* hurtboxRadius:     */ 80,
-    /* hurtboxHeight:     */ 160,
+    /* radius:            */ 96,
+    /* height:            */ 176,
+    /* hurtboxRadius:     */ 96,
+    /* hurtboxHeight:     */ 176,
 };
 
 /**

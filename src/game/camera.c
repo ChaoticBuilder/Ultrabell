@@ -2272,7 +2272,7 @@ s16 update_default_camera(struct Camera *c) {
         yaw = clamp_positions_and_find_yaw(c->pos, c->focus, 2254.f, -3789.f, 3790.f, -2253.f);
     }
 #endif
-    if (c->mode != CAMERA_MODE_CLOSE && c->mode != CAMERA_MODE_8_DIRECTIONS) {
+    if (c->mode != CAMERA_MODE_CLOSE || c->mode != CAMERA_MODE_8_DIRECTIONS) {
         lakitu_zoom(400.f, 0x600);
         vec3f_set_dist_and_angle(c->pos, c->pos, sLakituDist, sLakituPitch + 0x1000, yaw);
     }
