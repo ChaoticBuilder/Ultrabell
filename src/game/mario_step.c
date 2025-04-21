@@ -10,6 +10,7 @@
 #include "interaction.h"
 #include "mario_step.h"
 #include "ingame_menu.h"
+#include "print.h"
 
 #include "config.h"
 
@@ -362,6 +363,16 @@ s32 perform_ground_step(struct MarioState *m) {
         stepResult = perform_ground_quarter_step(m, intendedPos);
         if (stepResult == GROUND_STEP_LEFT_GROUND || stepResult == GROUND_STEP_HIT_WALL_STOP_QSTEPS) {
             break;
+        }
+        if (gLuigiToggle) {
+            struct Surface *floor;
+            f32 floorHeight = find_floor(intendedPos[0], intendedPos[1], intendedPos[2], &floor);
+            f32 waterLevel = find_water_level(intendedPos[0], intendedPos[2]);
+            if (floorHeight <= waterLevel) {
+                floorHeight = waterLevel;
+                m->pos[1] = intendedPos[1];
+                set_mario_floor(m, floor, floorHeight);
+            }
         }
     }
 

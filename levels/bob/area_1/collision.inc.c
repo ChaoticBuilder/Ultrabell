@@ -620,6 +620,6 @@ const Collision bob_area_1_collision[] = {
 	COL_TRI(201, 203, 204),
 	COL_TRI_STOP(),
 	COL_SPECIAL_INIT(1),
-	SPECIAL_OBJECT(special_bubble_tree, -4000, 0, 6400),
+	SPECIAL_OBJECT(special_bubble_tree, -4668, 768, 3800),
 	COL_END()
 };

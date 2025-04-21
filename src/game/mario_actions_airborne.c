@@ -629,6 +629,12 @@ s32 act_backflip(struct MarioState *m) {
 s32 act_freefall(struct MarioState *m) {
     s32 animation = MARIO_ANIM_GENERAL_FALL;
 
+    if (m->actionArg == 4) {
+        if (m->input & INPUT_A_PRESSED) {
+            return set_jump_from_landing(m);
+        }
+    }
+
     if (m->input & INPUT_B_PRESSED) {
         return set_mario_action(m, ACT_JUMP_KICK, 0);
     }
@@ -646,6 +652,14 @@ s32 act_freefall(struct MarioState *m) {
             break;
         case ACT_ARG_FREEFALL_FROM_SLIDE_KICK:
             animation = MARIO_ANIM_FALL_FROM_SLIDE_KICK;
+            break;
+        case 4:
+            m->vel[1] += 4.0f;
+            m->actionTimer++;
+            s16 duration = 10;
+            if (m->actionTimer > duration) {
+                m->actionArg = 0;
+            }
             break;
     }
 
@@ -674,11 +688,25 @@ s32 act_hold_jump(struct MarioState *m) {
 }
 
 s32 act_hold_freefall(struct MarioState *m) {
-    s32 animation;
-    if (m->actionArg == 0) {
-        animation = MARIO_ANIM_FALL_WITH_LIGHT_OBJ;
-    } else {
-        animation = MARIO_ANIM_FALL_FROM_SLIDING_WITH_LIGHT_OBJ;
+    s32 animation = MARIO_ANIM_FALL_FROM_SLIDING_WITH_LIGHT_OBJ;
+
+    if (m->actionArg == 4) {
+        if (m->input & INPUT_A_PRESSED) {
+            return set_jump_from_landing(m);
+        }
+    }
+
+    switch (m->actionArg) {
+        case 0:
+            animation = MARIO_ANIM_FALL_WITH_LIGHT_OBJ;
+            break;
+        case 4:
+            m->vel[1] = 0;
+            m->actionTimer++;
+            if (m->actionTimer > 6) {
+                m->actionArg = 0;
+            }
+            break;
     }
 
     if (m->marioObj->oInteractStatus & INT_STATUS_MARIO_DROP_OBJECT) {

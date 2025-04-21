@@ -808,14 +808,7 @@ s32 act_walking(struct MarioState *m) {
 
     switch (perform_ground_step(m)) {
         case GROUND_STEP_LEFT_GROUND:
-            perform_air_step(m, 0);
-            m->vel[1] = 0;
-
-            m->actionTimer++;
-            if (m->actionTimer > 4) {
-                set_mario_action(m, ACT_FREEFALL, 0);
-                set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
-            }
+            set_mario_action(m, ACT_FREEFALL, 4);
             break;
 
         case GROUND_STEP_NONE:
@@ -1765,13 +1758,7 @@ u32 common_landing_action(struct MarioState *m, s16 animation, u32 airAction) {
     stepResult = perform_ground_step(m);
     switch (stepResult) {
         case GROUND_STEP_LEFT_GROUND:
-            perform_air_step(m, 0);
-            m->vel[1] = 0;
-
-            m->actionTimer++;
-            if (m->actionTimer > 4) {
-                set_mario_action(m, airAction, 0);
-            }
+            set_mario_action(m, airAction, 4);
             break;
 
         case GROUND_STEP_HIT_WALL:

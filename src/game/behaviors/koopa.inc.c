@@ -455,7 +455,7 @@ static void koopa_unshelled_update(void) {
  * optionally begin the timer.
  */
 s32 obj_begin_race(s32 noTimer) {
-    if (o->oTimer == 50) {
+    if (o->oTimer == 12) {
         cur_obj_play_sound_2(SOUND_GENERAL_RACE_GUN_SHOT);
 
         if (!noTimer) {
@@ -470,7 +470,7 @@ s32 obj_begin_race(s32 noTimer) {
         // Unfreeze mario and disable time stop to begin the race
         set_mario_npc_dialog(MARIO_DIALOG_STOP);
         disable_time_stop_including_mario();
-    } else if (o->oTimer > 50) {
+    } else if (o->oTimer > 12) {
         return TRUE;
     }
 
