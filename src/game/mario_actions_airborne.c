@@ -654,12 +654,9 @@ s32 act_freefall(struct MarioState *m) {
             animation = MARIO_ANIM_FALL_FROM_SLIDE_KICK;
             break;
         case 4:
-            m->vel[1] += 4.0f;
+            m->vel[1] += 3.0f;
             m->actionTimer++;
-            s16 duration = 10;
-            if (m->actionTimer > duration) {
-                m->actionArg = 0;
-            }
+            if (m->actionTimer > 3) m->actionArg = 0;
             break;
     }
 
@@ -701,11 +698,9 @@ s32 act_hold_freefall(struct MarioState *m) {
             animation = MARIO_ANIM_FALL_WITH_LIGHT_OBJ;
             break;
         case 4:
-            m->vel[1] = 0;
+            m->vel[1] += 3.0f;
             m->actionTimer++;
-            if (m->actionTimer > 6) {
-                m->actionArg = 0;
-            }
+            if (m->actionTimer > 3) m->actionArg = 0;
             break;
     }
 
@@ -1345,7 +1340,10 @@ s32 act_backward_air_kb(struct MarioState *m) {
         return TRUE;
     }
 
-    common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -16.0f);
+    m->forwardVel = -(ABS(m->forwardVel));
+    m->forwardVel = CLAMP(m->forwardVel, -24.0f, -8.0f);
+
+    common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, m->forwardVel);
     return FALSE;
 }
 
@@ -1354,19 +1352,30 @@ s32 act_forward_air_kb(struct MarioState *m) {
         return TRUE;
     }
 
-    common_air_knockback_step(m, ACT_FORWARD_GROUND_KB, ACT_HARD_FORWARD_GROUND_KB, MARIO_ANIM_AIR_FORWARD_KB, 16.0f);
+    m->forwardVel = ABS(m->forwardVel);
+    m->forwardVel = CLAMP(m->forwardVel, 6.0f, 24.0f);
+
+    common_air_knockback_step(m, ACT_FORWARD_GROUND_KB, ACT_HARD_FORWARD_GROUND_KB, MARIO_ANIM_AIR_FORWARD_KB, m->forwardVel);
     return FALSE;
 }
 
 s32 act_hard_backward_air_kb(struct MarioState *m) {
     play_knockback_sound(m);
-    common_air_knockback_step(m, ACT_HARD_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -16.0f);
+
+    m->forwardVel = -(ABS(m->forwardVel));
+    m->forwardVel = CLAMP(m->forwardVel, -24.0f, -6.0f);
+    
+    common_air_knockback_step(m, ACT_HARD_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, m->forwardVel);
     return FALSE;
 }
 
 s32 act_hard_forward_air_kb(struct MarioState *m) {
     play_knockback_sound(m);
-    common_air_knockback_step(m, ACT_HARD_FORWARD_GROUND_KB, ACT_HARD_FORWARD_GROUND_KB, MARIO_ANIM_AIR_FORWARD_KB, 16.0f);
+
+    m->forwardVel = ABS(m->forwardVel);
+    m->forwardVel = CLAMP(m->forwardVel, 6.0f, 24.0f);
+
+    common_air_knockback_step(m, ACT_HARD_FORWARD_GROUND_KB, ACT_HARD_FORWARD_GROUND_KB, MARIO_ANIM_AIR_FORWARD_KB, m->forwardVel);
     return FALSE;
 }
 
@@ -1583,7 +1592,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
 
 s32 act_forward_rollout(struct MarioState *m) {
     if (m->actionState == 0) {
-        m->vel[1] = 36.0f;
+        m->vel[1] = 40.0f;
         m->actionState = 1;
     }
 
@@ -1624,7 +1633,7 @@ s32 act_forward_rollout(struct MarioState *m) {
 
 s32 act_backward_rollout(struct MarioState *m) {
     if (m->actionState == 0) {
-        m->vel[1] = 36.0f;
+        m->vel[1] = 40.0f;
         m->actionState = 1;
     }
 
@@ -1808,6 +1817,7 @@ s32 act_lava_boost(struct MarioState *m) {
 }
 
 s32 act_slide_kick(struct MarioState *m) {
+    return set_mario_action(m, ACT_SHOT_FROM_CANNON, 1);
     if (g95Toggle)
         return set_mario_action(m, ACT_FREEFALL, 2);
     if (m->input & INPUT_A_PRESSED) {
@@ -1950,8 +1960,10 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             break;
     }
 
-    if (m->vel[1] < 0.0f) {
-        set_mario_action(m, ACT_FLYING, 0);
+    if (m->actionArg == 0 || m->flags & MARIO_WING_CAP) {
+        if (m->vel[1] < 0.0f) set_mario_action(m, ACT_FLYING, 0);
+    } else {
+        if (m->vel[1] < 0.0f) set_mario_action(m, ACT_BUTT_SLIDE, 0);
     }
 
     if ((m->forwardVel -= 0.05f) < 10.0f) {

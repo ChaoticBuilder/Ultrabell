@@ -469,8 +469,8 @@ void set_camera_shake_from_hit(s16 shake) {
             break;
 
         case SHAKE_FALL_DAMAGE:
-            set_camera_pitch_shake(0x60, 0x3, 0x8000);
-            set_camera_roll_shake(0x60, 0x3, 0x8000);
+            set_camera_pitch_shake(0x60, 0x4, 0x8000);
+            set_camera_roll_shake(0x60, 0x4, 0x8000);
             break;
 
         case SHAKE_GROUND_POUND:

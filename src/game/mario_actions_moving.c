@@ -126,9 +126,14 @@ void check_ledge_climb_down(struct MarioState *m) {
     }
 }
 
-void slide_bonk(struct MarioState *m, UNUSED u32 fastAction, u32 slowAction) {
-    mario_set_forward_vel(m, 0.0f);
-    set_mario_action(m, slowAction, 0);
+void slide_bonk(struct MarioState *m, u32 fastAction, u32 slowAction) {
+    if (m->forwardVel > 16.0f) {
+        mario_bonk_reflection(m, TRUE);
+        drop_and_set_mario_action(m, fastAction, 0);
+    } else {
+        mario_set_forward_vel(m, 0.0f);
+        set_mario_action(m, slowAction, 0);
+    }
 }
 
 s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 actionArg) {
@@ -191,7 +196,7 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
 
     //! Speed is capped a frame late (butt slide HSG)
     m->forwardVel = sqrtf(sqr(m->slideVelX) + sqr(m->slideVelZ));
-    if (m->forwardVel > 112.0f) {
+    if (m->forwardVel > 108.0f) {
         m->slideVelX /= 1.03f;
         m->slideVelZ /= 1.03f;
     }
@@ -356,12 +361,13 @@ void update_shell_speed(struct MarioState *m) {
     }
 
     if (m->forwardVel <= 0.0f) {
-        m->forwardVel += 2.0f;
-    } else if (m->forwardVel <= targetSpeed /* > 0.0f */) {
+        m->forwardVel += 1.0f;
+    } else if (m->forwardVel <= targetSpeed) {
         if (!g95Toggle) m->forwardVel += 0.75f;
         if (g95Toggle) m->forwardVel += 0.5f;
+        if (gRealToggle) m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.0625f;
+        m->forwardVel -= 0.125f;
     }
 
     //! No backward speed cap (shell hyperspeed)
@@ -444,7 +450,7 @@ void update_walking_speed(struct MarioState *m) {
         if (g95Toggle) m->forwardVel += 0.5f;
         if (gRealToggle) m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.0625f;
+        m->forwardVel -= 0.125f;
     }
 
     if (m->forwardVel > 64.0f) {
@@ -1502,7 +1508,7 @@ s32 act_crouch_slide(struct MarioState *m) {
     }
 
         if (m->input & INPUT_B_PRESSED) {
-            if (!g95Toggle && m->forwardVel >= 10.0f) {
+            if (!g95Toggle && m->forwardVel >= 12.0f) {
                 return set_mario_action(m, ACT_SLIDE_KICK, 0);
             } else {
                 return set_mario_action(m, ACT_DIVE, 0);
@@ -1637,23 +1643,17 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
 
     s32 animFrame = set_mario_animation(m, animation);
     if (animFrame < checkFrame) {
-        apply_landing_accel(m, 0.875f);
-    } else if (m->forwardVel >= 0.0f) {
-        mario_set_forward_vel(m, 0.1f);
+        apply_landing_accel(m, 0.9f);
     } else {
-        mario_set_forward_vel(m, -0.1f);
+        mario_set_forward_vel(m, 0.0f);
     }
 
     if (perform_ground_step(m) == GROUND_STEP_LEFT_GROUND) {
-        m->forwardVel = (m->forwardVel * -0.25f);
-        if (m->forwardVel >= 0.0f) {
-            set_mario_action(m, ACT_FORWARD_AIR_KB, actionArg);
-        } else {
-            set_mario_action(m, ACT_BACKWARD_AIR_KB, actionArg);
-        }
-    } else if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) {
-        mario_bonk_reflection(m, TRUE);
+        (m->forwardVel >= 0.0f)
+        ? set_mario_action(m, ACT_BACKWARD_AIR_KB, actionArg)
+        : set_mario_action(m, ACT_FORWARD_AIR_KB, actionArg);
     } else {
+        if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) mario_bonk_reflection(m, TRUE);
         if (is_anim_at_end(m)) {
             set_mario_action(m, ACT_IDLE, 0);
             m->forwardVel = 24.0f;

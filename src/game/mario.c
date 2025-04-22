@@ -245,7 +245,7 @@ void play_sound_if_no_flag(struct MarioState *m, u32 soundBits, u32 flags) {
  * Plays a jump sound if one has not been played since the last action change.
  */
 void play_mario_jump_sound(struct MarioState *m) {
-    if (!(m->flags & MARIO_MARIO_SOUND_PLAYED) && !(m->flags & MARIO_METAL_CAP)) {
+    if (!(m->flags & MARIO_MARIO_SOUND_PLAYED) && m->flags != MARIO_METAL_CAP) {
         if (m->action == ACT_TRIPLE_JUMP) {
             play_sound(SOUND_MARIO_YAHOO_WAHA_YIPPEE + ((gAudioRandom % 5) << 16),
                        m->marioObj->header.gfx.cameraToObject);
@@ -740,57 +740,72 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
     switch (action) {
         case ACT_DOUBLE_JUMP:
-            (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            (!gRealToggle)
+            ? set_mario_y_vel_based_on_fspeed(m, 70.0f, 0.25f)
+            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;
 
         case ACT_BACKFLIP:
             m->marioObj->header.gfx.animInfo.animID = -1;
             m->forwardVel = -16.0f;
-            set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 86.0f, 0.0f);
             break;
 
         case ACT_TRIPLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 70.0f, 0.0f);
             m->forwardVel *= 0.75f;
             break;
 
         case ACT_FLYING_TRIPLE_JUMP:
-            (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 88.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            (!gRealToggle)
+            ? set_mario_y_vel_based_on_fspeed(m, 86.0f, 0.0f)
+            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             break;
 
         case ACT_WATER_JUMP:
         case ACT_HOLD_WATER_JUMP:
             if (actionArg == 0) {
-                (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+                (!gRealToggle)
+                ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f)
+                : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             }
             break;
 
         case ACT_BURNING_JUMP:
-            if (!gRealToggle) m->vel[1] = 48.0f;
-            if (!gRealToggle) m->vel[1] = 28.0f;
+            (!gRealToggle)
+            ? (m->vel[1] = 48.0f)
+            : (m->vel[1] = 28.0f);
             m->forwardVel = 32.0f;
             break;
 
         case ACT_RIDING_SHELL_JUMP:
-            (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            (!gRealToggle)
+            ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f)
+            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             break;
 
         case ACT_JUMP:
         case ACT_HOLD_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
-            (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            (!gRealToggle)
+            ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f)
+            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;
 
         case ACT_TOP_OF_POLE_JUMP:
-            (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f);
+            (!gRealToggle)
+            ? set_mario_y_vel_based_on_fspeed(m, 62.0f, 0.0f)
+            : set_mario_y_vel_based_on_fspeed(m, 36.0f, 0.0f);
             m->wallKickTimer = 0;
             if (m->forwardVel < 24.0f)
                 m->forwardVel = 24.0f;
             break;
         case ACT_WALL_KICK_AIR:
-            (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f);
+            (!gRealToggle)
+            ? set_mario_y_vel_based_on_fspeed(m, 68.0f, 0.0f)
+            : set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.0f);
             m->wallKickTimer = 0;
 
             s16 spd = 12;
@@ -807,7 +822,9 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_STEEP_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
-            (!gRealToggle) ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            (!gRealToggle)
+            ? set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f)
+            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             m->faceAngle[0] = -0x2000;
             break;
 
@@ -817,7 +834,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_DIVE:
             if (!g95Toggle) {
-                if (m->vel[1] < 0) m->vel[1] = ABS(m->vel[1] / 1.75f);
+                if (m->vel[1] < 0) m->vel[1] = 0;
                 m->vel[1] /= 2.0f;
                 m->vel[1] += 32.0f;
 
@@ -833,7 +850,6 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 if (m->forwardVel > spdcap) m->forwardVel = spdcap;
             } else {
                 (!gRealToggle) ? (m->vel[1] = 32.0f) : (m->vel[1] = 20.0f);
-
                 if ((forwardVel = m->forwardVel + 15.0f) > 48.0f) {
                     forwardVel = 48.0f;
                 }
@@ -844,28 +860,24 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_LONG_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
-            set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
             // m->marioObj->oMarioLongJumpIsSlow = m->forwardVel > 16.0f ? FALSE : TRUE;
 
             //! (BLJ's) This properly handles long jumps from getting forward speed with
             //  too much velocity, but misses backwards longs allowing high negative speeds.
-
-            // cat coder here, don't remove the *= 1.5f or it somehow fucking breaks bljs
             if ((m->forwardVel *= 1.5f) > 48.0f) {
                 m->forwardVel = 48.0f;
             }
             break;
 
         case ACT_SLIDE_KICK:
-            m->vel[1] += 30.0f;
-            if (m->forwardVel < 32.0f) {
-                m->forwardVel = 32.0f;
-            }
+            m->vel[1] = 24.0f;
+            m->forwardVel = 48.0f;
             break;
 
         case ACT_JUMP_KICK:
             if (!g95Toggle) {
-                if (m->vel[1] < 0) m->vel[1] = ABS(m->vel[1] / 1.75f);
+                if (m->vel[1] < 0) m->vel[1] = 0;
                 m->vel[1] /= 2.0f;
                 m->vel[1] += 32.0f;
             } else {
@@ -943,10 +955,6 @@ u32 set_mario_action_cutscene(struct MarioState *m, u32 action, UNUSED u32 actio
     switch (action) {
         case ACT_EMERGE_FROM_PIPE:
             m->vel[1] = 52.0f;
-            break;
-
-        case ACT_FALL_AFTER_STAR_GRAB:
-            mario_set_forward_vel(m, 0.0f);
             break;
 
         case ACT_SPAWN_SPIN_AIRBORNE:

@@ -364,16 +364,6 @@ s32 perform_ground_step(struct MarioState *m) {
         if (stepResult == GROUND_STEP_LEFT_GROUND || stepResult == GROUND_STEP_HIT_WALL_STOP_QSTEPS) {
             break;
         }
-        if (gLuigiToggle) {
-            struct Surface *floor;
-            f32 floorHeight = find_floor(intendedPos[0], intendedPos[1], intendedPos[2], &floor);
-            f32 waterLevel = find_water_level(intendedPos[0], intendedPos[2]);
-            if (floorHeight <= waterLevel) {
-                floorHeight = waterLevel;
-                m->pos[1] = intendedPos[1];
-                set_mario_floor(m, floor, floorHeight);
-            }
-        }
     }
 
     m->terrainSoundAddend = mario_get_terrain_sound_addend(m);
@@ -640,8 +630,7 @@ void apply_gravity(struct MarioState *m) {
             }
             sTerminalVelocity = TRUE;
         }
-    } else if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK
-               || m->action == ACT_BBH_ENTER_SPIN) {
+    } else if (m->action == ACT_LONG_JUMP || m->action == ACT_BBH_ENTER_SPIN) {
         m->vel[1] -= 2.5f;
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
@@ -650,7 +639,7 @@ void apply_gravity(struct MarioState *m) {
             }
             sTerminalVelocity = TRUE;
         }
-    } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_FALL_AFTER_STAR_GRAB) {
+    } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_SLIDE_KICK || m->action == ACT_FALL_AFTER_STAR_GRAB) {
         m->vel[1] -= 4.0f;
         if (m->vel[1] < -64.0f) {
             if (!gRealToggle) {
@@ -711,9 +700,9 @@ void apply_gravity(struct MarioState *m) {
                 if (sTerminalVelocity == TRUE) {
                     m->vel[1] -= 1.0f;
                 } else {
-                    if ((m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) && m->flags != MARIO_WING_CAP) {
+                    if ((m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) &&
+                        m->flags != MARIO_WING_CAP)
                         m->vel[1] += 3.0f;
-                    }
                 }
             }
         }

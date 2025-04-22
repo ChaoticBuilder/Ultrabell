@@ -210,13 +210,13 @@ void render_dl_power_meter(s16 numHealthWedges) {
  * Checks its timer to later change into deemphasizing mode.
  */
 void animate_power_meter_emphasized(void) {
-    s16 speed = 26 - (sPowerMeterVisibleTimer * 4);
+    s16 speed = 2 + ((sPowerMeterHUD.y - HUD_POWER_METER_EMPHASIZED_Y) / 2);
     
-    if (speed <= 2) speed = 2;
     approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_EMPHASIZED_Y, speed);
-    if (sPowerMeterHUD.y == HUD_POWER_METER_EMPHASIZED_Y) {
+    if (sPowerMeterHUD.y <= HUD_POWER_METER_EMPHASIZED_Y) {
         if (sPowerMeterVisibleTimer >= 30) {
             sPowerMeterHUD.animation = POWER_METER_DEEMPHASIZING;
+            sPowerMeterVisibleTimer = 0;
         }
     }
 }
@@ -226,13 +226,9 @@ void animate_power_meter_emphasized(void) {
  * Moves power meter y pos speed until it's at 200 to be visible.
  */
 static void animate_power_meter_deemphasizing(void) {
-    s16 speed = 4;
+    s16 speed = 1 + ((HUD_POWER_METER_Y - sPowerMeterHUD.y) / 6);
 
-    if (sPowerMeterHUD.y > HUD_POWER_METER_Y - 24) speed = 3;
-    if (sPowerMeterHUD.y > HUD_POWER_METER_Y - 12) speed = 2;
-    if (sPowerMeterHUD.y > HUD_POWER_METER_Y -  6) speed = 1;
-
-    sPowerMeterHUD.y += speed;
+    approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_Y, speed);
 
     if (sPowerMeterHUD.y > HUD_POWER_METER_Y) {
         sPowerMeterHUD.y = HUD_POWER_METER_Y;
@@ -274,7 +270,7 @@ void handle_power_meter_actions(s16 numHealthWedges) {
     // After health is full, hide power meter
     if (numHealthWedges == 8 && sPowerMeterVisibleTimer >= 30) {
         sPowerMeterHUD.animation = POWER_METER_HIDING;
-        sPowerMeterVisibleTimer = 2;
+        sPowerMeterVisibleTimer = 3;
     }
 
     // Update to match health value

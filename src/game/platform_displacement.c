@@ -42,7 +42,7 @@ void update_mario_platform(void) {
     marioZ = gMarioObject->oPosZ;
     floorHeight = find_floor(marioX, marioY, marioZ, &floor);
 
-    awayFromFloor =  absf(marioY - floorHeight) >= 8.0f;
+    awayFromFloor =  absf(marioY - floorHeight) >= 4.0f;
 
     if (awayFromFloor) {
         gMarioPlatform = NULL;
@@ -151,9 +151,8 @@ static void apply_mario_inertia(void) {
     // On the first frame of leaving the ground, boost Mario's y velocity
     if (sInertiaFirstFrame) {
         if (sMarioAmountDisplaced[1] > 0.0f) {
-            gMarioState->vel[1] -= sMarioAmountDisplaced[1];
+            gMarioState->vel[1] += sMarioAmountDisplaced[1];
         }
-        // why did hackersm64 flip the signs around it should be mario goes down when the platform goes up vice versa not the other way around
     }
 #endif
 
@@ -195,6 +194,8 @@ void apply_mario_platform_displacement(void) {
 /**
  * Set Mario's platform to NULL.
  */
+/*
 void clear_mario_platform(void) {
     gMarioPlatform = NULL;
 }
+*/
