@@ -71,7 +71,7 @@ extern Vtx mario_000_offset_001_mesh_layer_1_vtx_2[14];
 extern Gfx mario_000_offset_001_mesh_layer_1_tri_2[];
 extern Vtx mario_000_displaylist_mesh_layer_1_vtx_0[12];
 extern Gfx mario_000_displaylist_mesh_layer_1_tri_0[];
-extern Vtx mario_000_displaylist_mesh_layer_1_vtx_1[94];
+extern Vtx mario_000_displaylist_mesh_layer_1_vtx_1[96];
 extern Gfx mario_000_displaylist_mesh_layer_1_tri_1[];
 extern Vtx mario_000_displaylist_mesh_layer_1_vtx_2[14];
 extern Gfx mario_000_displaylist_mesh_layer_1_tri_2[];
