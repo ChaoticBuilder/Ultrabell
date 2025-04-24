@@ -757,7 +757,9 @@ s32 act_in_cannon(struct MarioState *m) {
 
                 marioObj->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
 
-                set_mario_action(m, ACT_SHOT_FROM_CANNON, 0);
+                (!gRealToggle)
+                ? set_mario_action(m, ACT_SHOT_FROM_CANNON, 1)
+                : set_mario_action(m, ACT_SHOT_FROM_CANNON, 2);
 #if ENABLE_RUMBLE
                 queue_rumble_data(60, 70);
 #endif

@@ -1617,7 +1617,13 @@ s32 act_dive_slide(struct MarioState *m) {
         set_mario_action(m, ACT_STOMACH_SLIDE_STOP, 0);
     }
 
-    mario_check_object_grab(m);
+    if (mario_check_object_grab(m)) {
+        mario_grab_used_object(m);
+        m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
+        if (m->action != ACT_DIVE_SLIDE) {
+            return TRUE;
+        }
+    }
 
     common_slide_action(m, ACT_STOMACH_SLIDE_STOP, ACT_FREEFALL, MARIO_ANIM_DIVE);
     return FALSE;

@@ -871,8 +871,13 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SLIDE_KICK:
-            m->vel[1] = 24.0f;
-            m->forwardVel = 48.0f;
+            if (!gLuigiToggle) {
+                m->vel[1] = 40.0f;
+                m->forwardVel += 2.0f;
+            } else {
+                m->vel[1] = 12.0f;
+                m->forwardVel = 72.0f;
+            }
             break;
 
         case ACT_JUMP_KICK:
@@ -1227,17 +1232,14 @@ void squish_mario_model(struct MarioState *m) {
  * Debug function that prints floor normal, velocity, and action information.
  */
 void debug_print_speed_action_normal(struct MarioState *m) {
-    f32 steepness;
-    f32 floor_nY;
-
     if (gShowDebugText) {
-        steepness = sqrtf(sqr(m->floor->normal.x) + sqr(m->floor->normal.z));
-        floor_nY = m->floor->normal.y;
+        // steepness = sqrtf(sqr(m->floor->normal.x) + sqr(m->floor->normal.z));
+        // floor_nY = m->floor->normal.y;
 
-        print_text_fmt_int(206, 60, "ANG %d", (atan2s(floor_nY, steepness) * 180.0f) / 32768.0f);
-
-        print_text_fmt_int(206, 43, "SPD %d", m->forwardVel);
-        print_text_fmt_int(206, 26, "VSP %d", m->vel[1]);
+        // print_text_fmt_int(206, 60, "ANG %d", (atan2s(floor_nY, steepness) * 180.0f) / 32768.0f);
+        print_text_fmt_int(206, 60, "ANG %x", m->intendedYaw);
+        print_text_fmt_int(206, 43, "SPD %x", m->forwardVel);
+        print_text_fmt_int(206, 26, "VSP %x", m->vel[1]);
 
         // STA short for "status," the official action name via SMS map.
         print_text_fmt_int(206, 9, "STA %x", (m->action & ACT_ID_MASK));

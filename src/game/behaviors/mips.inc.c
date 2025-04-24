@@ -30,8 +30,6 @@ void bhv_mips_init(void) {
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 #endif
-    o->oInteractType = INTERACT_GRABBABLE;
-
     o->oGravity = 15.0f;
     o->oFriction = 0.89f;
     o->oBuoyancy = 1.2f;
