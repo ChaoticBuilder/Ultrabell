@@ -805,7 +805,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_WALL_KICK_AIR:
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 68.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f);
             m->wallKickTimer = 0;
 
             s16 spd = 12;
@@ -871,12 +871,12 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SLIDE_KICK:
+            m->forwardVel += 2.0f;
             if (!gLuigiToggle) {
                 m->vel[1] = 40.0f;
-                m->forwardVel += 2.0f;
             } else {
-                m->vel[1] = 12.0f;
-                m->forwardVel = 72.0f;
+                m->vel[1] = 16.0f;
+                m->forwardVel += 32.0f;
             }
             break;
 
@@ -1238,8 +1238,8 @@ void debug_print_speed_action_normal(struct MarioState *m) {
 
         // print_text_fmt_int(206, 60, "ANG %d", (atan2s(floor_nY, steepness) * 180.0f) / 32768.0f);
         print_text_fmt_int(206, 60, "ANG %x", m->intendedYaw);
-        print_text_fmt_int(206, 43, "SPD %x", m->forwardVel);
-        print_text_fmt_int(206, 26, "VSP %x", m->vel[1]);
+        print_text_fmt_int(206, 43, "SPD %d", m->forwardVel);
+        print_text_fmt_int(206, 26, "VSP %d", m->vel[1]);
 
         // STA short for "status," the official action name via SMS map.
         print_text_fmt_int(206, 9, "STA %x", (m->action & ACT_ID_MASK));
