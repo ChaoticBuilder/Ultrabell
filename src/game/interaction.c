@@ -25,6 +25,7 @@
 #include "rumble_init.h"
 #include "config.h"
 #include "ingame_menu.h"
+#include "main.h"
 
 u8  sDelayInvincTimer;
 s16 sInvulnerable;
@@ -939,7 +940,7 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
 
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
 // #ifndef UNLOCK_ALL
-        if (warpDoorId == 1 && !(saveFlags & SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR)) {
+        if (warpDoorId == 1 && !(saveFlags & SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR) && !gDebugLevelSelect) {
             if (!(saveFlags & SAVE_FLAG_HAVE_KEY_2)) {
                 if (!sDisplayingDoorText) {
                     set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG,
@@ -953,7 +954,7 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
             doorAction = ACT_UNLOCKING_KEY_DOOR;
         }
 
-        if (warpDoorId == 2 && !(saveFlags & SAVE_FLAG_UNLOCKED_BASEMENT_DOOR)) {
+        if (warpDoorId == 2 && !(saveFlags & SAVE_FLAG_UNLOCKED_BASEMENT_DOOR) && !gDebugLevelSelect) {
             if (!(saveFlags & SAVE_FLAG_HAVE_KEY_1)) {
                 if (!sDisplayingDoorText) {
                     // Moat door skip was intended confirmed
@@ -1018,7 +1019,7 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
 // #endif
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
 // #ifndef UNLOCK_ALL
-        if (numStars >= requiredNumStars || obj->oInteractionSubtype != INT_SUBTYPE_STAR_DOOR) {
+        if (numStars >= requiredNumStars || obj->oInteractionSubtype != INT_SUBTYPE_STAR_DOOR || gDebugLevelSelect) {
             // forgot star doors and normal doors share the same code .w.
 // #endif
             u32 actionArg = should_push_or_pull_door(m, obj);
@@ -1103,7 +1104,7 @@ u32 interact_tornado(struct MarioState *m, UNUSED u32 interactType, struct Objec
 
     if (m->action != ACT_TORNADO_TWIRLING && m->action != ACT_SQUISHED) {
         mario_stop_riding_and_holding(m);
-        mario_set_forward_vel(m, 0.0f);
+        // mario_set_forward_vel(m, 0.0f);
         update_mario_sound_and_camera(m);
 
         obj->oInteractStatus = INT_STATUS_INTERACTED;
@@ -1167,7 +1168,7 @@ u32 interact_strong_wind(struct MarioState *m, UNUSED u32 interactType, struct O
 }
 
 u32 interact_flame(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
-    UNUSED u32 burningAction = ACT_BURNING_JUMP;
+    u32 burningAction = ACT_BURNING_GROUND;
 
     if (!sInvulnerable && !(m->flags & MARIO_METAL_CAP) && !(m->flags & MARIO_VANISH_CAP)
         && !(obj->oInteractionSubtype & INT_SUBTYPE_DELAY_INVINCIBILITY)) {
@@ -1188,7 +1189,7 @@ u32 interact_flame(struct MarioState *m, UNUSED u32 interactType, struct Object 
                 burningAction = ACT_BURNING_FALL;
             }
 
-            return drop_and_set_mario_action(m, ACT_BURNING_GROUND, 1);
+            return drop_and_set_mario_action(m, burningAction, 1);
         }
     }
 

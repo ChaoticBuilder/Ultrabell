@@ -1109,6 +1109,7 @@ void note_set_vel_pan_reverb(struct Note *note, f32 velocity, f32 pan, u8 reverb
 
 void note_set_frequency(struct Note *note, f32 frequency) {
     note->frequency = frequency;
+    // note->frequency = 0.5f / frequency;
 }
 
 void note_enable(struct Note *note) {

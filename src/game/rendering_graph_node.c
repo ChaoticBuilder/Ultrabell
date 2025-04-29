@@ -23,6 +23,8 @@
 #include "config.h"
 #include "config/config_world.h"
 
+s8 mirrorFlip = 0;
+
 /**
  * This file contains the code that processes the scene graph for rendering.
  * The scene graph is responsible for drawing everything except the HUD / text boxes.

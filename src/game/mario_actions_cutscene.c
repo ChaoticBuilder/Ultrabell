@@ -536,7 +536,7 @@ s32 act_debug_free_move(struct MarioState *m) {
         if (m->vel[1] < 0) m->vel[1] = 0;
         m->forwardVel = 0;
 
-        set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+        // set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
         m->input &= ~INPUT_A_PRESSED;
         if (m->pos[1] <= (m->waterLevel - 100)) {
             return set_mario_action(m, ACT_WATER_IDLE, 0);
@@ -1009,7 +1009,7 @@ s32 act_going_through_door(struct MarioState *m) {
                 level_trigger_warp(m, WARP_OP_WARP_DOOR);
             }
         } else {
-            if (m->actionTimer >= 300) {
+            if (m->actionTimer >= 120) {
                 level_trigger_warp(m, WARP_OP_WARP_DOOR);
                 doorTroll = FALSE;
             }
@@ -1596,6 +1596,7 @@ s32 act_squished(struct MarioState *m) {
                           2.0f - squishAmount);
             } else {
                 if (!(m->flags & MARIO_METAL_CAP) && m->invincTimer == 0) {
+                    if (gRealToggle) m->health = 0xFF;
                     // cap on: 3 units; cap off: 4.5 units
                     m->hurtCounter += m->flags & MARIO_CAP_ON_HEAD ? 12 : 18;
                     play_sound_if_no_flag(m, SOUND_MARIO_ATTACKED, MARIO_MARIO_SOUND_PLAYED);

@@ -108,7 +108,8 @@ s32 act_holding_pole(struct MarioState *m) {
     if (m->input & INPUT_A_PRESSED) {
         add_tree_leaf_particles(m);
         m->faceAngle[1] += 0x8000;
-        return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
+        m->forwardVel = 32.0f;
+        return set_mario_action(m, ACT_JUMP, 1);
     }
 
     if (m->controller->stickY > 16.0f) {
@@ -124,14 +125,14 @@ s32 act_holding_pole(struct MarioState *m) {
         }
     }
 
-    if (m->controller->stickY < -2.0f) {
-        m->angleVel[1] -= m->controller->stickY * 8;
+    if (m->controller->stickY < -4.0f) {
+        m->angleVel[1] -= m->controller->stickY * 6;
         if (m->angleVel[1] > 0x1000) {
             m->angleVel[1] = 0x1000;
         }
 
         m->faceAngle[1] += m->angleVel[1];
-        marioObj->oMarioPolePos += m->controller->stickY / 2;
+        marioObj->oMarioPolePos += m->controller->stickY / 3;
 
         add_tree_leaf_particles(m);
         play_climbing_sounds(m, 2);
@@ -167,7 +168,8 @@ s32 act_climbing_pole(struct MarioState *m) {
     if (m->input & INPUT_A_PRESSED) {
         add_tree_leaf_particles(m);
         m->faceAngle[1] += 0x8000;
-        return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
+        m->forwardVel = 32.0f;
+        return set_mario_action(m, ACT_JUMP, 1);
     }
 
     if (m->controller->stickY < 8.0f) {
@@ -385,7 +387,7 @@ s32 act_start_hanging(struct MarioState *m) {
     }
 
     // Only let go if A or B has been pressed
-    if (m->input & INPUT_A_PRESSED || (m->input & INPUT_B_PRESSED && !gGrapple)) {
+    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 #else
@@ -425,7 +427,7 @@ s32 act_hanging(struct MarioState *m) {
 
 #ifdef BETTER_HANGING
     // Only let go if A or B is pressed
-    if (m->input & INPUT_A_PRESSED || (m->input & INPUT_B_PRESSED && !gGrapple)) {
+    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 #else

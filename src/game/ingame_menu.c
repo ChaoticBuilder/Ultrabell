@@ -50,6 +50,7 @@ u8 gTrollToggle = FALSE;
 u8 g95Toggle = FALSE;
 u8 gRealToggle = FALSE;
 u8 gGrapple = FALSE;
+u8 gMirrorToggle = FALSE;
 /*
 #if defined(WIDE) && !defined(PUPPYCAM)
 u8 textCurrRatio43[] = { TEXT_HUD_CURRENT_RATIO_43 };
@@ -1736,6 +1737,14 @@ void debug_text(void) {
     }
 }
 
+void mirror_mode_toggle(void) {
+    if (gPlayer1Controller->buttonPressed & L_TRIG) {
+        gMirrorToggle ^= 1;
+        mirrorSpeed = 0;
+        mirrorTarget *= -1;
+    }
+}
+
 void config_open(void) {
     if (gPlayer1Controller->buttonPressed & R_TRIG) {
         gConfigOpen ^= 1;
@@ -2284,6 +2293,7 @@ s32 render_pause_courses_and_castle(void) {
             gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
             debug_text();
+            // mirror_mode_toggle();
         if (gDialogTextAlpha < 250) {
             gDialogTextAlpha += 25;
         }

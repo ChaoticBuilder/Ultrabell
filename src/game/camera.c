@@ -7364,6 +7364,7 @@ void cutscene_dance_default_rotate(struct Camera *c) {
             gCutsceneTimer = CUTSCENE_STOP;
             c->cutscene = 0;
             transition_next_state(c, 20);
+            set_fov_function(CAM_FOV_APP_45_FAST);
             sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
         }
     }
@@ -11004,14 +11005,14 @@ void fov_default(struct MarioState *m) {
     if ((m->action == ACT_IDLE) || (m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
         if (m->sleepTimer < 400) {
             m->sleepTimer++; // Increase the timer
-            camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 30.f);
+            camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 45.f);
         } else { // Gradually set the FOV to 30 if the threshold is reached
             camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (30.f - sFOVState.fov) / 30.f);
             sStatusFlags |= CAM_FLAG_SLEEPING;
         }
     } else {
         m->sleepTimer = 0; // Reset the timer and set the FOV back to 45 when Mario isn't sleeping
-        camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 30.f);
+        camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 45.f);
         sFOVState.unusedIsSleeping = 0;				   
     }
     if (m->area->camera->cutscene == CUTSCENE_0F_UNUSED) {
@@ -11024,6 +11025,9 @@ void approach_fov_30(UNUSED struct MarioState *m) {
 }
 void approach_fov_30_fast(UNUSED struct MarioState *m) {
     camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, 2.f);
+}
+void approach_fov_45_fast(UNUSED struct MarioState *m) {
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, 2.f);
 }
 
 void approach_fov_60(UNUSED struct MarioState *m) {
@@ -11107,6 +11111,9 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
                 break;
             case CAM_FOV_APP_30_FAST:
                 approach_fov_30_fast(marioState);
+                break;
+            case CAM_FOV_APP_45_FAST:
+                approach_fov_45_fast(marioState);
                 break;
             case CAM_FOV_APP_60:
                 approach_fov_60(marioState);

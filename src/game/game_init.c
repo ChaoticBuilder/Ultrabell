@@ -31,6 +31,7 @@
 #include "vc_ultra.h"
 #include "profiling.h"
 #include "emutest.h"
+#include "rendering_graph_node.h"
 
 // Emulators that the Instant Input patch should not be applied to
 #define INSTANT_INPUT_BLACKLIST (EMU_CONSOLE | EMU_WIIVC | EMU_ARES | EMU_SIMPLE64 | EMU_CEN64)
@@ -589,6 +590,8 @@ void adjust_analog_stick(struct Controller *controller) {
         controller->stickY *= 64 / controller->stickMag;
         controller->stickMag = 64;
     }
+
+    if (mirrorFlip) controller->stickX *= -1;
 }
 
 /**

@@ -634,7 +634,7 @@ void apply_gravity(struct MarioState *m) {
         m->vel[1] -= 2.5f;
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
-                m->vel[1] += 1.5f;
+                m->vel[1] += 1.25f;
                 m->vel[1] -= (m->vel[1] / 80);
             }
             sTerminalVelocity = TRUE;
@@ -644,7 +644,7 @@ void apply_gravity(struct MarioState *m) {
         if (m->vel[1] < -64.0f) {
             if (!gRealToggle) {
                 m->vel[1] += 2.0f;
-                m->vel[1] -= (m->vel[1] / 20);
+                m->vel[1] -= (m->vel[1] / 36);
             }
             sTerminalVelocity = TRUE;
         }
