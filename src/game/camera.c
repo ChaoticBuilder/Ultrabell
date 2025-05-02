@@ -2906,7 +2906,7 @@ void update_camera(struct Camera *c) {
         }
 
         if (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) {
-            if (gPlayer1Controller->buttonPressed & R_TRIG) {
+            if (gPlayer1Controller->buttonPressed & R_TRIG && !gMusicToggle) {
                 if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {
                     set_cam_angle(CAM_ANGLE_MARIO);
                 } else {
@@ -10965,7 +10965,7 @@ void visualizer_display(void) {
     
     sprintf(fovBytes, "FOV: %2.1f", fovTxt);
     print_set_envcolour(0, 189, 255, 255);
-    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y - 1) + gHudShakeY, fovBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 9) + gHudShakeY, fovBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
 static UNUSED void unused_deactivate_sleeping_camera(UNUSED struct MarioState *m) {

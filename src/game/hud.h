@@ -19,6 +19,9 @@
 extern s32 gHudShakeX;
 extern s32 gHudShakeY;
 extern u8 troll;
+extern u8 debugScroll;
+extern u32 musicID;
+extern u32 musicBank;
 
 #ifdef TIME_ATTACK
     extern int timeATKCount;

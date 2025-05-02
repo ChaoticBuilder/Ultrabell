@@ -19,6 +19,10 @@
 #include "menu/star_select.h"
 #include "main.h"
 #include "object_list_processor.h"
+#include "sound_init.h"
+#include "audio/external.h"
+#include "audio/load.h"
+#include "audio/internal.h"
 
 #include "config.h"
 
@@ -27,6 +31,9 @@ u8 gLuigiToggle = 0;
 s32 gSecondsToggle = TRUE;
 u8 gHudToggle;
 u8 troll = FALSE;
+u8 debugScroll = 1;
+u32 musicID = 0;
+u32 musicBank = 0;
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -516,6 +523,7 @@ void render_hud_timer(void) {
 }
 
 #ifdef DEMO_TIMER
+/*
 void render_hud_demo_timer(void) {
     char clockBytes[12];
     int timerCount = gGlobalTimer / 30;
@@ -555,6 +563,8 @@ void render_hud_demo_timer(void) {
     print_set_envcolour(0, 189, 255, 255);
     print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 9) + gHudShakeY, clockBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
+*/
+#endif
 
 void timer_troll(void) {
     int trollCount = (gGlobalTimer / 15) % 1800;
@@ -581,16 +591,86 @@ void timer_troll(void) {
         }
     }
 }
-#endif
 
-// welcome to disabled feature city
-// the residents here welcome your stay
-
-/* DISABLED FEATURE: (for now until 2013!!1!1!)
-void unregistered_hypercam(void) {
-    print_text(32, 80, "UNREGISTERED HYPERCAM");
+void music_menu_scroll(void) {
+    if (!gMusicToggle || gConfigOpen) return;
+    if (gPlayer1Controller->buttonPressed == U_JPAD) {
+        debugScroll--;
+        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+    }
+    if (gPlayer1Controller->buttonPressed == D_JPAD) {
+        debugScroll++;
+        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+    }
+    if (gPlayer1Controller->buttonPressed == L_JPAD) {
+        if (debugScroll == 1) musicID--;
+        if (debugScroll == 2) musicBank--;
+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+    }
+    if (gPlayer1Controller->buttonPressed == R_JPAD) {
+        if (debugScroll == 1) musicID++;
+        if (debugScroll == 2) musicBank++;
+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+    }
+    if (debugScroll < 1) {
+        debugScroll = 4;
+    }
+    if (debugScroll > 4) {
+        debugScroll = 1;
+    }
+    struct SequencePlayer *seqPlayer = &gSequencePlayers[0];
+    if (gPlayer1Controller->buttonPressed & R_TRIG) {
+        if (debugScroll == 1) {
+            if (musicID == 0) stop_background_music(musicID);
+            set_background_music(0, musicID, 0);
+            if (musicBank != 0) seqPlayer->defaultBank[0] = musicBank;
+        }
+        if (debugScroll == 3) {
+            musicID = gAreas[gCurrAreaIndex].musicParam2;
+            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        }
+    }
 }
-*/
+
+void music_menu(void) {
+    if (!gMusicToggle || gConfigOpen) return;
+    char currOption[64];
+    music_menu_scroll();
+    u8 yPos = 30;
+
+    print_set_envcolour(206, 156, 255, 255);
+    print_small_text_light(16, yPos, "SOUND TEST", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    yPos += 12;
+
+    print_set_envcolour(206, 156, 255, 255);
+    print_small_text_light(16, yPos, "PRESS R BUTTON", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    yPos += 16;
+
+    print_set_envcolour(255, 132, 0, 255);
+    if (debugScroll != 1) print_set_envcolour(189, 49, 115, 255);
+    sprintf(currOption, "Play Sequence: d%02d  x%02x", musicID, musicID);
+
+    print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    yPos += 12;
+
+    print_set_envcolour(255, 132, 0, 255);
+    if (debugScroll != 2) print_set_envcolour(189, 49, 115, 255);
+    sprintf(currOption, "Instrument Set: d%02d  x%02x", musicBank, musicBank);
+    
+    print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    yPos += 12;
+
+    print_set_envcolour(255, 132, 0, 255);
+    if (debugScroll != 3) print_set_envcolour(189, 49, 115, 255);
+    
+    print_small_text_light(16, yPos, "Reset Sequence", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    yPos += 128;
+
+    print_set_envcolour(206, 156, 255, 255);
+    sprintf(currOption, "Scroll: %2d", debugScroll);
+
+    print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+}
 
 /* DISABLED FEATURE:
 void ttc(void) {
@@ -713,9 +793,10 @@ void render_hud(void) {
             if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
                 render_hud_timer();
             }
-                render_hud_demo_timer();
+                // render_hud_demo_timer();
                 timer_troll();
                 visualizer_display();
+                music_menu();
                 // ttc(); displays the clock's current state, technically I could've kept it in but nah
                 // what makes me mad tho is the fact I had to do this in the first place
                 // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal

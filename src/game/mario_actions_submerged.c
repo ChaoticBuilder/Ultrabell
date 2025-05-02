@@ -950,8 +950,8 @@ static s32 act_drowning(struct MarioState *m) {
             set_mario_animation(m, MARIO_ANIM_DROWNING_PART2);
             m->marioBodyState->eyeState = MARIO_EYES_DEAD;
             if (m->marioObj->header.gfx.animInfo.animFrame == 30) {
-                if (rand < 0.0625f) {
-                    level_trigger_warp(m, WARP_OP_DEATH);
+                if (rand < 0.015625f) {
+                    if (!gRealToggle) level_trigger_warp(m, WARP_OP_DEATH);
                 }
                 // so yk the github description and how it mentions secrets hidden within? yeah this is now the first ever secret implemented, very small chance to get a perma death :3
                 // just a cool insight for people browsing the code

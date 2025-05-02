@@ -1275,15 +1275,15 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
             break;
 
         case AIR_STEP_LANDED:
-            if (m->actionArg != 2 && gRealToggle) {
-                m->hurtCounter += 2;
-                m->actionArg = 2;
-            }
 #if ENABLE_RUMBLE
             if (m->action != ACT_SOFT_BONK) {
                 queue_rumble_data(5, 40);
             }
 #endif
+            if (m->actionArg != 2 && gRealToggle) {
+                m->hurtCounter += 2;
+                return set_mario_action(m, ACT_HARD_BACKWARD_GROUND_KB, 2);
+            }
             if (!check_fall_damage_or_get_stuck(m, hardFallAction)) {
                 if (m->action == ACT_THROWN_FORWARD || m->action == ACT_THROWN_BACKWARD) {
                     set_mario_action(m, landAction, m->hurtCounter);
@@ -1431,7 +1431,7 @@ s32 act_soft_bonk(struct MarioState *m) {
 s32 act_wall_slide (struct MarioState *m) {
     if ((g95Toggle || gLuigiToggle) && m->wallKickTimer == 0 && m->prevAction == ACT_AIR_HIT_WALL) {
         play_sound(SOUND_MARIO_UH, m->marioObj->header.gfx.cameraToObject);
-        if (gRealToggle) return set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+        if (gRealToggle) return set_mario_action(m, ACT_HARD_BACKWARD_AIR_KB, 1);
         return set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
     } else {
         play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
@@ -1814,10 +1814,9 @@ s32 act_slide_kick(struct MarioState *m) {
     if (g95Toggle)
         return set_mario_action(m, ACT_FREEFALL, 2);
     if (gLuigiToggle) return set_mario_action(m, ACT_SHOT_FROM_CANNON, 0);
-
     
-    if (m->actionTimer < 4)
-        m->vel[1] = sqr((m->actionTimer + 3));
+    if (m->actionTimer < 5 && m->actionArg != 2)
+        m->vel[1] = sqr((m->actionTimer + 2));
     
     if (m->input & INPUT_A_PRESSED) {
         if (m->forwardVel > 48.0f) m->forwardVel = 48.0f;
@@ -1886,8 +1885,8 @@ s32 act_slide_kick(struct MarioState *m) {
 
         case AIR_STEP_LANDED:
             if (m->actionState == ACT_STATE_SLIDE_KICK_SLIDING && m->vel[1] < 0.0f) {
-                m->vel[1] = (-m->vel[1] - 36.0f);
-                if (m->vel[1] < 2.0f) m->vel[1] = 2.0f;
+                m->vel[1] = -m->vel[1] - 16.0f;
+                if (m->vel[1] < 16.0f) m->vel[1] = 16.0f;
                 m->actionState = ACT_STATE_SLIDE_KICK_END;
                 m->actionTimer = 0;
                 m->actionArg = 2;

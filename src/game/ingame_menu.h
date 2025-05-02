@@ -15,7 +15,7 @@ extern u8 gConfigOpen;
     extern u8 gTrollToggle;
     extern u8 gRealToggle;
     extern u8 gGrapple;
-    extern u8 gMirrorToggle;
+    extern u8 gMusicToggle;
     extern f32 sFovSlider;
 
 #define ASCII_TO_DIALOG(asc)                                       \
