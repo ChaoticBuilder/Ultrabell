@@ -51,6 +51,7 @@ u8 g95Toggle = FALSE;
 u8 gRealToggle = FALSE;
 u8 gGrapple = FALSE;
 u8 gMusicToggle = FALSE;
+u8 gLevelTroll = 0;
 /*
 #if defined(WIDE) && !defined(PUPPYCAM)
 u8 textCurrRatio43[] = { TEXT_HUD_CURRENT_RATIO_43 };
@@ -1589,9 +1590,9 @@ void config_options_scroll(void) {
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gConfigScroll < 2) {
-        gConfigScroll = 12;
+        gConfigScroll = 13;
     }
-    if (gConfigScroll > 12) {
+    if (gConfigScroll > 13) {
         gConfigScroll = 2;
     }
 }
@@ -1679,6 +1680,11 @@ void config_options(void) {
                 play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
             }
             */
+        }
+        if (gConfigScroll == 13) {
+            gLevelTroll++;
+            if (gLevelTroll > 2) gLevelTroll = 0;
+            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
     }
 }
@@ -1888,6 +1894,15 @@ void config_options_box(void) {
         print_set_envcolour(143, 143, 143, 255);
         if (gConfigScroll != 12) print_set_envcolour(79, 79, 79, 255);
     }
+
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    xPos += 160;
+
+    if (gLevelTroll == 0) sprintf(currOption, "LVL TROLL 0");
+    if (gLevelTroll == 1) sprintf(currOption, "LVL TROLL 1");
+    if (gLevelTroll == 2) sprintf(currOption, "LVL TROLL 2");
+    print_set_envcolour(255, 255, 255, 255);
+    if (gConfigScroll != 13) print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }

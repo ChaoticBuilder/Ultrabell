@@ -12,6 +12,7 @@
 #include "game/debug.h"
 #include "engine/math_util.h"
 #include "game/ingame_menu.h"
+#include "game/hud.h"
 
 #define DMEM_ADDR_TEMP 0x0
 #define DMEM_ADDR_RESAMPLED 0x20
@@ -1110,8 +1111,13 @@ void note_set_vel_pan_reverb(struct Note *note, f32 velocity, f32 pan, u8 reverb
 
 void note_set_frequency(struct Note *note, f32 frequency) {
     if (gLuigiToggle && (note->bankId == 8 || note->bankId == 10)) frequency *= 1.0625f;
-    note->frequency = frequency;
-    // note->frequency = 0.5f / frequency;
+    if (pitchInvert == 1) {
+        note->frequency = frequency;
+    } else {
+        (pitchInvert == 2)
+        ? (note->frequency = 0.5f / frequency)
+        : (note->frequency = 1.0f / frequency);
+    }
 }
 
 void note_enable(struct Note *note) {

@@ -127,7 +127,7 @@ void check_ledge_climb_down(struct MarioState *m) {
 }
 
 void slide_bonk(struct MarioState *m, u32 fastAction, u32 slowAction) {
-    if (m->forwardVel > 16.0f) {
+    if (m->forwardVel > 8.0f) {
         mario_bonk_reflection(m, TRUE);
         drop_and_set_mario_action(m, fastAction, 0);
     } else {
@@ -721,13 +721,15 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
         s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
         if (gLuigiToggle == TRUE) {
-            nextBodyPitch = -(s16)((m->forwardVel - 15) * 120);
+            nextBodyPitch = -(s16)((m->forwardVel - 15) * 104);
         } else {
-            nextBodyPitch = -(s16)((m->forwardVel - 15) * 80);
+            nextBodyPitch = -(s16)((m->forwardVel - 15) * 72);
         }
+        /*
         if (nextBodyPitch <= -1024) {
             nextBodyPitch -= (nextBodyPitch / 8);
         }
+        */
 
         nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(45), 0);
 
@@ -1655,9 +1657,14 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
     }
 
     if (perform_ground_step(m) == GROUND_STEP_LEFT_GROUND) {
-        (m->forwardVel >= 0.0f)
-        ? set_mario_action(m, ACT_BACKWARD_AIR_KB, actionArg)
-        : set_mario_action(m, ACT_FORWARD_AIR_KB, actionArg);
+        if (m->forwardVel >= 0.0f) {
+            m->forwardVel -= 16.0f;
+            set_mario_action(m, ACT_BACKWARD_AIR_KB, 4);
+        } else {
+            m->forwardVel += 16.0f;
+            set_mario_action(m, ACT_FORWARD_AIR_KB, 4);
+        }
+        m->vel[1] = 4.0f;
     } else {
         if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) mario_bonk_reflection(m, TRUE);
         if (is_anim_at_end(m)) {

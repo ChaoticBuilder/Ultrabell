@@ -1867,6 +1867,11 @@ void mario_process_interactions(struct MarioState *m) {
     if (!(m->marioObj->collidedObjInteractTypes & INTERACT_WARP)) {
         sJustTeleported = FALSE;
     }
+    if (g95Toggle) {
+        sDelayInvincTimer = FALSE;
+        sInvulnerable = FALSE;
+        m->invincTimer = 0;
+    }
 }
 
 void check_death_barrier(struct MarioState *m) {

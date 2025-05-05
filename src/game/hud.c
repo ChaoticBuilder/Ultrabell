@@ -23,6 +23,8 @@
 #include "audio/external.h"
 #include "audio/load.h"
 #include "audio/internal.h"
+#include "audio/heap.h"
+#include "audio/seqplayer.h"
 
 #include "config.h"
 
@@ -32,8 +34,9 @@ s32 gSecondsToggle = TRUE;
 u8 gHudToggle;
 u8 troll = FALSE;
 u8 debugScroll = 1;
-u32 musicID = 0;
-u32 musicBank = 0;
+u16 musicID = 0;
+u16 musicBank = 0xFFFF;
+u8 pitchInvert = 1;
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -438,7 +441,9 @@ void render_hud_mario_lives(void) {
         }
 
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(31) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives);
+        (gLevelTroll != 1)
+        ? print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives)
+        : print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%02d", gHudDisplay.lives);
     }
 }
 
@@ -458,13 +463,17 @@ void render_debug_mode(void) {
  * Renders the amount of coins collected.
  */
 void render_hud_coins(void) {
+    u8 top = HUD_TOP_Y;
+    if (gLevelTroll == 2) top += 17;
     if (gHudDisplay.coins == 1996) {
         // Thank you-a so much for-a playing my game!
-        print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X)) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "%d", gHudDisplay.coins);
+        print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X)) + gHudShakeX, (top - 17) + gHudShakeY, "%d", gHudDisplay.coins);
     } else {
-        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "$"); // 'Coin' glyph
-        print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "*"); // 'X' glyph
-        print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "%d", gHudDisplay.coins);
+        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, (top - 17) + gHudShakeY, "$"); // 'Coin' glyph
+        print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, (top - 17) + gHudShakeY, "*"); // 'X' glyph
+        (gLevelTroll != 1) 
+        ? print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, (top - 17) + gHudShakeY, "%d", gHudDisplay.coins)
+        : print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, (top - 17) + gHudShakeY, "%02d", gHudDisplay.coins);
     }
 }
 
@@ -473,10 +482,13 @@ void render_hud_coins(void) {
  * Disables "X" glyph when Mario has 100 stars or more.
  */
 void render_hud_stars(void) {
-    // if (gHudFlash == HUD_FLASH_STARS && gGlobalTimer & 0x8) return;
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "^"); // 'Star' glyph
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
-    print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.stars);
+    u8 top = HUD_TOP_Y;
+    if (gLevelTroll == 2) top -= 17;
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, top + gHudShakeY, "^"); // 'Star' glyph
+    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, top + gHudShakeY, "*"); // 'X' glyph
+    (gLevelTroll != 1) 
+    ? print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, top + gHudShakeY, "%d", gHudDisplay.stars)
+    : print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, top + gHudShakeY, "%02d", gHudDisplay.stars);
 }
 
 /**
@@ -581,7 +593,7 @@ void timer_troll(void) {
         }
         if (troll == TRUE) {
             if ((gGlobalTimer & 3) == 0) return;
-            if (rand < 0.015625f) {
+            if (rand < 0.03125f) {
                 if (trollCount == 0) return;
                 troll = FALSE;
             }
@@ -605,13 +617,18 @@ void music_menu_scroll(void) {
     if (gPlayer1Controller->buttonPressed == L_JPAD) {
         if (debugScroll == 1) musicID--;
         if (debugScroll == 2) musicBank--;
-        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        if (debugScroll == 4) pitchInvert--;
+        if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == R_JPAD) {
         if (debugScroll == 1) musicID++;
         if (debugScroll == 2) musicBank++;
-        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        if (debugScroll == 4) pitchInvert++;
+        if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
+    if (pitchInvert < 1) pitchInvert = 3;
+    if (pitchInvert > 3) pitchInvert = 1;
+    if (musicBank == 0xFFFE) musicBank = 0xFFFF;
     if (debugScroll < 1) {
         debugScroll = 4;
     }
@@ -623,7 +640,7 @@ void music_menu_scroll(void) {
         if (debugScroll == 1) {
             if (musicID == 0) stop_background_music(musicID);
             set_background_music(0, musicID, 0);
-            if (musicBank != 0) seqPlayer->defaultBank[0] = musicBank;
+            if (musicBank != 0xFFFF) seqPlayer->defaultBank[0] = musicBank;
         }
         if (debugScroll == 3) {
             musicID = gAreas[gCurrAreaIndex].musicParam2;
@@ -655,7 +672,9 @@ void music_menu(void) {
 
     print_set_envcolour(255, 132, 0, 255);
     if (debugScroll != 2) print_set_envcolour(189, 49, 115, 255);
-    sprintf(currOption, "Instrument Set: d%02d  x%02x", musicBank, musicBank);
+    (musicBank != 0xFFFF)
+    ? sprintf(currOption, "Instrument Set: d%02d  x%02x", musicBank, musicBank)
+    : sprintf(currOption, "Instrument Set: Default");
     
     print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     yPos += 12;
@@ -664,7 +683,16 @@ void music_menu(void) {
     if (debugScroll != 3) print_set_envcolour(189, 49, 115, 255);
     
     print_small_text_light(16, yPos, "Reset Sequence", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    yPos += 128;
+    yPos += 12;
+
+    print_set_envcolour(255, 132, 0, 255);
+    if (debugScroll != 4) print_set_envcolour(189, 49, 115, 255);
+    if (pitchInvert == 1) sprintf(currOption, "Invert Pitch: OFF", pitchInvert);
+    if (pitchInvert == 2) sprintf(currOption, "Invert Pitch: Half", pitchInvert);
+    if (pitchInvert == 3) sprintf(currOption, "Invert Pitch: Full", pitchInvert);
+    
+    print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    yPos += 116;
 
     print_set_envcolour(206, 156, 255, 255);
     sprintf(currOption, "Scroll: %2d", debugScroll);

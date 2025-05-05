@@ -815,7 +815,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SIDE_FLIP:
-            (!g95Toggle) ? set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f);
+            (!g95Toggle) ? set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 48.0f, 0.0f);
             m->forwardVel = 8.0f;
             m->faceAngle[1] = m->intendedYaw;
             break;
@@ -874,7 +874,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->forwardVel += 2.0f;
             if (gLuigiToggle) {
                 m->vel[1] = 16.0f;
-                m->forwardVel += 32.0f;
+                m->forwardVel += 40.0f;
             }
             break;
 
@@ -1507,7 +1507,7 @@ void update_mario_health(struct MarioState *m) {
 #ifndef BREATH_METER
         // Play a noise to alert the player when Mario is close to drowning.
         if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < 0x300)) {
-            play_sound(SOUND_MOVING_ALMOST_DROWNING, gGlobalSoundSource);
+            // play_sound(SOUND_MOVING_ALMOST_DROWNING, gGlobalSoundSource);
 #if ENABLE_RUMBLE
             if (gRumblePakTimer == 0) {
                 gRumblePakTimer = 36;
@@ -1530,7 +1530,7 @@ void update_mario_breath(struct MarioState *m) {
             m->breath--;
             if (m->breath < 0x300) {
                 // Play a noise to alert the player when Mario is close to drowning.
-                play_sound(SOUND_MOVING_ALMOST_DROWNING, gGlobalSoundSource);
+                // play_sound(SOUND_MOVING_ALMOST_DROWNING, gGlobalSoundSource);
 #if ENABLE_RUMBLE
                 if (gRumblePakTimer == 0) {
                     gRumblePakTimer = 36;
@@ -1671,7 +1671,7 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
     //! (Pause buffered hitstun) Since the global timer increments while paused,
     //  this can be paused through to give continual invisibility. This leads to
     //  no interaction with objects.
-    if ((m->invincTimer >= 3) && (gGlobalTimer & 1)) {
+    if ((m->invincTimer >= 3) && (gGlobalTimer & 1) && !g95Toggle) {
         m->marioObj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
     }
 
