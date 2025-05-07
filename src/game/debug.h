@@ -32,6 +32,7 @@ void stub_debug_control(void);
 void try_print_debug_mario_object_info(void);
 void try_do_mario_debug_object_spawn(void);
 void try_print_debug_mario_level_info(void);
+void try_change_debug_page(void);
 #else
 #define get_current_clock()
 #define get_clock_difference(cycles)
@@ -45,6 +46,7 @@ void try_print_debug_mario_level_info(void);
 #define try_print_debug_mario_object_info()
 #define try_do_mario_debug_object_spawn()
 #define try_print_debug_mario_level_info()
+#define try_change_debug_page();
 #endif
 
 extern char *__n64Assert_Filename;

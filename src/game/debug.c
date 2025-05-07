@@ -16,6 +16,7 @@
 #include "types.h"
 
 #ifdef VANILLA_DEBUG
+
 s16 gDebugPrintState1[6]; // prints top-down?
 s16 gDebugPrintState2[6]; // prints bottom-up?
 
@@ -127,10 +128,6 @@ void print_debug_top_down_objectinfo(const char *str, s32 number) {
 }
 
 void print_debug_top_down_mapinfo(const char *str, s32 number) {
-    if (sNoExtraDebug) { // how come this is the only instance of the sNoExtraDebug check?
-        return;
-    }
-
     if (gDebugInfoFlags & DEBUG_INFO_FLAG_DPRINT) {
         print_text_array_info(gDebugPrintState1, str, number);
     }
@@ -150,7 +147,7 @@ void print_mapinfo(void) {
     UNUSED s32 area;  // unused in EU
     UNUSED s32 angY;  // unused in EU
 
-    angY = gCurrentObject->oMoveAngleYaw / 182.044000;
+    angY = DEGREES(gCurrentObject->oMoveAngleYaw);
     area = ((s32) gCurrentObject->oPosX + 0x2000) / 1024
            + ((s32) gCurrentObject->oPosZ + 0x2000) / 1024 * 16;
 
@@ -170,9 +167,9 @@ void print_mapinfo(void) {
     print_debug_top_down_mapinfo("angY %d", angY);
 
     if (pfloor != NULL) {
-        print_debug_top_down_mapinfo("bgcode   %d", pfloor->type);
-        print_debug_top_down_mapinfo("bgstatus %d", pfloor->flags);
-        print_debug_top_down_mapinfo("bgarea   %d", pfloor->room);
+        print_debug_top_down_mapinfo("bgtype   %d", pfloor->type);
+        print_debug_top_down_mapinfo("bgflags  %d", pfloor->flags);
+        print_debug_top_down_mapinfo("bgroom   %d", pfloor->room);
     }
 
     if (gCurrentObject->oPosY < water) {
@@ -253,11 +250,9 @@ void debug_unknown_level_select_check(void) {
     if (!sDebugLvSelectCheckFlag) {
         sDebugLvSelectCheckFlag++; // again, just do = TRUE...
 
-        if (!gDebugLevelSelect) {
-            gDebugInfoFlags = DEBUG_INFO_NOFLAGS;
-        } else {
-            gDebugInfoFlags = DEBUG_INFO_FLAG_LSELECT;
-        }
+        (!gDebugLevelSelect)
+        ? (gDebugInfoFlags = DEBUG_INFO_NOFLAGS)
+        : (gDebugInfoFlags = DEBUG_INFO_FLAG_LSELECT);
 
         gNumCalls.floor = 0;
         gNumCalls.ceil = 0;
@@ -309,14 +304,12 @@ UNUSED static void check_debug_button_seq(void) {
  * Poll the debug info flags and controller for appropriate presses that
  * control sDebugPage's range. (unused)
  */
-UNUSED static void try_change_debug_page(void) {
+void try_change_debug_page(void) {
     if (gDebugInfoFlags & DEBUG_INFO_FLAG_DPRINT) {
-        if ((gPlayer1Controller->buttonPressed & L_JPAD)
-            && (gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG))) {
+        if ((gPlayer1Controller->buttonPressed & L_JPAD)) {
             sDebugPage++;
         }
-        if ((gPlayer1Controller->buttonPressed & R_JPAD)
-            && (gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG))) {
+        if ((gPlayer1Controller->buttonPressed & R_JPAD)) {
             sDebugPage--;
         }
         if (sDebugPage >= (DEBUG_PAGE_MAX + 1)) {

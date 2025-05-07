@@ -1722,8 +1722,10 @@ void fov_slider(void) {
 }
 
 void debug_text(void) {
+    gDebugInfoFlags = DEBUG_INFO_NOFLAGS;
     if (gPlayer1Controller->buttonPressed & Z_TRIG) {
         gShowDebugText ^= 1;
+        gDebugInfoFlags = DEBUG_INFO_FLAG_DPRINT;
     }
 }
 
@@ -1737,6 +1739,21 @@ void config_open(void) {
     if (gPlayer1Controller->buttonPressed & R_TRIG) {
         gConfigOpen ^= 1;
     }
+}
+
+/**
+  * Function for drawing options in the Hack Config.
+  * It takes in an x and y pos, modifier, scroll number, and string.
+  * Modifier affects whether or not it sets a envcolor. (even for yes, odd for no.)
+  */
+void config_option_render(u8 x, u8 y, const char *str, u8 mod, u8 scroll) {
+    if (mod % 2 == 0) {
+        (gConfigScroll == scroll)
+        ? print_set_envcolour(255, 255, 255, 255)
+        : print_set_envcolour(127, 127, 127, 255);
+    }
+
+    print_small_text_light(x, y, str, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
 void config_options_box(void) {
@@ -1760,11 +1777,9 @@ void config_options_box(void) {
     sprintf(currOption, "Widescreen Disabled");
 #endif
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 2) print_set_envcolour(127, 127, 127, 255);
-
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos += 160;
+    config_option_render(xPos, yPos, currOption, 0, 2);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (sFovSlider > 0) sprintf(currOption, "FOV: +%2.1f", sFovSlider);
     if (sFovSlider <= 0) sprintf(currOption, "FOV: %2.1f", sFovSlider);
@@ -1776,19 +1791,17 @@ void config_options_box(void) {
     }
     if (gConfigScroll != 3) print_set_envcolour(127, 127, 127, 255);
     
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos -= 160;
-    yPos += 12;
+    config_option_render(xPos, yPos, currOption, 1, 3);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gConfigScroll == 4) print_small_text_light(160, 204, "Good for taking screenshots, or to challenge yourself.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gHudToggle) sprintf(currOption, "Hud: On");
     if (gHudToggle) sprintf(currOption, "Hud: Off");
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 4) print_set_envcolour(127, 127, 127, 255);
-
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    config_option_render(xPos, yPos, currOption, 0, 4);
+    if (xPos >= 160) xPos -= 160;
     yPos += 32;
 
     if (!gLuigiToggle) print_set_envcolour(255, 95, 95, 255);
@@ -1805,8 +1818,9 @@ void config_options_box(void) {
 
     if (gConfigScroll != 6) print_set_envcolour(127, 127, 127, 255);
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos += 160;
+    config_option_render(xPos, yPos, currOption, 1, 6);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gConfigScroll == 7) print_small_text_light(160, 204, "What behavior to use when pressing B in the air.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
@@ -1814,12 +1828,9 @@ void config_options_box(void) {
     if (gDiveToggle == 1) sprintf(currOption, "Always Dive: Dive");
     if (gDiveToggle == 2) sprintf(currOption, "Always Dive: Kick");
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 7) print_set_envcolour(127, 127, 127, 255);
-    
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos -= 160;
-    yPos += 12;
+    config_option_render(xPos, yPos, currOption, 0, 7);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gConfigScroll == 8) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
@@ -1827,33 +1838,26 @@ void config_options_box(void) {
     if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
     if (gRealToggle) sprintf(currOption, "Automatically enabled.");
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 8) print_set_envcolour(127, 127, 127, 255);
-    
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos += 160;
+    config_option_render(xPos, yPos, currOption, 0, 8);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gConfigScroll == 9) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gRealToggle) sprintf(currOption, "Mario if he real: Off");
     if (gRealToggle) sprintf(currOption, "Mario if he real: On");
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 9) print_set_envcolour(127, 127, 127, 255);
-    
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos -= 160;
-    yPos += 12;
+    config_option_render(xPos, yPos, currOption, 0, 9);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gConfigScroll == 10) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     sprintf(currOption, "TEMP");
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 10) print_set_envcolour(127, 127, 127, 255);
-
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos += 160;
+    config_option_render(xPos, yPos, currOption, 0, 10);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gHudDisplay.stars >= 100) {
         if (gConfigScroll == 11) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
@@ -1873,8 +1877,8 @@ void config_options_box(void) {
         if (gConfigScroll != 11) print_set_envcolour(79, 79, 79, 255);
     }
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos -= 160;
+    config_option_render(xPos, yPos, currOption, 1, 11);
+    if (xPos >= 160) xPos -= 160;
     yPos += 32;
 
     if (gHudDisplay.stars >= 100) {
@@ -1895,16 +1899,15 @@ void config_options_box(void) {
         if (gConfigScroll != 12) print_set_envcolour(79, 79, 79, 255);
     }
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    xPos += 160;
+    config_option_render(xPos, yPos, currOption, 1, 12);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gLevelTroll == 0) sprintf(currOption, "LVL TROLL 0");
     if (gLevelTroll == 1) sprintf(currOption, "LVL TROLL 1");
     if (gLevelTroll == 2) sprintf(currOption, "LVL TROLL 2");
-    print_set_envcolour(255, 255, 255, 255);
-    if (gConfigScroll != 13) print_set_envcolour(127, 127, 127, 255);
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    config_option_render(xPos, yPos, currOption, 0, 13);
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -2114,7 +2117,7 @@ void render_pause_castle_course_stars(s16 x, s16 y, s16 fileIndex, s16 courseInd
 
     u16 nextStar = 0;
 
-    /* DIOSABLED FEATURE:
+    /* DISABLED FEATURE:
     if (starFlags & STAR_FLAG_ACT_100_COINS) {
         starCount--;
         print_generic_string(x + 89, y - 5, textStar);

@@ -1669,7 +1669,7 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
         if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) mario_bonk_reflection(m, TRUE);
         if (is_anim_at_end(m)) {
             set_mario_action(m, ACT_IDLE, 0);
-            m->forwardVel = 24.0f;
+            m->forwardVel = 16.0f;
             if (actionArg > 0) {
                 m->invincTimer = 30;
             }

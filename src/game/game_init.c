@@ -32,6 +32,7 @@
 #include "profiling.h"
 #include "emutest.h"
 #include "rendering_graph_node.h"
+#include "debug.h"
 
 // Emulators that the Instant Input patch should not be applied to
 #define INSTANT_INPUT_BLACKLIST (EMU_CONSOLE | EMU_WIIVC | EMU_ARES | EMU_SIMPLE64 | EMU_CEN64)
@@ -825,6 +826,9 @@ void thread5_game_loop(UNUSED void *arg) {
 #endif
 
         display_and_vsync();
+#ifdef VANILLA_DEBUG
+        try_change_debug_page();
+#endif
 /*
 #ifdef VANILLA_DEBUG
         // when debug info is enabled, print the "BUF %d" information.

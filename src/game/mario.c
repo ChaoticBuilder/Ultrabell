@@ -1925,6 +1925,7 @@ void init_mario_from_save_file(void) {
     gMarioState->numCoins = 0;
     gMarioState->numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
     gMarioState->numKeys = 0;
+    if ((save_file_get_flags() & SAVE_FLAG_HAVE_KEY_1) || (save_file_get_flags() & SAVE_FLAG_HAVE_KEY_2)) gMarioState->numKeys++;
 #ifdef ENABLE_LIVES
     gMarioState->numLives = ENABLE_LIVES;
 #else

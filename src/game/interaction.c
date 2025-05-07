@@ -847,6 +847,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 
         m->numStars =
             save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
+        if ((save_file_get_flags() & SAVE_FLAG_HAVE_KEY_1) || (save_file_get_flags() & SAVE_FLAG_HAVE_KEY_2)) m->numKeys++;
 
         if (!noExit) {
             drop_queued_background_music();
@@ -1005,8 +1006,8 @@ u32 get_door_save_file_flag(struct Object *door) {
         case  3: saveFileFlag = (isCcmDoor ? SAVE_FLAG_UNLOCKED_CCM_DOOR : SAVE_FLAG_UNLOCKED_JRB_DOOR); break;
         */
         case  8: saveFileFlag = SAVE_FLAG_UNLOCKED_BITDW_DOOR;                                           break;
-        case 30: saveFileFlag = SAVE_FLAG_UNLOCKED_BITFS_DOOR;                                           break;
-        case 50: saveFileFlag = SAVE_FLAG_UNLOCKED_50_STAR_DOOR;                                         break;
+        case 24: saveFileFlag = SAVE_FLAG_UNLOCKED_BITFS_DOOR;                                           break;
+        case 40: saveFileFlag = SAVE_FLAG_UNLOCKED_50_STAR_DOOR;                                         break;
     }
 
     return saveFileFlag;
@@ -1057,9 +1058,9 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
                 case  3: text = DIALOG_025 << 16; break;
                 */
                 case  8: text = DIALOG_026 << 16; break;
-                case 30: text = DIALOG_027 << 16; break;
-                case 50: text = DIALOG_028 << 16; break;
-                case 70: text = DIALOG_029 << 16; break;
+                case 24: text = DIALOG_027 << 16; break;
+                case 40: text = DIALOG_028 << 16; break;
+                case 64: text = DIALOG_029 << 16; break;
             }
 
             text += requiredNumStars - numStars;

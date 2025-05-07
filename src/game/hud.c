@@ -499,7 +499,7 @@ void render_hud_keys(void) {
     s16 i;
 
     for (i = 0; i < gHudDisplay.keys; i++) {
-        print_text((i * 16) + 220, 142, "|"); // unused glyph - beta key
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE((i * 17) + 16) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "|"); // unused glyph - beta key
     }
 }
 

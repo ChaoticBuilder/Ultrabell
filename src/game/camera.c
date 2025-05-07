@@ -4864,10 +4864,15 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
         cutscene = sObjectCutscene;
         sObjectCutscene = CUTSCENE_NONE;
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR) {
-            if (gCurrLevelArea == AREA_CASTLE_LOBBY) {
-                cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH);
-            } else {
-                cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
+            switch (c->mode) {
+                case CAMERA_MODE_FIXED:
+                    (gCurrLevelArea == AREA_CASTLE_LOBBY)
+                    ? (cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH))
+                    : (cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE));
+                    break;
+                default:
+                    cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
+                    break;
             }
         }
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR_WARP) {
@@ -4934,11 +4939,7 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
                 cutscene = CUTSCENE_STANDING_DEATH;
                 break;
             case ACT_STAR_DANCE_EXIT:
-                cutscene = CUTSCENE_DANCE_DEFAULT;
-                break;
             case ACT_STAR_DANCE_WATER:
-                cutscene = CUTSCENE_DANCE_DEFAULT;
-                break;
             case ACT_STAR_DANCE_NO_EXIT:
                 cutscene = CUTSCENE_DANCE_DEFAULT;
                 break;

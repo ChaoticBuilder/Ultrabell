@@ -1,18 +1,18 @@
 COURSE_ACTS(COURSE_BOB, _("BOB-OMB PLAINS"),
-       _("KING BOB-OMB'S SUMMIT")         , _("KOOPA TROOPA RACE!")            , _("FIND THE 8 RED COINS!"),
-       _("SECRET OF THE HILL")            , _("CHOMPING CHAIN CHOMP")          , _(""))
+       _("KING BOB-OMB'S MOUNTAIN!")      , _("KOOPA TROOPA RACE!")            , _("8 COINS..."),
+       _("SECRET OF THE HILL")            , _("INSIDE THE SUMMIT")             , _("ignore this"))
 
-COURSE_ACTS(COURSE_WF, _("MOUNTAIN TOWER FORT"),
-       _("THE WHOMP KING")                , _("TO THE TOP OF THE FORTRESS")    , _("SKY HIGH WALL KICKS"),
-       _("RED COIN PARKOUR!")             , _("FALL ONTO THE CAGED ISLAND")    , _("BLAST AWAY THE WALL"))
+COURSE_ACTS(COURSE_WF, _("MOUNTAIN FORTRESS"),
+       _("THE FORTRESS TOP!")             , _("SKY-HIGH WALL KICKS")           , _("8 COIN PLATFORMING..."),
+       _("FLOATING ISLAND ABOVE")         , _("BLAST THE WALL!")               , _("ignore this"))
 
-COURSE_ACTS(COURSE_JRB, _("NAUTICAL OCEAN SHIP"),
-       _("RAISE THE SUNKEN SHIP")         , _("THE SWIMMING EEL")              , _("TREASURE OF THE OCEAN CAVE"),
-       _("RED COINS ON DECK!")            , _("BLAST TO THE STONE PILLAR!")    , _("THROUGH THE JET STREAM"))
+COURSE_ACTS(COURSE_JRB, _("NAUTICAL OCEAN BAY"),
+       _("RAISE THE SUNKEN SHIP!")        , _("PLAYFUL SWIMMING EEL")          , _("DODGE FALLING STONES!"),
+       _("BLAST ONTO THE PILLAR!")        , _("IN THE JET STREAM!")            , _("ignore this"))
 
-COURSE_ACTS(COURSE_CCM, _("FROSTY SNOW SLIDE"),
-       _("CABIN SLIDE")                   , _("THAT STAR EVERYONE HATES")      , _("ANNUAL PENGUIN RACE"),
-       _("SLIPPERY 8 RED COINS!")         , _("SNOWMAN'S LOST HIS HEAD")       , _("WALL KICK PARKOUR!"))
+COURSE_ACTS(COURSE_CCM, _("FROSTY SLIDER"),
+       _("CABIN SLIDE!")                  , _("TUXIE RESCUE")                  , _("PENGUIN RACING!"),
+       _("SLIPPERY 8 COINS..")            , _("WALL KICK PARKOUR!")            , _("ignore this"))
 
 COURSE_ACTS(COURSE_BBH, _("HAUNTED BOO MANSION"),
        _("GHOST HOUSE GHOST HUNT!")       , _("THE SECRET MERRY GO ROUND")     , _("SECRET OF THE BOOKS"),
