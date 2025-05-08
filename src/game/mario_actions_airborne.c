@@ -869,8 +869,6 @@ s32 act_twirling(struct MarioState *m) {
 
 s32 act_dive(struct MarioState *m) {
     m->actionTimer++;
-    if (gGrapple)
-        return set_mario_action(m, ACT_GRAPPLE_HOOKED, 0);
     if (gDiveToggle == 2)
         return set_mario_action(m, ACT_JUMP_KICK, 0);
     if (m->input & INPUT_A_PRESSED && m->actionTimer >= 2 && !g95Toggle) {
@@ -1925,8 +1923,6 @@ s32 act_slide_kick(struct MarioState *m) {
 
 s32 act_jump_kick(struct MarioState *m) {
     m->actionTimer++;
-    if (gGrapple)
-        return set_mario_action(m, ACT_GRAPPLE_HOOKED, 0);
     if (gDiveToggle == 1)
         return set_mario_action(m, ACT_DIVE, 0);
     if (m->input & INPUT_A_PRESSED && m->actionTimer >= 2) {

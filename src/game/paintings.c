@@ -732,9 +732,12 @@ void painting_calculate_triangle_normals(PaintingData *mesh, PaintingData numVtx
         f32 z2 = gPaintingMesh[v2].pos[2];
 
         // Cross product to find each triangle's normal vector
-        gPaintingTriNorms[i][0] = (y1 - y0) * (z2 - z1) - (z1 - z0) * (y2 - y1);
-        gPaintingTriNorms[i][1] = (z1 - z0) * (x2 - x1) - (x1 - x0) * (z2 - z1);
-        gPaintingTriNorms[i][2] = (x1 - x0) * (y2 - y1) - (y1 - y0) * (x2 - x1);
+        if (gPaintingTriNorms != NULL) {
+            gPaintingTriNorms[i][0] = (y1 - y0) * (z2 - z1) - (z1 - z0) * (y2 - y1);
+            gPaintingTriNorms[i][1] = (z1 - z0) * (x2 - x1) - (x1 - x0) * (z2 - z1);
+            gPaintingTriNorms[i][2] = (x1 - x0) * (y2 - y1) - (y1 - y0) * (x2 - x1);
+        }
+        
     }
 }
 
@@ -787,9 +790,11 @@ void painting_average_vertex_normals(PaintingData *neighborTris, PaintingData nu
         neighbors = neighborTris[entry];
         for (j = 0; j < neighbors; j++) {
             tri = neighborTris[entry + j + 1];
-            nx += gPaintingTriNorms[tri][0];
-            ny += gPaintingTriNorms[tri][1];
-            nz += gPaintingTriNorms[tri][2];
+            if (gPaintingTriNorms != NULL) {
+                nx += gPaintingTriNorms[tri][0];
+                ny += gPaintingTriNorms[tri][1];
+                nz += gPaintingTriNorms[tri][2];
+            }
         }
         // Move to the next vertex's entry
         entry += neighbors + 1;
@@ -1025,7 +1030,7 @@ Gfx *display_painting_rippling(struct Painting *painting) {
 
     // The mesh data is freed every frame.
     mem_pool_free(gEffectsMemoryPool, gPaintingMesh);
-    mem_pool_free(gEffectsMemoryPool, gPaintingTriNorms);
+    if (gPaintingTriNorms != NULL) mem_pool_free(gEffectsMemoryPool, gPaintingTriNorms);
     return dlist;
 }
 

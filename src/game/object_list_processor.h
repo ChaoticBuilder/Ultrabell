@@ -51,7 +51,6 @@ enum ObjectList {
                           //      "cling" Mario similar to a pole action. (hoot,
                           //      whirlpool, trees/poles, etc)
     OBJ_LIST_SPAWNER,     // (11) spawners
-    OBJ_LIST_LOWPRIO,     // (12) low priority objects, these are a tier above unimportant objects.
     OBJ_LIST_UNIMPORTANT, // (13) unimportant objects. objects that will not load
                           //      if there are not enough object slots: they will also
                           //      be manually unloaded to make room for slots if the list
@@ -67,7 +66,6 @@ extern s32 gNumFindFloorMisses;
 extern s32 gUnknownWallCount;
 extern u32 gObjectCounter;
 extern u32 gUnimportantCounter;
-extern u32 gLowPrioCounter;
 
 struct NumTimesCalled {
     /*0x00*/ s16 floor;

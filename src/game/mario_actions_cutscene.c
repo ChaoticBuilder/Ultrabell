@@ -51,7 +51,7 @@ static s8 sPeachManualBlinkTime = 0;
 static s8 sPeachIsBlinking = FALSE;
 static s8 sPeachBlinkTimes[7] = { 2, 3, 2, 1, 2, 3, 2 };
 
-static u8 sStarsNeededForDialog[] = { 1, 3, 8, 30, 50, 70 };
+static u8 sStarsNeededForDialog[] = { 1, 3, 8, 24, 40, 64 };
 
 /**
  * Data for the jumbo star cutscene. It specifies the flight path after triple
@@ -870,10 +870,8 @@ s32 act_unlocking_star_door(struct MarioState *m) {
             }
             break;
         case ACT_STATE_UNLOCKING_STAR_DOOR_IN_DIALOG:
-            if (is_anim_at_end(m)) {
-                save_file_set_flags(get_door_save_file_flag(m->usedObj));
-                set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, DIALOG_038);
-            }
+            if (is_anim_at_end(m)) save_file_set_flags(get_door_save_file_flag(m->usedObj));
+            if (is_anim_past_end(m)) set_mario_action(m, ACT_ENTERING_STAR_DOOR, should_push_or_pull_door(m, m->usedObj));
             break;
     }
 
@@ -1007,11 +1005,11 @@ s32 act_going_through_door(struct MarioState *m) {
             doorTroll = TRUE;
         }
         if (!doorTroll) {
-            if (m->actionTimer == 20) {
+            if (m->actionTimer == 0xC) {
                 level_trigger_warp(m, WARP_OP_WARP_DOOR);
             }
         } else {
-            if (m->actionTimer >= 120) {
+            if (m->actionTimer >= 0x60) {
                 level_trigger_warp(m, WARP_OP_WARP_DOOR);
                 doorTroll = FALSE;
             }
@@ -1535,7 +1533,9 @@ s32 act_teleport_fade_in(struct MarioState *m) {
             }
             set_mario_action(m, ACT_WATER_IDLE, 0);
         } else {
-            set_mario_action(m, ACT_IDLE, 0);
+            m->vel[1] = 32.0f;
+            m->forwardVel = 32.0f;
+            return set_mario_action(m, ACT_JUMP, 0);
         }
     }
 

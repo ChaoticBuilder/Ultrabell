@@ -20,7 +20,7 @@
 #include "usb/debug.h"
 #endif
 #include "game/puppyprint.h"
-
+#include "src/game/debug.h"
 
 struct MainPoolState {
     u32 freeSpace;
@@ -538,6 +538,8 @@ void *mem_pool_alloc(struct MemoryPool *pool, u32 size) {
                 freeBlock->next = newBlock;
             }
             break;
+        } else {
+            return NULL;
         }
         freeBlock = freeBlock->next;
     }

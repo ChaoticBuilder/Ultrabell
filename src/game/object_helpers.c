@@ -29,7 +29,6 @@
 #include "print.h"
 
 u32 gUnimportantCounter;
-u32 gLowPrioCounter;
 
 static s32 clear_move_flag(u32 *bitSet, s32 flag);
 
@@ -639,30 +638,6 @@ struct Object *find_unimportant_object(void) {
 
 s32 count_unimportant_objects(void) {
     struct ObjectNode *listHead = &gObjectLists[OBJ_LIST_UNIMPORTANT];
-    struct ObjectNode *obj = listHead->next;
-    s32 count = 0;
-
-    while (listHead != obj) {
-        count++;
-        obj = obj->next;
-    }
-
-    return count;
-}
-
-struct Object *find_lowpriority_object(void) {
-    struct ObjectNode *listHead = &gObjectLists[OBJ_LIST_LOWPRIO];
-    struct ObjectNode *obj = listHead->next;
-
-    if (listHead == obj) {
-        return NULL;
-    }
-
-    return (struct Object *) obj;
-}
-
-s32 count_lowpriority_objects(void) {
-    struct ObjectNode *listHead = &gObjectLists[OBJ_LIST_LOWPRIO];
     struct ObjectNode *obj = listHead->next;
     s32 count = 0;
 
@@ -1683,8 +1658,8 @@ void cur_obj_spawn_particles(struct SpawnParticlesInfo *info) {
     s32 numParticles = info->count;
 
     // If there are a lot of objects already, limit the number of particles
-    if (gPrevFrameObjectCount > (OBJECT_POOL_CAPACITY - 230)) {
-        numParticles -= (gPrevFrameObjectCount / 60);
+    if (gPrevFrameObjectCount > (OBJECT_POOL_CAPACITY - 180)) {
+        numParticles -= (gPrevFrameObjectCount / 120);
     }
 
     if (gPrevFrameObjectCount > (OBJECT_POOL_CAPACITY - 30)) {

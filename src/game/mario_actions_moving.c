@@ -21,8 +21,6 @@
 
 #include "config.h"
 
-u8 gTurboToggle = FALSE;
-
 struct LandingAction {
     s16 numFrames;
     s16 doubleJumpTimer;
@@ -500,7 +498,7 @@ s32 analog_stick_held_back(struct MarioState *m) {
 }
 
 s32 check_ground_dive_or_punch(struct MarioState *m) {
-    if ((m->input & INPUT_B_PRESSED) || (gTurboToggle && (m->input & INPUT_B_DOWN) && gGlobalTimer % 2 == 0)) {
+    if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
         if (m->forwardVel > 24.0f && (!(m->input & INPUT_A_DOWN))) {
             return set_mario_action(m, ACT_DIVE, 1);
@@ -840,8 +838,6 @@ s32 act_walking(struct MarioState *m) {
 }
 
 s32 act_move_punching(struct MarioState *m) {
-    if (gGrapple)
-        return set_mario_action(m, ACT_GRAPPLE_HOOKED, 0);
     if (should_begin_sliding(m)) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
@@ -1596,7 +1592,7 @@ s32 act_hold_stomach_slide(struct MarioState *m) {
 }
 
 s32 act_dive_slide(struct MarioState *m) {
-    if ((m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) || (gTurboToggle && (m->input & INPUT_B_DOWN) && gGlobalTimer % 2 == 0)) {
+    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif
@@ -1893,8 +1889,6 @@ s32 act_long_jump_land(struct MarioState *m) {
 #endif
     if (m->input & INPUT_Z_DOWN) {
         if ((m->input & INPUT_A_PRESSED))
-            return set_mario_action(m, ACT_LONG_JUMP, 0);
-        if (gTurboToggle && (m->input & INPUT_A_DOWN && m->forwardVel < 0.0f && gGlobalTimer % 2 == 0))
             return set_mario_action(m, ACT_LONG_JUMP, 0);
     }
 

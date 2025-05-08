@@ -95,7 +95,7 @@ struct Object *gMarioObject;
  * second player. This is speculation, based on its position and its usage in
  * shadow.c.
  */
-struct Object *gLuigiObject;
+// struct Object *gLuigiObject;
 
 /**
  * The object whose behavior script is currently being updated.
@@ -174,7 +174,6 @@ s8 sObjectListUpdateOrder[] = { OBJ_LIST_SPAWNER,
                                 OBJ_LIST_DESTRUCTIVE,
                                 OBJ_LIST_LEVEL,
                                 OBJ_LIST_DEFAULT,
-                                OBJ_LIST_LOWPRIO,
                                 OBJ_LIST_UNIMPORTANT,
                                 -1 };
 
@@ -575,12 +574,8 @@ void update_non_terrain_objects(void) {
     }
 }
 
-void count_unimportant_lowprio_objects(void) {
-    s32 unimportantCount = count_unimportant_objects();
-    s32 lowPrioCount = count_lowpriority_objects();
-
-    gUnimportantCounter = unimportantCount;
-    gLowPrioCounter = lowPrioCount;
+void unimportant_counter(void) {
+    gUnimportantCounter = count_unimportant_objects();
 }
 
 /**
@@ -671,7 +666,7 @@ void update_objects(UNUSED s32 unused) {
     // Update all other objects that haven't been updated yet
     update_non_terrain_objects();
 
-    count_unimportant_lowprio_objects();
+    unimportant_counter();
     
     // Take a snapshot of the current collision processing time.
     UNUSED u32 firstPoint = profiler_get_delta(PROFILER_DELTA_COLLISION); 

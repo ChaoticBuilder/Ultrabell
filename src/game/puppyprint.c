@@ -994,12 +994,11 @@ void puppyprint_render_general_vars(void) {
     }
 
 
-    sprintf(textBytes, "World\n\nObjects: %d/%d\n\nUnimportant: %d/%d\n\nLow Priority: %d/%d\n\nLevel ID: %d\nCourse ID: %d\nArea ID: %d\nRoom ID: %d\n\nInteract:   \n0x%08X\nWarp: 0x%02X", 
+    sprintf(textBytes, "World\n\nObjects: %d/%d\n\nUnimportant: %d/%d\n\nLevel ID: %d\nCourse ID: %d\nArea ID: %d\nRoom ID: %d\n\nInteract:   \n0x%08X\nWarp: 0x%02X", 
             gObjectCounter,
             OBJECT_POOL_CAPACITY,
             gUnimportantCounter,
             OBJECT_POOL_CAPACITY,
-            gLowPrioCounter,
             OBJECT_POOL_CAPACITY,
             gCurrLevelNum,
             gCurrCourseNum,

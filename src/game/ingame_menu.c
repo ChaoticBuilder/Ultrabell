@@ -49,7 +49,6 @@ u8 gFlightToggle = FALSE;
 u8 gTrollToggle = FALSE;
 u8 g95Toggle = FALSE;
 u8 gRealToggle = FALSE;
-u8 gGrapple = FALSE;
 u8 gMusicToggle = FALSE;
 u8 gLevelTroll = 0;
 /*
@@ -1567,26 +1566,18 @@ void config_options_scroll(void) {
         return;
     if ((gPlayer1Controller->buttonPressed == L_JPAD) || (gPlayer1Controller->rawStickX <= -32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll--;
-        if (gConfigScroll == 5) gConfigScroll--;
-        
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll -= 2;
-        if (gConfigScroll == 5) gConfigScroll -= 2;
-
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll++;
-        if (gConfigScroll == 5) gConfigScroll++;
-
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll += 2;
-        if (gConfigScroll == 5) gConfigScroll += 2;
-
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gConfigScroll < 2) {
@@ -1597,95 +1588,36 @@ void config_options_scroll(void) {
     }
 }
 
-/* OLD CODE:
-#if defined(WIDE) && !defined(PUPPYCAM)
-void render_widescreen_setting(void) {
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-    if (!gConfig.widescreen) {
-        print_generic_string(10, 20, textCurrRatio43);
-        print_generic_string(10,  7, textPressL);
-    } else {
-        print_generic_string(10, 20, textCurrRatio169);
-        print_generic_string(10,  7, textPressL);
-    }
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
-    if (gPlayer1Controller->buttonPressed & L_TRIG){
-        gConfig.widescreen ^= 1;
-        save_file_set_widescreen_mode(gConfig.widescreen);
-    }
-}
-#endif
-*/
-
 void config_options(void) {
+    (!gRealToggle)
+    ? (g95Toggle = FALSE)
+    : (g95Toggle = TRUE);
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
-        if (gConfigScroll == 3) {
-            gHighlightToggle ^= 1;
-        }
         if (gConfigScroll == 2) {
 #ifdef WIDE
             gConfig.widescreen ^= 1;
             save_file_set_widescreen_mode(gConfig.widescreen);
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-#else
-            play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
 #endif
         }
-        if (gConfigScroll == 3) {
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
-        if (gConfigScroll == 4) {
-            gHudToggle ^= 1;
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
-        if (gConfigScroll == 6) {
-            gLuigiToggle ^= 1;
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
+        if (gConfigScroll == 3) gHighlightToggle ^= 1;
+        if (gConfigScroll == 4) gHudToggle ^= 1;
+        if (gConfigScroll == 5) gVisToggle ^= 1;
+        if (gConfigScroll == 6) gLuigiToggle ^= 1;
         if (gConfigScroll == 7) {
             gDiveToggle++;
             gDiveToggle %= 3;
             play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
-        if (gConfigScroll == 8) {
-            g95Toggle ^= 1;
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
-        if (gConfigScroll == 9) {
-            gRealToggle ^= 1;
-            if (!gRealToggle) g95Toggle = FALSE;
-            if (gRealToggle) g95Toggle = TRUE;
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
-        if (gConfigScroll == 10) {
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-        }
-        if (gConfigScroll == 11) {
-            // if (gHudDisplay.stars >= 100) {
-                gFlightToggle ^= 1;
-                play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-            /*
-            } else {
-                play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
-            }
-            */
-        }
-        if (gConfigScroll == 12) {
-            // if (gHudDisplay.stars >= 100) {
-                gTrollToggle ^= 1;
-                play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-            /*
-            } else {
-                play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
-            }
-            */
-        }
+        if (gConfigScroll == 8) g95Toggle ^= 1;
+        if (gConfigScroll == 9) gRealToggle ^= 1;
+        // if (gHudDisplay.stars >= 100)
+        if (gConfigScroll == 11) gFlightToggle ^= 1;
+        if (gConfigScroll == 12) gTrollToggle ^= 1;
         if (gConfigScroll == 13) {
             gLevelTroll++;
             if (gLevelTroll > 2) gLevelTroll = 0;
-            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
 }
 
@@ -1742,10 +1674,10 @@ void config_open(void) {
 }
 
 /**
-  * Function for drawing options in the Hack Config.
-  * It takes in an x and y pos, modifier, scroll number, and string.
-  * Modifier affects whether or not it sets a envcolor. (even for yes, odd for no.)
-  */
+ * Function for drawing options in the Hack Config.
+ * It takes in an x and y pos, modifier, scroll number, and string.
+ * Modifier affects whether or not it sets a envcolor. (even for yes, odd for no.)
+ */
 void config_option_render(u8 x, u8 y, const char *str, u8 mod, u8 scroll) {
     if (mod % 2 == 0) {
         (gConfigScroll == scroll)
@@ -1801,6 +1733,13 @@ void config_options_box(void) {
     if (gHudToggle) sprintf(currOption, "Hud: Off");
 
     config_option_render(xPos, yPos, currOption, 0, 4);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
+    if (!gVisToggle) sprintf(currOption, "Visualizer: On");
+    if (gVisToggle) sprintf(currOption, "Visualizer: Off");
+
+    config_option_render(xPos, yPos, currOption, 0, 5);
     if (xPos >= 160) xPos -= 160;
     yPos += 32;
 
