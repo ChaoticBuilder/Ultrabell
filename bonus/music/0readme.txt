@@ -1,0 +1,1 @@
+if you want to convert these to m64s use seq64 1.5 to set the instruments to their proper numbers. (and don't forget to set the percussion channel to 7F and add a drumset)
