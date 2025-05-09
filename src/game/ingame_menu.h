@@ -15,6 +15,7 @@ extern u8 gConfigOpen;
     extern u8 gFlightToggle;
     extern u8 gTrollToggle;
     extern u8 gRealToggle;
+    extern u8 gABCToggle;
     extern u8 gMusicToggle;
     extern u8 gLevelTroll;
     extern f32 sFovSlider;

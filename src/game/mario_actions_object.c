@@ -159,7 +159,7 @@ s32 act_punching(struct MarioState *m) {
         return check_common_action_exits(m);
     }
 
-    if (m->actionState == ACT_STATE_PUNCHING_CAN_JUMP_KICK && (m->input & INPUT_A_DOWN) && gRealToggle < 2) {
+    if (m->actionState == ACT_STATE_PUNCHING_CAN_JUMP_KICK && m->input & INPUT_A_DOWN) {
         return set_mario_action(m, ACT_JUMP_KICK, 0);
     }
 
