@@ -10,6 +10,7 @@ extern u8 gConfigOpen;
     extern u8 gLuigiToggle;
     extern u8 gHudToggle;
     extern u8 gVisToggle;
+    extern u8 gDebugToggle;
     extern u8 g95Toggle;
     extern u8 gFlightToggle;
     extern u8 gTrollToggle;

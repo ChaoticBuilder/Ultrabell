@@ -1489,12 +1489,12 @@ void update_mario_health(struct MarioState *m) {
         }
 
         if (m->healCounter > 0) {
-            if (gRealToggle) m->health -= 0x30;
+            if (gRealToggle > 0) m->health -= 0x30;
             m->health += 0x40;
             m->healCounter--;
         }
         if (m->hurtCounter > 0) {
-            if (gRealToggle) m->health -= 0x40;
+            if (gRealToggle > 0) m->health -= 0x40;
             m->health -= 0x40;
             m->hurtCounter--;
         }

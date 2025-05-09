@@ -25,6 +25,7 @@
 #include "audio/internal.h"
 #include "audio/heap.h"
 #include "audio/seqplayer.h"
+#include "emutest.h"
 
 #include "config.h"
 
@@ -700,11 +701,19 @@ void music_menu(void) {
     print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
-/* DISABLED FEATURE:
-void ttc(void) {
-    print_text_fmt_int(120, 16, "state %d", gTTCSpeedSetting);
+void debug_stats(void) {
+    if (!gDebugToggle) return;
+    char debug[32];
+    if (gEmulator == EMU_CONSOLE) {
+        sprintf(debug, "EMU: N64!", gEmulator); // noway someone's playing my hack on everdrive!!!
+    } else {
+        (gEmulator != EMU_MUPEN64PLUS_NEXT)
+        ? sprintf(debug, "EMU: 0x0%x", gEmulator) // 0x0xxx
+        : sprintf(debug, "EMU: 0x00%x", gEmulator); // 0x00xx (for some reason, Mupen64Next / RetroArch needs an extra 0)
+    }
+
+    print_small_text_light(16, 210, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
-*/
 
 /**
  * Sets HUD status camera value depending of the actions
@@ -825,6 +834,7 @@ void render_hud(void) {
                 timer_troll();
                 visualizer_display();
                 music_menu();
+                debug_stats();
                 // ttc(); displays the clock's current state, technically I could've kept it in but nah
                 // what makes me mad tho is the fact I had to do this in the first place
                 // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal

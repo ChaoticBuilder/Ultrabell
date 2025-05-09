@@ -24,7 +24,7 @@ void whomp_init(void) {
         gSecondCameraFocus = o;
         cur_obj_scale(2.0f);
         if (o->oSubAction == 0) {
-            if (o->oDistanceToMario < 600.0f) {
+            if (o->oDistanceToMario < 1024.0f) {
                 o->oSubAction++;
                 seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
             } else {
@@ -35,7 +35,7 @@ void whomp_init(void) {
             DIALOG_FLAG_TURN_TO_MARIO, CUTSCENE_DIALOG, DIALOG_114)) {
             o->oAction = 2;
         }
-    } else if (o->oDistanceToMario < 500.0f) {
+    } else if (o->oDistanceToMario < 768.0f) {
         o->oAction = 1;
     }
 
@@ -65,22 +65,22 @@ void whomp_patrol(void) {
     s16 marioAngle = abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw);
     f32 distWalked = cur_obj_lateral_dist_to_home();
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS // Make this a behavior param?
-    f32 patrolDist = gCurrLevelNum == LEVEL_BITS ? 200.0f : 700.0f;
+    f32 patrolDist = gCurrLevelNum == LEVEL_BITS ? 256.0f : 768.0f;
 #else
-    f32 patrolDist = 700.0f;
+    f32 patrolDist = 768.0f;
 #endif
 
     cur_obj_init_animation_with_accel_and_sound(0, 1.0f);
-    o->oForwardVel = 3.0f;
+    o->oForwardVel = 4.0f;
 
     if (distWalked > patrolDist) {
         o->oAction = 7;
     } else if (marioAngle < 0x2000) {
-        if (o->oDistanceToMario < 1500.0f) {
-            o->oForwardVel = 9.0f;
-            cur_obj_init_animation_with_accel_and_sound(0, 3.0f);
+        if (o->oDistanceToMario < 768.0f) {
+            o->oForwardVel = 12.0f;
+            cur_obj_init_animation_with_accel_and_sound(0, 4.0f);
         }
-        if (o->oDistanceToMario < 300.0f) {
+        if (o->oDistanceToMario < 384.0f) {
             o->oAction = 3;
         }
     }
@@ -90,17 +90,17 @@ void whomp_patrol(void) {
 
 void king_whomp_chase(void) {
     cur_obj_init_animation_with_accel_and_sound(0, 1.0f);
-    o->oForwardVel = 3.0f;
+    o->oForwardVel = 4.0f;
     cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x200);
 
     if (o->oTimer > 30) {
         s16 marioAngle = abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw);
         if (marioAngle < 0x2000) {
-            if (o->oDistanceToMario < 1500.0f) {
-                o->oForwardVel = 9.0f;
+            if (o->oDistanceToMario < 768.0f) {
+                o->oForwardVel = 12.0f;
                 cur_obj_init_animation_with_accel_and_sound(0, 3.0f);
             }
-            if (o->oDistanceToMario < 300.0f) {
+            if (o->oDistanceToMario < 384.0f) {
                 o->oAction = 3;
             }
         }
@@ -108,7 +108,7 @@ void king_whomp_chase(void) {
 
     whomp_play_sfx_from_pound_animation();
 
-    if (mario_is_far_below_object(1000.0f)) {
+    if (mario_is_far_below_object(1024.0f)) {
         o->oAction = 0;
         stop_background_music(SEQUENCE_ARGS(4, SEQ_EVENT_BOSS));
     }
@@ -124,11 +124,11 @@ void whomp_prepare_jump(void) {
 
 void whomp_jump(void) {
     if (o->oTimer == 0) {
-        o->oVelY = 40.0f;
+        o->oVelY = 48.0f;
     }
 
-    if (o->oTimer >= 8) {
-        o->oAngleVelPitch += 0x100;
+    if (o->oTimer > 7) {
+        o->oAngleVelPitch += (o->oTimer - 7) * 0x60;
         o->oFaceAnglePitch += o->oAngleVelPitch;
         if (o->oFaceAnglePitch > 0x4000) {
             o->oAngleVelPitch = 0;
@@ -262,15 +262,15 @@ void king_whomp_stop_music(void) {
 }
 
 ObjActionFunc sWhompActions[] = {
-    whomp_init,
-    whomp_patrol,
-    king_whomp_chase,
-    whomp_prepare_jump,
-    whomp_jump,
-    whomp_land,
-    whomp_on_ground_general,
-    whomp_turn, whomp_die,
-    king_whomp_stop_music,
+    whomp_init,                 // 0
+    whomp_patrol,               // 1
+    king_whomp_chase,           // 2
+    whomp_prepare_jump,         // 3
+    whomp_jump,                 // 4
+    whomp_land,                 // 5
+    whomp_on_ground_general,    // 6
+    whomp_turn, whomp_die,      // 7
+    king_whomp_stop_music,      // 8
 };
 
 void bhv_whomp_loop(void) {
