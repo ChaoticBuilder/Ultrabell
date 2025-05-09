@@ -534,7 +534,7 @@ s32 act_jump(struct MarioState *m) {
     ? MARIO_ANIM_SINGLE_JUMP
     : MARIO_ANIM_SLIDEJUMP;
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_PRESSED && m->prevAction != ACT_BUTT_SLIDE) {
         return set_mario_action(m, ACT_JUMP_KICK, 0);
     }
 
@@ -550,6 +550,10 @@ s32 act_jump(struct MarioState *m) {
 }
 
 s32 act_double_jump(struct MarioState *m) {
+    if (gABCToggle) {
+        set_mario_action(m, m->prevAction, 0);
+        return FALSE;
+    }
     s32 animation = (m->vel[1] >= 0.0f)
         ? MARIO_ANIM_DOUBLE_JUMP_RISE
         : MARIO_ANIM_DOUBLE_JUMP_FALL;
@@ -617,7 +621,7 @@ s32 act_freefall(struct MarioState *m) {
         }
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_PRESSED && (m->prevAction != ACT_TOP_OF_POLE_JUMP || m->actionTimer > 2)) {
         return set_mario_action(m, ACT_JUMP_KICK, 0);
     }
 
@@ -638,10 +642,10 @@ s32 act_freefall(struct MarioState *m) {
         case 4:
             if (gRealToggle) break;
             m->vel[1] += 3.0f;
-            m->actionTimer++;
             if (m->actionTimer > 3) m->actionArg = 0;
             break;
     }
+    m->actionTimer++;
 
     common_air_action_step(m, ACT_FREEFALL_LAND, animation, AIR_STEP_CHECK_LEDGE_GRAB);
     return FALSE;
@@ -652,7 +656,7 @@ s32 act_hold_jump(struct MarioState *m) {
         return drop_and_set_mario_action(m, ACT_FREEFALL, 0);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_PRESSED && m->prevAction != ACT_HOLD_BUTT_SLIDE) {
         if (m->heldObj->oInteractionSubtype & INT_SUBTYPE_HOLDABLE_NPC)
             return set_mario_action(m, ACT_FREEFALL, 0);
         return set_mario_action(m, ACT_AIR_THROW, 0);
@@ -707,7 +711,10 @@ s32 act_hold_freefall(struct MarioState *m) {
 }
 
 s32 act_side_flip(struct MarioState *m) {
-    if (gABCToggle) return set_mario_action(m, ACT_JUMP, 0);
+    if (gABCToggle) {
+        set_mario_action(m, m->prevAction, 0);
+        return FALSE;
+    }
 
     if (m->input & INPUT_B_PRESSED) {
         m->marioObj->header.gfx.angle[1] += 0x8000;
@@ -1081,7 +1088,7 @@ s32 act_ground_pound(struct MarioState *m) {
     u32 stepResult;
     f32 yOffset;
 
-    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED | INPUT_Z_PRESSED) && m->actionTimer >= 8 && !g95Toggle) {
+    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED | INPUT_Z_PRESSED) && m->actionTimer > 6 && !g95Toggle) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
 
@@ -1325,7 +1332,7 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
 }
 
 s32 check_wall_kick(struct MarioState *m) {
-    if ((m->input & INPUT_A_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL) {
+    if ((m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL)) {
         if ((!g95Toggle && !gLuigiToggle) && m->vel[1] >= 0) m->forwardVel += (m->vel[1] / 2.0f) + 10;
         m->faceAngle[1] += 0x8000;
         if (gABCToggle) return set_mario_action(m, ACT_FREEFALL, 0);
@@ -1697,6 +1704,7 @@ s32 act_butt_slide_air(struct MarioState *m) {
             break;
 
         case AIR_STEP_HIT_WALL:
+            mario_bonk_reflection(m, TRUE);
             (m->vel[1] >= 0.0f)
             ? (m->vel[1] = m->vel[1] / 2)
             : (m->vel[1] = -m->vel[1] / 4);
@@ -1737,6 +1745,7 @@ s32 act_hold_butt_slide_air(struct MarioState *m) {
             break;
 
         case AIR_STEP_HIT_WALL:
+            mario_bonk_reflection(m, TRUE);
             (m->vel[1] >= 0.0f)
             ? (m->vel[1] = m->vel[1] / 2)
             : (m->vel[1] = -m->vel[1] / 4);

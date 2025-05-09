@@ -1455,7 +1455,7 @@ s32 common_slide_action_with_jump(struct MarioState *m, u32 stopAction, u32 jump
     }
 #else
     if (m->actionTimer == 5) {
-        if (m->input & INPUT_A_PRESSED) {
+        if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
             return set_jumping_action(m, jumpAction, 0);
         }
     } else {
@@ -1471,9 +1471,32 @@ s32 common_slide_action_with_jump(struct MarioState *m, u32 stopAction, u32 jump
     return FALSE;
 }
 
+s32 stomach_slide_action(struct MarioState *m, u32 stopAction, u32 airAction, s32 animation) {
+    if (m->actionTimer == 5) {
+        if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
+#if ENABLE_RUMBLE
+            queue_rumble_data(5, 80);
+#endif
+            return drop_and_set_mario_action(
+                m, m->forwardVel >= 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT, 0);
+        }
+    } else {
+        m->actionTimer++;
+    }
+
+    if (update_sliding(m, 4.0f)) {
+        return set_mario_action(m, stopAction, 0);
+    }
+
+    common_slide_action(m, stopAction, airAction, animation);
+    return FALSE;
+}
+
 s32 act_butt_slide(struct MarioState *m) {
-    s32 cancel = common_slide_action_with_jump(m, ACT_BUTT_SLIDE_STOP, ACT_JUMP, ACT_BUTT_SLIDE_AIR,
-                                               MARIO_ANIM_SLIDE);
+    s32 cancel;
+    (!gABCToggle)
+    ? (cancel = common_slide_action_with_jump(m, ACT_BUTT_SLIDE_STOP, ACT_JUMP, ACT_BUTT_SLIDE_AIR, MARIO_ANIM_SLIDE))
+    : (cancel = stomach_slide_action(m, ACT_BUTT_SLIDE_STOP, ACT_BUTT_SLIDE_AIR, MARIO_ANIM_SLIDE));
     tilt_body_butt_slide(m);
     return cancel;
 }
@@ -1483,8 +1506,13 @@ s32 act_hold_butt_slide(struct MarioState *m) {
         return drop_and_set_mario_action(m, ACT_BUTT_SLIDE, 0);
     }
 
-    s32 cancel = common_slide_action_with_jump(m, ACT_HOLD_BUTT_SLIDE_STOP, ACT_HOLD_JUMP, ACT_HOLD_BUTT_SLIDE_AIR,
-                                               MARIO_ANIM_SLIDING_ON_BOTTOM_WITH_LIGHT_OBJ);
+    s32 cancel;
+    (!gABCToggle)
+    ? (cancel = common_slide_action_with_jump(m, ACT_HOLD_BUTT_SLIDE_STOP, ACT_HOLD_JUMP, ACT_HOLD_BUTT_SLIDE_AIR,
+                                              MARIO_ANIM_SLIDING_ON_BOTTOM_WITH_LIGHT_OBJ))
+    : (cancel = stomach_slide_action(m, ACT_HOLD_BUTT_SLIDE_STOP, ACT_HOLD_BUTT_SLIDE_AIR,
+                                     MARIO_ANIM_SLIDING_ON_BOTTOM_WITH_LIGHT_OBJ));
+
     tilt_body_butt_slide(m);
     return cancel;
 }
@@ -1555,27 +1583,6 @@ s32 act_slide_kick_slide(struct MarioState *m) {
     if (gGlobalTimer % 2 == 0) {
         m->particleFlags |= PARTICLE_DUST;
     }
-    return FALSE;
-}
-
-s32 stomach_slide_action(struct MarioState *m, u32 stopAction, u32 airAction, s32 animation) {
-    if (m->actionTimer == 5) {
-        if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
-#if ENABLE_RUMBLE
-            queue_rumble_data(5, 80);
-#endif
-            return drop_and_set_mario_action(
-                m, m->forwardVel >= 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT, 0);
-        }
-    } else {
-        m->actionTimer++;
-    }
-
-    if (update_sliding(m, 4.0f)) {
-        return set_mario_action(m, stopAction, 0);
-    }
-
-    common_slide_action(m, stopAction, airAction, animation);
     return FALSE;
 }
 

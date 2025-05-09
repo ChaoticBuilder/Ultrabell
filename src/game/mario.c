@@ -795,9 +795,9 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_TOP_OF_POLE_JUMP:
-            (!gRealToggle && !gABCToggle)
-            ? set_mario_y_vel_based_on_fspeed(m, 62.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 36.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 62.0f, 0.0f);
+            if (gRealToggle) set_mario_y_vel_based_on_fspeed(m, 36.0f, 0.0f);
+            if (gABCToggle) m->vel[1] = 0;
             m->wallKickTimer = 0;
             if (m->forwardVel < 24.0f)
                 m->forwardVel = 24.0f;
@@ -833,7 +833,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_DIVE:
-            if (!g95Toggle) {
+            if (!g95Toggle && !gABCToggle) {
                 if (m->vel[1] < 0) m->vel[1] = 0;
                 m->vel[1] /= 2.0f;
                 m->vel[1] += 32.0f;
@@ -879,7 +879,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_JUMP_KICK:
-            if (!g95Toggle) {
+            if (!g95Toggle && !gABCToggle) {
                 if (m->vel[1] < 0) m->vel[1] = 0;
                 m->vel[1] /= 2.0f;
                 m->vel[1] += 32.0f;
@@ -1489,12 +1489,12 @@ void update_mario_health(struct MarioState *m) {
         }
 
         if (m->healCounter > 0) {
-            if (!gRealToggle) m->health -= 0x30;
+            if (gRealToggle) m->health -= 0x30;
             m->health += 0x40;
             m->healCounter--;
         }
         if (m->hurtCounter > 0) {
-            if (!gRealToggle) m->health -= 0x40;
+            if (gRealToggle) m->health -= 0x40;
             m->health -= 0x40;
             m->hurtCounter--;
         }

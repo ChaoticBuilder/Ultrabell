@@ -101,7 +101,8 @@ s32 act_holding_pole(struct MarioState *m) {
 
     if ((m->input & INPUT_Z_PRESSED) || m->health < 0x100) {
         add_tree_leaf_particles(m);
-        m->forwardVel = -2.0f;
+        m->faceAngle[1] += 0x8000;
+        m->forwardVel = 4.0f;
         return set_mario_action(m, ACT_SOFT_BONK, 0);
     }
 
@@ -161,7 +162,8 @@ s32 act_climbing_pole(struct MarioState *m) {
 
     if (m->health < 0x100) {
         add_tree_leaf_particles(m);
-        m->forwardVel = -2.0f;
+        m->faceAngle[1] += 0x8000;
+        m->forwardVel = 4.0f;
         return set_mario_action(m, ACT_SOFT_BONK, 0);
     }
 
@@ -249,9 +251,10 @@ s32 act_top_of_pole_transition(struct MarioState *m) {
 }
 
 s32 act_top_of_pole(struct MarioState *m) {
-    if (m->input & INPUT_A_PRESSED) {
+    if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
         return set_mario_action(m, ACT_TOP_OF_POLE_JUMP, 0);
     }
+
     if (m->controller->stickY < -16.0f) {
         return set_mario_action(m, ACT_TOP_OF_POLE_TRANSITION, 1);
     }
