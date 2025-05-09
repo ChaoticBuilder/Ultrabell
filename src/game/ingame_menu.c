@@ -1590,9 +1590,6 @@ void config_options_scroll(void) {
 }
 
 void config_options(void) {
-    (gRealToggle < 1)
-    ? (g95Toggle = FALSE)
-    : (g95Toggle = TRUE);
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
         if (gConfigScroll == 2) {
 #ifdef WIDE
@@ -1607,7 +1604,12 @@ void config_options(void) {
         if (gConfigScroll == 7) gLuigiToggle ^= 1;
         if (gConfigScroll == 8) gDiveToggle = (gDiveToggle + 1) % 3;
         if (gConfigScroll == 9) g95Toggle ^= 1;
-        if (gConfigScroll == 10) gRealToggle = (gRealToggle + 1) % 3;
+        if (gConfigScroll == 10) {
+            gRealToggle = (gRealToggle + 1) % 3;
+            (!gRealToggle)
+            ? (g95Toggle = FALSE)
+            : (g95Toggle = TRUE);
+        }
         // if (gHudDisplay.stars >= 100)
         if (gConfigScroll == 12) gFlightToggle ^= 1;
         if (gConfigScroll == 13) gTrollToggle ^= 1;

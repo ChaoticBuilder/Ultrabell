@@ -1533,9 +1533,7 @@ s32 act_teleport_fade_in(struct MarioState *m) {
             }
             set_mario_action(m, ACT_WATER_IDLE, 0);
         } else {
-            m->vel[1] = 32.0f;
-            m->forwardVel = 32.0f;
-            return set_mario_action(m, ACT_JUMP, 0);
+            set_mario_action(m, ACT_IDLE, 0);
         }
     }
 
