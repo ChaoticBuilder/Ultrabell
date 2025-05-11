@@ -89,7 +89,8 @@ struct Painting {
     f32 entryDispersionFactor;
 
     /// How far the ripple has spread
-    f32 rippleTimer;
+    u8 rippleTimer;
+    // Thanks, Kaze! :3
 
     /// The x and y origin of the ripple
     f32 rippleX;

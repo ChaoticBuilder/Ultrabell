@@ -134,7 +134,7 @@
 /**
  * Reset the timer to 0.
  */
-#define RESET_TIMER 100
+#define RESET_TIMER 0x7F
 
 /// A copy of the type of floor Mario is standing on.
 s16 gPaintingMarioFloorType;
@@ -354,7 +354,7 @@ void painting_state(s8 state, struct Painting *painting, struct Painting *painti
 
     // Because true or false would be too simple...
     if (resetTimer == RESET_TIMER) {
-        painting->rippleTimer = 0.0f;
+        painting->rippleTimer = 0;
     }
     gRipplingPainting = painting;
 }
@@ -580,10 +580,14 @@ void painting_update_ripple_state(struct Painting *painting) {
     if (gPaintingUpdateCounter != gLastPaintingUpdateCounter) {
         painting->currRippleMag *= painting->rippleDecay;
 
-        if (painting->rippleTimer >= ((1 << 24) - 1.0f)) {
-            painting->rippleTimer = 0.0f;
+        /*
+        if (painting->rippleTimer >= ((1 << 24) - 1)) {
+            painting->rippleTimer = 0;
         }
-        painting->rippleTimer += 1.0f;
+        */
+        painting->rippleTimer += 1;
+        if (painting->rippleTimer == 0xFF)
+            painting->rippleTimer = 0x23; // seamlessly loops
     }
     if (painting->rippleTrigger == RIPPLE_TRIGGER_PROXIMITY) {
         // if the painting is barely rippling, make it stop rippling
@@ -619,7 +623,7 @@ s16 calculate_ripple_at_point(struct Painting *painting, f32 posX, f32 posY) {
     /// Controls how fast the ripple spreads
     f32 dispersionFactor = painting->dispersionFactor;
     /// How far the ripple has spread
-    f32 rippleTimer = painting->rippleTimer;
+    u8 rippleTimer = painting->rippleTimer;
     /// x and y ripple origin
     f32 rippleX = painting->rippleX;
     f32 rippleY = painting->rippleY;
@@ -1073,7 +1077,7 @@ void reset_painting(struct Painting *painting) {
     painting->rippleDecay = 1.0f;
     painting->currRippleRate = 0.0f;
     painting->dispersionFactor = 0.0f;
-    painting->rippleTimer = 0.0f;
+    painting->rippleTimer = 0;
     painting->rippleX = 0.0f;
     painting->rippleY = 0.0f;
     if (painting == &ddd_painting) {

@@ -30,7 +30,6 @@
 #include "profiling.h"
 #include "gfx_dimensions.h"
 
-UNUSED u8 dirCheck = FALSE;
 u8 gVisToggle = FALSE;
 
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
@@ -694,7 +693,7 @@ void set_camera_height(struct Camera *c, f32 goalHeight) {
     f32 baseOff = 125.f;
     f32 camCeilHeight = find_ceil(c->pos[0], gLakituState.goalPos[1] - 50.f, c->pos[2], &surface);
 #ifdef FAST_VERTICAL_CAMERA_MOVEMENT
-    f32 approachRate = 20.0f;
+    f32 approachRate = 40.0f;
 #endif
 
     if (sMarioCamState->action & ACT_FLAG_HANGING) {
@@ -733,7 +732,7 @@ void set_camera_height(struct Camera *c, f32 goalHeight) {
         }
 
 #ifdef FAST_VERTICAL_CAMERA_MOVEMENT
-        approachRate += ABS(c->pos[1] - goalHeight) / 20;
+        approachRate += ABS(c->pos[1] - goalHeight) / 40;
         approach_camera_height(c, goalHeight, approachRate);
 #else
         approach_camera_height(c, goalHeight, 40.f);
@@ -896,8 +895,8 @@ s32 update_8_directions_camera(UNUSED struct Camera *c, Vec3f focus, Vec3f pos) 
  * If sModeOffsetYaw is 0, the camera points directly at the area center point.
  */
 void radial_camera_move(struct Camera *c) {
-    s16 maxAreaYaw = DEGREES(45);
-    s16 minAreaYaw = DEGREES(-45);
+    s16 maxAreaYaw = DEGREES(60);
+    s16 minAreaYaw = DEGREES(-60);
     s16 rotateSpeed = 0x800;
     s16 avoidYaw;
     f32 areaDistX = sMarioCamState->pos[0] - c->areaCenX;
@@ -931,7 +930,7 @@ void radial_camera_move(struct Camera *c) {
     }
 
     if (gCameraMovementFlags & CAM_MOVE_ENTERED_ROTATE_SURFACE) {
-        rotateSpeed = 0x100;
+        rotateSpeed = 0x400;
     }
 
     if (c->mode == CAMERA_MODE_OUTWARD_RADIAL) {
@@ -990,12 +989,12 @@ void radial_camera_move(struct Camera *c) {
 
         // If it's the second time rotating, rotate all the way to +-105 degrees.
         if ((s2ndRotateFlags & CAM_MOVE_ROTATE_RIGHT) && (gCameraMovementFlags & CAM_MOVE_ROTATE_RIGHT)
-            && camera_approach_s16_symmetric_bool(&sModeOffsetYaw, DEGREES(90), rotateSpeed) == 0) {
+            && camera_approach_s16_symmetric_bool(&sModeOffsetYaw, DEGREES(105), rotateSpeed) == 0) {
             gCameraMovementFlags &= ~(CAM_MOVE_ROTATE_RIGHT | CAM_MOVE_ENTERED_ROTATE_SURFACE);
             s2ndRotateFlags &= ~CAM_MOVE_ROTATE_RIGHT;
         }
         if ((s2ndRotateFlags & CAM_MOVE_ROTATE_LEFT) && (gCameraMovementFlags & CAM_MOVE_ROTATE_LEFT)
-            && camera_approach_s16_symmetric_bool(&sModeOffsetYaw, DEGREES(-90), rotateSpeed) == 0) {
+            && camera_approach_s16_symmetric_bool(&sModeOffsetYaw, DEGREES(-105), rotateSpeed) == 0) {
             gCameraMovementFlags &= ~(CAM_MOVE_ROTATE_LEFT | CAM_MOVE_ENTERED_ROTATE_SURFACE);
             s2ndRotateFlags &= ~CAM_MOVE_ROTATE_LEFT;
         }
@@ -1573,7 +1572,7 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
 
     focus[1] = (sMarioCamState->pos[1] + secondFocus[1]) / 2.f + 100.f;
     if (heldState == 1) {
-        focus[1] += /* 300.f * */ sins((gMarioStates[0].angleVel[1] > 0.f) ?  gMarioStates[0].angleVel[1]
+        focus[1] += sins((gMarioStates[0].angleVel[1] > 0.f) ?  gMarioStates[0].angleVel[1]
                                                                      : -gMarioStates[0].angleVel[1]);
     }
 
@@ -1603,7 +1602,7 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
  * type exits the course or not.
  */
 u8 sDanceCutsceneTable[] = {
-    CUTSCENE_DANCE_DEFAULT, CUTSCENE_DANCE_ROTATE, CUTSCENE_DANCE_CLOSEUP, CUTSCENE_KEY_DANCE, CUTSCENE_DANCE_DEFAULT,
+    CUTSCENE_DANCE_FLY_AWAY, CUTSCENE_DANCE_ROTATE, CUTSCENE_DANCE_CLOSEUP, CUTSCENE_KEY_DANCE, CUTSCENE_DANCE_DEFAULT,
     CUTSCENE_NONE,           CUTSCENE_NONE,         CUTSCENE_NONE,          CUTSCENE_NONE,      CUTSCENE_NONE,
 };
 
@@ -1668,8 +1667,8 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     s16 yaw;
     s16 goalPitch = -sMarioCamState->faceAngle[0];
     s16 marioYaw = sMarioCamState->faceAngle[1] + DEGREES(180);
-    s16 yawSpeed = 192;
-    s16 pitchInc = 384;
+    s16 yawSpeed = 128;
+    s16 pitchInc = 256;
     f32 maxDist = 1000.f;
     f32 focYOff = 125.f;
 

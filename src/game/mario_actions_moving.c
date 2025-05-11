@@ -444,8 +444,8 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel += 1.0f;
     } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
-        if (!g95Toggle) m->forwardVel += 0.75f;
-        if (g95Toggle) m->forwardVel += 0.5f;
+        m->forwardVel += 0.5f;
+        if (!g95Toggle) m->forwardVel += 0.25f;
         if (gRealToggle) m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.125f;
@@ -1558,7 +1558,7 @@ s32 act_slide_kick_slide(struct MarioState *m) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif
-        return set_jumping_action(m, ACT_FORWARD_ROLLOUT, 0);
+        return set_mario_action(m, ACT_FORWARD_ROLLOUT, 0);
     }
 
     set_mario_animation(m, MARIO_ANIM_SLIDE_KICK);

@@ -1785,7 +1785,7 @@ s32 act_lava_boost(struct MarioState *m) {
             if (m->floor->type == SURFACE_BURNING) {
                 m->actionState = ACT_STATE_LAVA_BOOST_HIT_LAVA;
                 m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 12 : 18;
-                m->vel[1] = 96.0f;
+                (!g95Toggle) ? (m->vel[1] = 80.0f) : (m->vel[1] = 64.0f);
                 play_sound(SOUND_MARIO_ON_FIRE, m->marioObj->header.gfx.cameraToObject);
 #if ENABLE_RUMBLE
                 queue_rumble_data(5, 80);

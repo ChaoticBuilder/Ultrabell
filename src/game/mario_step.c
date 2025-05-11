@@ -631,19 +631,19 @@ void apply_gravity(struct MarioState *m) {
             sTerminalVelocity = TRUE;
         }
     } else if (m->action == ACT_LONG_JUMP || m->action == ACT_BBH_ENTER_SPIN) {
-        m->vel[1] -= 2.5f;
+        m->vel[1] -= 2.0f;
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
-                m->vel[1] += 1.25f;
+                m->vel[1] += 1.0f;
                 m->vel[1] -= (m->vel[1] / 80);
             }
             sTerminalVelocity = TRUE;
         }
     } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_SLIDE_KICK || m->action == ACT_FALL_AFTER_STAR_GRAB) {
-        m->vel[1] -= 4.0f;
+        m->vel[1] -= 3.5f;
         if (m->vel[1] < -64.0f) {
             if (!gRealToggle) {
-                m->vel[1] += 2.0f;
+                m->vel[1] += 1.75f;
                 m->vel[1] -= (m->vel[1] / 40);
             }
             sTerminalVelocity = TRUE;
@@ -658,9 +658,9 @@ void apply_gravity(struct MarioState *m) {
             sTerminalVelocity = TRUE;
         }
     } else if (should_strengthen_gravity_for_jump_ascent(m)) {
-        m->vel[1] /= 5.0f;
+        m->vel[1] /= 4.0f;
     } else if (m->action & ACT_FLAG_METAL_WATER) {
-        m->vel[1] -= 0.0f;
+        m->vel[1] -= 1.0f;
         if (m->vel[1] < -24.0f) {
             m->vel[1] = -24.0f;
             if (gRealToggle) { sTerminalVelocity = TRUE; }
@@ -668,32 +668,33 @@ void apply_gravity(struct MarioState *m) {
     } else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
 
-        m->vel[1] -= 2.5f;
+        m->vel[1] -= 2.0f;
+        if (gRealToggle) m->vel[1] -= 0.5f;
         if (m->vel[1] < -40.0f) {
             if (!gRealToggle) {
-                m->vel[1] += 1.25f;
-                m->vel[1] -= (m->vel[1] / 36);
+                m->vel[1] += 1.0f;
+                m->vel[1] -= (m->vel[1] / 40);
             }
             sTerminalVelocity = TRUE;
         }
     } else {
-        m->vel[1] -= 5.0f;
+        m->vel[1] -= 4.0f;
+        if (gRealToggle) m->vel[1] -= 1.0f;
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
-                m->vel[1] += 2.5f;
-                m->vel[1] -= (m->vel[1] / 40);
+                m->vel[1] += 2.0f;
+                m->vel[1] -= (m->vel[1] / 48);
             }
             sTerminalVelocity = TRUE;
         }
     }
     if (m->vel[1] >= 0) sTerminalVelocity = FALSE;
     if (m->flags & MARIO_METAL_CAP && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
-        m->vel[1] -= 1.5f;
-        if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) {
+        m->vel[1] -= 2.0f;
+        if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK)
             m->vel[1] += 0.5f;
-        }
     }
-    if (gLuigiToggle) {
+    if (gLuigiToggle && !gRealToggle) {
         if (m->marioBodyState->wingFlutter == FALSE && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN && m->action != ACT_TWIRLING)) {
             m->vel[1] += 1.0f;
             if (m->vel[1] < 8.0f) {

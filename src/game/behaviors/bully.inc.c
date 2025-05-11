@@ -1,4 +1,5 @@
 // bully.inc.c
+#include "src/game/print.h"
 
 static struct ObjectHitbox sSmallBullyHitbox = {
     /* interactType:      */ INTERACT_BULLY,
@@ -66,20 +67,21 @@ void bully_act_chase_mario(void) {
     f32 homeX = o->oHomeX;
     f32 posY = o->oPosY;
     f32 homeZ = o->oHomeZ;
+    s16 objDYaw = o->oMoveAngleYaw - obj_angle_to_object(o, gMarioObject);
 
-    if (o->oTimer < 10) {
-        o->oForwardVel = 3.0f;
-        obj_turn_toward_object(o, gMarioObject, O_MOVE_ANGLE_YAW_INDEX, 0x1000);
-    } else if (o->oBehParams2ndByte == BULLY_BP_SIZE_SMALL) {
-        o->oForwardVel = 20.0f;
-        if (o->oTimer > 30) {
+    if (o->oSubAction == 0) {
+        o->oForwardVel = 2.0f;
+        o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, obj_angle_to_object(o, gMarioObject), 0x500);
+        if (ABS(objDYaw) < DEGREES(11.25)) { // 0x03E8-yard stare intensifies...
+            if (o->oBehParams2ndByte == BULLY_BP_SIZE_BIG) o->oSubAction++;
+            o->oSubAction++;
             o->oTimer = 0;
         }
     } else {
-        o->oForwardVel = 30.0f;
-        if (o->oTimer > 35) {
-            o->oTimer = 0;
-        }
+        (o->oSubAction == 1)
+        ? (o->oForwardVel = 16.0f)
+        : (o->oForwardVel = 24.0f);
+        if (ABS(objDYaw) >= DEGREES(90)) o->oSubAction = 0;
     }
 
     if (!is_point_within_radius_of_mario(homeX, posY, homeZ, 1000)) {
@@ -94,7 +96,7 @@ void bully_act_knockback(void) {
         o->oBullyKBTimerAndMinionKOCounter++;
         o->oFlags |= OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW;
         o->oMoveAngleYaw = o->oFaceAngleYaw;
-        obj_turn_toward_object(o, gMarioObject, O_MOVE_ANGLE_YAW_INDEX, 1280);
+        obj_turn_toward_object(o, gMarioObject, O_MOVE_ANGLE_YAW_INDEX, 0x500);
     } else {
         o->header.gfx.animInfo.animFrame = 0;
     }

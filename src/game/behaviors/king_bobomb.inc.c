@@ -186,7 +186,7 @@ void king_bobomb_act_hit_ground(void) { // act 6
         cur_obj_init_animation_with_sound(KING_BOBOMB_ANIM_WALKING);
         cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
 
-        if ((o->oMoveAngleYaw >= o->oAngleToMario - 0x3000) && (o->oMoveAngleYaw <= o->oAngleToMario + 0x3000)) {
+        if (o->oMoveAngleYaw >= o->oAngleToMario - 0x3000 && o->oMoveAngleYaw <= o->oAngleToMario + 0x3000) {
             o->oAction = KING_BOBOMB_ACT_ACTIVE;
         }
     }
