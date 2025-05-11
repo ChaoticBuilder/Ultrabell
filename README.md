@@ -14,6 +14,10 @@ spongelover6996 on Discord for the Time Attack idea (which hasn't been added yet
 
 xbciom also on Discord for the FOV shake in "intense" levels, other level ideas, and music, (that will also be added later, except for the fov shake, that's already added)
 
+SMF128: Realistic Mode and also for just existing tbh bro's based asf
+
+iman/eman/#1 hater of 3 and w/whatever tf else this mf goes by: Possibly a future lapping feature, idk yet tbh
+
 Kaze Emanuar, for making amazing videos on SM64 optimizations, which taught me more about the game!
 
 And finally, Credits to the amazing people behind the [HackerSM64](https://github.com/HackerN64/HackerSM64) Repo! I couldn't make this hack without them!
