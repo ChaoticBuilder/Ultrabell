@@ -596,6 +596,7 @@ s32 act_backflip(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
+    if (m->actionTimer++ < 4) m->vel[1] *= ((m->actionTimer + 12) * 0.0625f);
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAH_WAH_HOO);
     if (!gLuigiToggle) {
@@ -1605,7 +1606,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
 
 s32 act_forward_rollout(struct MarioState *m) {
     if (m->actionState == 0) {
-        m->vel[1] = 40.0f;
+        m->vel[1] = 36.0f;
         m->actionState = 1;
     }
 
@@ -1646,7 +1647,7 @@ s32 act_forward_rollout(struct MarioState *m) {
 
 s32 act_backward_rollout(struct MarioState *m) {
     if (m->actionState == 0) {
-        m->vel[1] = 40.0f;
+        m->vel[1] = 36.0f;
         m->actionState = 1;
     }
 

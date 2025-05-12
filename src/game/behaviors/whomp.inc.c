@@ -24,7 +24,7 @@ void whomp_init(void) {
         gSecondCameraFocus = o;
         cur_obj_scale(2.0f);
         if (o->oSubAction == 0) {
-            if (o->oDistanceToMario < 1024.0f) {
+            if (o->oDistanceToMario < 768.0f) {
                 o->oSubAction++;
                 seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
             } else {
@@ -76,7 +76,7 @@ void whomp_patrol(void) {
     if (distWalked > patrolDist) {
         o->oAction = 7;
     } else if (marioAngle < 0x2000) {
-        if (o->oDistanceToMario < 768.0f) {
+        if (o->oDistanceToMario < 1024.0f) {
             o->oForwardVel = 12.0f;
             cur_obj_init_animation_with_accel_and_sound(0, 4.0f);
         }
@@ -96,7 +96,7 @@ void king_whomp_chase(void) {
     if (o->oTimer > 30) {
         s16 marioAngle = abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw);
         if (marioAngle < 0x2000) {
-            if (o->oDistanceToMario < 768.0f) {
+            if (o->oDistanceToMario < 1024.0f) {
                 o->oForwardVel = 12.0f;
                 cur_obj_init_animation_with_accel_and_sound(0, 3.0f);
             }
@@ -124,11 +124,11 @@ void whomp_prepare_jump(void) {
 
 void whomp_jump(void) {
     if (o->oTimer == 0) {
-        o->oVelY = 48.0f;
+        o->oVelY = 40.0f;
     }
 
-    if (o->oTimer > 7) {
-        o->oAngleVelPitch += (o->oTimer - 7) * 0x60;
+    if (o->oTimer > 5) {
+        o->oAngleVelPitch += (o->oTimer - 4) * 0x20;
         o->oFaceAnglePitch += o->oAngleVelPitch;
         if (o->oFaceAnglePitch > 0x4000) {
             o->oAngleVelPitch = 0;
@@ -216,10 +216,10 @@ void whomp_on_ground_general(void) {
         }
         if (o->oTimer > 100 || (gMarioState->action == ACT_SQUISHED && o->oTimer > 30)) {
             o->oSubAction = 10;
+            o->oTimer = 0;
         }
     } else if (o->oFaceAnglePitch > 0) {
-        o->oAngleVelPitch = -0x200;
-        o->oFaceAnglePitch += o->oAngleVelPitch;
+        o->oFaceAnglePitch -= (o->oTimer + 4) * 0x10;
     } else {
         o->oAngleVelPitch = 0;
         o->oFaceAnglePitch = 0;

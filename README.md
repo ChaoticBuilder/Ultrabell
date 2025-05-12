@@ -14,7 +14,7 @@ spongelover6996 on Discord for the Time Attack idea (which hasn't been added yet
 
 xbciom also on Discord for the FOV shake in "intense" levels, other level ideas, and music, (that will also be added later, except for the fov shake, that's already added)
 
-SMF128: and also for just existing tbh bro's based asf
+SMF128: and for bro just existing tbh bro's based asf
 
 iman/eman/3 and w hater/whatever this mf goes by: Possibly a future lapping feature, idk yet tbh
 

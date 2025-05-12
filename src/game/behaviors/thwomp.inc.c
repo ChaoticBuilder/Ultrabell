@@ -10,7 +10,7 @@ void grindel_thwomp_act_on_ground(void) {
 }
 
 void grindel_thwomp_act_falling(void) {
-    o->oVelY += -4.0f;
+    o->oVelY -= 6.0f;
     o->oPosY += o->oVelY;
     if (o->oPosY < o->oHomeY) {
         o->oPosY = o->oHomeY;

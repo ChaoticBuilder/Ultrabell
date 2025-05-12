@@ -5,7 +5,7 @@
 #include "src/game/print.h"
 
 void bhv_1up_interact(void) {
-    f32 rand = random_float();
+    // removed the random death thing, it was kinda pointless honestly
     if (obj_check_if_collided_with_object(o, gMarioObject)) {
         play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
 #ifdef MUSHROOMS_HEAL
@@ -15,13 +15,7 @@ void bhv_1up_interact(void) {
 #endif
 #endif
 #ifdef ENABLE_LIVES
-    if (!gRealToggle) {
-        if (rand < 0.0625f && !gDebugLevelSelect && !gTrollToggle) {
-            gMarioState->hurtCounter = 31;
-        } else {
-            gMarioState->numLives++;
-        }
-    }
+    if (!gRealToggle) gMarioState->numLives++;
 #endif
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
 #if ENABLE_RUMBLE
