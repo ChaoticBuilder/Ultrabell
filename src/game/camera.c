@@ -9256,14 +9256,14 @@ void cutscene_intro_peach_letter(struct Camera *c) {
     clamp_pitch(c->pos, c->focus, 0x3B00, -0x3B00);
 }
 void beta_intro_init(struct Camera *c) {
-    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, -0x450, 0, 0); // 0x310
+    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, -0x140, 0, 0);
 }
 
 void beta_intro_camera_rotate(struct Camera *c) {
-    c->pos[1] = 512.0f; // 368
-    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, 0, 0, -0x214);
+    c->pos[1] = 448.0f; // 368
+    rotate_and_move_vec3f(c->pos, sMarioCamState->pos, 0, 0, -0x1C4);
     if (gCutsceneTimer >= 60) {
-        c->pos[0] = -1329.0f;
+        c->pos[0] = -1472.0f;
     }
 }
 void beta_intro(struct Camera *c) {

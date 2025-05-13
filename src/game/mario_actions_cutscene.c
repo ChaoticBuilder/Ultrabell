@@ -1332,7 +1332,7 @@ s32 act_special_death_exit(struct MarioState *m) {
         return FALSE;
     }
 
-    if (launch_mario_until_land(m, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -20.0f)) {
+    if (launch_mario_until_land(m, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -24.0f)) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
 #endif

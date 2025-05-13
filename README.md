@@ -10,13 +10,13 @@ it's in-between the demos shown off at Shoshinkai, (later known as Space World) 
 I've made several changes that recreate beta mechanics / content, fix (a few) bugs, add in my own custom content including brand new levels, and other various things!
 
 CREDITS:
-spongelover6996 on Discord for the Time Attack idea (which hasn't been added yet, will do that eventually, I'm just lazy tbh)
+spongelover6996/Tophatman for the Time Attack idea (which hasn't been added yet, will do that eventually, I'm just lazy tbh)
 
-xbciom also on Discord for the FOV shake in "intense" levels, other level ideas, and music, (that will also be added later, except for the fov shake, that's already added)
+xbciom for the FOV shake in "intense" levels, other level ideas, and music, (that will also be added later, except for the fov shake, that's already added)
 
-SMF128: and for bro just existing tbh bro's based asf
+supermariofurry/SMF128: and for bro just existing tbh bro's based asf
 
-iman/eman/3 and w hater/whatever this mf goes by: Possibly a future lapping feature, idk yet tbh
+imann0731/eman/3 and w hater/whatever this mf goes by: Possibly a future lapping feature, idk yet tbh
 
 the voices in my head: Shoshinkai and Realistic mode, mario having hallucinations every 15 mins, (real thing btw, go look at hud.c) mario permadrowning, and a few other things
 

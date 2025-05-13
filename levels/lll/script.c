@@ -172,7 +172,7 @@ const LevelScript level_lll_entry[] = {
     LOAD_MODEL_FROM_GEO(MODEL_LLL_VOLCANO_FALLING_TRAP,           lll_geo_000EA8),
 
     AREA(/*index*/ 1, lll_geo_000E00),
-        OBJECT(/*model*/ MODEL_NONE, /*pos*/  1088, 1154, 6272, /*angle*/ 0,  -90, 0, /*behParam*/ 0x000A0000, /*beh*/ bhvSpinAirborneWarp),
+        OBJECT(/*model*/ MODEL_NONE, /*pos*/  1252, 1154, 6272, /*angle*/ 0,  -90, 0, /*behParam*/ 0x000A0000, /*beh*/ bhvSpinAirborneWarp),
         OBJECT(/*model*/ MODEL_NONE, /*pos*/     0,  105,    0, /*angle*/ 0,    0, 0, /*behParam*/ 0x190B0000, /*beh*/ bhvWarp),
         OBJECT(/*model*/ MODEL_NONE, /*pos*/ -3200,   11, 3456, /*angle*/ 0, -100, 0, /*behParam*/ 0x000C0000, /*beh*/ bhvFadingWarp),
         OBJECT(/*model*/ MODEL_NONE, /*pos*/ -5888,  154, 6656, /*angle*/ 0,  100, 0, /*behParam*/ 0x000D0000, /*beh*/ bhvFadingWarp),
@@ -208,7 +208,7 @@ const LevelScript level_lll_entry[] = {
     END_AREA(),
 
     FREE_LEVEL_POOL(),
-    MARIO_POS(/*area*/ 1, /*yaw*/ -90, /*pos*/ 1088, 154, 6272),
+    MARIO_POS(/*area*/ 1, /*yaw*/ -90, /*pos*/ 1252, 154, 6272),
     CALL(/*arg*/ 0, /*func*/ lvl_init_or_update),
     CALL_LOOP(/*arg*/ 1, /*func*/ lvl_init_or_update),
     CLEAR_LEVEL(),

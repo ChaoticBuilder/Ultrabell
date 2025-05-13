@@ -501,6 +501,9 @@ s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
         if (m->forwardVel > 24.0f && ((!(m->input & INPUT_A_DOWN)) || gABCToggle)) {
+            if (g95Toggle || gABCToggle) {
+                (!gRealToggle) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f);
+            }
             return set_mario_action(m, ACT_DIVE, 1);
         }
 
