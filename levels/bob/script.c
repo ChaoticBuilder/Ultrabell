@@ -57,7 +57,6 @@ const LevelScript level_bob_entry[] = {
 		OBJECT(MODEL_NONE, -6000, 1270, -5600, 0, 0, 0, 0x02000000, bhvHiddenRedCoinStar),
 		MARIO_POS(0x01, 135, -6558, 100, 6464),
 		OBJECT(MODEL_STAR, -6900, 320, -6000, 0, 0, 0, 0x03000000, bhvStar),
-		OBJECT(MODEL_STAR, 1550, 1200, 300, 0, 0, 0, 0x04000000, bhvStar),
 		OBJECT(MODEL_STAR, 1636, 4450, -5567, 0, 0, 0, 0x00000000, bhvStar),
 		OBJECT(MODEL_NONE, -6558, 1000, 6464, 0, 135, 0, 0x000A0000, bhvSpinAirborneWarp),
 		TERRAIN(bob_area_1_collision),
