@@ -492,10 +492,7 @@ s32 should_begin_sliding(struct MarioState *m) {
     return FALSE;
 }
 
-s32 analog_stick_held_back(struct MarioState *m) {
-    s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
-    return intendedDYaw < -0x4000 || intendedDYaw > 0x4000;
-}
+#define analog_stick_held_back(m) (abs_angle_diff((m)->intendedYaw, (m)->faceAngle[1]) > 0x4000)
 
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {

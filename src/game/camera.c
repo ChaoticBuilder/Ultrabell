@@ -1663,12 +1663,14 @@ void mode_fixed_camera(UNUSED struct Camera *c) {
  */
 s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     f32 dist;
+    s16 absPitch;
     s16 pitch;
     s16 yaw;
     s16 goalPitch = -sMarioCamState->faceAngle[0];
     s16 marioYaw = sMarioCamState->faceAngle[1] + DEGREES(180);
-    s16 yawSpeed = 128;
-    s16 pitchInc = 256;
+    s16 goalYawOff = 0;
+    s16 yawSpeed;
+    s16 pitchInc = 128;
     f32 maxDist = 1000.f;
     f32 focYOff = 125.f;
 
@@ -1690,7 +1692,7 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     if (dist > maxDist) {
         dist = maxDist;
     }
-    /*
+
     if ((absPitch = pitch) < 0) {
         absPitch = -absPitch;
     }
@@ -1778,9 +1780,8 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
         sBehindMarioSoundTimer = 30;
         pitchInc = 0x800;
     }
-    */
 
-    camera_approach_s16_symmetric_bool(&yaw, marioYaw, yawSpeed);
+    approach_s16_asymptotic_bool(&yaw, marioYaw + goalYawOff, yawSpeed);
     camera_approach_s16_symmetric_bool(&pitch, goalPitch, pitchInc);
     if (dist < 300.f) {
         dist = 300.f;

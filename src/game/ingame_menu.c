@@ -46,6 +46,7 @@ u8 gConfigScroll = 2;
 u8 gHighlightToggle = FALSE;
 u8 gDebugToggle = FALSE;
 u8 gDiveToggle = 0;
+u8 gTurnToggle = FALSE;
 u8 gFlightToggle = FALSE;
 u8 gTrollToggle = FALSE;
 u8 g95Toggle = FALSE;
@@ -1608,18 +1609,19 @@ void config_options(void) {
         if (gConfigScroll == 6) gDebugToggle ^= 1;
         if (gConfigScroll == 8) gLuigiToggle ^= 1;
         if (gConfigScroll == 9) gDiveToggle = (gDiveToggle + 1) % 3;
-        if (gConfigScroll == 10) g95Toggle ^= 1;
-        if (gConfigScroll == 11) {
+        if (gConfigScroll == 10) gTurnToggle ^= 1;
+        if (gConfigScroll == 11) g95Toggle ^= 1;
+        if (gConfigScroll == 12) {
             gRealToggle ^= 1;
             (!gRealToggle)
             ? (g95Toggle = FALSE)
             : (g95Toggle = TRUE);
         }
-        if (gConfigScroll == 12) gABCToggle ^= 1;
+        if (gConfigScroll == 13) gABCToggle ^= 1;
         // if (gHudDisplay.stars >= 100)
-        if (gConfigScroll == 13) gFlightToggle ^= 1;
-        if (gConfigScroll == 14) gTrollToggle ^= 1;
-        if (gConfigScroll == 15) gLevelTroll = (gLevelTroll + 1) % 3;
+        if (gConfigScroll == 14) gFlightToggle ^= 1;
+        if (gConfigScroll == 15) gTrollToggle ^= 1;
+        if (gConfigScroll == 16) gLevelTroll = (gLevelTroll + 1) % 3;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
 }
@@ -1781,69 +1783,56 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 10) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 10) print_small_text_light(160, 204, "Disables Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
-    if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
-    if (gRealToggle) sprintf(currOption, "Automatically enabled.");
+    if (!gTurnToggle) sprintf(currOption, "Shoshinkai Turn: On");
+    if (gTurnToggle) sprintf(currOption, "Shoshinkai Turn: Off");
 
     config_option_render(xPos, yPos, currOption, 0, 10);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 11) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 11) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gRealToggle) sprintf(currOption, "Realistic Mode: Off");
-    if (gRealToggle) sprintf(currOption, "Realistic Mode: On");
+    if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
+    if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
+    if (gRealToggle) sprintf(currOption, "Automatically enabled.");
 
     config_option_render(xPos, yPos, currOption, 0, 11);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 12) print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 12) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gABCToggle) sprintf(currOption, "AB Challenge: Off");
-    if (gABCToggle) sprintf(currOption, "AB Challenge: On");
+    if (!gRealToggle) sprintf(currOption, "Realistic Mode: Off");
+    if (gRealToggle) sprintf(currOption, "Realistic Mode: On");
 
     config_option_render(xPos, yPos, currOption, 0, 12);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 13) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 13) print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    sprintf(currOption, "TEMP");
+    if (!gABCToggle) sprintf(currOption, "AB Challenge: Off");
+    if (gABCToggle) sprintf(currOption, "AB Challenge: On");
 
     config_option_render(xPos, yPos, currOption, 0, 13);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
+    if (gConfigScroll == 14) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    sprintf(currOption, "TEMP");
+
+    config_option_render(xPos, yPos, currOption, 0, 14);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
     if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 14) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (gConfigScroll == 15) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         if (!gFlightToggle) sprintf(currOption, "Infinite Flight: On");
         if (!gFlightToggle) sprintf(currOption, "Infinite Flight: Off");
-
-        print_set_envcolour(255, 255, 255, 255);
-        if (gConfigScroll != 14) print_set_envcolour(127, 127, 127, 255);
-    } else {
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == 14) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        sprintf(currOption, "Locked!");
-
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll != 14) print_set_envcolour(79, 79, 79, 255);
-    }
-
-    config_option_render(xPos, yPos, currOption, 1, 14);
-    if (xPos >= 160) xPos -= 160;
-    yPos += 32;
-
-    if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 15) print_small_text_light(160, 204, "Are those pesky doors annoying you? Look no further.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        if (!gTrollToggle) sprintf(currOption, "Troll Events: On");
-        if (gTrollToggle) sprintf(currOption, "Troll Events: Off");
 
         print_set_envcolour(255, 255, 255, 255);
         if (gConfigScroll != 15) print_set_envcolour(127, 127, 127, 255);
@@ -1858,6 +1847,28 @@ void config_options_box(void) {
     }
 
     config_option_render(xPos, yPos, currOption, 1, 15);
+    if (xPos >= 160) xPos -= 160;
+    yPos += 32;
+
+    if (gHudDisplay.stars >= 100) {
+        if (gConfigScroll == 16) print_small_text_light(160, 204, "Are those pesky doors annoying you? Look no further.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        if (!gTrollToggle) sprintf(currOption, "Troll Events: On");
+        if (gTrollToggle) sprintf(currOption, "Troll Events: Off");
+
+        print_set_envcolour(255, 255, 255, 255);
+        if (gConfigScroll != 16) print_set_envcolour(127, 127, 127, 255);
+    } else {
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll == 16) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        sprintf(currOption, "Locked!");
+
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll != 16) print_set_envcolour(79, 79, 79, 255);
+    }
+
+    config_option_render(xPos, yPos, currOption, 1, 16);
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
