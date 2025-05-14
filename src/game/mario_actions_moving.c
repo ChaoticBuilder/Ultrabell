@@ -969,7 +969,7 @@ s32 act_turning_around(struct MarioState *m) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED && !gABCToggle) {
+    if (m->input & INPUT_A_PRESSED && !gRealToggle && !gABCToggle) {
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 
@@ -1022,7 +1022,7 @@ s32 act_finish_turning_around(struct MarioState *m) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED && !gABCToggle) {
+    if (m->input & INPUT_A_PRESSED && !gRealToggle && !gABCToggle) {
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 

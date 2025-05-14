@@ -371,10 +371,10 @@ void update_flying(struct MarioState *m) {
 
     if (!gDebugLevelSelect && !gFlightToggle) {
         if (m->flags & MARIO_WING_CAP) {
-            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x1800) - 0.25f;
+            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x2000) - 0.25f;
             if (m->forwardVel > 0.0f) m->forwardVel /= 1.0078125f;
         } else {
-            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x1800) + 0.0625f;
+            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x2000) + 0.0625f;
             if (m->forwardVel > 0.0f) m->forwardVel /= 1.015625f;
         }
     } else {
@@ -889,6 +889,7 @@ s32 act_dive(struct MarioState *m) {
     if (gDiveToggle == 2)
         return set_mario_action(m, ACT_JUMP_KICK, 0);
     if (m->input & INPUT_A_PRESSED && m->actionTimer > 0 && !g95Toggle) {
+        if (m->forwardVel > 48.0f) m->forwardVel -= 8.0f;
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
     m->actionTimer++;

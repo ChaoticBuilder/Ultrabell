@@ -769,21 +769,21 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_HOLD_WATER_JUMP:
             if (actionArg == 0) {
                 (!gRealToggle)
-                ? set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.0f)
+                ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
                 : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             }
             break;
 
         case ACT_BURNING_JUMP:
             (!gRealToggle)
-            ? (m->vel[1] = 40.0f)
+            ? (m->vel[1] = 42.0f)
             : (m->vel[1] = 28.0f);
             m->forwardVel = 32.0f;
             break;
 
         case ACT_RIDING_SHELL_JUMP:
             (!gRealToggle)
-            ? set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.0f)
+            ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
             : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             break;
 
@@ -791,7 +791,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_HOLD_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle)
-            ? set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.0f)
+            ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
             : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;
@@ -807,7 +807,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_WALL_KICK_AIR:
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f);
             m->wallKickTimer = 0;
 
             u8 spd = 12;
@@ -817,7 +817,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SIDE_FLIP:
-            (!g95Toggle) ? set_mario_y_vel_based_on_fspeed(m, 52.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f);
+            (!g95Toggle) ? set_mario_y_vel_based_on_fspeed(m, 52.0f, 0.0f) : set_mario_y_vel_based_on_fspeed(m, 44.0f, 0.0f);
             m->forwardVel = 8.0f;
             m->faceAngle[1] = m->intendedYaw;
             break;
@@ -825,7 +825,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_STEEP_JUMP:
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle)
-            ? set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.0f)
+            ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
             : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             m->faceAngle[0] = -0x2000;
             break;
@@ -840,14 +840,9 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 m->vel[1] /= 2.0f;
                 m->vel[1] += 28.0f;
 
-                if (m->forwardVel >= 0) {
-                    if (m->forwardVel < 32.0f) {
-                        m->forwardVel = 32.0f;
-                    } else {
-                        m->forwardVel += (m->forwardVel / 3);
-                    }
-                }
-                s16 spdcap = 56;
+                if (m->forwardVel >= 0 && m->forwardVel < 32.0f) m->forwardVel = 32.0f;
+                m->forwardVel += 8.0f;
+                s16 spdcap = 60;
                 if (gFlightToggle || m->flags & MARIO_METAL_CAP) spdcap = 96;
                 if (m->forwardVel > spdcap) m->forwardVel = spdcap;
             } else {
@@ -972,7 +967,7 @@ u32 set_mario_action_cutscene(struct MarioState *m, u32 action, UNUSED u32 actio
 
         case ACT_SPECIAL_EXIT_AIRBORNE:
         case ACT_SPECIAL_DEATH_EXIT:
-            m->vel[1] = 64.0f;
+            m->vel[1] = 52.0f;
             break;
     }
 

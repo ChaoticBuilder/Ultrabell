@@ -1610,7 +1610,7 @@ void config_options(void) {
         if (gConfigScroll == 8) gLuigiToggle ^= 1;
         if (gConfigScroll == 9) gDiveToggle = (gDiveToggle + 1) % 3;
         if (gConfigScroll == 10) gTurnToggle ^= 1;
-        if (gConfigScroll == 11) g95Toggle ^= 1;
+        if (gConfigScroll == 11 && !gRealToggle) g95Toggle ^= 1;
         if (gConfigScroll == 12) {
             gRealToggle ^= 1;
             (!gRealToggle)
