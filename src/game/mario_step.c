@@ -703,7 +703,7 @@ void apply_gravity(struct MarioState *m) {
                 } else {
                     if ((m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) &&
                         m->flags != MARIO_WING_CAP)
-                        m->vel[1] += 3.0f;
+                        m->vel[1] += 2.0f;
                 }
             }
         }

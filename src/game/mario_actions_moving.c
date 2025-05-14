@@ -500,7 +500,7 @@ s32 analog_stick_held_back(struct MarioState *m) {
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
-        if (m->forwardVel > 24.0f && ((!(m->input & INPUT_A_DOWN)) || gABCToggle)) {
+        if (m->forwardVel > 24.0f) {
             if (g95Toggle || gABCToggle) {
                 (!gRealToggle) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f);
             }
@@ -845,8 +845,9 @@ s32 act_move_punching(struct MarioState *m) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
 
-    if (m->actionState == ACT_STATE_MOVE_PUNCHING_CAN_JUMP_KICK && (m->input & INPUT_A_DOWN)) {
-        return set_mario_action(m, ACT_JUMP_KICK, 0);
+    if (m->actionState == ACT_STATE_MOVE_PUNCHING_CAN_JUMP_KICK && m->input & INPUT_A_DOWN) {
+        if (gDiveToggle != 1) return set_mario_action(m, ACT_JUMP_KICK, 0);
+        return set_mario_action(m, ACT_JUMP, 0);
     }
 
     m->actionState = ACT_STATE_MOVE_PUNCHING_NO_JUMP_KICK;
@@ -1540,7 +1541,7 @@ s32 act_crouch_slide(struct MarioState *m) {
             if (!g95Toggle && m->forwardVel >= 12.0f) {
                 return set_mario_action(m, ACT_SLIDE_KICK, 0);
             } else {
-                return set_mario_action(m, ACT_DIVE, 0);
+                return set_mario_action(m, ACT_JUMP, 0);
             }
         }
 

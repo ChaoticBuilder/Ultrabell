@@ -828,14 +828,14 @@ s32 act_twirling(struct MarioState *m) {
         case 0:
             set_mario_animation(m, MARIO_ANIM_DOUBLE_JUMP_RISE);
             if (m->vel[1] < 5.0f) {
-                m->actionArg = 1;
+                m->actionArg++;
             }
             break;
 
         case 1:
             set_mario_animation(m, MARIO_ANIM_START_TWIRL);
             if (is_anim_past_end(m)) {
-                m->actionArg = 2;
+                m->actionArg++;
             }
             break;
 
@@ -844,7 +844,7 @@ s32 act_twirling(struct MarioState *m) {
             break;
     }
 
-    if (m->actionArg != 2) {
+    if (m->actionArg < 2) {
         if (m->input & INPUT_B_PRESSED) {
             return set_mario_action(m, ACT_JUMP_KICK, 0);
         }
@@ -866,6 +866,10 @@ s32 act_twirling(struct MarioState *m) {
             break;
 
         case AIR_STEP_HIT_WALL:
+            if (m->actionArg < 2) {
+                set_mario_action(m, ACT_AIR_HIT_WALL, 0);
+                m->faceAngle[1] += 0x8000;
+            }
             mario_bonk_reflection(m, FALSE);
             break;
 
@@ -882,12 +886,12 @@ s32 act_twirling(struct MarioState *m) {
 }
 
 s32 act_dive(struct MarioState *m) {
-    m->actionTimer++;
     if (gDiveToggle == 2)
         return set_mario_action(m, ACT_JUMP_KICK, 0);
-    if (m->input & INPUT_A_PRESSED && m->actionTimer >= 2 && !g95Toggle) {
+    if (m->input & INPUT_A_PRESSED && m->actionTimer > 0 && !g95Toggle) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
+    m->actionTimer++;
     
     if (m->actionArg == 0) {
         play_mario_sound(m, SOUND_ACTION_THROW, SOUND_MARIO_HOOHOO);
@@ -1947,16 +1951,16 @@ s32 act_slide_kick(struct MarioState *m) {
 }
 
 s32 act_jump_kick(struct MarioState *m) {
-    m->actionTimer++;
     if (gDiveToggle == 1)
         return set_mario_action(m, ACT_DIVE, 0);
-    if (m->input & INPUT_A_PRESSED && m->actionTimer >= 2) {
+    if (m->input & INPUT_A_PRESSED && m->actionTimer > 0) {
         if (gDiveToggle != 2) {
             set_mario_action(m, ACT_DIVE, 0);
         } else if (!g95Toggle) {
             set_mario_action(m, ACT_SOFT_BONK, 0);
         }
     } 
+    m->actionTimer++;
 
     if (m->actionState == ACT_STATE_JUMP_KICK_PLAY_SOUND_AND_ANIM) {
         play_sound_if_no_flag(m, SOUND_MARIO_PUNCH_HOO, MARIO_ACTION_SOUND_PLAYED);

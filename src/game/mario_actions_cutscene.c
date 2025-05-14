@@ -423,6 +423,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
     u32 actionArg;
 
     m->actionState++;
+    if (m->prevAction == ACT_UNLOCKING_STAR_DOOR) m->actionState = 25; // really hacky way of doing this but whatever
     if (m->actionState == 2) {
         enable_time_stop();
     }
@@ -870,8 +871,10 @@ s32 act_unlocking_star_door(struct MarioState *m) {
             }
             break;
         case ACT_STATE_UNLOCKING_STAR_DOOR_IN_DIALOG:
-            if (is_anim_at_end(m)) save_file_set_flags(get_door_save_file_flag(m->usedObj));
-            if (is_anim_past_end(m)) set_mario_action(m, ACT_ENTERING_STAR_DOOR, should_push_or_pull_door(m, m->usedObj));
+            if (is_anim_at_end(m)) {
+                save_file_set_flags(get_door_save_file_flag(m->usedObj));
+                set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, DIALOG_038);
+            }
             break;
     }
 

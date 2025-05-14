@@ -841,8 +841,8 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 m->vel[1] += 28.0f;
 
                 if (m->forwardVel >= 0) {
-                    if (m->forwardVel < 24.0f) {
-                        m->forwardVel = 24.0f;
+                    if (m->forwardVel < 32.0f) {
+                        m->forwardVel = 32.0f;
                     } else {
                         m->forwardVel += (m->forwardVel / 3);
                     }
@@ -852,10 +852,12 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 if (m->forwardVel > spdcap) m->forwardVel = spdcap;
             } else {
                 if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
-                if (forwardVel + 16.0f > 48.0f) {
-                    forwardVel = 48.0f;
-                }
+                if (m->forwardVel >= 0) {
+                    if (forwardVel + 16.0f >= 48.0f) {
+                        forwardVel = 48.0f;
+                    }
                 mario_set_forward_vel(m, forwardVel);
+                }
             } 
             
             break;
@@ -887,7 +889,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 m->vel[1] += 28.0f;
             } else {
                 if (gDiveToggle != 1) {
-                    (!gRealToggle) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f);
+                    (!gRealToggle) ? (m->vel[1] = 32.0f) : (m->vel[1] = 20.0f);
                 }
             }
             break;
