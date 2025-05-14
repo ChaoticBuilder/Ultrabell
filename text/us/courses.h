@@ -1,18 +1,18 @@
 COURSE_ACTS(COURSE_BOB, _("BOB-OMB PLAINS"),
        _("KING BOB-OMB'S MOUNTAIN!")      , _("KOOPA TROOPA RACE!")            , _("8 COINS..."),
-       _("SECRET OF THE HILL")            , _("INSIDE THE SUMMIT")             , _("ignore this"))
+       _("SECRET OF THE HILL")            , _("INSIDE THE SUMMIT")             , _("IGNORE THIS"))
 
 COURSE_ACTS(COURSE_WF, _("MOUNTAIN FORTRESS"),
        _("THE FORTRESS TOP!")             , _("SKY-HIGH WALL KICKS")           , _("8 COIN PLATFORMING..."),
-       _("FLOATING ISLAND ABOVE")         , _("BLAST THE WALL!")               , _("ignore this"))
+       _("FLOATING ISLAND ABOVE")         , _("BLAST THE WALL!")               , _("IGNORE THIS"))
 
 COURSE_ACTS(COURSE_JRB, _("NAUTICAL OCEAN BAY"),
        _("RAISE THE SUNKEN SHIP!")        , _("PLAYFUL SWIMMING EEL")          , _("DODGE FALLING STONES!"),
-       _("BLAST ONTO THE PILLAR!")        , _("IN THE JET STREAM!")            , _("ignore this"))
+       _("BLAST ONTO THE PILLAR!")        , _("IN THE JET STREAM!")            , _("IGNORE THIS"))
 
 COURSE_ACTS(COURSE_CCM, _("FROSTY SLIDER"),
        _("CABIN SLIDE!")                  , _("TUXIE RESCUE")                  , _("PENGUIN RACING!"),
-       _("SLIPPERY 8 COINS..")            , _("WALL KICK PARKOUR!")            , _("ignore this"))
+       _("SLIPPERY 8 COINS..")            , _("WALL KICK PARKOUR!")            , _("IGNORE THIS"))
 
 COURSE_ACTS(COURSE_BBH, _("HAUNTED BOO MANSION"),
        _("GHOST HOUSE GHOST HUNT!")       , _("THE SECRET MERRY GO ROUND")     , _("SECRET OF THE BOOKS"),

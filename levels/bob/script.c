@@ -58,6 +58,8 @@ const LevelScript level_bob_entry[] = {
 		MARIO_POS(0x01, 135, -6558, 100, 6464),
 		OBJECT(MODEL_STAR, -6900, 320, -6000, 0, 0, 0, 0x03000000, bhvStar),
 		OBJECT(MODEL_STAR, 1636, 4450, -5567, 0, 0, 0, 0x00000000, bhvStar),
+		OBJECT_WITH_ACTS(MODEL_KOOPA_FLAG, 3000, 4194, -4800, 0, 0, 0, 0x00000000, bhvKoopaFlag, ACT_2 | ACT_3 | ACT_4 | ACT_5 | ACT_6),
+		OBJECT(MODEL_STAR, -1536, 1536, -5600, 0, 0, 0, 0x04000000, bhvStar),
 		OBJECT(MODEL_NONE, -6558, 1000, 6464, 0, 135, 0, 0x000A0000, bhvSpinAirborneWarp),
 		TERRAIN(bob_area_1_collision),
 		MACRO_OBJECTS(bob_area_1_macro_objs),

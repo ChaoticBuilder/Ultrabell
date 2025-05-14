@@ -5,6 +5,7 @@ const MacroObject bob_area_1_macro_objs[] = {
 	MACRO_OBJECT(macro_coin_line_horizontal, 90, -400, 512, 5600),
 	MACRO_OBJECT(macro_coin_ring_horizontal, 0, -5694, 128, 5600),
 	MACRO_OBJECT(macro_coin_ring_horizontal, 0, 512, 1120, -2560),
+	MACRO_OBJECT(macro_bob_koopa_the_quick, 0, -4400, 0, 6400),
 	MACRO_OBJECT(macro_red_coin, 0, -6220, 896, -3200),
 	MACRO_OBJECT(macro_red_coin, 0, -5200, 1024, -5200),
 	MACRO_OBJECT(macro_red_coin, 0, 6100, 1280, 4600),

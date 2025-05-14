@@ -374,7 +374,7 @@ void update_flying(struct MarioState *m) {
             m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x2000) - 0.25f;
             if (m->forwardVel > 0.0f) m->forwardVel /= 1.0078125f;
         } else {
-            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x2000) + 0.0625f;
+            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x2000) + 0.03125f;
             if (m->forwardVel > 0.0f) m->forwardVel /= 1.015625f;
         }
     } else {

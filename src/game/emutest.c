@@ -92,6 +92,9 @@ static u8 check_cache_emulation() {
 void detect_emulator() {
     if ((u32)IO_READ(DPC_PIPEBUSY_REG) | (u32)IO_READ(DPC_TMEM_REG) | (u32)IO_READ(DPC_BUFBUSY_REG)) {
         gEmulator = emux_detect() ? EMU_ARES : EMU_CONSOLE;
+        #ifndef DISABLE_AA
+        #define DISABLE_AA
+        #endif
         return;
     }
     
