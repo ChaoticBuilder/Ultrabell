@@ -314,7 +314,7 @@ static void common_idle_step(struct MarioState *m, s32 animation, s32 animAccel,
     perform_water_step(m);
     update_water_pitch(m);
 
-    if (isFloating == TRUE) {
+    if (isFloating == TRUE && g95Toggle) {
         m->faceAngle[0] = approach_s32(m->faceAngle[0], 0, 0x200, 0x200);
 
         if (m->forwardVel < targetSpeed) {

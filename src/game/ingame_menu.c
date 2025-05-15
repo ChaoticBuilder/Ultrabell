@@ -1741,8 +1741,10 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (!gVisToggle) sprintf(currOption, "Visualizer: On");
-    if (gVisToggle) sprintf(currOption, "Visualizer: Off");
+    if (gConfigScroll == 5) print_small_text_light(160, 204, "Shakes your FOV during stressful areas. It's a bit intense.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    if (!gVisToggle) sprintf(currOption, "Visualizer: Off");
+    if (gVisToggle) sprintf(currOption, "Visualizer: On");
 
     config_option_render(xPos, yPos, currOption, 0, 5);
     if (xPos >= 160) yPos += 12;

@@ -10929,7 +10929,7 @@ void epic_fov_visualizer(struct GraphNodePerspective *perspective) {
     u16 timer1;
     f32 timer2 = gGlobalTimer % sFOVState.multiplier; // the timer for the entire thing
     
-    if (gVisToggle) return;
+    if (!gVisToggle) return;
     if ((get_current_background_music() == SEQ_LEVEL_BOSS_KOOPA || get_current_background_music() == SEQ_LEVEL_SNOW ||
         get_current_background_music() == SEQ_LEVEL_SLIDE || get_current_background_music() == SEQ_LEVEL_KOOPA_ROAD) ||
         gCurrLevelNum == LEVEL_COTMC || gMarioState->flags & (MARIO_WING_CAP | MARIO_VANISH_CAP | MARIO_METAL_CAP)) {
