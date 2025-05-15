@@ -1588,9 +1588,9 @@ void config_options_scroll(void) {
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gConfigScroll < 2) {
-        gConfigScroll = 15;
+        gConfigScroll = 16;
     }
-    if (gConfigScroll > 15) {
+    if (gConfigScroll > 16) {
         gConfigScroll = 2;
     }
 }
@@ -1606,11 +1606,17 @@ void config_options(void) {
         if (gConfigScroll == 3) gHighlightToggle ^= 1;
         if (gConfigScroll == 4) gHudToggle ^= 1;
         if (gConfigScroll == 5) gVisToggle ^= 1;
-        if (gConfigScroll == 6) gDebugToggle ^= 1;
+        if (gConfigScroll == 6) {
+            gDebugToggle ^= 1;
+            gShowDebugText ^= 1;
+            (gShowDebugText)
+            ? (gDebugInfoFlags = DEBUG_INFO_FLAG_DPRINT)
+            : (gDebugInfoFlags = DEBUG_INFO_NOFLAGS);
+        }
         if (gConfigScroll == 8) gLuigiToggle ^= 1;
         if (gConfigScroll == 9) gDiveToggle = (gDiveToggle + 1) % 3;
-        if (gConfigScroll == 10) gTurnToggle ^= 1;
-        if (gConfigScroll == 11 && !gRealToggle) g95Toggle ^= 1;
+        if (gConfigScroll == 10 && !gRealToggle) g95Toggle ^= 1;
+        if (gConfigScroll == 11) gTurnToggle ^= 1;
         if (gConfigScroll == 12) {
             gRealToggle ^= 1;
             (!gRealToggle)
@@ -1656,14 +1662,6 @@ void fov_slider(void) {
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
     sFovSlider = CLAMP(sFovSlider, minFOV, maxFOV);
-}
-
-void debug_text(void) {
-    gDebugInfoFlags = DEBUG_INFO_NOFLAGS;
-    if (gPlayer1Controller->buttonPressed & Z_TRIG) {
-        gShowDebugText ^= 1;
-        gDebugInfoFlags = DEBUG_INFO_FLAG_DPRINT;
-    }
 }
 
 void debug_music_menu(void) {
@@ -1741,7 +1739,7 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 5) print_small_text_light(160, 204, "Shakes your FOV during stressful areas. It's a bit intense.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 5) print_small_text_light(160, 204, "Shakes your FOV during stressful areas.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gVisToggle) sprintf(currOption, "Visualizer: Off");
     if (gVisToggle) sprintf(currOption, "Visualizer: On");
@@ -1785,20 +1783,20 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 10) print_small_text_light(160, 204, "Disables Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 10) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gTurnToggle) sprintf(currOption, "Shoshinkai Turn: On");
-    if (gTurnToggle) sprintf(currOption, "Shoshinkai Turn: Off");
+    if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
+    if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
+    if (gRealToggle) sprintf(currOption, "Automatically enabled.");
 
     config_option_render(xPos, yPos, currOption, 0, 10);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 11) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 11) print_small_text_light(160, 204, "Toggles Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
-    if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
-    if (gRealToggle) sprintf(currOption, "Automatically enabled.");
+    if (!gTurnToggle) sprintf(currOption, "Circle Turn: On");
+    if (gTurnToggle) sprintf(currOption, "Circle Turn: Off");
 
     config_option_render(xPos, yPos, currOption, 0, 11);
     if (xPos >= 160) yPos += 12;
@@ -2251,7 +2249,6 @@ s32 render_pause_courses_and_castle(void) {
             print_generic_string(94, 8, textConfigOpen);
             gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
-            debug_text();
             debug_music_menu();
         if (gDialogTextAlpha < 250) {
             gDialogTextAlpha += 25;
