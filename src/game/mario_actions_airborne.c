@@ -478,9 +478,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
                 if (m->wall != NULL) {
                     set_mario_action(m, ACT_AIR_HIT_WALL, 0);
                 } else {
-                    (m->vel[1] >= 0.0f)
-                    ? (m->vel[1] = m->vel[1] / 2)
-                    : (m->vel[1] = -m->vel[1] / 4);
+                    m->vel[1] = -m->vel[1] / 4;
 
                     //! Hands-free holding. Bonking while no wall is referenced
                     // sets Mario's action to a non-holding action without
@@ -946,9 +944,7 @@ s32 act_dive(struct MarioState *m) {
             mario_bonk_reflection(m, TRUE);
             m->faceAngle[0] = 0;
 
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
             drop_and_set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
@@ -1155,9 +1151,7 @@ s32 act_ground_pound(struct MarioState *m) {
 #ifndef DISABLE_GROUNDPOUND_BONK
         else if (stepResult == AIR_STEP_HIT_WALL) {
             mario_set_forward_vel(m, -16.0f);
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
@@ -1322,9 +1316,7 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
             set_mario_animation(m, MARIO_ANIM_BACKWARD_AIR_KB);
             mario_bonk_reflection(m, FALSE);
 
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             mario_set_forward_vel(m, -speed);
             break;
@@ -1569,9 +1561,7 @@ s32 act_getting_blown(struct MarioState *m) {
             set_mario_animation(m, MARIO_ANIM_AIR_FORWARD_KB);
             mario_bonk_reflection(m, FALSE);
 
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             mario_set_forward_vel(m, -m->forwardVel);
             break;
@@ -1711,9 +1701,7 @@ s32 act_butt_slide_air(struct MarioState *m) {
 
         case AIR_STEP_HIT_WALL:
             mario_bonk_reflection(m, TRUE);
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
@@ -1752,9 +1740,7 @@ s32 act_hold_butt_slide_air(struct MarioState *m) {
 
         case AIR_STEP_HIT_WALL:
             mario_bonk_reflection(m, TRUE);
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             mario_drop_held_object(m);
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
@@ -1932,9 +1918,7 @@ s32 act_slide_kick(struct MarioState *m) {
 
         case AIR_STEP_HIT_WALL:
             m->forwardVel = -ABS(m->forwardVel);
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
 
@@ -2026,9 +2010,7 @@ s32 act_shot_from_cannon(struct MarioState *m) {
         case AIR_STEP_HIT_WALL:
             m->faceAngle[0] = 0;
 
-            (m->vel[1] >= 0.0f)
-            ? (m->vel[1] = m->vel[1] / 2)
-            : (m->vel[1] = -m->vel[1] / 4);
+            m->vel[1] = -m->vel[1] / 4;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
@@ -2127,9 +2109,7 @@ s32 act_flying(struct MarioState *m) {
                 mario_set_forward_vel(m, -16.0f);
                 m->faceAngle[0] = 0;
 
-                (m->vel[1] >= 0.0f)
-                ? (m->vel[1] = m->vel[1] / 2)
-                : (m->vel[1] = -m->vel[1] / 4);
+                m->vel[1] = -m->vel[1] / 4;
 
                 play_sound((m->flags & MARIO_METAL_CAP) ? SOUND_ACTION_METAL_BONK
                                                         : SOUND_ACTION_BONK,
