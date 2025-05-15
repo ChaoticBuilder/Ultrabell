@@ -61,7 +61,7 @@ struct KoopaTheQuickProperties {
  * Properties for the BoB race and the THI race.
  */
 static struct KoopaTheQuickProperties sKoopaTheQuickProperties[] = {
-    { DIALOG_005, DIALOG_007, bob_seg7_trajectory_koopa, { 3030, 4500, -4600 } },
+    { DIALOG_005, DIALOG_007, bob_area_1_spline_trajectory_koopa, { 3030, 4500, -4600 } },
     { DIALOG_009, DIALOG_031, thi_seg7_trajectory_koopa, { 7100, -1300, -6000 } },
 };
 
@@ -79,7 +79,7 @@ void bhv_koopa_init(void) {
     } else if (o->oKoopaMovementType >= KOOPA_BP_KOOPA_THE_QUICK_BASE) {
         // Koopa the Quick. Race index is 0 for BoB and 1 for THI
         o->oKoopaTheQuickRaceIndex = o->oKoopaMovementType - KOOPA_BP_KOOPA_THE_QUICK_BASE;
-        o->oKoopaAgility = 4.0f;
+        o->oKoopaAgility = 2.0f;
         cur_obj_scale(3.0f);
     } else {
         o->oKoopaAgility = 1.0f;
@@ -188,7 +188,7 @@ static void koopa_shelled_act_walk(void) {
             break;
     }
 
-    koopa_check_run_from_mario();
+    // koopa_check_run_from_mario();
 }
 
 /**
@@ -481,8 +481,6 @@ s32 obj_begin_race(s32 noTimer) {
  * Wait for mario to approach, and then enter the show init text action.
  */
 static void koopa_the_quick_act_wait_before_race(void) {
-    koopa_shelled_act_stopped();
-
     if (o->oKoopaTheQuickInitTextboxCooldown != 0) {
         o->oKoopaTheQuickInitTextboxCooldown--;
     } else if (cur_obj_can_mario_activate_textbox_2(400.0f, 400.0f)) {
@@ -516,8 +514,8 @@ static void koopa_the_quick_act_show_init_text(void) {
         o->oKoopaTurningAwayFromWall = FALSE;
         o->oFlags |= OBJ_FLAG_ACTIVE_FROM_AFAR;
     } else if (response == DIALOG_RESPONSE_NO) {
-        o->oAction = KOOPA_THE_QUICK_ACT_WAIT_BEFORE_RACE;
-        o->oKoopaTheQuickInitTextboxCooldown = 60;
+        o->oAction = KOOPA_SHELLED_ACT_STOPPED;
+        o->oKoopaTheQuickInitTextboxCooldown = 90;
     }
 }
 
@@ -604,9 +602,13 @@ static void koopa_the_quick_act_race(void) {
                         // cheated by shooting from cannon
                         o->oKoopaAgility = 8.0f;
                     } else if (o->oKoopaTheQuickRaceIndex != KOOPA_THE_QUICK_BOB_INDEX) {
-                        o->oKoopaAgility = 6.0f;
+                        (o->oDistanceToMario < 4096.0f)
+                        ? (o->oKoopaAgility = 6.0f)
+                        : (o->oKoopaAgility = 15.0f);
                     } else {
-                        o->oKoopaAgility = 4.0f;
+                        (o->oDistanceToMario < 6144.0f)
+                        ? (o->oKoopaAgility = 5.0f)
+                        : (o->oKoopaAgility = 12.0f);
                     }
 
                     obj_forward_vel_approach(o->oKoopaAgility * 6.0f * downhillSteepness,
@@ -737,8 +739,12 @@ static void koopa_the_quick_update(void) {
     obj_update_blinking(&o->oKoopaBlinkTimer, 10, 15, 3);
 
     switch (o->oAction) {
-        case KOOPA_THE_QUICK_ACT_WAIT_BEFORE_RACE:
-        case KOOPA_THE_QUICK_ACT_UNUSED1:
+        case KOOPA_SHELLED_ACT_STOPPED:
+            koopa_shelled_act_stopped();
+            koopa_the_quick_act_wait_before_race();
+            break;
+        case KOOPA_SHELLED_ACT_WALK:
+            koopa_shelled_act_walk();
             koopa_the_quick_act_wait_before_race();
             break;
         case KOOPA_THE_QUICK_ACT_SHOW_INIT_TEXT:

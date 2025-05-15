@@ -2,6 +2,7 @@ extern const GeoLayout bob_area_1_geo[];
 extern const GeoLayout bob_area_1[];
 extern const Collision bob_area_1_collision[];
 extern const MacroObject bob_area_1_macro_objs[];
+extern const Trajectory bob_area_1_spline_trajectory_koopa[];
 extern u8 bob_dl_bob_textures_05800_rgba16_rgba16[];
 extern u8 bob_dl_bob_textures_09000_rgba16_rgba16[];
 extern u8 bob_dl_bob_textures_06000_rgba16_rgba16[];
