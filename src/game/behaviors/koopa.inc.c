@@ -79,7 +79,7 @@ void bhv_koopa_init(void) {
     } else if (o->oKoopaMovementType >= KOOPA_BP_KOOPA_THE_QUICK_BASE) {
         // Koopa the Quick. Race index is 0 for BoB and 1 for THI
         o->oKoopaTheQuickRaceIndex = o->oKoopaMovementType - KOOPA_BP_KOOPA_THE_QUICK_BASE;
-        o->oKoopaAgility = 2.0f;
+        o->oKoopaAgility = 3.0f;
         cur_obj_scale(3.0f);
     } else {
         o->oKoopaAgility = 1.0f;
@@ -455,7 +455,7 @@ static void koopa_unshelled_update(void) {
  * optionally begin the timer.
  */
 s32 obj_begin_race(s32 noTimer) {
-    if (o->oTimer == 12) {
+    if (o->oTimer == 15) {
         cur_obj_play_sound_2(SOUND_GENERAL_RACE_GUN_SHOT);
 
         if (!noTimer) {
@@ -470,7 +470,7 @@ s32 obj_begin_race(s32 noTimer) {
         // Unfreeze mario and disable time stop to begin the race
         set_mario_npc_dialog(MARIO_DIALOG_STOP);
         disable_time_stop_including_mario();
-    } else if (o->oTimer > 12) {
+    } else if (o->oTimer > 15) {
         return TRUE;
     }
 
@@ -483,7 +483,7 @@ s32 obj_begin_race(s32 noTimer) {
 static void koopa_the_quick_act_wait_before_race(void) {
     if (o->oKoopaTheQuickInitTextboxCooldown != 0) {
         o->oKoopaTheQuickInitTextboxCooldown--;
-    } else if (cur_obj_can_mario_activate_textbox_2(400.0f, 400.0f)) {
+    } else if (cur_obj_can_mario_activate_textbox_2(384.0f, 384.0f)) {
         //! The next action doesn't execute until next frame, giving mario one
         //  frame where he can jump, and thus no longer be ready to speak.
         //  (On J, he has two frames and doing this enables time stop - see
@@ -515,7 +515,7 @@ static void koopa_the_quick_act_show_init_text(void) {
         o->oFlags |= OBJ_FLAG_ACTIVE_FROM_AFAR;
     } else if (response == DIALOG_RESPONSE_NO) {
         o->oAction = KOOPA_SHELLED_ACT_STOPPED;
-        o->oKoopaTheQuickInitTextboxCooldown = 90;
+        o->oKoopaTheQuickInitTextboxCooldown = 60;
     }
 }
 
@@ -564,7 +564,7 @@ static s32 koopa_the_quick_detect_bowling_ball(void) {
 static void koopa_the_quick_animate_footsteps(void) {
     //! With high negative speed (using the bowling ball deceleration), we can
     //  index out of the animation's bounds
-    cur_obj_init_animation_with_accel_and_sound(9, o->oForwardVel * 0.09f);
+    cur_obj_init_animation_with_accel_and_sound(9, o->oForwardVel * 0.1f);
     koopa_play_footstep_sound(2, 17);
 }
 
@@ -583,7 +583,7 @@ static void koopa_the_quick_act_race(void) {
             s32 bowlingBallStatus;
 
             f32 downhillSteepness = 1.0f + sins((s16)(f32) o->oPathedTargetPitch);
-            cur_obj_rotate_yaw_toward(o->oPathedTargetYaw, (s32)(o->oKoopaAgility * 150.0f));
+            cur_obj_rotate_yaw_toward(o->oPathedTargetYaw, (s32)(o->oKoopaAgility * 160.0f));
 
             switch (o->oSubAction) {
                 case KOOPA_THE_QUICK_SUB_ACT_START_RUN:
@@ -593,52 +593,39 @@ static void koopa_the_quick_act_race(void) {
                 case KOOPA_THE_QUICK_SUB_ACT_RUN:
                     koopa_the_quick_animate_footsteps();
 
+                    (o->oKoopaTheQuickRaceIndex != KOOPA_THE_QUICK_BOB_INDEX)
+                    ? (o->oKoopaAgility = 40.0f)
+                    : (o->oKoopaAgility = 32.0f);
                     if (
                         o->parentObj->oKoopaRaceEndpointRaceStatus != KOOPA_RACE_ENDPOINT_STATUS_KOOPA_WON
-                        && o->oDistanceToMario > 1500.0f
-                        && (o->oPathedPrevWaypointFlags & WAYPOINT_MASK_00FF) < 28
+                        && o->oDistanceToMario > 2048.0f
+                        && (o->oPathedPrevWaypointFlags & WAYPOINT_MASK_00FF) < 19
                     ) {
                         // Move faster if mario has already finished the race or
                         // cheated by shooting from cannon
-                        o->oKoopaAgility = 8.0f;
-                    } else if (o->oKoopaTheQuickRaceIndex != KOOPA_THE_QUICK_BOB_INDEX) {
-                        (o->oDistanceToMario < 4096.0f)
-                        ? (o->oKoopaAgility = 6.0f)
-                        : (o->oKoopaAgility = 15.0f);
-                    } else {
-                        (o->oDistanceToMario < 6144.0f)
-                        ? (o->oKoopaAgility = 5.0f)
-                        : (o->oKoopaAgility = 12.0f);
+                        o->oKoopaAgility *= 3.0f;
                     }
 
-                    obj_forward_vel_approach(o->oKoopaAgility * 6.0f * downhillSteepness,
-                                             o->oKoopaAgility * 0.1f);
-
-                    // Move upward if we hit a wall, to climb it
-                    if (o->oMoveFlags & OBJ_MOVE_HIT_WALL) {
-                        o->oVelY = 20.0f;
-                    }
+                    obj_forward_vel_approach(o->oKoopaAgility * downhillSteepness, 0.5f);
 
                     // If we're about to collide with a bowling ball or we hit an
                     // edge, jump
                     bowlingBallStatus = koopa_the_quick_detect_bowling_ball();
-                    if (bowlingBallStatus != 0 || (o->oMoveFlags & OBJ_MOVE_HIT_EDGE)) {
+                    if (bowlingBallStatus != 0 || (o->oMoveFlags & OBJ_MOVE_HIT_EDGE) || (o->oMoveFlags & OBJ_MOVE_HIT_WALL)) {
                         // If the ball is coming at us from behind, then set speed
                         // to zero to let it move under and past us
                         if (bowlingBallStatus < 0) {
                             o->oForwardVel = 0.0f;
                         }
 
-                        if (bowlingBallStatus != 0
-                            || (o->oPathedPrevWaypointFlags & WAYPOINT_MASK_00FF) >= 8) {
-                            o->oVelY = 80.0f;
-                        } else {
-                            o->oVelY = 40.0f;
-                        }
+                        (bowlingBallStatus != 0 || (o->oPathedPrevWaypointFlags & WAYPOINT_MASK_00FF) >= 8)
+                        ? (o->oVelY = 80.0f)
+                        : (o->oVelY = 40.0f);
+
+                        if (o->oMoveFlags & OBJ_MOVE_HIT_WALL) o->oVelY = 48.0f;
 
                         o->oGravity = -6.0f;
                         o->oSubAction = KOOPA_THE_QUICK_SUB_ACT_JUMP;
-                        o->oMoveFlags = OBJ_MOVE_NONE;
 
                         cur_obj_init_animation_with_sound(KOOPA_ANIM_THE_QUICK_JUMP);
                     }
@@ -663,12 +650,12 @@ static void koopa_the_quick_act_race(void) {
  * Decelerate and then enter the stop action.
  */
 static void koopa_the_quick_act_decelerate(void) {
-    obj_forward_vel_approach(3.0f, 1.0f);
-    cur_obj_init_animation_with_accel_and_sound(9, 0.99f);
+    obj_forward_vel_approach(0.0f, 2.0f);
+    cur_obj_init_animation_with_accel_and_sound(9, 1.0f);
 
     if (cur_obj_check_if_near_animation_end()) {
         o->oAction = KOOPA_THE_QUICK_ACT_STOP;
-        o->oForwardVel = 3.0f;
+        o->oForwardVel = 0.0f;
     }
 }
 
