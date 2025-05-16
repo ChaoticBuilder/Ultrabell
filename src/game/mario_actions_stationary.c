@@ -253,7 +253,7 @@ s32 act_sleeping(struct MarioState *m) {
             animFrame = set_mario_animation(m, MARIO_ANIM_SLEEP_IDLE);
 
             if (animFrame == -1 && !m->actionTimer) {
-                lower_background_noise(2);
+                play_secondary_music(0x0B, 0, 255, 1000);
             }
 
             if (animFrame == 2) {
@@ -296,6 +296,7 @@ s32 act_waking_up(struct MarioState *m) {
         stop_sound(SOUND_MARIO_SNORING2, m->marioObj->header.gfx.cameraToObject);
         stop_sound(SOUND_MARIO_SNORING3, m->marioObj->header.gfx.cameraToObject);
         raise_background_noise(2);
+        stop_secondary_music(50);
     }
 
     if (m->input & INPUT_STOMPED) {
