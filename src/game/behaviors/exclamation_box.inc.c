@@ -82,9 +82,9 @@ void exclamation_box_act_active(void) {
     }
     if (cur_obj_was_attacked_or_ground_pounded()) {
         cur_obj_become_intangible();
-        o->oExclamationBoxScaleAngle = 0x4000;
-        o->oVelY = 30.0f;
-        o->oGravity = -8.0f;
+        o->oExclamationBoxScaleAngle = 0;
+        o->oVelY = 36.0f;
+        o->oGravity = -4.0f;
         o->oFloorHeight = o->oPosY;
         o->oAction = EXCLAMATION_BOX_ACT_SCALING;
 #if ENABLE_RUMBLE
@@ -95,21 +95,10 @@ void exclamation_box_act_active(void) {
 }
 
 void exclamation_box_act_scaling(void) {
-    cur_obj_move_using_fvel_and_gravity();
-    if (o->oVelY < 0.0f) {
-        o->oVelY = 0.0f;
-        o->oGravity = 0.0f;
-    }
-    o->oGraphYOffset                  = ((-sins(o->oExclamationBoxScaleAngle) + 1.0f) * 26.0f);
-    o->oExclamationBoxHorizontalScale = ((-sins(o->oExclamationBoxScaleAngle) + 1.0f) *  0.5f) + 1.0f;
-    o->oExclamationBoxVerticalScale   = (( sins(o->oExclamationBoxScaleAngle) + 1.0f) *  0.3f) + 0.0f;
-    o->oExclamationBoxScaleAngle += 0x1000;
-    obj_scale_xyz(o,
-        (o->oExclamationBoxHorizontalScale * 2.0f),
-        (o->oExclamationBoxVerticalScale   * 2.0f),
-        (o->oExclamationBoxHorizontalScale * 2.0f)
-    );
-    if (o->oTimer == 7) {
+    cur_obj_move_using_vel_and_gravity();
+    o->oExclamationBoxScaleAngle += 0x800;
+    cur_obj_scale(sins(o->oExclamationBoxScaleAngle) + 2.0f);
+    if (o->oTimer > 15) {
         o->oAction = EXCLAMATION_BOX_ACT_EXPLODE;
     }
 }
