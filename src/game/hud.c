@@ -29,7 +29,6 @@
 
 #include "config.h"
 
-s32 gTimeAttackToggle = FALSE;
 u8 gLuigiToggle = 0;
 s32 gSecondsToggle = TRUE;
 u8 gHudToggle;
@@ -535,49 +534,36 @@ void render_hud_timer(void) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
-#ifdef DEMO_TIMER
-/*
-void render_hud_demo_timer(void) {
-    char clockBytes[12];
-    int timerCount = gGlobalTimer / 30;
-    int timerCount2 = timerCount / 60;
-    int timerCount3 = timerCount2 / 60;
-    int timerSeconds = timerCount % 60;
-    int timerMinutes = timerCount2 % 60;
-    int timerHours = timerCount3 % 99; // just incase if the globaltimer even lasts for this long tbh
-    sprintf(clockBytes, "Clock: %02d : %02d . %02d", timerHours, timerMinutes, timerSeconds);
-    #ifdef TIME_ATTACK
-        int timeATKCount = 0;
-        if (gGlobalTimer % 30) timeATKCount++;
-        int timeATKCount2 = timeATKCount / 60;
-        int timeATKSecs = timeATKCount % 60;
-        int timeATKMins = timeATKCount2 % 60;
-        if (gTimeAttackToggle == TRUE) {
-            if (!(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) return;
-            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(128), HUD_BOTTOM_Y, "SPEEDRUN");
-            if (timeAttackMinutes > TIME_ATTACK) {
-                gMarioState->hurtCounter = 31;
-                gGlobalTimer = 0;
+int timerCount = 60;
+
+void attack_timer(void) {
+    if (!gTimerToggle) return;
+    char timerBytes[32];
+
+    int timerSecs = timerCount / 30;
+    int timerMins = timerSecs / 60;
+
+    if (gTimerToggle) {
+        if (!(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) {
+            timerCount = gTimerTime * 30;
+        } else {
+            if (timerCount > 0) timerCount--;
+            if (timerCount <= 0) {
+                gMarioState->health -= 4;
+                if (g95Toggle && !gRealToggle) gMarioState->health -= 1;
+                if (!g95Toggle && gMarioState->action == ACT_PANTING) gMarioState->health -= 2;
+                // pesky health regens -w-
             }
-            print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16), HUD_BOTTOM_Y, "TIME");
-            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(68), HUD_BOTTOM_Y, "%02d", (timeAttackMinutes % 60));
-            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(102), HUD_BOTTOM_Y, "%02d", (timeAttackSeconds % 60));
-            print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(136), HUD_BOTTOM_Y, "%02d", (timeAttackCount % 30));
-        
-            gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
-            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(91), (HUD_TOP_Y - 8), (*hudLUT)[GLYPH_APOSTROPHE]);
-            render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(125), (HUD_TOP_Y + 1), (*hudLUT)[GLYPH_APOSTROPHE]);
         }
-    #endif
-    // WIP, I figured out externs can be global, so this may happen soon
+    }
+    sprintf(timerBytes, "TIME: %02d : %02d", timerMins, (timerSecs % 60));
     
-    if (gTimeAttackToggle) return;
-    print_set_envcolour(0, 189, 255, 255);
-    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 9) + gHudShakeY, clockBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    (timerSecs > 10)
+    ? print_set_envcolour(0, 189, 255, 255)
+    : print_set_envcolour(255, 0, 0, 255);
+    print_small_text_light(160 + gHudShakeX, 200 + gHudShakeY, timerBytes,
+    PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 }
-*/
-#endif
 
 void timer_troll(void) {
     int trollCount = (gGlobalTimer / 15) % 1800;
@@ -830,7 +816,7 @@ void render_hud(void) {
             if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
                 render_hud_timer();
             }
-                // render_hud_demo_timer();
+                attack_timer();
                 timer_troll();
                 visualizer_display();
                 music_menu();

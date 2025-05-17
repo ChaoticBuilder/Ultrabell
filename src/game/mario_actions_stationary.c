@@ -41,6 +41,7 @@ s32 check_common_idle_cancels(struct MarioState *m) {
     }
 
     if (m->input & INPUT_FIRST_PERSON) {
+        m->actionTimer = 0;
         return set_mario_action(m, ACT_FIRST_PERSON, 0);
     }
 
@@ -460,6 +461,7 @@ s32 act_standing_against_wall(struct MarioState *m) {
     }
 
     if (m->input & INPUT_FIRST_PERSON) {
+        m->actionTimer = 0;
         return set_mario_action(m, ACT_FIRST_PERSON, 0);
     }
 
@@ -539,7 +541,7 @@ s32 act_crouching(struct MarioState *m) {
 }
 
 s32 act_panting(struct MarioState *m) {
-    if (!g95Toggle) m->health += 0x2;
+    if (!g95Toggle) m->health += 2;
     if (m->input & INPUT_STOMPED) {
         return set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }
@@ -1035,6 +1037,13 @@ s32 act_ground_pound_land(struct MarioState *m) {
 
 s32 act_first_person(struct MarioState *m) {
     UNUSED s32 exit = (m->input & (INPUT_OFF_FLOOR | INPUT_ABOVE_SLIDE | INPUT_STOMPED)) != 0;
+    struct MarioBodyState *bodyState = m->marioBodyState;
+    if (m->actionTimer == 0 || m->fadeWarpOpacity > 0x3F) {
+        m->fadeWarpOpacity = (-m->actionTimer * 0x8) + 0xF7;
+        m->actionTimer++;
+    }
+    bodyState->modelState &= ~MODEL_STATE_MASK;
+    bodyState->modelState |= (MODEL_STATE_ALPHA | m->fadeWarpOpacity);
 
     if (m->actionState == ACT_STATE_FIRST_PERSON_SET_MODE) {
         lower_background_noise(2);

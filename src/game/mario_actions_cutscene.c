@@ -1775,6 +1775,7 @@ static void beta_intro_set_mario_to_idle(struct MarioState *m) {
     if (gCamera->cutscene == CUTSCENE_NONE) {
         gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
         gObjCutsceneDone = TRUE;
+        m->actionTimer = 0;
         set_mario_action(m, ACT_FIRST_PERSON, 0);
     }
 

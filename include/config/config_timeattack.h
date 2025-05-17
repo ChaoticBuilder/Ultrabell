@@ -5,11 +5,6 @@
  ************************/
 
 /**
- * Enable "Demo Timer", does nothing but act as a playtime counter.
+ * Enables "Time Attack", if toggled, after a certain amount of time, it drains Mario's health. (ENTER AMOUNT OF TIME IN SECONDS)
  */
-#define DEMO_TIMER
-
-/**
- * Enable "Time Attack", an extra gamemode for speedrunning, after a certain amount of time, it kills Mario.
- */
-// #define TIME_ATTACK 1
+// #define TIME_ATTACK 60

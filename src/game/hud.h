@@ -25,10 +25,7 @@ extern u16 musicBank;
 extern u8 pitchInvert;
 
 #ifdef TIME_ATTACK
-    extern int timeATKCount;
-    extern int timeATKCount2;
-    extern int timeATKSecs;
-    extern int timeATKMins;
+    extern int timerCount;
 #endif
 
 enum PowerMeterAnimation {

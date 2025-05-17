@@ -46,6 +46,7 @@ u8 gConfigScroll = 2;
 u8 gHighlightToggle = FALSE;
 u8 gDebugToggle = FALSE;
 u8 gDiveToggle = 0;
+u8 gTimerToggle = FALSE;
 u8 gTurnToggle = FALSE;
 u8 gFlightToggle = FALSE;
 u8 gTrollToggle = FALSE;
@@ -1588,9 +1589,9 @@ void config_options_scroll(void) {
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gConfigScroll < 2) {
-        gConfigScroll = 16;
+        gConfigScroll = 17;
     }
-    if (gConfigScroll > 16) {
+    if (gConfigScroll > 17) {
         gConfigScroll = 2;
     }
 }
@@ -1615,19 +1616,24 @@ void config_options(void) {
         }
         if (gConfigScroll == 8) gLuigiToggle ^= 1;
         if (gConfigScroll == 9) gDiveToggle = (gDiveToggle + 1) % 3;
-        if (gConfigScroll == 10 && !gRealToggle) g95Toggle ^= 1;
-        if (gConfigScroll == 11) gTurnToggle ^= 1;
-        if (gConfigScroll == 12) {
+        if (gConfigScroll == 10 && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) gTimerToggle ^= 1;
+        if (gConfigScroll == 11 && !gRealToggle) g95Toggle ^= 1;
+        if (gConfigScroll == 12) gTurnToggle ^= 1;
+        if (gConfigScroll == 13) {
             gRealToggle ^= 1;
             (!gRealToggle)
             ? (g95Toggle = FALSE)
             : (g95Toggle = TRUE);
         }
-        if (gConfigScroll == 13) gABCToggle ^= 1;
+        if (gConfigScroll == 14) gABCToggle ^= 1;
         // if (gHudDisplay.stars >= 100)
-        if (gConfigScroll == 14) gFlightToggle ^= 1;
-        if (gConfigScroll == 15) gTrollToggle ^= 1;
-        if (gConfigScroll == 16) gLevelTroll = (gLevelTroll + 1) % 3;
+        if (gConfigScroll == 15) gFlightToggle ^= 1;
+        if (gConfigScroll == 16) gTrollToggle ^= 1;
+        if (gConfigScroll == 17) gLevelTroll = (gLevelTroll + 1) % 3;
+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+    }
+    if (gPlayer1Controller->buttonPressed & B_BUTTON) {
+        if (gConfigScroll == 10 && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum)) && gTimerToggle) gHighlightToggle ^= 1;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
 }
@@ -1662,6 +1668,18 @@ void fov_slider(void) {
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
     sFovSlider = CLAMP(sFovSlider, minFOV, maxFOV);
+}
+
+int gTimerTime = 60;
+
+void time_slider(void) {
+    if (gPlayer1Controller->buttonPressed == L_JPAD) gTimerTime--;
+    if (gPlayer1Controller->buttonPressed == R_JPAD) gTimerTime++;
+    if (gGlobalTimer % 2 == 0) {
+        if (gPlayer1Controller->buttonDown == L_JPAD) gTimerTime--;
+        if (gPlayer1Controller->buttonDown == R_JPAD) gTimerTime++;
+    }
+    CLAMP(gTimerTime, 0, 900);
 }
 
 void debug_music_menu(void) {
@@ -1720,7 +1738,7 @@ void config_options_box(void) {
     if (sFovSlider <= 0) sprintf(currOption, "FOV: %2.1f", sFovSlider);
     
     print_set_envcolour(255, 255, 255, 255);
-    if (gHighlightToggle) {
+    if (gHighlightToggle && gConfigScroll == 3) {
         fov_slider();
         print_set_envcolour(255, 255, 95, 255);
     }
@@ -1783,78 +1801,76 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 10) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 10) print_small_text_light(160, 204, "Spaghetti Time.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    if (!gTimerToggle) sprintf(currOption, "Time Attack: Off");
+    if (gTimerToggle) {
+        (!(COURSE_IS_MAIN_COURSE(gCurrCourseNum)))
+        ? sprintf(currOption, "Time Attack: %02d Seconds", gTimerTime)
+        : sprintf(currOption, "Lock in!");
+    }
+
+    print_set_envcolour(255, 255, 255, 255);
+    if (gHighlightToggle && gConfigScroll == 10) { // this is temp, every level will have their own custom amount of time soon
+        time_slider();
+        print_set_envcolour(255, 255, 95, 255);
+    }
+    if (gConfigScroll != 10) print_set_envcolour(127, 127, 127, 255);
+
+    config_option_render(xPos, yPos, currOption, 1, 10);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
+    if (gConfigScroll == 11) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
     if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
     if (gRealToggle) sprintf(currOption, "Automatically enabled.");
 
-    config_option_render(xPos, yPos, currOption, 0, 10);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
-
-    if (gConfigScroll == 11) print_small_text_light(160, 204, "Toggles Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-    if (!gTurnToggle) sprintf(currOption, "Circle Turn: On");
-    if (gTurnToggle) sprintf(currOption, "Circle Turn: Off");
-
     config_option_render(xPos, yPos, currOption, 0, 11);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 12) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 12) print_small_text_light(160, 204, "Toggles Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gRealToggle) sprintf(currOption, "Realistic Mode: Off");
-    if (gRealToggle) sprintf(currOption, "Realistic Mode: On");
+    if (!gTurnToggle) sprintf(currOption, "Circle Turn: On");
+    if (gTurnToggle) sprintf(currOption, "Circle Turn: Off");
 
     config_option_render(xPos, yPos, currOption, 0, 12);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 13) print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 13) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gABCToggle) sprintf(currOption, "AB Challenge: Off");
-    if (gABCToggle) sprintf(currOption, "AB Challenge: On");
+    if (!gRealToggle) sprintf(currOption, "Realistic Mode: Off");
+    if (gRealToggle) sprintf(currOption, "Realistic Mode: On");
 
     config_option_render(xPos, yPos, currOption, 0, 13);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 14) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == 14) print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    sprintf(currOption, "TEMP");
+    if (!gABCToggle) sprintf(currOption, "AB Challenge: Off");
+    if (gABCToggle) sprintf(currOption, "AB Challenge: On");
 
     config_option_render(xPos, yPos, currOption, 0, 14);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
+    if (gConfigScroll == 15) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    sprintf(currOption, "TEMP");
+
+    config_option_render(xPos, yPos, currOption, 0, 15);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
     if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 15) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (gConfigScroll == 16) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         if (!gFlightToggle) sprintf(currOption, "Infinite Flight: On");
         if (!gFlightToggle) sprintf(currOption, "Infinite Flight: Off");
-
-        print_set_envcolour(255, 255, 255, 255);
-        if (gConfigScroll != 15) print_set_envcolour(127, 127, 127, 255);
-    } else {
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == 15) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        sprintf(currOption, "Locked!");
-
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll != 15) print_set_envcolour(79, 79, 79, 255);
-    }
-
-    config_option_render(xPos, yPos, currOption, 1, 15);
-    if (xPos >= 160) xPos -= 160;
-    yPos += 32;
-
-    if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 16) print_small_text_light(160, 204, "Are those pesky doors annoying you? Look no further.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        if (!gTrollToggle) sprintf(currOption, "Troll Events: On");
-        if (gTrollToggle) sprintf(currOption, "Troll Events: Off");
 
         print_set_envcolour(255, 255, 255, 255);
         if (gConfigScroll != 16) print_set_envcolour(127, 127, 127, 255);
@@ -1869,6 +1885,28 @@ void config_options_box(void) {
     }
 
     config_option_render(xPos, yPos, currOption, 1, 16);
+    if (xPos >= 160) xPos -= 160;
+    yPos += 32;
+
+    if (gHudDisplay.stars >= 100) {
+        if (gConfigScroll == 17) print_small_text_light(160, 204, "Are those pesky doors annoying you? Look no further.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        if (!gTrollToggle) sprintf(currOption, "Troll Events: On");
+        if (gTrollToggle) sprintf(currOption, "Troll Events: Off");
+
+        print_set_envcolour(255, 255, 255, 255);
+        if (gConfigScroll != 17) print_set_envcolour(127, 127, 127, 255);
+    } else {
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll == 17) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        sprintf(currOption, "Locked!");
+
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll != 17) print_set_envcolour(79, 79, 79, 255);
+    }
+
+    config_option_render(xPos, yPos, currOption, 1, 17);
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
