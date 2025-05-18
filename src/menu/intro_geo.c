@@ -15,7 +15,7 @@
 #include "game/print.h"
 
 // frame counts for the zoom in, hold, and zoom out of title model
-#define INTRO_STEPS_ZOOM_IN 15
+#define INTRO_STEPS_ZOOM_IN 12
 // #define INTRO_STEPS_HOLD_1 960
 // #define INTRO_STEPS_ZOOM_OUT 0
 
