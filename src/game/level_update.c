@@ -1364,9 +1364,9 @@ s32 lvl_init_from_save_file(UNUSED s16 initOrUpdate, s32 levelNum) {
     sWarpDest.type = WARP_TYPE_NOT_WARPING;
     sDelayedWarpOp = WARP_OP_NONE;
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
-    gNeverEnteredCastle = !save_file_exists(gCurrSaveFileNum - 1);
+    gNeverEnteredCastle = TRUE;
 #else
-    gNeverEnteredCastle = 0;
+    gNeverEnteredCastle = FALSE;
 #endif
     gCurrLevelNum = levelNum;
     gCurrCourseNum = COURSE_NONE;

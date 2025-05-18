@@ -532,7 +532,7 @@ s32 act_jump(struct MarioState *m) {
     ? MARIO_ANIM_SINGLE_JUMP
     : MARIO_ANIM_SLIDEJUMP;
 
-    if (m->input & INPUT_B_PRESSED && m->prevAction != ACT_BUTT_SLIDE) {
+    if (m->input & INPUT_B_PRESSED) {
         return set_mario_action(m, ACT_JUMP_KICK, 0);
     }
 

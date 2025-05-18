@@ -584,7 +584,7 @@ void timer_troll(void) {
                 if (trollCount == 0) return;
                 troll = FALSE;
             }
-            if (rand > 0.875f) return print_text(112, 120, "FIND THEM");
+            if (rand > 0.75f) return print_text(112, 120, "FIND THEM");
             return print_text(112, 120, "MARIO 64");
             // made this uncringe
         }

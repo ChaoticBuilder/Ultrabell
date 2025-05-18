@@ -1040,6 +1040,7 @@ s32 act_warp_door_spawn(struct MarioState *m) {
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
         if (gNeverEnteredCastle && gCurrLevelNum == LEVEL_CASTLE) {
             set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, DIALOG_021);
+            gNeverEnteredCastle = FALSE;
         } else {
             set_mario_action(m, ACT_IDLE, 0);
         }
