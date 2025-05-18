@@ -163,8 +163,8 @@ const Gfx door_seg3_sub_dl_polished_wooden_door_near[] = {
 
 // 0x03013CC8 - 0x03013D78
 const Gfx door_seg3_sub_dl_polished_wooden_door_handle_1[] = {
-    gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
+    gsSPLightColor(LIGHT_1, 0xffbf00ff),
+    gsSPLightColor(LIGHT_2, 0x402000ff),
     gsSPVertex(door_seg3_vertex_polished_wooden_door_handle_1, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  2,  3,  4, 0x0),
     gsSP2Triangles( 2,  1,  3, 0x0,  5,  2,  4, 0x0),
@@ -180,8 +180,8 @@ const Gfx door_seg3_sub_dl_polished_wooden_door_handle_1[] = {
 
 // 0x03013D78 - 0x03013E28
 const Gfx door_seg3_sub_dl_polished_wooden_door_handle_2[] = {
-    gsSPLightColor(LIGHT_1, 0xffaa00ff),
-    gsSPLightColor(LIGHT_2, 0x3f2a00ff),
+    gsSPLightColor(LIGHT_1, 0xffbf00ff),
+    gsSPLightColor(LIGHT_2, 0x402000ff),
     gsSPVertex(door_seg3_vertex_polished_wooden_door_handle_2, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  0,  2,  3, 0x0),
     gsSP2Triangles( 0,  3,  4, 0x0,  0,  5,  1, 0x0),

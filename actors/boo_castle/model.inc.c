@@ -258,7 +258,7 @@ const Gfx boo_castle_seg6_dl_06017A10[] = {
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsSPLightColor(LIGHT_1, 0xffffffff),
-    gsSPLightColor(LIGHT_2, 0x979affff),
+    gsSPLightColor(LIGHT_2, 0x42517bff),
     gsSPVertex(boo_castle_seg6_vertex_06016E70, 12, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  3,  4,  5, 0x0),
     gsSP2Triangles( 6,  7,  8, 0x0,  9, 10, 11, 0x0),

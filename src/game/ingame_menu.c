@@ -2294,7 +2294,7 @@ s32 render_pause_courses_and_castle(void) {
     } else {
         prepare_blank_box();
         render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 191);
-        finish_blank_box();    
+        finish_blank_box();
         config_options_box();
         
         gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);

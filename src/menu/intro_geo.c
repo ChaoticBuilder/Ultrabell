@@ -12,11 +12,12 @@
 #include "buffers/framebuffers.h"
 #include "game/game_init.h"
 #include "audio/external.h"
+#include "game/print.h"
 
 // frame counts for the zoom in, hold, and zoom out of title model
-#define INTRO_STEPS_ZOOM_IN 20
-#define INTRO_STEPS_HOLD_1 960
-#define INTRO_STEPS_ZOOM_OUT 0
+#define INTRO_STEPS_ZOOM_IN 15
+// #define INTRO_STEPS_HOLD_1 960
+// #define INTRO_STEPS_ZOOM_OUT 0
 
 // background types
 enum IntroBackgroundTypes {
@@ -47,15 +48,19 @@ Gfx *geo_intro_super_mario_64_logo(s32 callContext, struct GraphNode *node, UNUS
     if (callContext != GEO_CONTEXT_RENDER) {
         sIntroFrameCounter = 0;
     } else if (callContext == GEO_CONTEXT_RENDER) {
-        f32 *scaleTable1 = segmented_to_virtual(intro_seg7_table_scale_1);
-        f32 *scaleTable2 = segmented_to_virtual(intro_seg7_table_scale_2);
+        // f32 *scaleTable1 = segmented_to_virtual(intro_seg7_table_scale_1);
+        // f32 *scaleTable2 = segmented_to_virtual(intro_seg7_table_scale_2);
         SET_GRAPH_NODE_LAYER(graphNode->flags, LAYER_OPAQUE);
         Mtx *scaleMat = alloc_display_list(sizeof(*scaleMat));
         dl = alloc_display_list(4 * sizeof(*dl));
         dlIter = dl;
         Vec3f scale;
+        f32 countMax = sIntroFrameCounter;
+        if (countMax > INTRO_STEPS_ZOOM_IN) countMax = INTRO_STEPS_ZOOM_IN;
 
         // determine scale based on the frame counter
+        vec3_same(scale, (countMax / INTRO_STEPS_ZOOM_IN));
+        /*
         if (sIntroFrameCounter >= 0 && sIntroFrameCounter < INTRO_STEPS_ZOOM_IN) {
             // zooming in
             vec3f_copy(scale, &scaleTable1[sIntroFrameCounter * 3]);
@@ -69,6 +74,8 @@ Gfx *geo_intro_super_mario_64_logo(s32 callContext, struct GraphNode *node, UNUS
             // disappeared
             vec3_zero(scale);
         }
+        */
+        
         guScale(scaleMat, scale[0], scale[1], scale[2]);
 
         gSPMatrix(dlIter++, scaleMat, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
@@ -107,7 +114,8 @@ Gfx *geo_intro_tm_copyright(s32 callContext, struct GraphNode *node, UNUSED void
         gSPEndDisplayList(dlIter);
 
         // Once the "Super Mario 64" logo has just about zoomed fully, fade in the "TM" and copyright text
-        if (sIntroFrameCounter >= 19) {
+        if (sIntroFrameCounter >= INTRO_STEPS_ZOOM_IN) {
+            print_text(104, 64, "ULTRABELL");
             sTmCopyrightAlpha += 26;
             if (sTmCopyrightAlpha > 255) {
                 sTmCopyrightAlpha = 255;
