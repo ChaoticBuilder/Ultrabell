@@ -1443,7 +1443,7 @@ void set_submerged_cam_preset_and_spawn_bubbles(struct MarioState *m) {
             // of the water with his head out, spawn bubbles.
             if (!(m->action & ACT_FLAG_INTANGIBLE)) {
                 if ((m->pos[1] < (f32)(m->waterLevel - 160)) || (m->faceAngle[0] < -0x800)) {
-                    if (gGlobalTimer % 15 == 0) {
+                    if (gGlobalTimer % 8 == 0) {
                         m->particleFlags |= PARTICLE_BUBBLE;
                     }
                 }
@@ -1508,7 +1508,6 @@ void update_mario_health(struct MarioState *m) {
 #ifndef BREATH_METER
         // Play a noise to alert the player when Mario is close to drowning.
         if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < 0x300)) {
-            // play_sound(SOUND_MOVING_ALMOST_DROWNING, gGlobalSoundSource);
 #if ENABLE_RUMBLE
             if (gRumblePakTimer == 0) {
                 gRumblePakTimer = 36;

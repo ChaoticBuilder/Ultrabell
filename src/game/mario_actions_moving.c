@@ -46,7 +46,6 @@ Mat4 sFloorAlignMatrix[2];
 
 s16 tilt_body_running(struct MarioState *m) {
     s16 pitch = (find_floor_slope(m, 0)) / 1.5;
-    // pitch = pitch * m->forwardVel / 64.0f;
     return -pitch;
 }
 
@@ -78,9 +77,7 @@ void align_with_floor(struct MarioState *m) {
             surface_normal_to_vec3f(floorNormal, floor);
             mtxf_align_terrain_normal(sFloorAlignMatrix[m->playerID], floorNormal, m->pos, m->faceAngle[1]);
 #else
-    Vec3f floorNormal;
-    surface_normal_to_vec3f(floorNormal, floor);
-    mtxf_align_terrain_normal(sFloorAlignMatrix[m->playerID], floorNormal, m->pos, m->faceAngle[1]);
+        mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerID], m->pos, m->faceAngle[1], 40.0f);
 #endif
         m->marioObj->header.gfx.throwMatrix = &sFloorAlignMatrix[m->playerID];
     }
@@ -480,7 +477,6 @@ void update_walking_speed(struct MarioState *m) {
 
 s32 should_begin_sliding(struct MarioState *m) {
     if (m->input & INPUT_ABOVE_SLIDE) {
-        UNUSED s32 superSlippery = (m->floor != NULL) && (m->floor->type == SURFACE_SUPER_SLIPPERY);
         s32 slideLevel = (m->area->terrainType & TERRAIN_MASK) == TERRAIN_SLIDE;
         s32 movingBackward = m->forwardVel <= -1.0f;
 
@@ -518,7 +514,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if ((m->forwardVel >= 24.0f) || (gLuigiToggle == TRUE && m->forwardVel >= 6.0f && !(m->flags & MARIO_METAL_CAP))) {
+    if ((m->forwardVel > 24.0f) || (gLuigiToggle == TRUE && m->forwardVel >= 6.0f && !(m->flags & MARIO_METAL_CAP))) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -707,31 +703,26 @@ void push_or_sidle_wall(struct MarioState *m, Vec3f startPos) {
     
 }
 
-void tilt_body_walking(struct MarioState *m, s16 startYaw) {
+void tilt_body_walking(struct MarioState *m, UNUSED s16 startYaw) {
     struct MarioBodyState *marioBodyState = m->marioBodyState;
     s16 animID = m->marioObj->header.gfx.animInfo.animID;
 
     if (animID == MARIO_ANIM_WALKING || animID == MARIO_ANIM_RUNNING) {
-        s16 dYaw = m->faceAngle[1] - startYaw;
+        // s16 dYaw = m->faceAngle[1] - startYaw;
         //! (Speed Crash) These casts can cause a crash if
         //! (forwardVel * 170) exceeds or equals 2^31.
         // Pitch is reversed, a higher multiplier makes Mario tilt backwards farther instead of forwards.
-        s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
+        // s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
         if (gLuigiToggle == TRUE) {
             nextBodyPitch = -(s16)((m->forwardVel - 15) * 104);
         } else {
             nextBodyPitch = -(s16)((m->forwardVel - 15) * 72);
         }
-        /*
-        if (nextBodyPitch <= -1024) {
-            nextBodyPitch -= (nextBodyPitch / 8);
-        }
-        */
 
         nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(45), 0);
 
-        marioBodyState->torsoAngle[2] = approach_s32(marioBodyState->torsoAngle[2], nextBodyRoll, 0x400, 0x400);
+        marioBodyState->torsoAngle[2] = 0;
         marioBodyState->torsoAngle[0] = approach_s32(marioBodyState->torsoAngle[0], nextBodyPitch, 0x400, 0x400);
     } else {
         marioBodyState->torsoAngle[2] = 0;
@@ -820,7 +811,7 @@ s32 act_walking(struct MarioState *m) {
         case GROUND_STEP_NONE:
             anim_and_audio_for_walk(m);
             if (m->intendedMag - m->forwardVel > 16.0f) {
-                if (gGlobalTimer % 6 == 0) {
+                if (gGlobalTimer % 4 == 0) {
                     m->particleFlags |= PARTICLE_DUST;
                 }
             }
@@ -866,7 +857,7 @@ s32 act_move_punching(struct MarioState *m) {
             break;
 
         case GROUND_STEP_NONE:
-            if (gGlobalTimer % 12 == 0) {
+            if (gGlobalTimer % 8 == 0) {
                 m->particleFlags |= PARTICLE_DUST;
             }
             break;
@@ -923,7 +914,7 @@ s32 act_hold_walking(struct MarioState *m) {
     anim_and_audio_for_hold_walk(m);
 
     if (0.4f * m->intendedMag - m->forwardVel > 10.0f) {
-        if (gGlobalTimer % 6 == 0) {
+        if (gGlobalTimer % 4 == 0) {
             m->particleFlags |= PARTICLE_DUST;
         }
     }
@@ -1456,7 +1447,7 @@ s32 common_slide_action_with_jump(struct MarioState *m, u32 stopAction, u32 jump
     }
 #else
     if (m->actionTimer == 5) {
-        if (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED)) {
+        if (m->input & INPUT_A_PRESSED) {
             return set_jumping_action(m, jumpAction, 0);
         }
     } else {
@@ -1523,7 +1514,7 @@ s32 act_crouch_slide(struct MarioState *m) {
         return set_mario_action(m, ACT_BUTT_SLIDE, 0);
     }
 
-    if (g95Toggle < 1) {
+    if (!g95Toggle) {
         if (m->actionTimer < 30) {
             m->actionTimer++;
             if (m->input & INPUT_A_PRESSED) {
@@ -1668,7 +1659,7 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
             m->forwardVel += 16.0f;
             set_mario_action(m, ACT_FORWARD_AIR_KB, 4);
         }
-        m->vel[1] = 4.0f;
+        m->vel[1] = 8.0f;
     } else {
         if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) mario_bonk_reflection(m, TRUE);
         if (is_anim_at_end(m)) {

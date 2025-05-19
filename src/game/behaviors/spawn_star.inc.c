@@ -56,6 +56,7 @@ void bhv_star_spawn_init(void) {
     } else {
         cutscene_object(CUTSCENE_RED_COIN_STAR_SPAWN, o);
     }
+    gMarioState->invincTimer = 120;
     cur_obj_become_intangible();
 }
 
