@@ -23,6 +23,7 @@ extern u8 debugScroll;
 extern u16 musicID;
 extern u16 musicBank;
 extern u8 pitchInvert;
+extern u8 sleepTimer;
 
 #ifdef TIME_ATTACK
     extern int timerCount;

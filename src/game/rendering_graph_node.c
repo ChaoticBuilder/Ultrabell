@@ -185,17 +185,6 @@ static const Gfx dl_silhouette_begin[] = {
     gsSPEndDisplayList(),
 };
 
-static const Gfx dl_silhouette_begin_luigi[] = {
-    gsDPPipeSync(),
-    // Set the render mode for the silhouette so that it gets its color and alpha from the fog register.
-    gsDPSetRenderMode((SCHWA | GBL_c1(G_BL_CLR_FOG, G_BL_A_FOG, G_BL_CLR_MEM, G_BL_1MA)),
-                      (SCHWA | GBL_c2(G_BL_CLR_FOG, G_BL_A_FOG, G_BL_CLR_MEM, G_BL_1MA))),
-    // Set the silhouette's color & alpha.
-    gsDPSetFogColor(0, 192, 0, SILHOUETTE),
-    // Hacky way to prevent triangle overlap. 32..255. 63 seems to give best results.
-    gsSPEndDisplayList(),
-};
-
 static const Gfx dl_silhouette_end[] = {
     gsDPPipeSync(),
     gsDPSetFogColor(  0,   0,   0, 255), // Reset fog color & alpha
@@ -323,11 +312,7 @@ void geo_process_master_list_sub(struct GraphNodeMasterList *node) {
 #if SILHOUETTE
                 if (phaseIndex == RENDER_PHASE_SILHOUETTE) {
                     // Add the current display list to the master list, with silhouette F3D.
-                    if (!(gLuigiToggle)) {
-                        gSPDisplayList(tempGfxHead++, dl_silhouette_begin);
-                    } else {
-                        gSPDisplayList(tempGfxHead++, dl_silhouette_begin_luigi);
-                    }
+                    gSPDisplayList(tempGfxHead++, dl_silhouette_begin);
                     gSPDisplayList(tempGfxHead++, currList->displayList);
                     gSPDisplayList(tempGfxHead++, dl_silhouette_end);
                 } else {

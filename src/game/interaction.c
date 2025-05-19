@@ -1868,7 +1868,7 @@ void mario_process_interactions(struct MarioState *m) {
     if (!(m->marioObj->collidedObjInteractTypes & INTERACT_WARP)) {
         sJustTeleported = FALSE;
     }
-    if (g95Toggle) {
+    if (g95Toggle && (m->action != ACT_SLEEPING || gRealToggle)) {
         sDelayInvincTimer = FALSE;
         sInvulnerable = FALSE;
         m->invincTimer = 0;

@@ -17,6 +17,8 @@
 #include "surface_terrains.h"
 #include "rumble_init.h"
 #include "ingame_menu.h"
+#include "hud.h"
+#include "game_init.h"
 
 s32 check_common_idle_cancels(struct MarioState *m) {
     mario_drop_held_object(m);
@@ -248,6 +250,8 @@ s32 act_sleeping(struct MarioState *m) {
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_CLOSED;
+    m->invincTimer = 2;
+    sleepTimer = 192;
     stationary_ground_step(m);
     switch (m->actionState) {
         case ACT_SLEEPING_STATE_IDLE:

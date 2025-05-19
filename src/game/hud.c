@@ -695,10 +695,29 @@ void debug_stats(void) {
     } else {
         (gEmulator != EMU_MUPEN64PLUS_NEXT)
         ? sprintf(debug, "EMU: 0x0%x", gEmulator) // 0x0xxx
-        : sprintf(debug, "EMU: 0x00%x", gEmulator); // 0x00xx (for some reason, Mupen64Next / RetroArch needs an extra 0)
+        : sprintf(debug, "EMU: 0x00%x", gEmulator); // 0x00xx (for some reason, Mupen64Next needs an extra 0)
     }
 
     print_small_text_light(16, 210, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+}
+
+u8 sleepTimer = 0;
+u8 sleepInc = 0;
+
+void sleep_draw(void) {
+    if (gMarioState->prevAction == ACT_SLEEPING) sleepTimer = 0;
+    if (sleepTimer > sleepInc && gGlobalTimer % 30 == 0) sleepInc++;
+    if (sleepTimer < sleepInc && gGlobalTimer % 2 == 0) {
+        (sleepInc > (sleepInc - 1) && (sleepInc - 1) > sleepTimer) 
+        ? sleepInc--
+        : (sleepInc = sleepTimer); // subtracting would either overflow, or be less than sleepTimer. 
+        // unsigned integer skillz 100
+    }
+    if (sleepInc >= 8) {
+        prepare_blank_box();
+        render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, (sleepInc * 8));
+        finish_blank_box();
+    }
 }
 
 /**
@@ -821,6 +840,7 @@ void render_hud(void) {
                 visualizer_display();
                 music_menu();
                 debug_stats();
+                sleep_draw();
                 // ttc(); displays the clock's current state, technically I could've kept it in but nah
                 // what makes me mad tho is the fact I had to do this in the first place
                 // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal
