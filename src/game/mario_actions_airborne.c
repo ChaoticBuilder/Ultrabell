@@ -1280,7 +1280,7 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
 
 s32 check_wall_kick(struct MarioState *m) {
     if ((m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL)) {
-        if ((!g95Toggle && !gLuigiToggle) && m->vel[1] >= 0) m->forwardVel += (m->vel[1] / 2.0f) + 10.0f;
+        if ((!g95Toggle && !gKickToggle && !gLuigiToggle) && m->vel[1] >= 0) m->forwardVel += (m->vel[1] / 2.0f) + 10.0f;
         m->faceAngle[1] += 0x8000;
         if (gABCToggle) return set_mario_action(m, ACT_FREEFALL, 0);
         return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
@@ -1396,7 +1396,7 @@ s32 act_soft_bonk(struct MarioState *m) {
 }
 
 s32 act_wall_slide (struct MarioState *m) {
-    if ((g95Toggle || gLuigiToggle) && m->wallKickTimer == 0 && m->prevAction == ACT_AIR_HIT_WALL) {
+    if ((g95Toggle || gKickToggle || gLuigiToggle) && m->wallKickTimer == 0 && m->prevAction == ACT_AIR_HIT_WALL) {
         play_sound(SOUND_MARIO_UH, m->marioObj->header.gfx.cameraToObject);
         if (gRealToggle) return set_mario_action(m, ACT_HARD_BACKWARD_AIR_KB, 2);
         return set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
@@ -1405,18 +1405,18 @@ s32 act_wall_slide (struct MarioState *m) {
         if (gGlobalTimer % 2 == 0) {
             m->particleFlags |= PARTICLE_DUST;
         }
-        if (!g95Toggle && !gLuigiToggle) {
+        if (!g95Toggle && !gKickToggle && !gLuigiToggle) {
             mario_set_forward_vel(m, -0.01f);
             m->vel[1] -= 1.0f;
         } else if (gRealToggle) {
-            if (m->wallKickTimer >= 8) m->vel[1] = 0;
+            if (m->wallKickTimer == gKickTime) m->vel[1] = 0;
         }
 
         if (check_wall_kick(m)) {
             return TRUE;
         }
 
-        if (!g95Toggle && !gLuigiToggle) {
+        if (!g95Toggle && !gKickToggle && !gLuigiToggle) {
             common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
             m->marioObj->header.gfx.angle[1] += 0x8000;
         } else {
@@ -1479,9 +1479,9 @@ s32 act_air_hit_wall(struct MarioState *m) {
         mario_drop_held_object(m);
     }
 
-    if (g95Toggle || gLuigiToggle) {
+    if (g95Toggle || gKickToggle || gLuigiToggle) {
         if (!gRealToggle) m->vel[1] = 24.0f;
-        m->wallKickTimer = 8;
+        m->wallKickTimer = gKickTime;
         set_mario_action(m, ACT_WALL_SLIDE, 0);
     } else {
         if (m->actionTimer == 0) {

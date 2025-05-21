@@ -13,6 +13,8 @@ extern u8 gConfigOpen;
     extern u8 gDebugToggle;
     extern u8 gTimerToggle;
     extern int gTimerTime;
+    extern u8 gKickToggle;
+    extern int gKickTime;
     extern u8 gTurnToggle;
     extern u8 g95Toggle;
     extern u8 gFlightToggle;
