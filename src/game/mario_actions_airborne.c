@@ -407,17 +407,13 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
-            switch (animation) {
-                case MARIO_ANIM_SLIDEFLIP:
-                    if (!gLuigiToggle) set_mario_anim_with_accel(m, animation, 0x18000);
-                    break;
-                }
-            if (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
-                (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
-                set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000);
-            } else {
-                set_mario_animation(m, animation);
+            if (animation == MARIO_ANIM_SLIDEFLIP && !gLuigiToggle) {
+                set_mario_anim_with_accel(m, animation, 0x18000);
             }
+            (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
+            (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL))
+            ? set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000)
+            : set_mario_animation(m, animation);
             break;
 
         case AIR_STEP_LANDED:
@@ -600,7 +596,7 @@ s32 act_freefall(struct MarioState *m) {
         case ACT_ARG_FREEFALL_FROM_SLIDE_KICK:
             animation = MARIO_ANIM_FALL_FROM_SLIDE_KICK;
             break;
-        case 4:
+        case 4: // coyote time
             if (gRealToggle) break;
             m->vel[1] += 3.0f;
             if (m->actionTimer > 3) m->actionArg = 0;

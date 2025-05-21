@@ -706,17 +706,18 @@ u8 sleepInc = 0;
 
 void sleep_draw(void) {
     if (gMarioState->prevAction == ACT_SLEEPING) sleepTimer = 0;
-    if (sleepTimer > sleepInc && gGlobalTimer % 30 == 0) sleepInc++;
-    if (sleepTimer < sleepInc && gGlobalTimer % 2 == 0) {
-        (sleepInc > (sleepInc - 1) && (sleepInc - 1) > sleepTimer) 
+    if (sleepInc > 0) {
+        prepare_blank_box();
+        render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x10, 0x10, 0x21, (sleepInc * 8 - 1));
+        finish_blank_box();
+    }
+    if (sleepTimer == sleepInc) return;
+    if (sleepTimer > sleepInc && gGlobalTimer % 8 == 0) sleepInc++;
+    if (sleepTimer < sleepInc) {
+        (sleepInc > 0 && (sleepInc - 1) > sleepTimer) 
         ? sleepInc--
         : (sleepInc = sleepTimer); // subtracting would either overflow, or be less than sleepTimer. 
         // unsigned integer skillz 100
-    }
-    if (sleepInc >= 8) {
-        prepare_blank_box();
-        render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, (sleepInc * 8));
-        finish_blank_box();
     }
 }
 

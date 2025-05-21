@@ -251,7 +251,7 @@ s32 act_sleeping(struct MarioState *m) {
 
     m->marioBodyState->eyeState = MARIO_EYES_CLOSED;
     m->invincTimer = 2;
-    sleepTimer = 192;
+    sleepTimer = 30;
     stationary_ground_step(m);
     switch (m->actionState) {
         case ACT_SLEEPING_STATE_IDLE:

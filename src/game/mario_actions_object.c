@@ -15,7 +15,7 @@
  * Used by act_punching() to determine Mario's forward velocity during each
  * animation frame.
  */
-s8 sPunchingForwardVelocities[8] = { 0, 1, 1, 2, 3, 5, 7, 10 };
+// s8 sPunchingForwardVelocities[8] = { 0, 1, 1, 2, 3, 5, 7, 10 };
 
 void animated_stationary_ground_step(struct MarioState *m, s32 animation, u32 endAction) {
     stationary_ground_step(m);
@@ -79,39 +79,6 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
         case ACT_ARG_PUNCH_SEQUENCE_WAH:
             play_sound(SOUND_MARIO_PUNCH_WAH, m->marioObj->header.gfx.cameraToObject);
             // fallthrough
-        /* DISABLED FUNCTION:
-        case ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH:
-            set_mario_animation(m, MARIO_ANIM_SECOND_PUNCH);
-            if (is_anim_past_end(m)) {
-                m->actionArg = ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH_FAST;
-            } else {
-                m->actionArg = ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH;
-            }
-
-            if (m->marioObj->header.gfx.animInfo.animFrame > 0) {
-                m->flags |= MARIO_PUNCHING;
-            }
-
-            if (m->actionArg == ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH_FAST) {
-                m->marioBodyState->punchState = (PUNCH_STATE_TYPE_SECOND_PUNCH | 0x4);
-            }
-            break;
-
-        case ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH_FAST:
-            set_mario_animation(m, MARIO_ANIM_SECOND_PUNCH_FAST);
-            if (m->marioObj->header.gfx.animInfo.animFrame <= 0) {
-                m->flags |= MARIO_PUNCHING;
-            }
-
-            if (m->input & INPUT_B_PRESSED) {
-                m->actionArg = ACT_ARG_PUNCH_SEQUENCE_GROUND_KICK;
-            }
-
-            if (is_anim_at_end(m)) {
-                set_mario_action(m, endAction, 0);
-            }
-            break;
-        */
 
         case ACT_ARG_PUNCH_SEQUENCE_GROUND_KICK:
             play_mario_action_sound(m, SOUND_MARIO_PUNCH_HOO, 1);

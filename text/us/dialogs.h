@@ -81,7 +81,7 @@ DEFINE_DIALOG(DIALOG_004, 1, 4, 95, 200, _("\
 Hello there, Mario!\n\
 Welcome to Ultrabell!\n\
 You're currently in\n\
-Bob-Omb Plains! (Demo)\n\
+Bob-Omb Plains!\n\
 There's tons of new details\n\
 and secrets to find!\n\
 You should try the water!\n\
@@ -93,14 +93,11 @@ it's Italian Lunch!\n\
 Lastly, if you want more\n\
 info on this hack,\n\
 read the sign nearby!\n\
+\n\
+Oh yeah, and one last\n\
+thing:\n\
+You're a furry! :3\n\
 See ya later, Plumber!"))
-
-/*
-Welcome to the Plains,\n\
-Mario!\n\
-We don't use our cannons,\n\
-so feel free to blast off!
-*/
 
 DEFINE_DIALOG(DIALOG_005, 1, 3, 30, 200, _("\
 Hey, Mario! Is it true\n\
@@ -168,43 +165,28 @@ Ready?\n\
 \n\
 //Go//// Don't Go"))
 
-DEFINE_DIALOG(DIALOG_010, 1, 4, 30, 200, _("\
-You've stepped on the\n\
-Wing Cap Switch. Wearing\n\
-the Wing Cap, you can\n\
-soar through the sky.\n\
-Now Wing Caps will pop\n\
-out of all the red blocks\n\
-you find.\n\
+DEFINE_DIALOG(DIALOG_010, 1, 2, 30, 200, _("\
+TODO:\n\
 \n\
-Would you like to Save?\n\
-\n\
+WING CAP BLOCK\n\
+OFF STATE\n\
+SAVE?\n\
 //Yes////No"))
 
-DEFINE_DIALOG(DIALOG_011, 1, 4, 30, 200, _("\
-You've just stepped on\n\
-the Metal Cap Switch!\n\
-The Metal Cap makes\n\
-Mario invincible.\n\
-Now Metal Caps will\n\
-pop out of all of the\n\
-green blocks you find.\n\
+DEFINE_DIALOG(DIALOG_011, 1, 2, 30, 200, _("\
+TODO:\n\
 \n\
-Would you like to Save?\n\
-\n\
+METAL CAP BLOCK\n\
+OFF STATE\n\
+SAVE?\n\
 //Yes////No"))
 
-DEFINE_DIALOG(DIALOG_012, 1, 4, 30, 200, _("\
-You've just stepped on\n\
-the Vanish Cap Switch.\n\
-The Vanish Cap makes\n\
-Mario disappear.\n\
-Now Vanish Caps will pop\n\
-from all of the blue\n\
-blocks you find.\n\
+DEFINE_DIALOG(DIALOG_012, 1, 2, 30, 200, _("\
+TODO:\n\
 \n\
-Would you like to Save?\n\
-\n\
+VANISH CAP BLOCK\n\
+OFF STATE\n\
+SAVE?\n\
 //Yes////No"))
 
 DEFINE_DIALOG(DIALOG_013, 1, 5, 30, 200, _("\

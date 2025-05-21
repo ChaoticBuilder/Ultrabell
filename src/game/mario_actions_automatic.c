@@ -309,9 +309,9 @@ s32 perform_hanging_step(struct MarioState *m, Vec3f nextPos) {
 s32 update_hang_moving(struct MarioState *m) {
     Vec3f nextPos;
 #ifdef BETTER_HANGING
-    f32 maxSpeed = (m->intendedMag / 2.0f);
+    f32 maxSpeed = (m->intendedMag / 4.0f);
     if (g95Toggle) maxSpeed /= 2.0f;
-    if (gRealToggle) maxSpeed /= 2.0f;
+    if (gRealToggle) maxSpeed /= 1.5f;
 #else
     f32 maxSpeed = HANGING_SPEED;
 #endif
@@ -518,10 +518,14 @@ s32 act_hang_moving(struct MarioState *m) {
         }
     }
 
+#endif
     if (update_hang_moving(m) == HANG_LEFT_CEIL) {
+        if (!gRealToggle) {
+            m->forwardVel = 8.0f;
+            m->vel[1] = 48.0f;
+        }
         set_mario_action(m, ACT_FREEFALL, 0);
     }
-#endif
 
     return FALSE;
 }
