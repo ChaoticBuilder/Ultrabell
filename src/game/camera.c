@@ -29,6 +29,7 @@
 #include "puppyprint.h"
 #include "profiling.h"
 #include "gfx_dimensions.h"
+#include "mario.h"
 
 u8 gVisToggle = FALSE;
 
@@ -4866,8 +4867,9 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
         sObjectCutscene = CUTSCENE_NONE;
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR) {
             cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-            if (CAMERA_MODE_PARALLEL_TRACKING) cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH);
-            if (CAMERA_MODE_FIXED) cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE);
+            if ((gCurrLevelArea == AREA_CASTLE_LOBBY && c->mode != CAMERA_MODE_FIXED && c->mode != CAMERA_MODE_PARALLEL_TRACKING) ||
+                (gCurrLevelArea == AREA_BBH && c->doorStatus != DOOR_LEAVING_SPECIAL))
+                cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE);
         }
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR_WARP) {
             cutscene = CUTSCENE_DOOR_WARP;

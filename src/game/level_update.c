@@ -846,7 +846,6 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
 
         if (fadeMusic && gCurrDemoInput == NULL) {
             fadeout_music((sDelayedWarpTimer * 0xC));
-            // old formula: (3 * sDelayedWarpTimer / 2) * 8 - 2 (basically just sDelayedWarpTimer * 12 - 2)
         }
     }
 
@@ -1247,7 +1246,8 @@ s32 init_level(void) {
     sTransitionTimer = 0;
     sSpecialWarpDest = WARP_SPECIAL_NONE;
 
-    g100CoinStarSpawned = FALSE;
+    if (!gNeverEnteredCastle) gNeverEnteredCastle = TRUE;
+    // g100CoinStarSpawned = FALSE;
 
     // NOTE: gStarModelLastCollected reset here as a safety to prevent possible UB if assigned a model used
     // in a non-global group. This checked can be removed as needed.
@@ -1363,11 +1363,7 @@ s32 lvl_init_from_save_file(UNUSED s16 initOrUpdate, s32 levelNum) {
 #endif
     sWarpDest.type = WARP_TYPE_NOT_WARPING;
     sDelayedWarpOp = WARP_OP_NONE;
-#ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
     gNeverEnteredCastle = TRUE;
-#else
-    gNeverEnteredCastle = FALSE;
-#endif
     gCurrLevelNum = levelNum;
     gCurrCourseNum = COURSE_NONE;
     gSavedCourseNum = COURSE_NONE;

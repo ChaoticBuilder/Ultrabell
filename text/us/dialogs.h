@@ -166,27 +166,15 @@ Ready?\n\
 //Go//// Don't Go"))
 
 DEFINE_DIALOG(DIALOG_010, 1, 2, 30, 200, _("\
-TODO:\n\
-\n\
-WING CAP BLOCK\n\
-OFF STATE\n\
-SAVE?\n\
+Save?\n\
 //Yes////No"))
 
 DEFINE_DIALOG(DIALOG_011, 1, 2, 30, 200, _("\
-TODO:\n\
-\n\
-METAL CAP BLOCK\n\
-OFF STATE\n\
-SAVE?\n\
+Save?\n\
 //Yes////No"))
 
 DEFINE_DIALOG(DIALOG_012, 1, 2, 30, 200, _("\
-TODO:\n\
-\n\
-VANISH CAP BLOCK\n\
-OFF STATE\n\
-SAVE?\n\
+Save?\n\
 //Yes////No"))
 
 DEFINE_DIALOG(DIALOG_013, 1, 5, 30, 200, _("\
@@ -277,29 +265,26 @@ door. You need [%] more\n\
 Stars."))
 
 DEFINE_DIALOG(DIALOG_026, 1, 4, 95, 200, _("\
-It takes the power of\n\
-8 Stars to open this\n\
-door. You need [%] more\n\
-Stars."))
+This door requires the\n\
+power of 8 Stars!\n\
+You need [%]\n\
+more Stars..."))
 
 DEFINE_DIALOG(DIALOG_027, 1, 4, 95, 200, _("\
-It takes the power of\n\
-24 Stars to open this\n\
-door. You need [%] more\n\
-Stars."))
+This door requires the\n\
+power of 24 Stars!\n\
+You need [%]\n\
+more Stars..."))
 
 DEFINE_DIALOG(DIALOG_028, 1, 4, 95, 200, _("\
-It takes the power of\n\
-40 Stars to open this\n\
-door. You need [%] more\n\
-Stars."))
+This door requires the\n\
+power of 40 Stars!\n\
+You need [%]\n\
+more Stars..."))
 
-DEFINE_DIALOG(DIALOG_029, 1, 5, 95, 200, _("\
-To open the door that\n\
-leads to the 『endless』\n\
-stairs, you need 64\n\
-Stars.\n\
-Bwa ha ha!"))
+DEFINE_DIALOG(DIALOG_029, 1, 2, 95, 200, _("\
+PLACEHOLDER DIALOG\n\
+'STAIRS WITHOUT END'"))
 
 DEFINE_DIALOG(DIALOG_030, 1, 6, 30, 200, _("\
 Hello! The Lakitu Bros.,\n\

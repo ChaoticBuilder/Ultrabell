@@ -1040,20 +1040,17 @@ s32 act_ground_pound_land(struct MarioState *m) {
 }
 
 s32 act_first_person(struct MarioState *m) {
-    UNUSED s32 exit = (m->input & (INPUT_OFF_FLOOR | INPUT_ABOVE_SLIDE | INPUT_STOMPED)) != 0;
-    struct MarioBodyState *bodyState = m->marioBodyState;
-    if (m->actionTimer == 0 || m->fadeWarpOpacity > 0x3F) {
-        m->fadeWarpOpacity = (-m->actionTimer * 0x8) + 0xF7;
-        m->actionTimer++;
-    }
-    bodyState->modelState &= ~MODEL_STATE_MASK;
-    bodyState->modelState |= (MODEL_STATE_ALPHA | m->fadeWarpOpacity);
+    s32 exit = m->input & INPUT_OFF_FLOOR;
+    (!g95Toggle)
+    ? (fadeWarpTarget = 0)
+    : (fadeWarpTarget = 0xFF);
 
     if (m->actionState == ACT_STATE_FIRST_PERSON_SET_MODE) {
         lower_background_noise(2);
         set_camera_mode(m->area->camera, CAMERA_MODE_C_UP, 16);
         m->actionState = ACT_STATE_FIRST_PERSON_IDLE;
-    } else if (!(m->input & INPUT_FIRST_PERSON)) {
+    } else if (!(m->input & INPUT_FIRST_PERSON) || exit) {
+        fadeWarpTarget = 0xFF;
         raise_background_noise(2);
         // Go back to the last camera mode
         set_camera_mode(m->area->camera, -1, 1);

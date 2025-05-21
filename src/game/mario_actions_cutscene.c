@@ -423,15 +423,14 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
     u32 actionArg;
 
     m->actionState++;
-    if (m->prevAction == ACT_UNLOCKING_STAR_DOOR) m->actionState = 25; // really hacky way of doing this but whatever
+    if (m->prevAction == ACT_UNLOCKING_STAR_DOOR) m->actionState = 10; // really hacky way of doing this but whatever
     if (m->actionState == 2) {
         enable_time_stop();
     }
     if (m->actionState < 9) {
         set_mario_animation(m, m->prevAction == ACT_STAR_DANCE_WATER ? MARIO_ANIM_WATER_IDLE
-                                                                     : MARIO_ANIM_FIRST_PERSON);
-        // always look up for automatic dialogs
-        m->actionTimer -= 1024;
+                                                                     : MARIO_ANIM_IDLE_HEAD_LEFT);
+        // m->actionTimer -= 1024;
     } else {
         // set Mario dialog
         if (m->actionState == 9) {
@@ -444,23 +443,23 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
         }
         // wait until dialog is done
         else if (m->actionState == 10) {
-            if (get_dialog_id() >= 0) {
-                m->actionState--;
-            }
-        }
-        // look back down
+            if (get_dialog_id() < 0) {
+        /*
         else if (m->actionState < 19) {
             m->actionTimer += 1024;
         }
-        // finished action
         else if (m->actionState == 25) {
-            disable_time_stop();
-            if (m->prevAction == ACT_STAR_DANCE_WATER) {
-                set_mario_action(m, ACT_WATER_IDLE, 0); // 100c star?
+        */
+                disable_time_stop();
+                if (m->prevAction == ACT_STAR_DANCE_WATER) {
+                    set_mario_action(m, ACT_WATER_IDLE, 0); // 100c star?
+                } else {
+                    // make Mario walk into door after star dialog
+                    set_mario_action(m, m->prevAction == ACT_UNLOCKING_STAR_DOOR ? ACT_WALKING : ACT_IDLE,
+                                    0);
+                }
             } else {
-                // make Mario walk into door after star dialog
-                set_mario_action(m, m->prevAction == ACT_UNLOCKING_STAR_DOOR ? ACT_WALKING : ACT_IDLE,
-                                 0);
+                m->actionState--;
             }
         }
     }
@@ -537,16 +536,12 @@ s32 act_debug_free_move(struct MarioState *m) {
         if (m->vel[1] < 0) m->vel[1] = 0;
         m->forwardVel = 0;
 
-        // set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
         m->input &= ~INPUT_A_PRESSED;
         if (m->pos[1] <= (m->waterLevel - 100)) {
             return set_mario_action(m, ACT_WATER_IDLE, 0);
         } else if (m->pos[1] <= m->floorHeight) {
             return set_mario_action(m, ACT_IDLE, 0);
         } else {
-            // slight upwards boost to get you some hover time
-            m->vel[1] = 40.0f;
-            gPlayer1Controller->buttonDown &= ~U_JPAD;
             return set_mario_action(m, ACT_FREEFALL, 0);
         }
     }
@@ -1039,16 +1034,15 @@ s32 act_warp_door_spawn(struct MarioState *m) {
     } else if (m->usedObj->oAction == DOOR_ACT_CLOSED) {
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
         if (gNeverEnteredCastle && gCurrLevelNum == LEVEL_CASTLE) {
-            set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, DIALOG_021);
             gNeverEnteredCastle = FALSE;
-        } else {
+            set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, DIALOG_021);
+        } else
+#endif
+        {
             set_mario_action(m, ACT_IDLE, 0);
         }
-#else
-        set_mario_action(m, ACT_IDLE, 0);
-#endif
     }
-    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
     stop_and_set_height_to_floor(m);
     return FALSE;
 }
@@ -1498,9 +1492,7 @@ s32 act_teleport_fade_out(struct MarioState *m) {
 
     m->flags |= MARIO_TELEPORTING;
 
-    if (m->actionTimer < 32) {
-        m->fadeWarpOpacity = (-m->actionTimer << 3) + 0xF8;
-    }
+    fadeWarpTarget = 0;
 
     if (m->actionTimer++ == 20) {
         level_trigger_warp(m, WARP_OP_TELEPORT);
@@ -1522,12 +1514,10 @@ s32 act_teleport_fade_in(struct MarioState *m) {
     }
 #endif
 
-    if (m->actionTimer < 32) {
-        m->flags |= MARIO_TELEPORTING;
-        m->fadeWarpOpacity = m->actionTimer << 3;
-    } else {
-        m->flags &= ~MARIO_TELEPORTING;
-    }
+    fadeWarpTarget = 0xFF;
+    (m->actionTimer < 32)
+    ? (m->flags |= MARIO_TELEPORTING)
+    : (m->flags &= ~MARIO_TELEPORTING);
 
     if (m->actionTimer++ == 32) {
         if (m->pos[1] < m->waterLevel - 100) {

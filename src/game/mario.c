@@ -1653,6 +1653,10 @@ u32 update_and_return_cap_flags(struct MarioState *m) {
     return flags;
 }
 
+u8 fadeWarpTarget = 0xFF;
+u8 alphaTimer = 0;
+u8 target = FALSE;
+
 /**
  * Updates the Mario's cap, rendering, and hitbox.
  */
@@ -1698,7 +1702,15 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
         m->marioObj->hitboxHeight = 160.0f;
     }
 
-    if ((m->flags & MARIO_TELEPORTING) && (m->fadeWarpOpacity != MODEL_STATE_MASK)) {
+    if (m->fadeWarpOpacity != fadeWarpTarget) {
+        alphaTimer++;
+        if (m->fadeWarpOpacity > fadeWarpTarget) {
+            m->fadeWarpOpacity = (-alphaTimer * 8) + 0xF8;
+        } else if (m->fadeWarpOpacity < fadeWarpTarget) {
+            m->fadeWarpOpacity = (alphaTimer * 8) + 7;
+        }
+    }
+    if (m->fadeWarpOpacity != MODEL_STATE_MASK) {
         bodyState->modelState &= ~MODEL_STATE_MASK;
         bodyState->modelState |= (MODEL_STATE_ALPHA | m->fadeWarpOpacity);
     }
@@ -1848,6 +1860,8 @@ void init_mario(void) {
     gMarioState->framesSinceB = 0xFF;
 
     gMarioState->invincTimer = 0;
+    gMarioState->fadeWarpOpacity = 0xFF;
+    fadeWarpTarget = 0xFF;
 
     if (save_file_get_flags()
         & (SAVE_FLAG_CAP_ON_GROUND | SAVE_FLAG_CAP_ON_KLEPTO | SAVE_FLAG_CAP_ON_UKIKI
@@ -1921,6 +1935,8 @@ void init_mario_from_save_file(void) {
     gMarioState->marioBodyState = &gBodyStates[0];
     gMarioState->controller = &gControllers[0];
     gMarioState->animList = &gMarioAnimsBuf;
+    gMarioState->fadeWarpOpacity = 0xFF;
+    fadeWarpTarget = 0xFF;
 
     gMarioState->numCoins = 0;
     gMarioState->numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
