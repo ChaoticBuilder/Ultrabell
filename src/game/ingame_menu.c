@@ -48,7 +48,7 @@ u8 gDebugToggle = FALSE;
 u8 gDiveToggle = 0;
 u8 gTimerToggle = FALSE;
 u8 gKickToggle = FALSE;
-int gKickTime = 5;
+int gKickTimer = 0;
 u8 gTurnToggle = FALSE;
 u8 gFlightToggle = FALSE;
 u8 gTrollToggle = FALSE;
@@ -57,13 +57,6 @@ u8 gRealToggle = FALSE;
 u8 gABCToggle = FALSE;
 u8 gMusicToggle = FALSE;
 u8 gLevelTroll = 0;
-/*
-#if defined(WIDE) && !defined(PUPPYCAM)
-u8 textCurrRatio43[] = { TEXT_HUD_CURRENT_RATIO_43 };
-u8 textCurrRatio169[] = { TEXT_HUD_CURRENT_RATIO_169 };
-u8 textPressL[] = { TEXT_HUD_PRESS_L };
-#endif
-*/
 u8 textConfigOpen[] = { TEXT_CONFIG_OPEN };
 u8 textConfigClose[] = { TEXT_CONFIG_CLOSE };
 
@@ -1572,72 +1565,95 @@ void config_options_scroll(void) {
         return;
     if ((gPlayer1Controller->buttonPressed == L_JPAD) || (gPlayer1Controller->rawStickX <= -32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll--;
-        if (gConfigScroll == 7) gConfigScroll--;
+        if (gConfigScroll == CFG_SPAC0) gConfigScroll--;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll -= 2;
-        if (gConfigScroll == 7) gConfigScroll -= 2;
+        if (gConfigScroll == CFG_SPAC0) gConfigScroll -= 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll++;
-        if (gConfigScroll == 7) gConfigScroll++;
+        if (gConfigScroll == CFG_SPAC0) gConfigScroll++;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll += 2;
-        if (gConfigScroll == 7) gConfigScroll += 2;
+        if (gConfigScroll == CFG_SPAC0) gConfigScroll += 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gConfigScroll < 2) {
-        gConfigScroll = 18;
+    if (gConfigScroll == CFG_2) {
+        gConfigScroll = (CFG_END - 1);
     }
-    if (gConfigScroll > 18) {
+    if (gConfigScroll < CFG_2) {
+        gConfigScroll = (CFG_END - 2);
+    }
+    if (gConfigScroll == CFG_END) {
         gConfigScroll = 2;
+    }
+    if (gConfigScroll > CFG_END) {
+        gConfigScroll = 3;
     }
 }
 
 void config_options(void) {
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
-        if (gConfigScroll == 2) {
+        if (gConfigScroll == CFG_WIDE) {
 #ifdef WIDE
             gConfig.widescreen ^= 1;
             save_file_set_widescreen_mode(gConfig.widescreen);
 #endif
         }
-        if (gConfigScroll == 3) gHighlightToggle ^= 1;
-        if (gConfigScroll == 4) gHudToggle ^= 1;
-        if (gConfigScroll == 5) gVisToggle ^= 1;
-        if (gConfigScroll == 6) {
+        if (gConfigScroll == CFG_FOV) gHighlightToggle ^= 1;
+        if (gConfigScroll == CFG_HUD) gHudToggle ^= 1;
+        if (gConfigScroll == CFG_TEMP0) gVisToggle ^= 1;
+        if (gConfigScroll == CFG_STATS) {
             gDebugToggle ^= 1;
             gShowDebugText ^= 1;
             (gShowDebugText)
             ? (gDebugInfoFlags = DEBUG_INFO_FLAG_DPRINT)
             : (gDebugInfoFlags = DEBUG_INFO_NOFLAGS);
         }
-        if (gConfigScroll == 8) gLuigiToggle ^= 1;
-        if (gConfigScroll == 9 && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) gTimerToggle ^= 1;
-        if (gConfigScroll == 10 && !gRealToggle) g95Toggle ^= 1;
-        if (gConfigScroll == 11) {
-            gRealToggle ^= 1;
-            (!gRealToggle)
-            ? (g95Toggle = FALSE)
-            : (g95Toggle = TRUE);
+        if (gConfigScroll == CFG_LUIGI) {
+            gLuigiToggle ^= 1;
+            gKickToggle = gLuigiToggle;
+            (!gLuigiToggle)
+            ? (gKickTimer = 0)
+            : (gKickTimer = 5);
         }
-        if (gConfigScroll == 12) gDiveToggle = (gDiveToggle + 1) % 3;
-        if (gConfigScroll == 13) gKickToggle ^= 1;
-        if (gConfigScroll == 14) gTurnToggle ^= 1;
-        if (gConfigScroll == 15) gABCToggle ^= 1;
+        if (gConfigScroll == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) gTimerToggle ^= 1;
+        if (gConfigScroll == CFG_SSK && !gRealToggle) {
+            g95Toggle ^= 1;
+            gKickToggle = g95Toggle;
+            (!g95Toggle)
+            ? (gKickTimer = 0)
+            : (gKickTimer = 5);
+        }
+        if (gConfigScroll == CFG_REAL) {
+            gRealToggle ^= 1;
+            g95Toggle = gRealToggle;
+            gKickToggle = gRealToggle;
+            (!gRealToggle)
+            ? (gKickTimer = 0)
+            : (gKickTimer = 5);
+        }
+        if (gConfigScroll == CFG_DIVE) gDiveToggle = (gDiveToggle + 1) % 3;
+        if (gConfigScroll == CFG_VKICK && !gLuigiToggle && !g95Toggle && !gRealToggle) {
+            gKickToggle ^= 1;
+            (!gKickToggle)
+            ? (gKickTimer = 0)
+            : (gKickTimer = 5);
+        }
+        if (gConfigScroll == CFG_CTURN) gTurnToggle ^= 1;
+        if (gConfigScroll == CFG_ABC) gABCToggle ^= 1;
         // if (gHudDisplay.stars >= 100)
-        if (gConfigScroll == 16) gFlightToggle ^= 1;
-        if (gConfigScroll == 17) gTrollToggle ^= 1;
-        if (gConfigScroll == 18) gLevelTroll = (gLevelTroll + 1) % 3;
+        if (gConfigScroll == CFG_FLY) gFlightToggle ^= 1;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed & B_BUTTON) {
-        if (gConfigScroll == 9 && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum)) && gTimerToggle) gHighlightToggle ^= 1;
-        if (gConfigScroll == 13 && gKickToggle) gHighlightToggle ^= 1;
+        if (gConfigScroll == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum)) && gTimerToggle) gHighlightToggle ^= 1;
+        if (gConfigScroll == CFG_VKICK) gHighlightToggle ^= 1;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
 }
@@ -1646,10 +1662,10 @@ void fov_slider(void) {
     s16 minFOV = -15;
     s16 maxFOV = 45;
     if (gPlayer1Controller->rawStickX >= 32.0f) {
-        sFovSlider += 0.1;
+        sFovSlider += 0.1f;
     }
     if (gPlayer1Controller->rawStickX <= -32.0f) {
-        sFovSlider -= 0.1;
+        sFovSlider -= 0.1f;
     }
     if (gGlobalTimer % 2 == 0) {
         if (gPlayer1Controller->buttonDown == R_JPAD) {
@@ -1684,16 +1700,20 @@ void time_slider(void) {
         }
     } else {
         if (gGlobalTimer % 2 == 0) {
-            if (gPlayer1Controller->buttonDown == L_JPAD) gKickTime--;
-            if (gPlayer1Controller->buttonDown == R_JPAD) gKickTime++;
+            if (gPlayer1Controller->buttonDown == L_JPAD) gKickTimer--;
+            if (gPlayer1Controller->buttonDown == R_JPAD) gKickTimer++;
         }
         if (gPlayer1Controller->buttonPressed == D_JPAD) {
-            gKickTime = 5;
+            (!gKickToggle)
+            ? (gKickTimer = 0)
+            : (gKickTimer = 5);
             play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
     }
-    
-    gKickTime = CLAMP(gKickTime, 1, 30);
+
+    (!gKickToggle)
+    ? (gKickTimer = CLAMP(gKickTimer, 0, 30))
+    : (gKickTimer = CLAMP(gKickTimer, 1, 20));
 }
 
 void config_open(void) {
@@ -1707,15 +1727,12 @@ void config_open(void) {
 
 /**
  * Function for drawing options in the Hack Config.
- * It takes in an x and y pos, modifier, scroll number, and string.
- * Modifier affects whether or not it sets a envcolor. (even for yes, odd for no.)
+ * It takes in an x and y pos, scroll number, and string.
  */
-void config_option_render(u8 x, u8 y, const char *str, u8 mod, u8 scroll) {
-    if (mod % 2 == 0) {
-        (gConfigScroll == scroll)
-        ? print_set_envcolour(255, 255, 255, 255)
-        : print_set_envcolour(127, 127, 127, 255);
-    }
+void config_option_render(u8 x, u8 y, const char *str, u8 scroll) {
+    (gConfigScroll == scroll)
+    ? print_set_envcolour(255, 255, 255, 255)
+    : print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(x, y, str, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
@@ -1731,54 +1748,50 @@ void config_options_box(void) {
     print_small_text_light(142, 12, "Visual", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
 #ifdef WIDE
-    if (!gConfig.widescreen) sprintf(currOption, "Ratio: 4:3");
-    if (gConfig.widescreen) sprintf(currOption, "Ratio: 16:9");
+    (!gConfig.widescreen) ? sprintf(currOption, "Ratio: 4:3") : sprintf(currOption, "Ratio: 16:9");
 #else
     sprintf(currOption, "Widescreen Disabled");
 #endif
 
-    config_option_render(xPos, yPos, currOption, 0, 2);
+    config_option_render(xPos, yPos, currOption, CFG_WIDE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (sFovSlider > 0) sprintf(currOption, "FOV: +%2.1f", sFovSlider);
-    if (sFovSlider <= 0) sprintf(currOption, "FOV: %2.1f", sFovSlider);
-    
     print_set_envcolour(255, 255, 255, 255);
-    if (gHighlightToggle && gConfigScroll == 3) {
+    if (gHighlightToggle && gConfigScroll == CFG_FOV) {
         fov_slider();
         print_set_envcolour(255, 255, 95, 255);
     }
-    if (gConfigScroll != 3) print_set_envcolour(127, 127, 127, 255);
+    if (gConfigScroll != CFG_FOV) print_set_envcolour(127, 127, 127, 255);
+
+    (sFovSlider > 0) ? sprintf(currOption, "FOV: +%2.1f", sFovSlider) : sprintf(currOption, "FOV: %2.1f", sFovSlider);
     
-    config_option_render(xPos, yPos, currOption, 1, 3);
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 4) print_small_text_light(160, 204, "Good for taking screenshots, or to challenge yourself.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_HUD)
+        print_small_text_light(160, 204, "Good for taking screenshots, or to challenge yourself.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gHudToggle) sprintf(currOption, "Hud: On");
-    if (gHudToggle) sprintf(currOption, "Hud: Off");
+    (!gHudToggle) ? sprintf(currOption, "Hud: On") : sprintf(currOption, "Hud: Off");
 
-    config_option_render(xPos, yPos, currOption, 0, 4);
+    config_option_render(xPos, yPos, currOption, CFG_HUD);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 5) print_small_text_light(160, 204, "Shakes your FOV during stressful areas.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_TEMP0) print_small_text_light(160, 204, "Shakes your FOV during stressful areas.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gVisToggle) sprintf(currOption, "Visualizer: Off");
-    if (gVisToggle) sprintf(currOption, "Visualizer: On");
+    (!gVisToggle) ? sprintf(currOption, "Visualizer: Off") : sprintf(currOption, "Visualizer: On");
 
     // prob gonna deprecate this one later honestly
 
-    config_option_render(xPos, yPos, currOption, 0, 5);
+    config_option_render(xPos, yPos, currOption, CFG_TEMP0);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (!gDebugToggle) sprintf(currOption, "debugstats: Off");
-    if (gDebugToggle) sprintf(currOption, "debugstats: On");
+    (!gDebugToggle) ? sprintf(currOption, "debugstats: Off") : sprintf(currOption, "debugstats: On");
     
-    config_option_render(xPos, yPos, currOption, 0, 6);
+    config_option_render(xPos, yPos, currOption, CFG_STATS);
     if (xPos >= 160) xPos -= 160;
     yPos += 32;
 
@@ -1787,7 +1800,7 @@ void config_options_box(void) {
 
     if (!gLuigiToggle) print_set_envcolour(255, 95, 95, 255);
     if (gLuigiToggle) print_set_envcolour(95, 255, 95, 255);
-    if (gConfigScroll == 8) print_small_text_light(160, 204, "Choose your Player!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_LUIGI) print_small_text_light(160, 204, "Choose your Player!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gLuigiToggle) {
         sprintf(currOption, "Brother: Mario");
@@ -1797,13 +1810,21 @@ void config_options_box(void) {
         print_set_envcolour(95, 255, 95, 255);
     }
 
-    if (gConfigScroll != 8) print_set_envcolour(127, 127, 127, 255);
+    if (gConfigScroll != CFG_LUIGI) print_set_envcolour(127, 127, 127, 255);
 
-    config_option_render(xPos, yPos, currOption, 1, 8);
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 9) print_small_text_light(160, 204, "Spaghetti Time. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_TIMER)
+        print_small_text_light(160, 204, "Spaghetti Time. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    print_set_envcolour(255, 255, 255, 255);
+    if (gHighlightToggle && gConfigScroll == CFG_TIMER) { // this is temp, every level will have their own custom amount of time soon
+        time_slider();
+        print_set_envcolour(255, 255, 95, 255);
+    }
+    if (gConfigScroll != CFG_TIMER) print_set_envcolour(127, 127, 127, 255);
 
     if (!gTimerToggle) sprintf(currOption, "Time Attack: Off");
     if (gTimerToggle) {
@@ -1812,139 +1833,118 @@ void config_options_box(void) {
         : sprintf(currOption, "Lock in, Mario!");
     }
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gHighlightToggle && gConfigScroll == 9) { // this is temp, every level will have their own custom amount of time soon
-        time_slider();
-        print_set_envcolour(255, 255, 95, 255);
-    }
-    if (gConfigScroll != 9) print_set_envcolour(127, 127, 127, 255);
-
-    config_option_render(xPos, yPos, currOption, 1, 9);
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 10) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_SSK) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!g95Toggle) sprintf(currOption, "Shoshinkai Mode: Off");
     if (g95Toggle) sprintf(currOption, "Shoshinkai Mode: On");
     if (gRealToggle) sprintf(currOption, "Automatically enabled.");
 
-    config_option_render(xPos, yPos, currOption, 0, 10);
+    config_option_render(xPos, yPos, currOption, CFG_SSK);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 11) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_REAL) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gRealToggle) sprintf(currOption, "Realistic Mode: Off");
     if (gRealToggle) sprintf(currOption, "Realistic Mode: On");
 
-    config_option_render(xPos, yPos, currOption, 0, 11);
+    config_option_render(xPos, yPos, currOption, CFG_REAL);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 12) print_small_text_light(160, 204, "What behavior to use when pressing B in the air.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_DIVE)
+        print_small_text_light(160, 204, "What behavior to use when pressing B in the air.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (gDiveToggle == 0) sprintf(currOption, "Always Dive: Off");
+    if (!gDiveToggle)     sprintf(currOption, "Always Dive: Off");
     if (gDiveToggle == 1) sprintf(currOption, "Always Dive: Dive");
     if (gDiveToggle == 2) sprintf(currOption, "Always Dive: Kick");
 
-    config_option_render(xPos, yPos, currOption, 0, 12);
+    config_option_render(xPos, yPos, currOption, CFG_DIVE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 13) print_small_text_light(160, 204, "Vanilla Wall Kicks. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-    if (!gKickToggle) sprintf(currOption, "V-Kicks: Off");
-    if (gKickToggle) {
-        sprintf(currOption, "V-Kicks:%2d Frames", gKickTime);
-        if (gKickTime == 1) sprintf(currOption, "V-Kicks:%2d Frame", gKickTime);
-        if (gKickTime == 5) sprintf(currOption, "V-Kicks: Vanilla", gKickTime);
-        if (gKickTime >= 10) sprintf(currOption, "V-Kicks: %2d Frames", gKickTime);
+    if (gConfigScroll == CFG_VKICK) {
+        (!gKickToggle)
+        ? print_small_text_light(160, 192, "Current Mode: Modern", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE)
+        : print_small_text_light(160, 192, "Current Mode: Vanilla", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        print_small_text_light(160, 204, "Vanilla Wall Kicks. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
     }
 
     print_set_envcolour(255, 255, 255, 255);
-    if (gHighlightToggle && gConfigScroll == 13) {
+    if (gHighlightToggle && gConfigScroll == CFG_VKICK) {
         time_slider();
         print_set_envcolour(255, 255, 95, 255);
-        if (gKickTime < 5) print_set_envcolour(255, 95, 95, 255);
-        if (gKickTime >= 15) print_set_envcolour(127, 255, 175, 255);
+        if (gKickTimer > 0 && gKickTimer < 5) print_set_envcolour(255, 95, 95, 255);
+        if (gKickTimer > 10) print_set_envcolour(127, 255, 175, 255);
     }
-    if (gConfigScroll != 13) print_set_envcolour(127, 127, 127, 255);
+    if (gConfigScroll != CFG_VKICK) print_set_envcolour(127, 127, 127, 255);
 
-    config_option_render(xPos, yPos, currOption, 1, 13);
+    sprintf(currOption, "V-Kicks:%2d Frames", gKickTimer);
+    if (gKickTimer == 0) sprintf(currOption, "V-Kicks: Off");
+    if (gKickTimer == 1) sprintf(currOption, "V-Kicks: 1 Frame");
+    if (gKickTimer == 5) sprintf(currOption, "V-Kicks: Vanilla");
+    if (gKickTimer >= 10) sprintf(currOption, "V-Kicks: %2d Frames", gKickTimer);
+
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 14) print_small_text_light(160, 204, "Toggles Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_CTURN)
+        print_small_text_light(160, 204, "Toggles Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gTurnToggle) sprintf(currOption, "Circle Turn: On");
     if (gTurnToggle) sprintf(currOption, "Circle Turn: Off");
 
-    config_option_render(xPos, yPos, currOption, 0, 14);
+    config_option_render(xPos, yPos, currOption, CFG_CTURN);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 15) print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_ABC)
+        print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gABCToggle) sprintf(currOption, "AB Challenge: Off");
     if (gABCToggle) sprintf(currOption, "AB Challenge: On");
 
-    config_option_render(xPos, yPos, currOption, 0, 15);
+    config_option_render(xPos, yPos, currOption, CFG_ABC);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    if (gConfigScroll == 16) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (gConfigScroll == CFG_HARD) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     sprintf(currOption, "TEMP");
 
-    config_option_render(xPos, yPos, currOption, 0, 16);
+    config_option_render(xPos, yPos, currOption, CFG_HARD);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 17) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         if (!gFlightToggle) sprintf(currOption, "Infinite Flight: On");
         if (!gFlightToggle) sprintf(currOption, "Infinite Flight: Off");
 
         print_set_envcolour(255, 255, 255, 255);
-        if (gConfigScroll != 17) print_set_envcolour(127, 127, 127, 255);
+        if (gConfigScroll != CFG_FLY) print_set_envcolour(127, 127, 127, 255);
     } else {
         print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == 17) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         sprintf(currOption, "Locked!");
 
         print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll != 17) print_set_envcolour(79, 79, 79, 255);
+        if (gConfigScroll != CFG_FLY) print_set_envcolour(79, 79, 79, 255);
     }
 
-    config_option_render(xPos, yPos, currOption, 1, 17);
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) xPos -= 160;
     yPos += 32;
 
     print_set_envcolour(255, 127, 255, 255);
     print_small_text_light(140, (yPos - 16), "Events", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-
-    if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == 18) print_small_text_light(160, 204, "Are those pesky doors annoying you? Look no further.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        if (!gTrollToggle) sprintf(currOption, "Troll Events: On");
-        if (gTrollToggle) sprintf(currOption, "Troll Events: Off");
-
-        print_set_envcolour(255, 255, 255, 255);
-        if (gConfigScroll != 18) print_set_envcolour(127, 127, 127, 255);
-    } else {
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == 18) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-        sprintf(currOption, "Locked!");
-
-        print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll != 18) print_set_envcolour(79, 79, 79, 255);
-    }
-
-    config_option_render(xPos, yPos, currOption, 1, 18);
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)

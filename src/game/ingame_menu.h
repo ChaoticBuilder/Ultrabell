@@ -14,7 +14,7 @@ extern u8 gConfigOpen;
     extern u8 gTimerToggle;
     extern int gTimerTime;
     extern u8 gKickToggle;
-    extern int gKickTime;
+    extern int gKickTimer;
     extern u8 gTurnToggle;
     extern u8 g95Toggle;
     extern u8 gFlightToggle;
@@ -24,6 +24,28 @@ extern u8 gConfigOpen;
     extern u8 gMusicToggle;
     extern u8 gLevelTroll;
     extern f32 sFovSlider;
+
+enum ConfigMenuIDs {
+    CFG_1,
+    CFG_2,
+    CFG_WIDE,
+    CFG_FOV,
+    CFG_HUD,
+    CFG_TEMP0,
+    CFG_SPAC0,
+    CFG_STATS,
+    CFG_LUIGI,
+    CFG_TIMER,
+    CFG_SSK,
+    CFG_REAL,
+    CFG_DIVE,
+    CFG_VKICK,
+    CFG_CTURN,
+    CFG_ABC,
+    CFG_HARD,
+    CFG_FLY,
+    CFG_END,
+};
 
 #define ASCII_TO_DIALOG(asc)                                       \
     (((asc) >= '0' && (asc) <= '9') ? ((asc) - '0') :              \
