@@ -464,7 +464,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
         }
     }
     // apply head turn
-    vec3s_set(m->marioBodyState->headAngle, m->actionTimer, 0, 0);
+    // vec3s_set(m->marioBodyState->headAngle, m->actionTimer, 0, 0);
     return FALSE;
 }
 
@@ -533,15 +533,16 @@ s32 act_debug_free_move(struct MarioState *m) {
         pos[1] -= 16.0f * speed;
     }
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
-        if (m->vel[1] < 0) m->vel[1] = 0;
         m->forwardVel = 0;
 
         m->input &= ~INPUT_A_PRESSED;
-        if (m->pos[1] <= (m->waterLevel - 100)) {
+        if (m->pos[1] <= m->waterLevel - 64) {
             return set_mario_action(m, ACT_WATER_IDLE, 0);
-        } else if (m->pos[1] <= m->floorHeight) {
+        } else if (m->pos[1] <= m->floorHeight + 32) {
             return set_mario_action(m, ACT_IDLE, 0);
         } else {
+            m->vel[1] = 8.0f;
+            gPlayer1Controller->buttonDown &= ~U_JPAD;
             return set_mario_action(m, ACT_FREEFALL, 0);
         }
     }
@@ -888,12 +889,10 @@ s32 act_entering_star_door(struct MarioState *m) {
     s16 targetAngle;
     f32 rand = random_float();
     u8 troll = FALSE;
-    if (!gTrollToggle) {
-        if (rand < 0.03125f) {
-            troll = TRUE;
-        } else {
-            troll = FALSE;
-        }
+    if (rand < 0.03125f) {
+        troll = TRUE;
+    } else {
+        troll = FALSE;
     }
 
     if (m->actionTimer++ == 0) {
@@ -961,30 +960,28 @@ s32 act_going_through_door(struct MarioState *m) {
     u8 troll = FALSE;
     u8 troll2 = FALSE;
     u8 doorTroll = FALSE;
-    if (!gTrollToggle) {
-        if (rand < 0.03125f) {
-            troll = TRUE;
-        } else {
-            troll = FALSE;
-        }
-        if (rand > 0.96875f) {
-            troll2 = TRUE;
-        } else {
-            troll2 = FALSE;
-        }
+    if (rand < 0.03125f) {
+        troll = TRUE;
+    } else {
+        troll = FALSE;
+    }
+    if (rand > 0.96875f) {
+        troll2 = TRUE;
+    } else {
+        troll2 = FALSE;
     }
     
     if (m->actionTimer == 0) {
         if (m->actionArg & WARP_FLAG_DOOR_PULLED) {
             m->interactObj->oInteractStatus = INT_STATUS_DOOR_PULLED;
-            if (!(troll)) {
+            if (!troll) {
                 set_mario_animation(m, MARIO_ANIM_PULL_DOOR_WALK_IN);
             } else {
                 set_mario_animation(m, MARIO_ANIM_PUSH_DOOR_WALK_IN);
             }
         } else {
             m->interactObj->oInteractStatus = INT_STATUS_DOOR_PUSHED;
-            if (!(troll)) {
+            if (!troll) {
                 set_mario_animation(m, MARIO_ANIM_PUSH_DOOR_WALK_IN);
             } else {
                 set_mario_animation(m, MARIO_ANIM_PULL_DOOR_WALK_IN);

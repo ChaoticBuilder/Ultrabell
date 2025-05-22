@@ -19,7 +19,7 @@
  * This define will disable this behavior, making sound replacements easier to manage. Use of this is not recommended unless you're actually replacing Mario's sounds.
  * When toggling this define, you will need to run `make clean` for it to apply.
  */
-#define DISABLE_MARIO_PITCH_SHIFTING
+// #define DISABLE_MARIO_PITCH_SHIFTING
 
 /** 
  * Enables the additional spacial processing that takes place with sound effects in vanilla.

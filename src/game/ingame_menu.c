@@ -51,7 +51,6 @@ u8 gKickToggle = FALSE;
 int gKickTimer = 0;
 u8 gTurnToggle = FALSE;
 u8 gFlightToggle = FALSE;
-u8 gTrollToggle = FALSE;
 u8 g95Toggle = FALSE;
 u8 gRealToggle = FALSE;
 u8 gABCToggle = FALSE;
@@ -1565,22 +1564,22 @@ void config_options_scroll(void) {
         return;
     if ((gPlayer1Controller->buttonPressed == L_JPAD) || (gPlayer1Controller->rawStickX <= -32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll--;
-        if (gConfigScroll == CFG_SPAC0) gConfigScroll--;
+        // if (gConfigScroll == CFG_SPAC0) gConfigScroll--;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll -= 2;
-        if (gConfigScroll == CFG_SPAC0) gConfigScroll -= 2;
+        // if (gConfigScroll == CFG_SPAC0) gConfigScroll -= 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll++;
-        if (gConfigScroll == CFG_SPAC0) gConfigScroll++;
+        // if (gConfigScroll == CFG_SPAC0) gConfigScroll++;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -32.0f && gGlobalTimer % 5 == 0)) {
         gConfigScroll += 2;
-        if (gConfigScroll == CFG_SPAC0) gConfigScroll += 2;
+        // if (gConfigScroll == CFG_SPAC0) gConfigScroll += 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
     if (gConfigScroll == CFG_2) {
@@ -1607,7 +1606,6 @@ void config_options(void) {
         }
         if (gConfigScroll == CFG_FOV) gHighlightToggle ^= 1;
         if (gConfigScroll == CFG_HUD) gHudToggle ^= 1;
-        if (gConfigScroll == CFG_TEMP0) gVisToggle ^= 1;
         if (gConfigScroll == CFG_STATS) {
             gDebugToggle ^= 1;
             gShowDebugText ^= 1;
@@ -1623,13 +1621,7 @@ void config_options(void) {
             : (gKickTimer = 5);
         }
         if (gConfigScroll == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) gTimerToggle ^= 1;
-        if (gConfigScroll == CFG_SSK && !gRealToggle) {
-            g95Toggle ^= 1;
-            gKickToggle = g95Toggle;
-            (!g95Toggle)
-            ? (gKickTimer = 0)
-            : (gKickTimer = 5);
-        }
+        if (gConfigScroll == CFG_SSK && !gRealToggle) g95Toggle ^= 1;
         if (gConfigScroll == CFG_REAL) {
             gRealToggle ^= 1;
             g95Toggle = gRealToggle;
@@ -1712,8 +1704,8 @@ void time_slider(void) {
     }
 
     (!gKickToggle)
-    ? (gKickTimer = CLAMP(gKickTimer, 0, 30))
-    : (gKickTimer = CLAMP(gKickTimer, 1, 20));
+    ? (gKickTimer = CLAMP(gKickTimer, 0, 20))
+    : (gKickTimer = CLAMP(gKickTimer, 1, 15));
 }
 
 void config_open(void) {
@@ -1776,16 +1768,6 @@ void config_options_box(void) {
     (!gHudToggle) ? sprintf(currOption, "Hud: On") : sprintf(currOption, "Hud: Off");
 
     config_option_render(xPos, yPos, currOption, CFG_HUD);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
-
-    if (gConfigScroll == CFG_TEMP0) print_small_text_light(160, 204, "Shakes your FOV during stressful areas.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-    (!gVisToggle) ? sprintf(currOption, "Visualizer: Off") : sprintf(currOption, "Visualizer: On");
-
-    // prob gonna deprecate this one later honestly
-
-    config_option_render(xPos, yPos, currOption, CFG_TEMP0);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
@@ -1879,7 +1861,7 @@ void config_options_box(void) {
         time_slider();
         print_set_envcolour(255, 255, 95, 255);
         if (gKickTimer > 0 && gKickTimer < 5) print_set_envcolour(255, 95, 95, 255);
-        if (gKickTimer > 10) print_set_envcolour(127, 255, 175, 255);
+        if (gKickTimer >= 10) print_set_envcolour(127, 255, 175, 255);
     }
     if (gConfigScroll != CFG_VKICK) print_set_envcolour(127, 127, 127, 255);
 
@@ -1940,11 +1922,13 @@ void config_options_box(void) {
     }
 
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    /*
     if (xPos >= 160) xPos -= 160;
     yPos += 32;
 
     print_set_envcolour(255, 127, 255, 255);
     print_small_text_light(140, (yPos - 16), "Events", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    */
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)

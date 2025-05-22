@@ -1665,7 +1665,7 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
         if (is_anim_at_end(m)) {
             set_mario_action(m, ACT_IDLE, 0);
             m->forwardVel = 16.0f;
-            if (actionArg > 0) {
+            if (actionArg > 0 && actionArg != 4) {
                 m->invincTimer = 30;
             }
         }

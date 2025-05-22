@@ -6,24 +6,23 @@
 extern u8 gConfigOpen;
     extern u8 gConfigScroll;
     extern u8 gHighlightToggle;
-    extern u8 gDiveToggle;
+    extern f32 sFovSlider;
     extern u8 gLuigiToggle;
     extern u8 gHudToggle;
     extern u8 gVisToggle;
     extern u8 gDebugToggle;
-    extern u8 gTimerToggle;
-    extern int gTimerTime;
-    extern u8 gKickToggle;
-    extern int gKickTimer;
-    extern u8 gTurnToggle;
     extern u8 g95Toggle;
-    extern u8 gFlightToggle;
-    extern u8 gTrollToggle;
     extern u8 gRealToggle;
+    extern u8 gTimerToggle;
+    extern u8 gKickToggle;
+    extern int gTimerTime;
+    extern int gKickTimer;
+    extern u8 gDiveToggle;
+    extern u8 gTurnToggle;
     extern u8 gABCToggle;
+    extern u8 gFlightToggle;
     extern u8 gMusicToggle;
     extern u8 gLevelTroll;
-    extern f32 sFovSlider;
 
 enum ConfigMenuIDs {
     CFG_1,
@@ -31,9 +30,8 @@ enum ConfigMenuIDs {
     CFG_WIDE,
     CFG_FOV,
     CFG_HUD,
-    CFG_TEMP0,
-    CFG_SPAC0,
     CFG_STATS,
+    // CFG_SPAC0,
     CFG_LUIGI,
     CFG_TIMER,
     CFG_SSK,

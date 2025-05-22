@@ -5301,7 +5301,7 @@ void set_fixed_cam_axis_sa_lobby(UNUSED s16 preset) {
             break;
 
         case AREA_CASTLE_LOBBY:
-            vec3f_set(sFixedModeBasePosition, 724.f, 150.f, 856.f);
+            vec3f_set(sFixedModeBasePosition, -256.f, 144.f, 1920.f);
             break;
     }
 }
@@ -5956,6 +5956,7 @@ struct CameraTrigger sCamCCM[] = {
  * and one trigger that starts the enter pool cutscene when Mario enters HMC.
  */
 struct CameraTrigger sCamCastle[] = {
+    { 1, cam_castle_enter_lobby, 0, 0, 1024, 300, 150, 300, 0 },
     { 1, cam_castle_close_mode, -1100, 657, -1346, 300, 150, 300, 0 },
     { 1, cam_castle_enter_lobby, -1099, 657, -803, 300, 150, 300, 0 },
     { 1, cam_castle_close_mode, -2304, -264, -4072, 140, 150, 140, 0 },
@@ -5990,7 +5991,7 @@ struct CameraTrigger sCamCastle[] = {
     { 1, cam_castle_close_mode, -946, -929, 622, 300, 150, 300, 0 },
     { 2, cam_castle_look_upstairs, -205, 1456, 2508, 210, 928, 718, 0 },
     { 1, cam_castle_basement_look_downstairs, -1027, -587, -718, 318, 486, 577, 0 },
-    { 1, cam_castle_lobby_entrance, -1023, 376, 1830, 300, 400, 300, 0 },
+    // { 1, cam_castle_lobby_entrance, -1023, 376, 1830, 300, 400, 300, 0 },
     { 3, cam_castle_hmc_start_pool_cutscene, 2485, -1689, -2659, 600, 50, 600, 0 },
     NULL_TRIGGER
 };
@@ -10026,7 +10027,7 @@ struct Cutscene sCutsceneDoorPull[] = {
 // HackerSM64 TODO: Properly transition when moving through doors
 #ifndef FORCED_CAMERA_MODE
     { cutscene_door_start, 1 },
-    { cutscene_door_fix_cam, 30 },
+    { cutscene_door_fix_cam, 20 },
     { cutscene_door_move_behind_mario, 1 },
     { cutscene_door_follow_mario, 50 },
 #endif
@@ -10040,7 +10041,7 @@ struct Cutscene sCutsceneDoorPush[] = {
 // HackerSM64 TODO: Properly transition when moving through doors
 #ifndef FORCED_CAMERA_MODE
     { cutscene_door_start, 1 },
-    { cutscene_door_fix_cam, 20 },
+    { cutscene_door_fix_cam, 15 },
     { cutscene_door_move_behind_mario, 1 },
     { cutscene_door_follow_mario, 50 },
 #endif
@@ -10055,7 +10056,7 @@ struct Cutscene sCutsceneDoorPullMode[] = {
 // HackerSM64 TODO: Properly transition when moving through doors
 #ifndef FORCED_CAMERA_MODE
     { cutscene_door_start, 1 },
-    { cutscene_door_fix_cam, 30 },
+    { cutscene_door_fix_cam, 20 },
 #endif
     { cutscene_door_mode, CUTSCENE_LOOP }
 };
@@ -10068,7 +10069,7 @@ struct Cutscene sCutsceneDoorPushMode[] = {
 // HackerSM64 TODO: Properly transition when moving through doors
 #ifndef FORCED_CAMERA_MODE
     { cutscene_door_start, 1 },
-    { cutscene_door_fix_cam, 20 },
+    { cutscene_door_fix_cam, 15 },
 #endif
     { cutscene_door_mode, CUTSCENE_LOOP }
 };

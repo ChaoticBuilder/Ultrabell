@@ -807,7 +807,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_WALL_KICK_AIR:
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 44.0f, 0.0f);
             m->wallKickTimer = 0;
 
             u8 spd = 12;

@@ -2320,7 +2320,7 @@ Gfx mario_000_displaylist_005_mesh_layer_1_tri_1[] = {
 
 
 Gfx mat_mario_blue[] = {
-	gsSPLightColor(LIGHT_1, 0x0F4BFFFF),
+	gsSPLightColor(LIGHT_1, 0x0F5FFFFF),
 	gsSPLightColor(LIGHT_2, 0x10003FFF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
@@ -2358,7 +2358,7 @@ Gfx mat_revert_mario_metal_v3_001[] = {
 
 Gfx mat_mario_red[] = {
 	gsSPLightColor(LIGHT_1, 0xFF1F1FFF),
-	gsSPLightColor(LIGHT_2, 0x3F001FFF),
+	gsSPLightColor(LIGHT_2, 0x40001BFF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(SHADE, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, SHADE, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),
@@ -2645,7 +2645,7 @@ Gfx mat_revert_mario_wing_1_v3_001[] = {
 
 Gfx mat_mario_gloves_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFFFFFFFF),
-	gsSPLightColor(LIGHT_2, 0x2A4355FF),
+	gsSPLightColor(LIGHT_2, 0x384654FF),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, SHADE, 0, 0, 0, ENVIRONMENT),
 	gsDPSetAlphaDither(G_AD_NOISE),

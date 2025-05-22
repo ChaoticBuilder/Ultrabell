@@ -450,7 +450,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
                     // in both conditions to fix this
                     if (m->forwardVel >= 38.0f) {
                         m->particleFlags |= PARTICLE_VERTICAL_STAR;
-                        set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+                        set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
                     } else {
                         if (m->forwardVel > 8.0f) {
                             mario_set_forward_vel(m, -8.0f);
@@ -902,7 +902,7 @@ s32 act_dive(struct MarioState *m) {
             m->vel[1] = 16.0f;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
-            drop_and_set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+            drop_and_set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
             break;
 
         case AIR_STEP_HIT_LAVA_WALL:
@@ -1049,7 +1049,7 @@ s32 act_ground_pound(struct MarioState *m) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
 
-    play_sound_if_no_flag(m, SOUND_ACTION_THROW, MARIO_ACTION_SOUND_PLAYED);
+    play_sound_if_no_flag(m, SOUND_MARIO_UH, MARIO_MARIO_SOUND_PLAYED);
 
      if (m->actionTimer < 10) {
         yOffset = 20 - 2 * m->actionTimer;
@@ -1104,7 +1104,7 @@ s32 act_ground_pound(struct MarioState *m) {
             m->vel[1] = 16.0f;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
-            set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+            set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
         }
 #endif
     return FALSE;
@@ -1398,14 +1398,16 @@ s32 act_soft_bonk(struct MarioState *m) {
 s32 act_wall_slide (struct MarioState *m) {
     if (gKickTimer > 0 && m->wallKickTimer == 0 && m->prevAction == ACT_AIR_HIT_WALL) {
         play_sound(SOUND_MARIO_UH, m->marioObj->header.gfx.cameraToObject);
-        if (gRealToggle) return set_mario_action(m, ACT_HARD_BACKWARD_AIR_KB, 2);
-        return set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
-    } else {
-        play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
-        if (gGlobalTimer % 2 == 0) {
-            m->particleFlags |= PARTICLE_DUST;
+        if (gRealToggle) return set_mario_action(m, ACT_BACKWARD_AIR_KB, 2);
+        if (m->forwardVel < 32.0f) {
+            mario_set_forward_vel(m, -8.0f);
+            return set_mario_action(m, ACT_SOFT_BONK, 0);
         }
+        return set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
+    } else {
         if (!gKickToggle) {
+            play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
+            if (gGlobalTimer % 2 == 0) m->particleFlags |= PARTICLE_DUST;
             mario_set_forward_vel(m, -0.01f);
             m->vel[1] -= 1.0f;
         } else if (gRealToggle) {
@@ -1420,7 +1422,7 @@ s32 act_wall_slide (struct MarioState *m) {
             common_air_knockback_step(m, ACT_FREEFALL_LAND, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_START_WALLKICK, m->forwardVel);
             m->marioObj->header.gfx.angle[1] += 0x8000;
         } else {
-            common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -8.0f);
+            set_mario_animation(m, MARIO_ANIM_START_WALLKICK);
         }
         return FALSE;
     }
@@ -1608,7 +1610,7 @@ s32 act_butt_slide_air(struct MarioState *m) {
             m->vel[1] = 16.0f;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
-            set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+            set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
             break;
 
         case AIR_STEP_HIT_LAVA_WALL:
@@ -1827,7 +1829,7 @@ s32 act_slide_kick(struct MarioState *m) {
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
 
-            set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+            set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
             break;
 
         case AIR_STEP_HIT_LAVA_WALL:
@@ -1918,7 +1920,7 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             m->vel[1] = 16.0f;
 
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
-            set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+            set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
             set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
             break;
 
@@ -2021,7 +2023,7 @@ s32 act_flying(struct MarioState *m) {
                            m->marioObj->header.gfx.cameraToObject);
 
                 m->particleFlags |= PARTICLE_VERTICAL_STAR;
-                set_mario_action(m, ACT_BACKWARD_AIR_KB, 1);
+                set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
                 set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
             } else {
                 if (m->actionTimer++ == 0) {

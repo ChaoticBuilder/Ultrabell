@@ -2796,7 +2796,7 @@ const BehaviorScript bhvWhitePuff2[] = {
     OR_INT(oFlags, (OBJ_FLAG_MOVE_XZ_USING_FVEL | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
     BILLBOARD(),
     SET_INT(oAnimState, OBJ_ANIM_STATE_INIT_ANIM),
-    BEGIN_REPEAT(7),
+    BEGIN_REPEAT(10),
         CALL_NATIVE(bhv_white_puff_2_loop),
         ADD_INT(oAnimState, 1),
     END_REPEAT(),

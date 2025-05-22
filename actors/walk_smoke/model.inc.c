@@ -10,29 +10,30 @@ static const Vtx smoke_seg4_vertex_0401DE60[] = {
 
 // 0x0401DEA0
 ALIGNED8 static const Texture smoke_seg4_texture_0401DEA0[] = {
-#include "actors/walk_smoke/walk_smoke_0.ia16.inc.c"
+#include "actors/walk_smoke/walk_smoke_0.custom.ia16.inc.c"
 };
 
 // 0x0401E6A0
 ALIGNED8 static const Texture smoke_seg4_texture_0401E6A0[] = {
-#include "actors/walk_smoke/walk_smoke_1.ia16.inc.c"
+#include "actors/walk_smoke/walk_smoke_1.custom.ia16.inc.c"
 };
 
 // 0x0401EEA0
 ALIGNED8 static const Texture smoke_seg4_texture_0401EEA0[] = {
-#include "actors/walk_smoke/walk_smoke_2.ia16.inc.c"
+#include "actors/walk_smoke/walk_smoke_2.custom.ia16.inc.c"
 };
 
 // 0x0401F6A0
 ALIGNED8 static const Texture smoke_seg4_texture_0401F6A0[] = {
-#include "actors/walk_smoke/walk_smoke_3.ia16.inc.c"
+#include "actors/walk_smoke/walk_smoke_3.custom.ia16.inc.c"
 };
 
 // 0x0401FEA0
 ALIGNED8 static const Texture smoke_seg4_texture_0401FEA0[] = {
-#include "actors/walk_smoke/walk_smoke_4.ia16.inc.c"
+#include "actors/walk_smoke/walk_smoke_4.custom.ia16.inc.c"
 };
 
+/*
 // 0x040206A0
 ALIGNED8 static const Texture smoke_seg4_texture_040206A0[] = {
 #include "actors/walk_smoke/walk_smoke_5.ia16.inc.c"
@@ -42,6 +43,7 @@ ALIGNED8 static const Texture smoke_seg4_texture_040206A0[] = {
 ALIGNED8 static const Texture smoke_seg4_texture_04020EA0[] = {
 #include "actors/walk_smoke/walk_smoke_6.ia16.inc.c"
 };
+*/
 
 // 0x040216A0 - 0x04021718
 const Gfx smoke_seg4_dl_040216A0[] = {
@@ -97,6 +99,7 @@ const Gfx smoke_seg4_dl_04021778[] = {
     gsSPBranchList(smoke_seg4_dl_040216A0),
 };
 
+/*
 // 0x04021790 - 0x040217A8
 const Gfx smoke_seg4_dl_04021790[] = {
     gsDPPipeSync(),
@@ -110,3 +113,4 @@ const Gfx smoke_seg4_dl_040217A8[] = {
     gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, smoke_seg4_texture_04020EA0),
     gsSPBranchList(smoke_seg4_dl_040216A0),
 };
+*/

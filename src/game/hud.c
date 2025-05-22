@@ -32,10 +32,6 @@
 u8 gLuigiToggle = 0;
 s32 gSecondsToggle = TRUE;
 u8 gHudToggle;
-u8 troll = FALSE;
-u8 debugScroll = 1;
-u16 musicID = 0;
-u16 musicBank = 0xFFFF;
 u8 pitchInvert = 1;
 
 /* @file hud.c
@@ -565,56 +561,56 @@ void attack_timer(void) {
     PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 }
 
+u8 troll = FALSE;
+
 void timer_troll(void) {
-    int trollCount = (gGlobalTimer / 15) % 1800;
-    int trollCount2 = gGlobalTimer % 27000;
-    if (!gTrollToggle) {
-        f32 rand = random_float();
-        /*
-        print_text_fmt_int(160, 48, "%2d", troll);
-        print_text_fmt_int(160, 32, "%2d", trollCount);
-        print_text_fmt_int(160, 16, "%2d", trollCount2);
-        */
-        if ((trollCount2 == 0 && rand <= 0.5f)) {
-            troll = TRUE;
+    int trollCount = gGlobalTimer % 9000;
+    f32 rand = random_float();
+    if ((trollCount == 0 && rand >= 0.125f) || gPlayer1Controller->buttonPressed == L_JPAD) {
+        troll = TRUE;
+    }
+    if (troll == TRUE) {
+        if ((gGlobalTimer & 3) == 0) return;
+        if (rand < 0.03125f) {
+            troll = FALSE;
         }
-        if (troll == TRUE) {
-            if ((gGlobalTimer & 3) == 0) return;
-            if (rand < 0.03125f) {
-                if (trollCount == 0) return;
-                troll = FALSE;
-            }
-            if (rand > 0.75f) return print_text(112, 120, "FIND THEM");
-            return print_text(112, 120, "MARIO 64");
-            // made this uncringe
-        }
+        if (rand > 0.75f) return print_text(112, 120, "FIND THEM");
+        return print_text(112, 120, "MARIO 64");
     }
 }
 
+u8 debugScroll = 1;
+u16 musicID = 0;
+u16 musicBank = 0xFFFF;
+
 void music_menu_scroll(void) {
     if (!gMusicToggle || gConfigOpen) return;
-    if (gPlayer1Controller->buttonPressed == U_JPAD) {
-        debugScroll--;
-        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+    if (gGlobalTimer % 4 == 0) {
+        if (gPlayer1Controller->buttonDown == U_JPAD) {
+            debugScroll--;
+            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+        }
+        if (gPlayer1Controller->buttonDown == D_JPAD) {
+            debugScroll++;
+            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+        }
+        if (gPlayer1Controller->buttonDown == L_JPAD) {
+            if (debugScroll == 1) musicID--;
+            if (debugScroll == 2) musicBank--;
+            if (debugScroll == 4) pitchInvert--;
+            if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        }
+        if (gPlayer1Controller->buttonDown == R_JPAD) {
+            if (debugScroll == 1) musicID++;
+            if (debugScroll == 2) musicBank++;
+            if (debugScroll == 4) pitchInvert++;
+            if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+        }
     }
-    if (gPlayer1Controller->buttonPressed == D_JPAD) {
-        debugScroll++;
-        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed == L_JPAD) {
-        if (debugScroll == 1) musicID--;
-        if (debugScroll == 2) musicBank--;
-        if (debugScroll == 4) pitchInvert--;
-        if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed == R_JPAD) {
-        if (debugScroll == 1) musicID++;
-        if (debugScroll == 2) musicBank++;
-        if (debugScroll == 4) pitchInvert++;
-        if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-    }
+    
     if (pitchInvert < 1) pitchInvert = 3;
     if (pitchInvert > 3) pitchInvert = 1;
+    if (musicID == 0xFFFF) musicID = 0;
     if (musicBank == 0xFFFE) musicBank = 0xFFFF;
     if (debugScroll < 1) {
         debugScroll = 4;
