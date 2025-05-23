@@ -21,6 +21,7 @@
 #include "game/rumble_init.h"
 #include "sm64.h"
 #include "text_strings.h"
+#include "level_commands.h"
 
 #include "eu_translation.h"
 #if MULTILANG
@@ -901,13 +902,21 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
     }
 }
 
+u8 transitionPlayed = FALSE;
+u8 transitionTime = 0;
+
 /**
  * Loads a save file selected after it goes into a full screen state
  * retuning sSelectedFileNum to a save value defined in fileNum.
  */
 void load_main_menu_save_file(struct Object *fileButton, s32 fileNum) {
-    if (fileButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
-        sSelectedFileNum = fileNum;
+    if (fileButton->oMenuButtonState == MENU_BUTTON_STATE_GROWING && !transitionPlayed) {
+        transitionPlayed = TRUE;
+        sSelectedFileNum = fileNum; // first jump to initialize the transition
+    } else if (transitionPlayed) {
+        sSelectedFileNum = 0;
+        transitionTime++;
+        if (transitionTime >= 16) sSelectedFileNum = fileNum; // second jump to actually load the file
     }
 }
 
@@ -1048,7 +1057,7 @@ void bhv_menu_button_manager_init(void) {
     sTextBaseAlpha = 0;
 }
 
-#define SAVE_FILE_SOUND SOUND_MENU_STAR_SOUND_OKEY_DOKEY
+#define SAVE_FILE_SOUND SOUND_MENU_STAR_SOUND
 
 /**
  * In the main menu, check if a button was clicked to play it's button growing state.
@@ -1232,15 +1241,6 @@ void handle_controller_cursor_input(void) {
     sCursorVel[1] = approach_f32(sCursorVel[1], CLAMP(rawStickY, -11, 11), ABS(rawStickY / 24), ABS(rawStickY / 24));
     sCursorPos[0] += sCursorVel[0];
     sCursorPos[1] += sCursorVel[1];
-
-    /*
-    print_text_fmt_int(200, 96, "PLRX %d", rawStickX);
-    print_text_fmt_int(200, 80, "PLRY %d", rawStickY);
-    print_text_fmt_int(200, 64, "VELX %d", sCursorVel[0]);
-    print_text_fmt_int(200, 48, "VELY %d", sCursorVel[1]);
-    print_text_fmt_int(200, 32, "POSX %d", sCursorPos[0]);
-    print_text_fmt_int(200, 16, "POSY %d", sCursorPos[1]);
-    */
 
     // Stop cursor from going offscreen
     if (sCursorPos[0] > 129.0f) {

@@ -723,7 +723,7 @@ void initiate_painting_warp(void) {
  * Return the time left until the delayed warp is initiated.
  */
 s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
-    s32 fadeMusic = TRUE;
+    UNUSED s32 fadeMusic = TRUE;
 
     if (sDelayedWarpOp == WARP_OP_NONE) {
         m->invincTimer = -1;
@@ -844,9 +844,11 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 break;
         }
 
+        /*
         if (fadeMusic && gCurrDemoInput == NULL) {
             fadeout_music((sDelayedWarpTimer * 0xC));
         }
+        */
     }
 
     return sDelayedWarpTimer;
