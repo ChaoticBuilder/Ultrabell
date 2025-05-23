@@ -115,7 +115,7 @@ Gfx *geo_intro_tm_copyright(s32 callContext, struct GraphNode *node, UNUSED void
 
         // Once the "Super Mario 64" logo has just about zoomed fully, fade in the "TM" and copyright text
         if (sIntroFrameCounter >= INTRO_STEPS_ZOOM_IN) {
-            print_text(104, 64, "ULTRABELL");
+            print_text(80, 64, "~ ULTRABELL ~");
             sTmCopyrightAlpha += 26;
             if (sTmCopyrightAlpha > 255) {
                 sTmCopyrightAlpha = 255;

@@ -1246,7 +1246,6 @@ s32 init_level(void) {
     sTransitionTimer = 0;
     sSpecialWarpDest = WARP_SPECIAL_NONE;
 
-    if (!gNeverEnteredCastle) gNeverEnteredCastle = TRUE;
     // g100CoinStarSpawned = FALSE;
 
     // NOTE: gStarModelLastCollected reset here as a safety to prevent possible UB if assigned a model used

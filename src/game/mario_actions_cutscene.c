@@ -1082,25 +1082,28 @@ s32 act_spawn_spin_airborne(struct MarioState *m) {
     // updates all velocity variables based on m->forwardVel
     mario_set_forward_vel(m, m->forwardVel);
 
-    // landed on floor, play spawn land animation
-    if (perform_air_step(m, AIR_STEP_CHECK_NONE) == AIR_STEP_LANDED) {
-        play_mario_landing_sound(m, SOUND_ACTION_TERRAIN_LANDING);
-        set_mario_action(m, ACT_SPAWN_SPIN_LANDING, 0);
+    switch (perform_air_step(m, 0)) {
+        case AIR_STEP_LANDED:
+            play_mario_landing_sound(m, SOUND_ACTION_TERRAIN_LANDING);
+            if (m->actionState++ == 0) {
+                m->vel[1] = 32.0f;
+            } else {
+                set_mario_action(m, ACT_SPAWN_SPIN_LANDING, 0);
+            }
+            break;
+
+        case AIR_STEP_HIT_WALL:
+            mario_bonk_reflection(m, TRUE);
+            break;
     }
 
-    // is 300 units above floor, spin and play woosh sounds
-    if (m->actionState == ACT_STATE_SPAWN_SPIN_AIRBORNE_SPINNING && m->pos[1] - m->floorHeight > 300.0f) {
-        if (set_mario_animation(m, MARIO_ANIM_FORWARD_SPINNING) == 0) { // first anim frame
-            play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
-        }
-    }
-
-    // under 300 units above floor, enter freefall animation
-    else {
-        m->actionState = ACT_STATE_SPAWN_SPIN_AIRBORNE_FALLING;
+    if (m->actionState == 0 || m->vel[1] > 0.0f) {
+        set_mario_animation(m, MARIO_ANIM_FORWARD_SPINNING);
+    } else {
         set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
     }
 
+    m->particleFlags |= PARTICLE_SPARKLES;
     return FALSE;
 }
 

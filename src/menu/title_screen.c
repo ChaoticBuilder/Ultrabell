@@ -172,7 +172,7 @@ s32 intro_level_select(void) {
     // Use file 4 as a test
     gCurrSaveFileNum = 4;
 
-    print_text_centered(158, 96, "DEVELOPER TEST 96");
+    print_text_centered(158, 96, "^ DEVELOPER TEST 96 ^");
     print_text_centered(158, 56, "PRESS START TO TEST!");
     print_text_centered(140, 36, "CURRENT ACT");
 

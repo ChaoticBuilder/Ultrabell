@@ -238,6 +238,7 @@ Princess Toadstool"))
 
 DEFINE_DIALOG(DIALOG_021, 1, 5, 95, 200, _("\
 Welcome to the Castle!\n\
+It's exclusive to E3!\n\
 There's paintings with\n\
 vast landscapes, so go\n\
 ahead and explore!"))
