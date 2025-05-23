@@ -6241,14 +6241,14 @@ chan_end
 
 .layer_2684:
 layer_portamento 0x83, 44, 200
-layer_note0 49, 0xc, 127, 127
-layer_note0 40, 0x12, 127, 155
-layer_note0 39, 0xb, 127, 127
+layer_note0 55, 0xc, 127, 127
+layer_note0 46, 0x12, 127, 155
+layer_note0 45, 0xb, 127, 127
 layer_portamento 0x83, 41, 200
-layer_note0 51, 0xa, 127, 127
-layer_note0 48, 0x12, 127, 80
-layer_note0 46, 0xa, 127, 127
-layer_note0 48, 0xb, 127, 127
+layer_note0 57, 0xa, 127, 127
+layer_note0 54, 0x12, 127, 80
+layer_note0 52, 0xa, 127, 127
+layer_note0 54, 0xb, 127, 127
 layer_end
 
 .chan_26A9:

@@ -200,10 +200,8 @@ s32 intro_regular(void) {
     // "press start to play" when it goes back to the title screen
     // (using SAVE AND QUIT)
     if (sPlayMarioGreeting) {
-        if (gGlobalTimer < 129) {
+        if (gGlobalTimer > 127) {
             play_sound(SOUND_MARIO_HELLO, gGlobalSoundSource);
-        } else {
-            play_sound(SOUND_MARIO_PRESS_START_TO_PLAY, gGlobalSoundSource);
         }
         sPlayMarioGreeting = FALSE;
     }

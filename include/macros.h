@@ -2,6 +2,8 @@
 #define MACROS_H
 
 #include "platform_info.h"
+#include "gex.h"
+#include "hms.h"
 
 #ifndef __sgi
 #define GLOBAL_ASM(...)

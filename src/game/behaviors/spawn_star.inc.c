@@ -30,7 +30,7 @@ void bhv_collect_star_init(void) {
 }
 
 void bhv_collect_star_loop(void) {
-    o->oFaceAngleYaw += 0x800;
+    if (gGlobalTimer % 2 == 0) o->oAnimState++;
 
     if (o->oInteractStatus & INT_STATUS_INTERACTED) {
         obj_mark_for_deletion(o);
@@ -63,7 +63,7 @@ void bhv_star_spawn_init(void) {
 void bhv_star_spawn_loop(void) {
     switch (o->oAction) {
         case SPAWN_STAR_ARC_CUTSCENE_ACT_START:
-            o->oFaceAngleYaw += 0x1000;
+            o->oAnimState += 2;
             cur_obj_become_intangible();
             if (o->oTimer > 20) {
                 o->oAction = SPAWN_STAR_ARC_CUTSCENE_ACT_GO_TO_HOME;
@@ -74,7 +74,7 @@ void bhv_star_spawn_loop(void) {
             obj_move_xyz_using_fvel_and_yaw(o);
             o->oStarSpawnVelY += o->oVelY;
             o->oPosY = o->oStarSpawnVelY + sins((o->oTimer * 0x8000) / 30) * 400.0f;
-            o->oFaceAngleYaw += 0x1000;
+            o->oAnimState += 2;
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
             cur_obj_play_sound_1(SOUND_ENV_STAR);
             if (o->oTimer == 29) {
@@ -95,7 +95,7 @@ void bhv_star_spawn_loop(void) {
 
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
             obj_move_xyz_using_fvel_and_yaw(o);
-            o->oFaceAngleYaw = o->oFaceAngleYaw - o->oTimer * 0x10 + 0x1000;
+            o->oAnimState++;
             cur_obj_play_sound_1(SOUND_ENV_STAR);
 
             if (o->oPosY < o->oHomeY) {
@@ -107,7 +107,7 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_END:
-            o->oFaceAngleYaw += 0x800;
+            if (gGlobalTimer % 2 == 0) o->oAnimState++;
             if (o->oTimer == 20) {
                 gObjCutsceneDone = TRUE;
             }

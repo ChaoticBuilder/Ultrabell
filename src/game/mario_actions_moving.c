@@ -715,9 +715,9 @@ void tilt_body_walking(struct MarioState *m, UNUSED s16 startYaw) {
         // s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
         if (gLuigiToggle == TRUE) {
-            nextBodyPitch = -(s16)((m->forwardVel - 15) * 104);
+            nextBodyPitch = -(s16)((m->forwardVel - 12) * 96);
         } else {
-            nextBodyPitch = -(s16)((m->forwardVel - 15) * 72);
+            nextBodyPitch = -(s16)((m->forwardVel - 12) * 48);
         }
 
         nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(45), 0);

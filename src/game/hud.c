@@ -564,9 +564,8 @@ void attack_timer(void) {
 u8 troll = FALSE;
 
 void timer_troll(void) {
-    int trollCount = gGlobalTimer % 9000;
     f32 rand = random_float();
-    if ((trollCount == 0 && rand >= 0.125f) || gPlayer1Controller->buttonPressed == L_JPAD) {
+    if (((gGlobalTimer % 9000 == 0) && rand >= 0.25f) || (gPlayer1Controller->buttonPressed == L_JPAD && !gConfigOpen)) {
         troll = TRUE;
     }
     if (troll == TRUE) {

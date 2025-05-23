@@ -71,8 +71,8 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     f32 damageHeightLarge = FALL_DAMAGE_HEIGHT_LARGE;
 
     if (gLuigiToggle) {
-        damageHeight += 512.0f;
-        damageHeightLarge += 1024.0f;
+        damageHeight += 384.0f;
+        damageHeightLarge += 768.0f;
     }
 
     if (m->action != ACT_TWIRLING && m->action != ACT_WALL_SLIDE && m->floor->type != SURFACE_BURNING) {
