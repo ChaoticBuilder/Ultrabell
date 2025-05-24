@@ -93,9 +93,9 @@ void bhv_star_spawn_loop(void) {
                 o->oVelY = -10.0f;
             }
 
+            o->oAnimState++;
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
             obj_move_xyz_using_fvel_and_yaw(o);
-            o->oAnimState++;
             cur_obj_play_sound_1(SOUND_ENV_STAR);
 
             if (o->oPosY < o->oHomeY) {
@@ -107,9 +107,13 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_END:
-            if (gGlobalTimer % 2 == 0) o->oAnimState++;
             if (o->oTimer == 20) {
                 gObjCutsceneDone = TRUE;
+            }
+            if (o->oTimer < 20) {
+                o->oAnimState++;
+            } else {
+                if (gGlobalTimer % 2 == 0) o->oAnimState++;
             }
 
             if (o->oInteractStatus & INT_STATUS_INTERACTED) {

@@ -20,6 +20,8 @@ supermariofurry/SMF128: and for bro just existing tbh bro's based asf
 
 imann0731/eman/3 and w hater/whatever this mf goes by: Possibly a future lapping feature, idk yet tbh
 
+R_eal-G_rude/eye of rah: For helping me add Gigaleak .sou / .hms files and convert them! (Especially the 2D Stars, I've wanted to add them for a while lol!)
+
 the voices in my head: Shoshinkai and Realistic mode, mario having hallucinations every 15 mins, (real thing btw, go look at hud.c) mario permadrowning, and a few other things
 
 Kaze Emanuar, for making amazing videos on SM64 optimizations, which taught me more about the game!

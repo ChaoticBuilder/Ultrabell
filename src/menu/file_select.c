@@ -916,7 +916,7 @@ void load_main_menu_save_file(struct Object *fileButton, s32 fileNum) {
     } else if (transitionPlayed) {
         sSelectedFileNum = 0;
         transitionTime++;
-        if (transitionTime >= 16) sSelectedFileNum = fileNum; // second jump to actually load the file
+        if (transitionTime >= 24) sSelectedFileNum = fileNum; // second jump to actually load the file
     }
 }
 

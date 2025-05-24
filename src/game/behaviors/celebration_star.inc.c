@@ -22,8 +22,8 @@ void celeb_star_act_spin_around_mario(void) {
     o->oPosX = o->oHomeX + sins(o->oMoveAngleYaw) * (f32)(o->oCelebStarDiameterOfRotation / 2);
     o->oPosZ = o->oHomeZ + coss(o->oMoveAngleYaw) * (f32)(o->oCelebStarDiameterOfRotation / 2);
     o->oPosY += 5.0f;
-    o->oFaceAngleYaw += 0x1000;
     o->oMoveAngleYaw += 0x2000;
+    o->oAnimState++;
 
     if (o->oTimer == 40) {
         o->oAction = CELEB_STAR_ACT_FACE_CAMERA;
@@ -44,12 +44,12 @@ void celeb_star_act_face_camera(void) {
         } else {
             cur_obj_scale((f32) o->oTimer / 30.0f);
         }
-        o->oFaceAngleYaw += 0x1000;
+        if (gGlobalTimer % 2 == 0) o->oAnimState++;
     } else {
-        o->oFaceAngleYaw = gMarioObject->header.gfx.angle[1];
+        if (o->oAnimState != 0) o->oAnimState++;
     }
 
-    if (o->oTimer == 59) {
+    if (o->oTimer == 70) {
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 }

@@ -1041,7 +1041,7 @@ s32 act_ground_pound_land(struct MarioState *m) {
 
 s32 act_first_person(struct MarioState *m) {
     s32 exit = m->input & INPUT_OFF_FLOOR;
-    (!g95Toggle)
+    ((!g95Toggle || gRealToggle) && m->actionArg == 0)
     ? (fadeWarpTarget = 0)
     : (fadeWarpTarget = 0xFF);
 

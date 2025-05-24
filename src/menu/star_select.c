@@ -65,7 +65,7 @@ void bhv_act_selector_star_type_loop(void) {
             break;
         // If a star is selected, rotate and slightly increase size
         case STAR_SELECTOR_SELECTED:
-            if (gGlobalTimer % 2 == 0) gCurrentObject->oAnimState++;
+            gCurrentObject->oAnimState++;
             break;
         // If the 100 coin star is selected, rotate
         case STAR_SELECTOR_100_COINS:

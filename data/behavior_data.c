@@ -913,6 +913,7 @@ const BehaviorScript bhvSpawnedStar[] = {
 const BehaviorScript bhvSpawnedStarNoLevelExit[] = {
     BEGIN(OBJ_LIST_LEVEL),
     OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
+    BILLBOARD(),
     // Spawned star - common:
     SET_HOME(),
     CALL_NATIVE(bhv_spawned_star_init),
@@ -4552,6 +4553,7 @@ const BehaviorScript bhvStar[] = {
 const BehaviorScript bhvStarSpawnCoordinates[] = {
     BEGIN(OBJ_LIST_LEVEL),
     OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
+    BILLBOARD(),
     CALL_NATIVE(bhv_collect_star_init),
     CALL_NATIVE(bhv_star_spawn_init),
     BEGIN_LOOP(),
