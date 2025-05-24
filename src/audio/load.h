@@ -98,6 +98,7 @@ void preload_sequence(u32 seqId, s32 preloadMask);
 #else
 void preload_sequence(u32 seqId, u8 preloadMask);
 #endif
+void load_soundbank(u32 seqID, u8 bankID);
 void load_sequence(u32 player, u32 seqId, s32 loadAsync);
 
 #ifdef VERSION_SH

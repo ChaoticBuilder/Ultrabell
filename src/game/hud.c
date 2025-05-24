@@ -580,7 +580,7 @@ void timer_troll(void) {
 
 u8 debugScroll = 1;
 u16 musicID = 0;
-u16 musicBank = 0xFFFF;
+u8 musicBank = 0xFF;
 
 void music_menu_scroll(void) {
     if (!gMusicToggle || gConfigOpen) return;
@@ -610,7 +610,7 @@ void music_menu_scroll(void) {
     if (pitchInvert < 1) pitchInvert = 3;
     if (pitchInvert > 3) pitchInvert = 1;
     if (musicID == 0xFFFF) musicID = 0;
-    if (musicBank == 0xFFFE) musicBank = 0xFFFF;
+    if (musicBank == 0xFE) musicBank = 0xFF;
     if (debugScroll < 1) {
         debugScroll = 4;
     }
@@ -622,7 +622,7 @@ void music_menu_scroll(void) {
         if (debugScroll == 1) {
             if (musicID == 0) stop_background_music(musicID);
             set_background_music(0, musicID, 0);
-            if (musicBank != 0xFFFF) seqPlayer->defaultBank[0] = musicBank;
+            if (musicBank != 0xFF) seqPlayer->defaultBank[0] = musicBank;
         }
         if (debugScroll == 3) {
             musicID = gAreas[gCurrAreaIndex].musicParam2;
@@ -654,7 +654,7 @@ void music_menu(void) {
 
     print_set_envcolour(255, 132, 0, 255);
     if (debugScroll != 2) print_set_envcolour(189, 49, 115, 255);
-    (musicBank != 0xFFFF)
+    (musicBank != 0xFF)
     ? sprintf(currOption, "Instrument Set: d%02d  x%02x", musicBank, musicBank)
     : sprintf(currOption, "Instrument Set: Default");
     

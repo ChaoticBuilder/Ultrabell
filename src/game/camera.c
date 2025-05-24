@@ -4867,7 +4867,7 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
         sObjectCutscene = CUTSCENE_NONE;
         if (sMarioCamState->cameraEvent == CAM_EVENT_DOOR) {
             cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
-            if ((gCurrLevelArea == AREA_CASTLE_LOBBY && c->mode != CAMERA_MODE_FIXED && c->mode != CAMERA_MODE_PARALLEL_TRACKING) ||
+            if ((gCurrLevelArea == AREA_CASTLE_LOBBY && c->mode != CAMERA_MODE_FIXED) ||
                 (gCurrLevelArea == AREA_BBH && c->doorStatus != DOOR_LEAVING_SPECIAL))
                 cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE);
         }
@@ -10029,7 +10029,7 @@ struct Cutscene sCutsceneDoorPull[] = {
     { cutscene_door_start, 1 },
     { cutscene_door_fix_cam, 18 },
     { cutscene_door_move_behind_mario, 1 },
-    { cutscene_door_follow_mario, 32 },
+    { cutscene_door_follow_mario, 40 },
 #endif
     { cutscene_door_end, 0 }
 };
@@ -10043,7 +10043,7 @@ struct Cutscene sCutsceneDoorPush[] = {
     { cutscene_door_start, 1 },
     { cutscene_door_fix_cam, 12 },
     { cutscene_door_move_behind_mario, 1 },
-    { cutscene_door_follow_mario, 32 },
+    { cutscene_door_follow_mario, 40 },
 #endif
     { cutscene_door_end, 0 }
 };

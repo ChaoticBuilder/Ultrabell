@@ -15,6 +15,7 @@
 #include "engine/math_util.h"
 #include "seq_ids.h"
 #include "dialog_ids.h"
+#include "game/game_init.h"
 
 #include "config/config_audio.h"
 
@@ -2378,8 +2379,6 @@ void stop_secondary_music(u16 fadeTimer) {
  * Called from threads: thread3_main, thread5_game_loop
  */
 void func_803210D4(u16 fadeDuration) {
-    u8 i;
-
     if (sHasStartedFadeOut) {
         return;
     }
@@ -2400,11 +2399,13 @@ void func_803210D4(u16 fadeDuration) {
 #endif
     }
 
+    /*
     for (i = 0; i < SOUND_BANK_COUNT; i++) {
         if (i != SOUND_BANK_MENU) {
             fade_channel_volume_scale(SEQ_PLAYER_SFX, i, 0, fadeDuration / 16);
         }
     }
+    */
 
     sHasStartedFadeOut = TRUE;
 }
@@ -2527,4 +2528,13 @@ void sound_reset(u8 reverbPresetId) {
     }
     seq_player_play_sequence(SEQ_PLAYER_SFX, SEQ_SOUND_PLAYER, 0);
     sHasStartedFadeOut = FALSE;
+}
+
+UNUSED void sound_reset_beta(void) {
+    /* TODO: figure out why this isn't working idfk aaaaa
+    if (gGlobalTimer == 0) return sound_reset(0);
+    sound_init();
+    seq_player_play_sequence(SEQ_PLAYER_SFX, SEQ_SOUND_PLAYER, 0);
+    sHasStartedFadeOut = FALSE;
+    */
 }
