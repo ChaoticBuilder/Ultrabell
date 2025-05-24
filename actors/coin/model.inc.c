@@ -417,26 +417,26 @@ static const Vtx coin_seg3_vertex_red[] = {
 };
 #else
 static const Vtx coin_seg3_vertex_yellow[] = {
-    {{{   -32,      0,      0}, 0, {     0,   1984}, {0xff, 0xd6, 0x00, 0xff}}}, // bottom left + small diagonal stripe
-    {{{    32,      0,      0}, 0, {  1984,   1984}, {0xff, 0xd6, 0x00, 0xff}}}, // bottom right
-    {{{    32,     64,      0}, 0, {  1984,      0}, {0xff, 0xd6, 0x00, 0xff}}}, // top right + big diagonal stripe
-    {{{   -32,     64,      0}, 0, {     0,      0}, {0xff, 0xd6, 0x00, 0xff}}}, // top left
+    {{{   -32,      0,      0}, 0, {     0,   1984}, {0xff, 0xde, 0x00, 0xff}}}, // bottom left + small diagonal stripe
+    {{{    32,      0,      0}, 0, {  1984,   1984}, {0xff, 0xde, 0x00, 0xff}}}, // bottom right
+    {{{    32,     64,      0}, 0, {  1984,      0}, {0xff, 0xde, 0x00, 0xff}}}, // top right + big diagonal stripe
+    {{{   -32,     64,      0}, 0, {     0,      0}, {0xff, 0xde, 0x00, 0xff}}}, // top left
 };
 
 // 0x03005700
 static const Vtx coin_seg3_vertex_blue[] = {
-    {{{   -50,      0,      0}, 0, {     0,   1984}, {0x21, 0x5a, 0xff, 0xff}}},
-    {{{    50,      0,      0}, 0, {  1984,   1984}, {0x21, 0x5a, 0xff, 0xff}}},
-    {{{    50,    100,      0}, 0, {  1984,      0}, {0x21, 0x5a, 0xff, 0xff}}},
-    {{{   -50,    100,      0}, 0, {     0,      0}, {0x21, 0x5a, 0xff, 0xff}}},
+    {{{   -50,      0,      0}, 0, {     0,   1984}, {0x31, 0x63, 0xff, 0xff}}},
+    {{{    50,      0,      0}, 0, {  1984,   1984}, {0x31, 0x63, 0xff, 0xff}}},
+    {{{    50,    100,      0}, 0, {  1984,      0}, {0x31, 0x63, 0xff, 0xff}}},
+    {{{   -50,    100,      0}, 0, {     0,      0}, {0x31, 0x63, 0xff, 0xff}}},
 };
 
 // 0x03005740
 static const Vtx coin_seg3_vertex_red[] = {
-    {{{   -35,      0,      0}, 0, {     0,   1984}, {0xff, 0x00, 0x10, 0xff}}},
-    {{{    35,      0,      0}, 0, {  1984,   1984}, {0xff, 0x00, 0x10, 0xff}}},
-    {{{    35,     70,      0}, 0, {  1984,      0}, {0xff, 0x00, 0x10, 0xff}}},
-    {{{   -35,     70,      0}, 0, {     0,      0}, {0xff, 0x00, 0x10, 0xff}}},
+    {{{   -35,      0,      0}, 0, {     0,   1984}, {0xff, 0x00, 0x31, 0xff}}},
+    {{{    35,      0,      0}, 0, {  1984,   1984}, {0xff, 0x00, 0x31, 0xff}}},
+    {{{    35,     70,      0}, 0, {  1984,      0}, {0xff, 0x00, 0x31, 0xff}}},
+    {{{   -35,     70,      0}, 0, {     0,      0}, {0xff, 0x00, 0x31, 0xff}}},
 };
 #endif
 
