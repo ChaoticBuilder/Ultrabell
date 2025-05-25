@@ -32,7 +32,7 @@
  */
 
 // Star Selector count models printed in the act selector menu.
-static struct Object *sStarSelectorModels[6];
+static struct Object *sStarSelectorModels[8];
 
 // The act the course is loaded as, affects whether some objects spawn.
 static s8 sLoadedActNum;
@@ -58,6 +58,7 @@ static s8 sSelectableStarIndex = 0;
  * Defines a select type for a star in the act selector.
  */
 void bhv_act_selector_star_type_loop(void) {
+    f32 size = 1.0f;
     switch (gCurrentObject->oStarSelectorType) {
         // If a star is not selected, don't rotate or change size
         case STAR_SELECTOR_NOT_SELECTED:
@@ -65,6 +66,7 @@ void bhv_act_selector_star_type_loop(void) {
             break;
         // If a star is selected, rotate and slightly increase size
         case STAR_SELECTOR_SELECTED:
+            size = 1.25f;
             gCurrentObject->oAnimState++;
             break;
         // If the 100 coin star is selected, rotate
@@ -72,7 +74,7 @@ void bhv_act_selector_star_type_loop(void) {
             break;
     }
     // Scale act selector stars depending of the type selected
-    cur_obj_scale(gCurrentObject->oStarSelectorSize);
+    cur_obj_scale(size);
 }
 
 /**
@@ -83,19 +85,19 @@ void render_100_coin_star(u8 stars) {
         // If the 100 coin star has been collected, create a new star selector next to the coin score.
     #ifdef WIDE
         if (gConfig.widescreen) {
-            sStarSelectorModels[5] = spawn_object_abs_with_rot(o, 0, MODEL_STAR,
+            sStarSelectorModels[6] = spawn_object_abs_with_rot(o, 0, MODEL_STAR,
                                                             bhvActSelectorStarType, (370 * 4.0f) / 3, 24, -300, 0, 0, 0);
         } else {
-            sStarSelectorModels[5] = spawn_object_abs_with_rot(o, 0, MODEL_STAR,
+            sStarSelectorModels[6] = spawn_object_abs_with_rot(o, 0, MODEL_STAR,
                                                             bhvActSelectorStarType, 370, 24, -300, 0, 0, 0);
         }
     #else
-        sStarSelectorModels[5] = spawn_object_abs_with_rot(o, 0, MODEL_STAR,
+        sStarSelectorModels[6] = spawn_object_abs_with_rot(o, 0, MODEL_STAR,
                                                         bhvActSelectorStarType, 370, 24, -300, 0, 0, 0);
     #endif
 
-        sStarSelectorModels[5]->oStarSelectorSize = 0.8f;
-        sStarSelectorModels[5]->oStarSelectorType = STAR_SELECTOR_100_COINS;
+        sStarSelectorModels[6]->oStarSelectorSize = 0.8f;
+        sStarSelectorModels[6]->oStarSelectorType = STAR_SELECTOR_100_COINS;
     }
 }
 
@@ -128,7 +130,7 @@ void bhv_act_selector_init(void) {
     }
 
     // If the stars have been collected in order so far, show the next star.
-    if (sVisibleStars == sObtainedStars && sVisibleStars != 5) {
+    if (sVisibleStars == sObtainedStars && sVisibleStars < 5) {
         selectorModelIDs[sVisibleStars] = MODEL_TRANSPARENT_STAR;
         sInitSelectedActNum = sVisibleStars + 1;
         sSelectableStarIndex = sVisibleStars;
@@ -187,7 +189,7 @@ void bhv_act_selector_loop(void) {
     u8 starIndexCounter;
     u8 stars = save_file_get_star_flags(gCurrSaveFileNum - 1, COURSE_NUM_TO_INDEX(gCurrCourseNum));
 
-    if (sObtainedStars != 5) {
+    if (sObtainedStars < 5) {
         // Sometimes, stars are not selectable even if they appear on the screen.
         // This code filters selectable and non-selectable stars.
         sSelectedActIndex = 0;

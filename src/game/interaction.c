@@ -847,7 +847,6 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 
         m->numStars =
             save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
-        if ((save_file_get_flags() & SAVE_FLAG_HAVE_KEY_1) || (save_file_get_flags() & SAVE_FLAG_HAVE_KEY_2)) m->numKeys++;
 
         if (!noExit) {
             drop_queued_background_music();
