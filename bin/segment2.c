@@ -204,7 +204,7 @@ ALIGNED8 static const Texture texture_hud_char_B[] = {
 };
 
 ALIGNED8 static const Texture texture_hud_char_C[] = {
-#include "textures/segment2/segment2.01800.rgba16.inc.c"
+#include "textures/segment2/segment2.01800.custom.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_D[] = {
@@ -216,7 +216,7 @@ ALIGNED8 static const Texture texture_hud_char_E[] = {
 };
 
 ALIGNED8 static const Texture texture_hud_char_F[] = {
-#include "textures/segment2/segment2.01E00.rgba16.inc.c"
+#include "textures/segment2/segment2.01E00.custom.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_G[] = {
@@ -258,7 +258,7 @@ ALIGNED8 static const Texture texture_hud_char_N[] = {
 };
 
 ALIGNED8 static const Texture texture_hud_char_O[] = {
-#include "textures/segment2/segment2.03000.rgba16.inc.c"
+#include "textures/segment2/segment2.03000.custom.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_P[] = {

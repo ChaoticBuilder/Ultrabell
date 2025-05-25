@@ -3490,6 +3490,7 @@ const BehaviorScript bhvToadMessage[] = {
 
 const BehaviorScript bhvUnlockDoorStar[] = {
     BEGIN(OBJ_LIST_LEVEL),
+    BILLBOARD(),
     OR_INT(oFlags, (OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
     CALL_NATIVE(bhv_unlock_door_star_init),
     BEGIN_LOOP(),

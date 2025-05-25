@@ -230,7 +230,6 @@ static void star_door_unlock_spawn_particles(s16 angleOffset) {
 void bhv_unlock_door_star_init(void) {
     o->oUnlockDoorStarState = UNLOCK_DOOR_STAR_RISING;
     o->oUnlockDoorStarTimer = 0;
-    o->oUnlockDoorStarYawVel = 0x1000;
     o->oPosX += 30.0f * sins(gMarioState->faceAngle[1] - 0x4000);
     o->oPosY += 160.0f;
     o->oPosZ += 30.0f * coss(gMarioState->faceAngle[1] - 0x4000);
@@ -242,14 +241,14 @@ void bhv_unlock_door_star_loop(void) {
     s16 prevYaw = o->oMoveAngleYaw;
 
     // Speed up the star every frame
-    if (o->oUnlockDoorStarYawVel < 0x2400) {
-        o->oUnlockDoorStarYawVel += 0x60;
-    }
     switch (o->oUnlockDoorStarState) {
         case UNLOCK_DOOR_STAR_RISING:
             o->oPosY += 3.4f; // Raise the star up in the air
-            o->oMoveAngleYaw +=
-                o->oUnlockDoorStarYawVel; // Apply yaw velocity
+            if (o->oUnlockDoorStarTimer < 20) {
+                if (gGlobalTimer % 2 == 0) o->oAnimState++;
+            } else {
+                o->oAnimState++;
+            }
             cur_obj_scale(o->oUnlockDoorStarTimer / 50.0f + 0.5f); // Scale the star to be bigger
             if (++o->oUnlockDoorStarTimer == 30) {
                 o->oUnlockDoorStarTimer = 0;
@@ -257,8 +256,11 @@ void bhv_unlock_door_star_loop(void) {
             }
             break;
         case UNLOCK_DOOR_STAR_WAITING:
-            o->oMoveAngleYaw +=
-                o->oUnlockDoorStarYawVel; // Apply yaw velocity
+            if (o->oUnlockDoorStarTimer < 10) {
+                o->oAnimState++;
+            } else {
+                o->oAnimState += 2;
+            }
             if (++o->oUnlockDoorStarTimer == 30) {
                 play_sound(SOUND_MENU_STAR_SOUND, o->header.gfx.cameraToObject); // Play final sound
                 cur_obj_hide(); // Hide the object
