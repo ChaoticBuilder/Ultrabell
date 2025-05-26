@@ -846,6 +846,8 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
     return sDelayedWarpTimer;
 }
 
+u8 gZ64Toggle = FALSE;
+
 /**
  * If a delayed warp is ready, initiate it.
  */
@@ -874,7 +876,10 @@ void initiate_delayed_warp(void) {
             switch (sDelayedWarpOp) {
                 case WARP_OP_GAME_OVER:
                     save_file_reload();
-                    warp_special(WARP_SPECIAL_MARIO_HEAD_DIZZY);
+                    f32 rand = random_float();
+                    (rand < 0.5f || gZ64Toggle)
+                    ? warp_special(WARP_SPECIAL_INTRO_Z64)
+                    : warp_special(WARP_SPECIAL_MARIO_HEAD_DIZZY);
                     break;
 
                 case WARP_OP_CREDITS_END:

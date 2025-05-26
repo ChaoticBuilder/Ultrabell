@@ -93,7 +93,7 @@ const GeoLayout intro_geo_mario_head_dizzy[] = {
       GEO_OPEN_NODE(),
          GEO_NODE_ORTHO(100),
          GEO_OPEN_NODE(),
-            GEO_ASM(0, geo_intro_gameover_backdrop),
+            GEO_ASM(0, geo_intro_regular_backdrop),
 #ifdef GODDARD_EASTER_EGG
             GEO_ASM(0, geo_intro_face_easter_egg),
 #endif
@@ -117,6 +117,21 @@ const GeoLayout intro_geo_mario_head_dizzy[] = {
          GEO_ASM(INTRO_CONTEXT_GAME_OVER, geo_intro_rumble_pak_graphic),
       GEO_CLOSE_NODE(),
 #endif
+   GEO_CLOSE_NODE(),
+   GEO_END(),
+};
+
+// 0x0E0003B8
+const GeoLayout intro_geo_z64[] = {
+   GEO_NODE_SCREEN_AREA(0, SCREEN_CENTER_X, SCREEN_CENTER_Y, SCREEN_CENTER_X, SCREEN_CENTER_Y),
+   GEO_OPEN_NODE(),
+      GEO_ZBUFFER(0),
+      GEO_OPEN_NODE(),
+         GEO_NODE_ORTHO(100),
+         GEO_OPEN_NODE(),
+            GEO_ASM(0, geo_intro_regular_backdrop),
+         GEO_CLOSE_NODE(),
+      GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
    GEO_END(),
 };

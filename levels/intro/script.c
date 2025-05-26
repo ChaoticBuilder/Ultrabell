@@ -140,6 +140,29 @@ const LevelScript level_intro_mario_head_dizzy[] = {
     JUMP(script_intro_main_level_entry),
 };
 
+const LevelScript level_intro_z64[] = {
+    INIT_LEVEL(),
+    BLACKOUT(/*active*/ TRUE),
+    LOAD_GODDARD(),
+    LOAD_BEHAVIOR_DATA(),
+    LOAD_TITLE_SCREEN_BG(),
+    ALLOC_LEVEL_POOL(),
+
+    AREA(/*index*/ 1, intro_geo_z64),
+    END_AREA(),
+
+    FREE_LEVEL_POOL(),
+    SLEEP(/*frames*/ 2),
+    BLACKOUT(/*active*/ FALSE),
+    LOAD_AREA(/*area*/ 1),
+    SET_MENU_MUSIC(/*seq*/ SEQ_CUSTOM_Z64),
+    TRANSITION(/*transType*/ WARP_TRANSITION_FADE_FROM_STAR, /*time*/ 20, /*color*/ 0x00, 0x00, 0x00),
+    SLEEP(/*frames*/ 20),
+    CALL_LOOP(/*arg*/ LVL_INTRO_Z64, /*func*/ lvl_intro_update),
+    JUMP_IF(/*op*/ OP_EQ, /*arg*/ LEVEL_FILE_SELECT,  script_intro_file_select),
+    JUMP(script_intro_main_level_entry),
+};
+
 const LevelScript level_intro_entry_level_select[] = {
     INIT_LEVEL(),
     LOAD_BEHAVIOR_DATA(),

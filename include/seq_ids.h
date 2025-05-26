@@ -46,7 +46,8 @@ enum SeqId {
     SEQ_MENU_FILE_SELECT,             // 0x21
     SEQ_EVENT_CUTSCENE_LAKITU,        // 0x22 (not in JP)
     // start of custom sequences
-    SEQ_CUSTOM_DESERT,            // 0x23
+    SEQ_CUSTOM_DESERT,                // 0x23
+    SEQ_CUSTOM_Z64,                   // 0x24
     SEQ_COUNT
 };
 

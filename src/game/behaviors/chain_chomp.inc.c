@@ -8,6 +8,7 @@
  * Processing order is bhvWoodenPost, bhvChainChompGate, bhvChainChomp, bhvChainChompChainPart.
  * The chain parts are processed starting at the post and ending at the chomp.
  */
+#include "src/game/print.h"
 
 #define CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS 180.0f
 
@@ -129,46 +130,54 @@ static void chain_chomp_restore_normal_chain_lengths(void) {
  * Turn toward mario. Wait a bit and then enter the lunging sub-action.
  */
 static void chain_chomp_sub_act_turn(void) {
+    // credits to xerox and AmitabhTechz for the original code!
     o->oGravity = -4.0f;
-
     chain_chomp_restore_normal_chain_lengths();
-    obj_move_pitch_approach(0, 0x100);
-
-    if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
-        cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
-        if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x800) {
-            if (cur_obj_check_anim_frame(0)) {
-                cur_obj_reverse_animation();
+    obj_move_pitch_approach(0, 0x200);
+    cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x800);
+    if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x100) {
+        if (o->oTimer >= 60) {
+            o->oTimer = 60;
+            if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
                 // Increase the maximum distance from the pivot and enter
                 // the lunging sub-action.
                 cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP2);
 
                 o->oSubAction = CHAIN_CHOMP_SUB_ACT_LUNGE;
-                // o->oChainChompMaxDistFromPivotPerChainPart = 900.0f / CHAIN_CHOMP_NUM_SEGMENTS;
                 o->oChainChompMaxDistFromPivotPerChainPart = CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS;
                 o->oForwardVel = 140.0f;
                 o->oVelY = 20.0f;
                 o->oGravity = 0.0f;
                 o->oChainChompTargetPitch = obj_get_pitch_from_vel();
-                }
+            }
         } else {
+            if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
+                cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP1);
+                o->oForwardVel = 10.0f;
+                o->oVelY = 20.0f;
+            }
+        }
+    } else {
+        o->oTimer = 0;
+        if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
             cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP1);
             o->oForwardVel = 10.0f;
             o->oVelY = 20.0f;
         }
-    } else {
-        cur_obj_rotate_yaw_toward(o->oAngleToMario, 400);
-        o->oTimer = 0;
     }
+    print_text_fmt_int(160, 16, "%d", o->oTimer);
 }
 
-static void chain_chomp_sub_act_lunge(void) {
-    obj_face_pitch_approach(o->oChainChompTargetPitch, 0x400);
+u8 freeCounter = 0;
 
+static void chain_chomp_sub_act_lunge(void) {
+    if (freeCounter < 16) freeCounter++;
+    obj_face_pitch_approach(o->oChainChompTargetPitch, 0x400);
+    o->oTimer = 50;
     if (o->oForwardVel != 0.0f) {
         // f32 val04;
 
-        if (o->oChainChompRestrictedByChain) {
+        if (o->oChainChompRestrictedByChain && freeCounter < 16) {
             o->oForwardVel = o->oVelY = 0.0f;
             o->oChainChompSignedMaxDistBetweenChainParts = 30.0f;
         }
@@ -195,10 +204,6 @@ static void chain_chomp_sub_act_lunge(void) {
         if (gGlobalTimer % 2 != 0) {
             o->oChainChompMaxDistBetweenChainParts = -o->oChainChompSignedMaxDistBetweenChainParts;
         }
-    }
-
-    if (o->oTimer < 30) {
-        cur_obj_reverse_animation();
     }
 }
 

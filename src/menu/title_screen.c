@@ -261,6 +261,14 @@ s32 intro_game_over(void) {
 
 #endif
 
+s32 intro_z64(void) {
+    s32 level = LEVEL_NONE;
+    z64_text();
+
+    if (gPlayer1Controller->buttonPressed & START_BUTTON) level = LEVEL_FILE_SELECT;
+    return level;
+}
+
 /**
  * Plays the casual "It's a me mario" when the game stars.
  */
@@ -290,6 +298,7 @@ s32 lvl_intro_update(s16 arg, UNUSED s32 unusedArg) {
         case LVL_INTRO_GAME_OVER:           return (LEVEL_FILE_SELECT + gDebugLevelSelect);
 #endif
         case LVL_INTRO_LEVEL_SELECT:        return intro_level_select();
+        case LVL_INTRO_Z64:                 return intro_z64();
         default: return LEVEL_NONE;
     }
 }

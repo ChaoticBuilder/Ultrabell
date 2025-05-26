@@ -1685,7 +1685,7 @@ void fov_slider(void) {
 int gTimerTime = 60;
 
 void time_slider(void) {
-    if (gConfigScroll == 9) {
+    if (gConfigScroll == CFG_TIMER) {
         if (gGlobalTimer % 2 == 0) {
             if (gPlayer1Controller->buttonDown == L_JPAD) gTimerTime--;
             if (gPlayer1Controller->buttonDown == R_JPAD) gTimerTime++;
@@ -1709,11 +1709,11 @@ void time_slider(void) {
 }
 
 void config_open(void) {
-    if (gPlayer1Controller->buttonPressed & R_TRIG) {
-        gConfigOpen ^= 1;
-    }
-    if (gPlayer1Controller->buttonPressed & L_TRIG) {
-        gMusicToggle ^= 1;
+    if (gPlayer1Controller->buttonPressed & R_TRIG) gConfigOpen ^= 1;
+    if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
+    if (gPlayer1Controller->buttonPressed & B_BUTTON) {
+        gZ64Toggle ^= 1;
+        gMarioState->numLives = 0;
     }
 }
 
@@ -2361,7 +2361,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
-    if (gCourseCompleteCoins >= gHudDisplay.coins) {
+    if ((gCourseCompleteCoins >= gHudDisplay.coins) || gHudDisplay.coins == 1996) {
         gCourseCompleteCoinsEqual = TRUE;
         gCourseCompleteCoins = gHudDisplay.coins;
 
@@ -2371,11 +2371,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
         }
         */
     } else {
-        if ((gCourseDoneMenuTimer & 1) || gHudDisplay.coins > 70) {
-            gCourseCompleteCoins++;
-            play_sound(SOUND_MENU_YOSHI_GAIN_LIVES, gGlobalSoundSource);
-        }
-
+        gCourseCompleteCoins++;
         if ((gHudDisplay.coins == gCourseCompleteCoins) && gGotFileCoinHiScore) {
             play_sound(SOUND_MENU_HIGH_SCORE, gGlobalSoundSource);
         }

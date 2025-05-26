@@ -34,6 +34,7 @@ enum WarpOperation {
 enum SpecialWarpDestinations {
     WARP_SPECIAL_LEVEL_SELECT        = -9,
     WARP_SPECIAL_INTRO_SPLASH_SCREEN = -8,
+    WARP_SPECIAL_INTRO_Z64           = -7,
     WARP_SPECIAL_MARIO_HEAD_DIZZY    = -3,
     WARP_SPECIAL_MARIO_HEAD_REGULAR  = -2,
     WARP_SPECIAL_ENDING              = -1,
@@ -90,6 +91,7 @@ extern s16 sCurrPlayMode;
 extern s16 sTransitionTimer;
 extern void (*sTransitionUpdate)(s16 *);
 extern void load_language_text(void);
+extern u8 gZ64Toggle;
 
 struct WarpDest {
     u8 type;
@@ -107,6 +109,7 @@ extern s16 sDelayedWarpTimer;
 extern s16 sSourceWarpNodeId;
 extern s32 sDelayedWarpArg;
 extern s8 sTimerRunning;
+extern u8 introz64;
 
 struct HudDisplay {
     /*0x00*/ s16 lives;

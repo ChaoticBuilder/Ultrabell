@@ -716,6 +716,10 @@ void sleep_draw(void) {
     }
 }
 
+void z64_draw(void) {
+    if (gZ64Toggle) print_small_text_light(16, 28, "LIVES", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+}
+
 /**
  * Sets HUD status camera value depending of the actions
  * defined in update_camera_status.
@@ -836,6 +840,7 @@ void render_hud(void) {
                 visualizer_display();
                 music_menu();
                 debug_stats();
+                z64_draw();
                 sleep_draw();
                 // ttc(); displays the clock's current state, technically I could've kept it in but nah
                 // what makes me mad tho is the fact I had to do this in the first place

@@ -48,6 +48,7 @@ static const LevelScript goto_intro_splash_screen[6];
 static const LevelScript goto_ending[6];
 static const LevelScript goto_mario_head_regular[6];
 static const LevelScript goto_mario_head_dizzy[6];
+static const LevelScript goto_intro_z64[6];
 static const LevelScript goto_debug_level_select[6];
 
 #define STUB_LEVEL(_0, _1, _2, _3, _4, _5, _6, _7, _8)
@@ -128,6 +129,7 @@ const LevelScript level_main_scripts_entry[] = {
     JUMP_IF(   /*op*/ OP_EQ, /*arg*/ WARP_SPECIAL_ENDING,              goto_ending),
     JUMP_IF(   /*op*/ OP_EQ, /*arg*/ WARP_SPECIAL_MARIO_HEAD_REGULAR,  goto_mario_head_regular),
     JUMP_IF(   /*op*/ OP_EQ, /*arg*/ WARP_SPECIAL_MARIO_HEAD_DIZZY,    goto_mario_head_dizzy),
+    JUMP_IF(   /*op*/ OP_EQ, /*arg*/ WARP_SPECIAL_INTRO_Z64,           goto_intro_z64),
     JUMP_IF(   /*op*/ OP_EQ, /*arg*/ WARP_SPECIAL_INTRO_SPLASH_SCREEN, goto_intro_splash_screen),
     JUMP_IF(   /*op*/ OP_EQ, /*arg*/ WARP_SPECIAL_LEVEL_SELECT,        goto_debug_level_select),
 };
@@ -146,6 +148,10 @@ static const LevelScript goto_mario_head_regular[] = {
 
 static const LevelScript goto_mario_head_dizzy[] = {
     EXIT_AND_EXECUTE_WITH_CODE(/*seg*/ SEGMENT_MENU_INTRO, _introSegmentRomStart, _introSegmentRomEnd, level_intro_mario_head_dizzy, _introSegmentBssStart, _introSegmentBssEnd),
+};
+
+static const LevelScript goto_intro_z64[] = {
+    EXIT_AND_EXECUTE_WITH_CODE(/*seg*/ SEGMENT_MENU_INTRO, _introSegmentRomStart, _introSegmentRomEnd, level_intro_z64, _introSegmentBssStart, _introSegmentBssEnd),
 };
 
 static const LevelScript goto_debug_level_select[] = {

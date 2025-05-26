@@ -9,7 +9,8 @@ enum LevelScriptIntroArgs {
     LVL_INTRO_PLAY_ITS_A_ME_MARIO,
     LVL_INTRO_REGULAR,
     LVL_INTRO_GAME_OVER,
-    LVL_INTRO_LEVEL_SELECT
+    LVL_INTRO_LEVEL_SELECT,
+    LVL_INTRO_Z64
 };
 
 s32 lvl_intro_update(s16 arg, UNUSED s32 unusedArg);
