@@ -20,9 +20,8 @@
 #include "star_select.h"
 #include "text_strings.h"
 #include "game/main.h"
-#include "game/print.h"
-#include "game/hud.h"
-#include "gfx_dimensions.h"
+
+// TODO: FIX THIS SHIT IN V1.0
 
 /**
  * @file star_select.c
@@ -130,7 +129,7 @@ void bhv_act_selector_init(void) {
     }
 
     // If the stars have been collected in order so far, show the next star.
-    if (sVisibleStars == sObtainedStars && sVisibleStars < 5) {
+    if (sVisibleStars == sObtainedStars && sVisibleStars < 6) {
         selectorModelIDs[sVisibleStars] = MODEL_TRANSPARENT_STAR;
         sInitSelectedActNum = sVisibleStars + 1;
         sSelectableStarIndex = sVisibleStars;
@@ -138,14 +137,8 @@ void bhv_act_selector_init(void) {
     }
 
     // If all stars have been collected, set the default selection to the last star.
-    if (sObtainedStars == 5) {
+    if (sObtainedStars == 6) {
         sInitSelectedActNum = sVisibleStars;
-    }
-
-    //! Useless, since sInitSelectedActNum has already been set in this
-    //! scenario by the code that shows the next uncollected star.
-    if (sObtainedStars == 0) {
-        sInitSelectedActNum = 1;
     }
 
     // Render star selector objects
@@ -189,7 +182,7 @@ void bhv_act_selector_loop(void) {
     u8 starIndexCounter;
     u8 stars = save_file_get_star_flags(gCurrSaveFileNum - 1, COURSE_NUM_TO_INDEX(gCurrCourseNum));
 
-    if (sObtainedStars < 5) {
+    if (sObtainedStars < 6) {
         // Sometimes, stars are not selectable even if they appear on the screen.
         // This code filters selectable and non-selectable stars.
         sSelectedActIndex = 0;

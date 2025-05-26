@@ -8,11 +8,11 @@ COURSE_ACTS(COURSE_WF, _("MOUNTAIN FORTRESS"),
 
 COURSE_ACTS(COURSE_JRB, _("NAUTICAL OCEAN BAY"),
        _("RAISE THE SUNKEN SHIP!")        , _("PLAYFUL SWIMMING EEL")          , _("DODGE FALLING STONES!"),
-       _("BLAST ONTO THE PILLAR!")        , _("IN THE JET STREAM!")            , _("IGNORE THIS"))
+       _("BLAST ONTO THE PILLAR!")        , _("IN THE JET STREAM!")            , _("TEMP STAR 6"))
 
 COURSE_ACTS(COURSE_CCM, _("FROSTY SLIDER"),
        _("CABIN SLIDE!")                  , _("TUXIE RESCUE")                  , _("PENGUIN RACING!"),
-       _("SLIPPERY 8 COINS..")            , _("WALL KICK PARKOUR!")            , _("IGNORE THIS"))
+       _("SLIPPERY 8 COINS..")            , _("WALL KICK PARKOUR!")            , _("TEMP STAR 6"))
 
 COURSE_ACTS(COURSE_BBH, _("HAUNTED BOO MANSION"),
        _("GHOST HOUSE GHOST HUNT!")       , _("THE SECRET MERRY GO ROUND")     , _("SECRET OF THE BOOKS"),

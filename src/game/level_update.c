@@ -877,9 +877,12 @@ void initiate_delayed_warp(void) {
                 case WARP_OP_GAME_OVER:
                     save_file_reload();
                     f32 rand = random_float();
-                    (rand < 0.5f || gZ64Toggle)
-                    ? warp_special(WARP_SPECIAL_INTRO_Z64)
-                    : warp_special(WARP_SPECIAL_MARIO_HEAD_DIZZY);
+                    if (rand < 0.5f || gZ64Toggle) {
+                        warp_special(WARP_SPECIAL_INTRO_Z64);
+                        gZ64Toggle = FALSE;
+                    } else {
+                        warp_special(WARP_SPECIAL_MARIO_HEAD_DIZZY);
+                    }
                     break;
 
                 case WARP_OP_CREDITS_END:
