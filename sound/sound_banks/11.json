@@ -233,6 +233,11 @@
             "release_rate": 208,
             "envelope": "envelope0",
             "sound": "4B"
+        },
+        "inst14": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "23_strings_1"
         }
     },
     "instrument_list": [
@@ -249,6 +254,7 @@
         "inst10",
         "inst11",
         "inst12",
-        "inst13"
+        "inst13",
+        "inst14"
     ]
 }

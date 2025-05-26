@@ -165,7 +165,7 @@ static void chain_chomp_sub_act_turn(void) {
             o->oVelY = 20.0f;
         }
     }
-    print_text_fmt_int(160, 16, "%d", o->oTimer);
+    // print_text_fmt_int(160, 16, "%d", o->oTimer);
 }
 
 u8 freeCounter = 0;

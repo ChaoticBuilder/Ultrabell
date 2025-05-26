@@ -1392,8 +1392,6 @@ s32 lvl_set_current_level(UNUSED s16 initOrUpdate, s32 levelNum) {
     }
 
     if (gCurrLevelNum != LEVEL_BOWSER_1 && gCurrLevelNum != LEVEL_BOWSER_2 && gCurrLevelNum != LEVEL_BOWSER_3) {
-        gMarioState->numCoins = 0;
-        gHudDisplay.coins = 0;
         gCurrCourseStarFlags =
             save_file_get_star_flags(gCurrSaveFileNum - 1, COURSE_NUM_TO_INDEX(gCurrCourseNum));
     }

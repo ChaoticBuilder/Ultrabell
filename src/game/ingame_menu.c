@@ -2372,6 +2372,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
         */
     } else {
         gCourseCompleteCoins++;
+        play_sound(SOUND_MENU_YOSHI_GAIN_LIVES, gGlobalSoundSource);
         if ((gHudDisplay.coins == gCourseCompleteCoins) && gGotFileCoinHiScore) {
             play_sound(SOUND_MENU_HIGH_SCORE, gGlobalSoundSource);
         }
