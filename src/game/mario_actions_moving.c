@@ -1005,6 +1005,7 @@ s32 act_turning_around(struct MarioState *m) {
         }
     }
 
+    m->marioBodyState->eyeState = MARIO_EYES_LOOK_RIGHT;
     return FALSE;
 }
 

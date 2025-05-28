@@ -23,6 +23,26 @@ u8 mario_mario_eyes_closed_rgba16_rgba16[] = {
 	#include "actors/mario/mario_eyes_closed.rgba16.inc.c"
 };
 
+Gfx mario_mario_eyes_right_unused_rgba16_rgba16_aligner[] = {gsSPEndDisplayList()};
+u8 mario_mario_eyes_right_unused_rgba16_rgba16[] = {
+	#include "actors/mario/mario_eyes_right_unused.rgba16.inc.c"
+};
+
+Gfx mario_mario_eyes_left_unused_rgba16_rgba16_aligner[] = {gsSPEndDisplayList()};
+u8 mario_mario_eyes_left_unused_rgba16_rgba16[] = {
+	#include "actors/mario/mario_eyes_left_unused.rgba16.inc.c"
+};
+
+Gfx mario_mario_eyes_up_unused_rgba16_rgba16_aligner[] = {gsSPEndDisplayList()};
+u8 mario_mario_eyes_up_unused_rgba16_rgba16[] = {
+	#include "actors/mario/mario_eyes_up_unused.rgba16.inc.c"
+};
+
+Gfx mario_mario_eyes_down_unused_rgba16_rgba16_aligner[] = {gsSPEndDisplayList()};
+u8 mario_mario_eyes_down_unused_rgba16_rgba16[] = {
+	#include "actors/mario/mario_eyes_down_unused.rgba16.inc.c"
+};
+
 Gfx mario_mario_eyes_dead_rgba16_rgba16_aligner[] = {gsSPEndDisplayList()};
 u8 mario_mario_eyes_dead_rgba16_rgba16[] = {
 	#include "actors/mario/mario_eyes_dead.rgba16.inc.c"
@@ -2570,6 +2590,90 @@ Gfx mat_revert_mario_face_2___eye_closed_v3_001[] = {
 	gsSPEndDisplayList(),
 };
 
+Gfx mat_mario_face_3_v3_001[] = {
+	gsSPLightColor(LIGHT_1, 0xFFAF5EFF),
+	gsSPLightColor(LIGHT_2, 0x3F1B0FFF),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
+	gsDPSetAlphaDither(G_AD_NOISE),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 1, mario_mario_eyes_right_unused_rgba16_rgba16),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 1023, 256),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 0, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_revert_mario_face_3_v3_001[] = {
+	gsDPPipeSync(),
+	gsDPSetAlphaDither(G_AD_DISABLE),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_mario_face_4_v3_001[] = {
+	gsSPLightColor(LIGHT_1, 0xFFAF5EFF),
+	gsSPLightColor(LIGHT_2, 0x3F1B0FFF),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
+	gsDPSetAlphaDither(G_AD_NOISE),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 1, mario_mario_eyes_left_unused_rgba16_rgba16),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 1023, 256),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 0, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_revert_mario_face_4_v3_001[] = {
+	gsDPPipeSync(),
+	gsDPSetAlphaDither(G_AD_DISABLE),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_mario_face_5_v3_001[] = {
+	gsSPLightColor(LIGHT_1, 0xFFAF5EFF),
+	gsSPLightColor(LIGHT_2, 0x3F1B0FFF),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
+	gsDPSetAlphaDither(G_AD_NOISE),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 1, mario_mario_eyes_up_unused_rgba16_rgba16),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 1023, 256),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 0, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_revert_mario_face_5_v3_001[] = {
+	gsDPPipeSync(),
+	gsDPSetAlphaDither(G_AD_DISABLE),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_mario_face_6_v3_001[] = {
+	gsSPLightColor(LIGHT_1, 0xFFAF5EFF),
+	gsSPLightColor(LIGHT_2, 0x3F1B0FFF),
+	gsDPPipeSync(),
+	gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
+	gsDPSetAlphaDither(G_AD_NOISE),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 1, mario_mario_eyes_down_unused_rgba16_rgba16),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b_LOAD_BLOCK, 0, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
+	gsDPLoadBlock(7, 0, 0, 1023, 256),
+	gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 0, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
+	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPEndDisplayList(),
+};
+
+Gfx mat_revert_mario_face_6_v3_001[] = {
+	gsDPPipeSync(),
+	gsDPSetAlphaDither(G_AD_DISABLE),
+	gsSPEndDisplayList(),
+};
+
 Gfx mat_mario_face_7___eye_X_v3_001[] = {
 	gsSPLightColor(LIGHT_1, 0xFFAF5EFF),
 	gsSPLightColor(LIGHT_2, 0x3F1B0FFF),
@@ -2825,7 +2929,119 @@ Gfx mario_000_displaylist_mesh_layer_1_mat_override_face_2___eye_closed_v3_001_2
 	gsSPEndDisplayList(),
 };
 
-Gfx mario_000_displaylist_mesh_layer_1_mat_override_face_7___eye_X_v3_001_3[] = {
+Gfx mario_000_displaylist_mesh_layer_1_mat_override_face_3_v3_001_3[] = {
+	gsSPDisplayList(mat_mario_face_3_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_mario_face_3_v3_001),
+	gsSPDisplayList(mat_mario_skin),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_1),
+	gsSPDisplayList(mat_revert_mario_skin),
+	gsSPDisplayList(mat_mario_mustache_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_2),
+	gsSPDisplayList(mat_revert_mario_mustache_v3_001),
+	gsSPDisplayList(mat_mario_hair_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_3),
+	gsSPDisplayList(mat_revert_mario_hair_v3_001),
+	gsSPDisplayList(mat_mario_red),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_4),
+	gsSPDisplayList(mat_revert_mario_red),
+	gsSPDisplayList(mat_mario_cap_inside),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_5),
+	gsSPDisplayList(mat_revert_mario_cap_inside),
+	gsSPDisplayList(mat_mario_cat_pink),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_6),
+	gsSPDisplayList(mat_revert_mario_cat_pink),
+	gsSPDisplayList(mat_mario_cat),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_7),
+	gsSPDisplayList(mat_revert_mario_cat),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_1_mat_override_face_4_v3_001_4[] = {
+	gsSPDisplayList(mat_mario_face_4_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_mario_face_4_v3_001),
+	gsSPDisplayList(mat_mario_skin),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_1),
+	gsSPDisplayList(mat_revert_mario_skin),
+	gsSPDisplayList(mat_mario_mustache_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_2),
+	gsSPDisplayList(mat_revert_mario_mustache_v3_001),
+	gsSPDisplayList(mat_mario_hair_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_3),
+	gsSPDisplayList(mat_revert_mario_hair_v3_001),
+	gsSPDisplayList(mat_mario_red),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_4),
+	gsSPDisplayList(mat_revert_mario_red),
+	gsSPDisplayList(mat_mario_cap_inside),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_5),
+	gsSPDisplayList(mat_revert_mario_cap_inside),
+	gsSPDisplayList(mat_mario_cat_pink),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_6),
+	gsSPDisplayList(mat_revert_mario_cat_pink),
+	gsSPDisplayList(mat_mario_cat),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_7),
+	gsSPDisplayList(mat_revert_mario_cat),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_1_mat_override_face_5_v3_001_5[] = {
+	gsSPDisplayList(mat_mario_face_5_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_mario_face_5_v3_001),
+	gsSPDisplayList(mat_mario_skin),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_1),
+	gsSPDisplayList(mat_revert_mario_skin),
+	gsSPDisplayList(mat_mario_mustache_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_2),
+	gsSPDisplayList(mat_revert_mario_mustache_v3_001),
+	gsSPDisplayList(mat_mario_hair_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_3),
+	gsSPDisplayList(mat_revert_mario_hair_v3_001),
+	gsSPDisplayList(mat_mario_red),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_4),
+	gsSPDisplayList(mat_revert_mario_red),
+	gsSPDisplayList(mat_mario_cap_inside),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_5),
+	gsSPDisplayList(mat_revert_mario_cap_inside),
+	gsSPDisplayList(mat_mario_cat_pink),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_6),
+	gsSPDisplayList(mat_revert_mario_cat_pink),
+	gsSPDisplayList(mat_mario_cat),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_7),
+	gsSPDisplayList(mat_revert_mario_cat),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_1_mat_override_face_6_v3_001_6[] = {
+	gsSPDisplayList(mat_mario_face_6_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_mario_face_6_v3_001),
+	gsSPDisplayList(mat_mario_skin),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_1),
+	gsSPDisplayList(mat_revert_mario_skin),
+	gsSPDisplayList(mat_mario_mustache_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_2),
+	gsSPDisplayList(mat_revert_mario_mustache_v3_001),
+	gsSPDisplayList(mat_mario_hair_v3_001),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_3),
+	gsSPDisplayList(mat_revert_mario_hair_v3_001),
+	gsSPDisplayList(mat_mario_red),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_4),
+	gsSPDisplayList(mat_revert_mario_red),
+	gsSPDisplayList(mat_mario_cap_inside),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_5),
+	gsSPDisplayList(mat_revert_mario_cap_inside),
+	gsSPDisplayList(mat_mario_cat_pink),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_6),
+	gsSPDisplayList(mat_revert_mario_cat_pink),
+	gsSPDisplayList(mat_mario_cat),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_7),
+	gsSPDisplayList(mat_revert_mario_cat),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_1_mat_override_face_7___eye_X_v3_001_7[] = {
 	gsSPDisplayList(mat_mario_face_7___eye_X_v3_001),
 	gsSPDisplayList(mario_000_displaylist_mesh_layer_1_tri_0),
 	gsSPDisplayList(mat_revert_mario_face_7___eye_X_v3_001),
@@ -2881,7 +3097,35 @@ Gfx mario_000_displaylist_mesh_layer_4_mat_override_face_2___eye_closed_v3_001_2
 	gsSPEndDisplayList(),
 };
 
-Gfx mario_000_displaylist_mesh_layer_4_mat_override_face_7___eye_X_v3_001_3[] = {
+Gfx mario_000_displaylist_mesh_layer_4_mat_override_face_3_v3_001_3[] = {
+	gsSPDisplayList(mat_mario_logo),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_4_tri_0),
+	gsSPDisplayList(mat_revert_mario_logo),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_4_mat_override_face_4_v3_001_4[] = {
+	gsSPDisplayList(mat_mario_logo),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_4_tri_0),
+	gsSPDisplayList(mat_revert_mario_logo),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_4_mat_override_face_5_v3_001_5[] = {
+	gsSPDisplayList(mat_mario_logo),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_4_tri_0),
+	gsSPDisplayList(mat_revert_mario_logo),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_4_mat_override_face_6_v3_001_6[] = {
+	gsSPDisplayList(mat_mario_logo),
+	gsSPDisplayList(mario_000_displaylist_mesh_layer_4_tri_0),
+	gsSPDisplayList(mat_revert_mario_logo),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_000_displaylist_mesh_layer_4_mat_override_face_7___eye_X_v3_001_7[] = {
 	gsSPDisplayList(mat_mario_logo),
 	gsSPDisplayList(mario_000_displaylist_mesh_layer_4_tri_0),
 	gsSPDisplayList(mat_revert_mario_logo),
@@ -2946,7 +3190,39 @@ Gfx mario_002_switch_option_head__no_cap__mesh_layer_1_mat_override_face_2___eye
 	gsSPEndDisplayList(),
 };
 
-Gfx mario_002_switch_option_head__no_cap__mesh_layer_1_mat_override_face_7___eye_X_v3_001_3[] = {
+Gfx mario_002_switch_option_head__no_cap__mesh_layer_1_mat_override_face_3_v3_001_3[] = {
+	gsSPDisplayList(mat_mario_face_3_v3_001),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_mario_face_3_v3_001),
+	gsSPDisplayList(mat_mario_skin),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_1),
+	gsSPDisplayList(mat_revert_mario_skin),
+	gsSPDisplayList(mat_mario_mustache_v3_001),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_2),
+	gsSPDisplayList(mat_revert_mario_mustache_v3_001),
+	gsSPDisplayList(mat_mario_hair_v3_001),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_3),
+	gsSPDisplayList(mat_revert_mario_hair_v3_001),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_002_switch_option_head__no_cap__mesh_layer_1_mat_override_face_4_v3_001_4[] = {
+	gsSPDisplayList(mat_mario_face_4_v3_001),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_mario_face_4_v3_001),
+	gsSPDisplayList(mat_mario_skin),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_1),
+	gsSPDisplayList(mat_revert_mario_skin),
+	gsSPDisplayList(mat_mario_mustache_v3_001),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_2),
+	gsSPDisplayList(mat_revert_mario_mustache_v3_001),
+	gsSPDisplayList(mat_mario_hair_v3_001),
+	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_3),
+	gsSPDisplayList(mat_revert_mario_hair_v3_001),
+	gsSPEndDisplayList(),
+};
+
+Gfx mario_002_switch_option_head__no_cap__mesh_layer_1_mat_override_face_7___eye_X_v3_001_5[] = {
 	gsSPDisplayList(mat_mario_face_7___eye_X_v3_001),
 	gsSPDisplayList(mario_002_switch_option_head__no_cap__mesh_layer_1_tri_0),
 	gsSPDisplayList(mat_revert_mario_face_7___eye_X_v3_001),

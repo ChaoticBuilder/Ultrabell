@@ -33,6 +33,7 @@ enum ActionStatesPushOrSidleWall { // push_or_sidle_wall
 };
 
 void play_step_sound(struct MarioState *m, s16 frame1, s16 frame2);
+void check_ledge_climb_down(struct MarioState *m);
 s32 mario_execute_moving_action(struct MarioState *m);
 
 #endif // MARIO_ACTIONS_MOVING

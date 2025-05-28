@@ -562,15 +562,14 @@ void attack_timer(void) {
 }
 
 u8 troll = FALSE;
-
 void timer_troll(void) {
     f32 rand = random_float();
-    if (((gGlobalTimer % 9000 == 0) && rand >= 0.25f) /* || (gPlayer1Controller->buttonPressed == L_JPAD && !gConfigOpen) */) {
+    if (((gGlobalTimer % 18000 == 0) && rand < 0.5f) || (gPlayer1Controller->buttonPressed == L_JPAD && !gConfigOpen)) {
         troll = TRUE;
     }
     if (troll == TRUE) {
         if ((gGlobalTimer & 3) == 0) return;
-        if (rand < 0.03125f) {
+        if (rand < 0.0625f) {
             troll = FALSE;
         }
         if (rand > 0.75f) return print_text(112, 120, "FIND THEM");

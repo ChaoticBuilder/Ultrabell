@@ -10,7 +10,7 @@
  */
 #include "src/game/print.h"
 
-#define CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS 180.0f
+#define CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS 192.0f
 
 #define CHAIN_CHOMP_LOAD_DIST   (3000.0f + (CHAIN_CHOMP_NUM_SEGMENTS * CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS))
 #define CHAIN_CHOMP_UNLOAD_DIST (4000.0f + (CHAIN_CHOMP_NUM_SEGMENTS * CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS))
@@ -122,7 +122,7 @@ static void chain_chomp_update_chain_segments(void) {
  */
 static void chain_chomp_restore_normal_chain_lengths(void) {
     // approach_f32_ptr(&o->oChainChompMaxDistFromPivotPerChainPart, 750.0f / CHAIN_CHOMP_NUM_SEGMENTS, 4.0f);
-    approach_f32_ptr(&o->oChainChompMaxDistFromPivotPerChainPart, 150.0f, 4.0f);
+    approach_f32_ptr(&o->oChainChompMaxDistFromPivotPerChainPart, 96.0f, 4.0f);
     o->oChainChompMaxDistBetweenChainParts = o->oChainChompMaxDistFromPivotPerChainPart;
 }
 
@@ -133,11 +133,12 @@ static void chain_chomp_sub_act_turn(void) {
     // credits to xerox and AmitabhTechz for the original code!
     o->oGravity = -4.0f;
     chain_chomp_restore_normal_chain_lengths();
-    obj_move_pitch_approach(0, 0x200);
-    cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x800);
-    if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x100) {
-        if (o->oTimer >= 60) {
-            o->oTimer = 60;
+    obj_move_pitch_approach(0, 0x100);
+    cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x300);
+
+    if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x200) {
+        if (o->oTimer >= 45) {
+            o->oTimer = 45;
             if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
                 // Increase the maximum distance from the pivot and enter
                 // the lunging sub-action.
@@ -145,39 +146,36 @@ static void chain_chomp_sub_act_turn(void) {
 
                 o->oSubAction = CHAIN_CHOMP_SUB_ACT_LUNGE;
                 o->oChainChompMaxDistFromPivotPerChainPart = CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS;
-                o->oForwardVel = 140.0f;
-                o->oVelY = 20.0f;
+                o->oForwardVel = 160.0f;
+                o->oVelY = 24.0f;
                 o->oGravity = 0.0f;
                 o->oChainChompTargetPitch = obj_get_pitch_from_vel();
             }
         } else {
             if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
                 cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP1);
-                o->oForwardVel = 10.0f;
-                o->oVelY = 20.0f;
+                o->oForwardVel = 16.0f;
+                o->oVelY = 24.0f;
             }
         }
     } else {
         o->oTimer = 0;
         if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
             cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP1);
-            o->oForwardVel = 10.0f;
-            o->oVelY = 20.0f;
+            o->oForwardVel = 16.0f;
+            o->oVelY = 24.0f;
         }
     }
-    // print_text_fmt_int(160, 16, "%d", o->oTimer);
+    // print_text_fmt_int(160, 32, "%d", o->oTimer);
 }
 
-u8 freeCounter = 0;
-
 static void chain_chomp_sub_act_lunge(void) {
-    if (freeCounter < 16) freeCounter++;
     obj_face_pitch_approach(o->oChainChompTargetPitch, 0x400);
-    o->oTimer = 50;
+    o->oTimer = 45;
     if (o->oForwardVel != 0.0f) {
         // f32 val04;
 
-        if (o->oChainChompRestrictedByChain && freeCounter < 16) {
+        if (o->oChainChompRestrictedByChain) {
             o->oForwardVel = o->oVelY = 0.0f;
             o->oChainChompSignedMaxDistBetweenChainParts = 30.0f;
         }

@@ -410,10 +410,17 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
             if (animation == MARIO_ANIM_SLIDEFLIP && !gLuigiToggle) {
                 set_mario_anim_with_accel(m, animation, 0x18000);
             }
-            (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
-            (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL))
-            ? set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000)
-            : set_mario_animation(m, animation);
+            if (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
+            (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
+                set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000);
+            } else {
+                if (m->action != ACT_LONG_JUMP) {
+                    (m->vel[1] > 0)
+                    ? (m->marioBodyState->eyeState = MARIO_EYES_LOOK_UP)
+                    : (m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN);
+                }
+                set_mario_animation(m, animation);
+            }
             break;
 
         case AIR_STEP_LANDED:
@@ -604,6 +611,7 @@ s32 act_freefall(struct MarioState *m) {
     }
     m->actionTimer++;
 
+    m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN;
     common_air_action_step(m, ACT_FREEFALL_LAND, animation, AIR_STEP_CHECK_LEDGE_GRAB);
     return FALSE;
 }
@@ -1107,6 +1115,7 @@ s32 act_ground_pound(struct MarioState *m) {
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
         }
 #endif
+    m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN;
     return FALSE;
 }
 
