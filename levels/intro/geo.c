@@ -129,7 +129,7 @@ const GeoLayout intro_geo_z64[] = {
       GEO_OPEN_NODE(),
          GEO_NODE_ORTHO(100),
          GEO_OPEN_NODE(),
-            GEO_ASM(0, geo_intro_regular_backdrop),
+            GEO_ASM(0, geo_intro_gameover_backdrop),
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),

@@ -798,7 +798,7 @@ s32 act_walking(struct MarioState *m) {
     update_walking_speed(m);
 
     if (m->actionState != ACT_STATE_WALKING_NO_WALL && (m->forwardVel < m->intendedMag)) {
-        m->forwardVel = (m->intendedMag /= 1.125f);
+        m->intendedMag /= 1.125f;
     }
 
     m->actionState = ACT_STATE_WALKING_NO_WALL;

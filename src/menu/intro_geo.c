@@ -220,9 +220,6 @@ static s8 gameOverBackgroundTable[] = {
 };
 
 // order of tiles that are flipped from "Game Over" to "Super Mario 64"
-static s8 flipOrder[] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
 
 /**
  * Geo callback to render the Game Over background tiles
@@ -242,6 +239,7 @@ Gfx *geo_intro_gameover_backdrop(s32 callContext, struct GraphNode *node, UNUSED
     } else { // draw
         dl = alloc_display_list(16 * sizeof(*dl));
         dlIter = dl;
+        /*
         if (sGameOverTableIndex == -2) {
             if (sGameOverFrameCounter == 180) {
                 sGameOverTableIndex++;
@@ -257,6 +255,7 @@ Gfx *geo_intro_gameover_backdrop(s32 callContext, struct GraphNode *node, UNUSED
         if (sGameOverTableIndex != 11) {
             sGameOverFrameCounter++;
         }
+        */
         SET_GRAPH_NODE_LAYER(graphNode->flags, LAYER_OPAQUE);
 
         // draw all the tiles

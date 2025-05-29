@@ -415,7 +415,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
                 set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000);
             } else {
                 if (m->action != ACT_LONG_JUMP) {
-                    (m->vel[1] > 0)
+                    (m->vel[1] >= -8.0f)
                     ? (m->marioBodyState->eyeState = MARIO_EYES_LOOK_UP)
                     : (m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN);
                 }
