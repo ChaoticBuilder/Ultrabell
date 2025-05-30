@@ -1102,6 +1102,7 @@ s32 act_decelerating(struct MarioState *m) {
         }
 
         if (m->input & INPUT_NONZERO_ANALOG) {
+            if (gTurnToggle) m->faceAngle[1] = (s16) m->intendedYaw;
             return set_mario_action(m, ACT_WALKING, 0);
         }
 

@@ -24,6 +24,8 @@ R_eal-G_rude/eye of rah: For helping me add Gigaleak .sou / .hms files and conve
 
 the voices in my head: Shoshinkai and Realistic mode, mario having hallucinations every 15 mins, (real thing btw, go look at hud.c) mario permadrowning, and a few other things
 
+stalechilibeans, iProgramInCpp, and the other people who worked on TPP, for Animations & a *few* Assets, comparing as a reference for my own beta content, and other miscellaneous things!
+
 Kaze Emanuar, for making amazing videos on SM64 optimizations, which taught me more about the game!
 
 And finally, Credits to the amazing people behind the [HackerSM64](https://github.com/HackerN64/HackerSM64) Repo! I couldn't make this hack without them!

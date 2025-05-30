@@ -1111,7 +1111,7 @@ s32 check_common_action_exits(struct MarioState *m) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
     if (m->input & INPUT_NONZERO_ANALOG) {
-        if (gTurnToggle) m->faceAngle[1] = (s16) m->intendedYaw;
+        if (gTurnToggle && m->action != ACT_BRAKING) m->faceAngle[1] = (s16) m->intendedYaw;
         return set_mario_action(m, ACT_WALKING, 0);
     }
     if (m->input & INPUT_ABOVE_SLIDE) {
