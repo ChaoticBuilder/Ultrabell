@@ -1078,7 +1078,10 @@ s32 act_ground_pound(struct MarioState *m) {
         play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
         (!g95Toggle)
         ? (m->vel[1] = ABS(m->vel[1] / 1.375))
-        : (m->vel[1] = -32.0f);
+        : (m->vel[1] = 0.0f);
+    }
+    if (g95Toggle && m->actionTimer < 4) {
+        m->vel[1] -= 4.0f;
     }
 
     m->actionTimer++;

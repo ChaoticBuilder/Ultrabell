@@ -1045,6 +1045,8 @@ s32 act_finish_turning_around(struct MarioState *m) {
 #else
     m->marioObj->header.gfx.angle[1] += 0x8000;
 #endif
+    if (m->actionTimer > 1 && m->actionTimer < 9) m->marioBodyState->eyeState = MARIO_EYES_LOOK_LEFT;
+    m->actionTimer++;
     return FALSE;
 }
 

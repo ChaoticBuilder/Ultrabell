@@ -5,9 +5,10 @@ MARIO 1995: ULTRABELL
 *This isn't your ordinary SM64 Development build. There are secrets hidden within...*
 
 INTRO:
-Welcome to Ultrabell! One of the very many hacks of SM64 that aim to recreate a beta build of the game.
-Ultrabell is a hack that takes place in the December 1995 - January 1996 development timeline, a real development phase with my own fake name I created.
-it's in-between the demos shown off at Shoshinkai, (later known as Space World) and E3 1996.
+Welcome to Ultrabell! *Enjoy your stay, as **Mario's Kingdom is endless!***
+
+Ultrabell is one of the very many hacks of SM64 that aim to recreate a beta build of the game.
+It takes place in-between the demos shown off at Shoshinkai, (later known as Space World) and E3 1996. (Dec '95 - Jan '96)
 
 I've made several changes that recreate beta mechanics / content, fix (a few) bugs, add in my own custom content including brand new levels, and other various things!
 
@@ -24,7 +25,7 @@ R_eal-G_rude/eye of rah: For helping me add Gigaleak .sou / .hms files and conve
 
 the voices in my head: Shoshinkai and Realistic mode, mario having hallucinations every 15 mins, (real thing btw, go look at hud.c) mario permadrowning, and a few other things
 
-stalechilibeans, iProgramInCpp, and the other people who worked on TPP, for Animations & a *few* Assets, comparing as a reference for my own beta content, and other miscellaneous things!
+stalechilibeans, iProgramInCpp, and the other people who worked on TPP, for Animations & *a few* Assets, comparing as a reference for my own beta content, and other miscellaneous things!
 
 Kaze Emanuar, for making amazing videos on SM64 optimizations, which taught me more about the game!
 
