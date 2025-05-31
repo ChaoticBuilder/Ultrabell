@@ -696,10 +696,10 @@ void apply_gravity(struct MarioState *m) {
     }
     if (gLuigiToggle && !gRealToggle) {
         if (m->marioBodyState->wingFlutter == FALSE && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN && m->action != ACT_TWIRLING)) {
-            m->vel[1] += 1.0f;
+            if (!gABCToggle) m->vel[1] += 1.0f;
             if (m->vel[1] < 8.0f) {
                 if (sTerminalVelocity == TRUE) {
-                    m->vel[1] -= 1.0f;
+                    if (!gABCToggle) m->vel[1] -= 1.0f;
                 } else {
                     if ((m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) &&
                         m->flags != MARIO_WING_CAP)
