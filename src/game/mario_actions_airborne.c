@@ -490,6 +490,9 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
 
 s32 act_jump(struct MarioState *m) {
     if (gABCToggle) {
+        if (m->flags & MARIO_WING_CAP && gABCToggle < 2) {
+            return set_mario_action(m, ACT_FLYING_TRIPLE_JUMP, 0);
+        }
         set_mario_action(m, m->prevAction, 0);
         return FALSE;
     }
@@ -552,6 +555,10 @@ s32 act_triple_jump(struct MarioState *m) {
 }
 
 s32 act_backflip(struct MarioState *m) {
+    if (gABCToggle) {
+        set_mario_action(m, m->prevAction, 0);
+        return FALSE;
+    }
     if (g95Toggle)
         return set_mario_action(m, ACT_FREEFALL, 0);
     if (m->input & INPUT_B_PRESSED) {
@@ -605,7 +612,7 @@ s32 act_freefall(struct MarioState *m) {
             animation = MARIO_ANIM_FALL_FROM_SLIDE_KICK;
             break;
         case 4: // coyote time
-            if (gRealToggle) break;
+            if (gRealToggle || gABCToggle == 2) m->actionArg = 0;
             m->vel[1] += 3.0f;
             if (m->actionTimer > 3) m->actionArg = 0;
             break;
@@ -618,6 +625,10 @@ s32 act_freefall(struct MarioState *m) {
 }
 
 s32 act_hold_jump(struct MarioState *m) {
+    if (gABCToggle == 2) {
+        set_mario_action(m, m->prevAction, 0);
+        return FALSE;
+    }
     if (m->marioObj->oInteractStatus & INT_STATUS_MARIO_DROP_OBJECT || (m->input & INPUT_B_PRESSED && m->heldObj->oInteractionSubtype & INT_SUBTYPE_HOLDABLE_NPC)) {
         return drop_and_set_mario_action(m, ACT_FREEFALL, 0);
     }
@@ -651,7 +662,7 @@ s32 act_hold_freefall(struct MarioState *m) {
             animation = MARIO_ANIM_FALL_WITH_LIGHT_OBJ;
             break;
         case 4:
-            if (gRealToggle) break;
+            if (gRealToggle || gABCToggle == 2) m->actionArg = 0;
             m->vel[1] += 3.0f;
             m->actionTimer++;
             if (m->actionTimer > 3) m->actionArg = 0;
@@ -720,6 +731,10 @@ s32 act_wall_kick_air(struct MarioState *m) {
 }
 
 s32 act_long_jump(struct MarioState *m) {
+    if (gABCToggle == 2) {
+        set_mario_action(m, m->prevAction, 0);
+        return FALSE;
+    }
     if (g95Toggle)
         return set_mario_action(m, ACT_FREEFALL, 1);
     if (m->input & INPUT_B_PRESSED) {
@@ -951,7 +966,7 @@ s32 act_air_throw(struct MarioState *m) {
 }
 
 s32 act_water_jump(struct MarioState *m) {
-    if (gABCToggle) {
+    if (gABCToggle == 2) {
         set_mario_action(m, m->prevAction, 0);
         return FALSE;
     }

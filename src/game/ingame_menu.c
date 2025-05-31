@@ -53,7 +53,7 @@ u8 gTurnToggle = FALSE;
 u8 gFlightToggle = FALSE;
 u8 g95Toggle = FALSE;
 u8 gRealToggle = FALSE;
-u8 gABCToggle = FALSE;
+u8 gABCToggle = 0;
 u8 gMusicToggle = FALSE;
 u8 gLevelTroll = 0;
 u8 textConfigOpen[] = { TEXT_CONFIG_OPEN };
@@ -1638,7 +1638,7 @@ void config_options(void) {
             : (gKickTimer = 5);
         }
         if (gConfigScroll == CFG_CTURN) gTurnToggle ^= 1;
-        if (gConfigScroll == CFG_ABC) gABCToggle ^= 1;
+        if (gConfigScroll == CFG_ABC) gABCToggle = (gABCToggle + 1) % 3;
         // if (gHudDisplay.stars >= 100)
         if (gConfigScroll == CFG_FLY) gFlightToggle ^= 1;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
@@ -1889,7 +1889,8 @@ void config_options_box(void) {
         print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gABCToggle) sprintf(currOption, "AB Challenge: Off");
-    if (gABCToggle) sprintf(currOption, "AB Challenge: On");
+    if (gABCToggle == 1) sprintf(currOption, "AB Challenge: Easy");
+    if (gABCToggle == 2) sprintf(currOption, "AB Challenge: Hard");
 
     config_option_render(xPos, yPos, currOption, CFG_ABC);
     if (xPos >= 160) yPos += 12;
