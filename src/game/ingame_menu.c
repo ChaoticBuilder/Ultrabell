@@ -1713,7 +1713,6 @@ void config_open(void) {
     if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
     if (gPlayer1Controller->buttonPressed & B_BUTTON) {
         gZ64Toggle ^= 1;
-        gMarioState->numLives = 0;
     }
 }
 

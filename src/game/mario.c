@@ -1484,8 +1484,8 @@ void update_mario_health(struct MarioState *m) {
                         m->health -= (terrainIsSnow ? 3 : 1);
                     }
 #endif
-                } else if (g95Toggle && !gRealToggle && gGlobalTimer % 2 == 0) {
-                    m->health++;
+                } else if (g95Toggle && !gRealToggle && gGlobalTimer % 120 == 0) {
+                    m->healCounter++;
                 }
             }
         }

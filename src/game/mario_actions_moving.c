@@ -1518,26 +1518,23 @@ s32 act_crouch_slide(struct MarioState *m) {
         return set_mario_action(m, ACT_BUTT_SLIDE, 0);
     }
 
-    if (!g95Toggle) {
-        if (m->actionTimer < 30) {
-            m->actionTimer++;
-            if (m->input & INPUT_A_PRESSED) {
-                if (m->forwardVel > 10.0f) {
-                    return set_jumping_action(m, ACT_LONG_JUMP, 0);
-                }
-            }
+    if (m->input & INPUT_B_PRESSED) {
+        if (!g95Toggle && m->forwardVel >= 12.0f) {
+            return set_mario_action(m, ACT_SLIDE_KICK, 0);
+        } else if (gABCToggle < 2) {
+            m->vel[1] = 32.0f;
+            return set_mario_action(m, ACT_GROUND_POUND, 2);
         }
     }
 
-        if (m->input & INPUT_B_PRESSED) {
-            if (!g95Toggle && m->forwardVel >= 12.0f) {
-                return set_mario_action(m, ACT_SLIDE_KICK, 0);
-            } else {
-                return set_mario_action(m, ACT_JUMP, 0);
-            }
-        }
-
     if (m->input & INPUT_A_PRESSED) {
+        if (m->forwardVel > 10.0f && !g95Toggle) {
+            return set_jumping_action(m, ACT_LONG_JUMP, 0);
+        }
+        if (gABCToggle < 2) {
+            m->vel[1] = 32.0f;
+            return set_mario_action(m, ACT_GROUND_POUND, 2);
+        }
         return set_jumping_action(m, ACT_JUMP, 0);
     }
 
@@ -1657,13 +1654,12 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
 
     if (perform_ground_step(m) == GROUND_STEP_LEFT_GROUND) {
         if (m->forwardVel >= 0.0f) {
-            m->forwardVel -= 16.0f;
+            m->forwardVel = -0.5f;
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 4);
         } else {
-            m->forwardVel += 16.0f;
+            m->forwardVel = 0.5f;
             set_mario_action(m, ACT_FORWARD_AIR_KB, 4);
         }
-        m->vel[1] = 8.0f;
     } else {
         if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) mario_bonk_reflection(m, TRUE);
         if (is_anim_at_end(m)) {

@@ -416,9 +416,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
                 set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000);
             } else {
                 if (m->action != ACT_LONG_JUMP) {
-                    (m->vel[1] >= -8.0f)
-                    ? (m->marioBodyState->eyeState = MARIO_EYES_LOOK_UP)
-                    : (m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN);
+                    if (m->vel[1] < -8.0f) m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN;
                 }
                 set_mario_animation(m, animation);
             }
@@ -739,7 +737,10 @@ s32 act_long_jump(struct MarioState *m) {
         return set_mario_action(m, ACT_FREEFALL, 1);
     if (m->input & INPUT_B_PRESSED) {
         set_mario_action(m, ACT_JUMP_KICK, 0);
-    } 
+    }
+    if (m->input & INPUT_Z_PRESSED) {
+        return set_mario_action(m, ACT_GROUND_POUND, 0);
+    }
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAHOO);
 
@@ -1087,15 +1088,25 @@ s32 act_ground_pound(struct MarioState *m) {
     m->forwardVel = approach_f32(m->forwardVel, 0, ABS(m->forwardVel / 12.0f), (m->forwardVel / 12.0f));
     mario_set_forward_vel(m, m->forwardVel);
 
+    u8 speed = 0x10;
+    if (m->actionArg > 0) {
+        if (m->actionTimer < 8) speed = -m->actionTimer + 0x18;
+    }
+
+    set_mario_anim_with_accel(m, m->actionArg == ACT_ARG_GROUND_POUND_NORMAL
+                                 ? MARIO_ANIM_START_GROUND_POUND : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND,
+                                 (speed * 0x1000));
     set_mario_animation(m, m->actionArg == ACT_ARG_GROUND_POUND_NORMAL ? MARIO_ANIM_START_GROUND_POUND
                                                                        : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND);
     if (m->actionTimer == 0) {
         play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
-        (!g95Toggle)
-        ? (m->vel[1] = ABS(m->vel[1] / 1.375))
-        : (m->vel[1] = 0.0f);
+        if (m->actionArg < 2) {
+            (!g95Toggle)
+            ? (m->vel[1] = ABS(m->vel[1] / 1.375))
+            : (m->vel[1] = 0.0f);
+        }
     }
-    if (g95Toggle && m->actionTimer < 4) {
+    if (g95Toggle && m->actionTimer < 4 && m->actionArg < 2) {
         m->vel[1] -= 4.0f;
     }
 
@@ -1120,7 +1131,8 @@ s32 act_ground_pound(struct MarioState *m) {
                 play_mario_heavy_landing_sound(m, SOUND_ACTION_TERRAIN_HEAVY_LANDING);
                 if (!check_fall_damage(m, ACT_HARD_BACKWARD_GROUND_KB)) {
                     m->particleFlags |= PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR;
-                    set_mario_action(m, ACT_GROUND_POUND_LAND, 0);
+                    if (m->actionArg == 1) m->actionArg = 0;
+                    set_mario_action(m, ACT_GROUND_POUND_LAND, m->actionArg);
                 }
             }
             set_camera_shake_from_hit(SHAKE_GROUND_POUND);
@@ -1134,7 +1146,7 @@ s32 act_ground_pound(struct MarioState *m) {
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
         }
 #endif
-    m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN;
+    if (m->vel[1] < -8.0f) m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN;
     return FALSE;
 }
 
@@ -1984,6 +1996,10 @@ s32 act_shot_from_cannon(struct MarioState *m) {
 
 s32 act_flying(struct MarioState *m) {
     s16 startPitch = m->faceAngle[0];
+    if (m->actionTimer == 0) {
+        vec3_zero(m->faceAngle);
+    }
+    if (m->actionTimer < 1) m->actionTimer++;
 
     if (m->input & INPUT_Z_PRESSED) {
         if (m->area->camera->mode == FLYING_CAMERA_MODE) {
@@ -2023,7 +2039,6 @@ s32 act_flying(struct MarioState *m) {
         case AIR_STEP_NONE:
             m->marioObj->header.gfx.angle[0] = -m->faceAngle[0];
             m->marioObj->header.gfx.angle[2] = m->faceAngle[2];
-            m->actionTimer = 0;
             break;
 
         case AIR_STEP_LANDED:
