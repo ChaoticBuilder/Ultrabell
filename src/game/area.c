@@ -396,38 +396,9 @@ void play_transition_after_delay(s16 transType, s16 time, u8 red, u8 green, u8 b
     play_transition(transType, time, red, green, blue);
 }
 
-s32 mirrorTarget = SCREEN_WIDTH / 2;
-s16 mirrorSpeed = 0;
-void mirror_mode(struct GraphNodeRoot *node) {
-    if (node == NULL) return;
-    if (node->width == mirrorTarget && (mirrorFlip == 0 || mirrorFlip == 2)) return;
-    if (mirrorFlip < 2) {
-        if (node->width > 0) mirrorSpeed += 1;
-        if (node->width < 0) {
-            mirrorSpeed -= 1;
-            mirrorFlip = 1;
-        }
-        if (node->width == mirrorTarget) mirrorFlip = 2;
-    } else {
-        if (node->width < 0) mirrorSpeed += 1;
-        if (node->width > 0) {
-            mirrorSpeed -= 1;
-            mirrorFlip = 3;
-        }
-        if (node->width == mirrorTarget) mirrorFlip = 0;
-    }
-    print_text_fmt_int(160, 16, "%d", mirrorFlip);
-    
-    if (mirrorSpeed < 0) mirrorSpeed = 0;
-
-    node->width = approach_s32_symmetric(node->width, mirrorTarget, mirrorSpeed);
-    clear_framebuffer(gWarpTransFBSetColor);
-}
-
 void render_game(void) {
     PROFILER_GET_SNAPSHOT_TYPE(PROFILER_DELTA_COLLISION);
     if (gCurrentArea != NULL && !gWarpTransition.pauseRendering) {
-        mirror_mode(gCurrentArea->graphNode);
         if (gCurrentArea->graphNode) {
             geo_process_root(gCurrentArea->graphNode, gViewportOverride, gViewportClip, gFBSetColor);
         }
