@@ -1,7 +1,5 @@
 // chuckya.inc.c
 
-#include "game/print.h"
-
 void common_anchor_mario_behavior(f32 forwardVel, f32 yVel, s32 flag) {
     switch (o->parentObj->oCommonAnchorAction) {
         case 0:
@@ -144,7 +142,7 @@ void chuckya_act_1(void) {
             o->oInteractStatus &= ~INT_STATUS_GRABBED_MARIO;
             o->oChuckyaNumPlayerEscapeActions = 0;
         }
-        print_text_fmt_int(120, 48, "%d", o->oChuckyaNumPlayerEscapeActions);
+        print_debug_bottom_up("%d", o->oChuckyaNumPlayerEscapeActions);
     }
 }
 

@@ -754,7 +754,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_TRIPLE_JUMP:
             (g95Toggle)
-            ? set_mario_y_vel_based_on_fspeed(m, 70.0f, 0.0f)
+            ? set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f)
             : set_mario_y_vel_based_on_fspeed(m, 64.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;

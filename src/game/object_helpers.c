@@ -2290,8 +2290,6 @@ s32 player_performed_grab_escape_action(void) {
     if (gPlayer1Controller->buttonPressed & (A_BUTTON | B_BUTTON | Z_TRIG)) {
         return TRUE;
     }
-    print_text_fmt_int(120, 32, "%d", x);
-    print_text_fmt_int(120, 16, "%d", y);
 
     return FALSE;
 }

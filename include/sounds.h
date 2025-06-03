@@ -371,7 +371,7 @@ enum SoundBank {
 
 /* Environment Sound Effects */
 #define SOUND_ENV_WATERFALL1                     /* 0x40000001 */ SOUND_ARG_LOAD(SOUND_BANK_ENV,      0x00, 0x00, 0) // unverified
-#define SOUND_ENV_WATERFALL2                     /* 0x40010001 */ SOUND_ARG_LOAD(SOUND_BANK_ENV,      0x01, 0x00, 0) // unverified
+#define SOUND_ENV_WATERFALL2                     /* 0x40010001 */ SOUND_ARG_LOAD(SOUND_BANK_ENV,      0x01, 0x40, 0) // unverified
 #define SOUND_ENV_ELEVATOR1                      /* 0x40020001 */ SOUND_ARG_LOAD(SOUND_BANK_ENV,      0x02, 0x00, 0) // unverified
 #define SOUND_ENV_DRONING1                       /* 0x41030001 */ SOUND_ARG_LOAD(SOUND_BANK_ENV,      0x03, 0x00, SOUND_NO_VOLUME_LOSS) // unverified
 #define SOUND_ENV_DRONING2                       /* 0x40040001 */ SOUND_ARG_LOAD(SOUND_BANK_ENV,      0x04, 0x00, 0) // unverified
