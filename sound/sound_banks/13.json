@@ -158,12 +158,12 @@
             "sound_hi": "10_cymbal_bell"
         },
         "inst5": {
-            "release_rate": 1,
+            "release_rate": 5,
             "envelope": "envelope6",
             "sound": "27_harpsichord"
         },
         "inst6": {
-            "release_rate": 1,
+            "release_rate": 5,
             "envelope": "envelope7",
             "sound": "42_vibraphone"
         }

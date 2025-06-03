@@ -23,7 +23,7 @@
 /**
  * This can be 0..32767.
  */
-#define MAX_NUM_COINS 32000
+#define MAX_NUM_COINS 255
 
 /**
  * Air/breath meter is separate from health meter when underwater.

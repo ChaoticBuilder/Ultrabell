@@ -2274,20 +2274,24 @@ s32 cur_obj_check_grabbed_mario(void) {
 }
 
 s32 sPlayerGrabReleaseState;
+u8 grabPTS = 0;
 
 s32 player_performed_grab_escape_action(void) {
-    if (gPlayer1Controller->stickMag < 30.0f) {
-        sPlayerGrabReleaseState = FALSE;
-    }
-
-    if (sPlayerGrabReleaseState && (gPlayer1Controller->stickMag > 40.0f)) {
-        sPlayerGrabReleaseState = TRUE;
+    s16 x = gPlayer1Controller->rawStickX;
+    s16 y = gPlayer1Controller->rawStickY;
+    if (((x | y) >  0 && grabPTS == 1) ||
+        ((x | y) < -0 && grabPTS == 3) ||
+     (x < -0 && y > 0 && grabPTS == 0) ||
+     (x > 0 && y < -0 && grabPTS == 2)) {
+        grabPTS = (grabPTS + 1) % 4;
         return TRUE;
     }
 
     if (gPlayer1Controller->buttonPressed & (A_BUTTON | B_BUTTON | Z_TRIG)) {
         return TRUE;
     }
+    print_text_fmt_int(120, 32, "%d", x);
+    print_text_fmt_int(120, 16, "%d", y);
 
     return FALSE;
 }

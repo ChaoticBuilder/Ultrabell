@@ -46,7 +46,7 @@
  * Height of the black borders at the top and bottom of the screen for NTSC Versions. You can set it to different values for console and emulator.
  * There is generally no reason to have a value other than 0 for emulator. As for console, it provides a (small) performance boost.
  */
-#define BORDER_HEIGHT_CONSOLE  0
+#define BORDER_HEIGHT_CONSOLE  8
 #define BORDER_HEIGHT_EMULATOR 0
 
 /**

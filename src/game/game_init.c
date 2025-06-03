@@ -31,7 +31,6 @@
 #include "vc_ultra.h"
 #include "profiling.h"
 #include "emutest.h"
-#include "rendering_graph_node.h"
 #include "debug.h"
 
 // Emulators that the Instant Input patch should not be applied to
@@ -591,8 +590,6 @@ void adjust_analog_stick(struct Controller *controller) {
         controller->stickY *= 64 / controller->stickMag;
         controller->stickMag = 64;
     }
-
-    if (mirrorFlip) controller->stickX *= -1;
 }
 
 /**
@@ -835,7 +832,7 @@ void thread5_game_loop(UNUSED void *arg) {
         if (gShowDebugText) {
             // subtract the end of the gfx pool with the display list to obtain the
             // amount of free space remaining.
-            print_text_fmt_int(180, 16, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
+            print_text_fmt_int(180, 20, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
         }
 #endif
 */

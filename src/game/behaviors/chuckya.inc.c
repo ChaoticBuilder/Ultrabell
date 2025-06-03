@@ -1,5 +1,7 @@
 // chuckya.inc.c
 
+#include "game/print.h"
+
 void common_anchor_mario_behavior(f32 forwardVel, f32 yVel, s32 flag) {
     switch (o->parentObj->oCommonAnchorAction) {
         case 0:
@@ -104,38 +106,45 @@ void chuckya_act_0(void) {
 }
 
 void chuckya_act_1(void) {
-    if (o->oSubAction == 0) {
-        if (cur_obj_init_animation_and_check_if_near_end(0)) {
-            o->oSubAction++;
-        }
-        o->oChuckyaSubActionTimer = random_float() * 30.0f + 10.0f;
-        o->oChuckyaNumPlayerEscapeActions = 0;
-        o->oForwardVel = 0.0f;
-    } else {
-        if (o->oSubAction == 1) {
-            o->oChuckyaNumPlayerEscapeActions += player_performed_grab_escape_action();
-            print_debug_bottom_up("%d", o->oChuckyaNumPlayerEscapeActions);
-            if (o->oChuckyaNumPlayerEscapeActions > 10) {
-                o->oCommonAnchorAction = 3;
-                o->oAction = 3;
-                o->oInteractStatus &= ~INT_STATUS_GRABBED_MARIO;
-            } else {
-                cur_obj_init_animation_with_sound(1);
-                o->oMoveAngleYaw += INT_STATUS_GRABBED_MARIO;
-                if (o->oChuckyaSubActionTimer-- < 0
-                 && (check_if_moving_over_floor(50.0f, 150.0f) || o->oChuckyaSubActionTimer < -16)) {
-                    o->oSubAction++;
-                }
+    u8 check = TRUE;
+    switch (o->oSubAction) {
+        case 0:
+            o->oForwardVel = 0.0f;
+            if (cur_obj_init_animation_and_check_if_near_end(0)) {
+                o->oChuckyaSubActionTimer = random_float() * 15.0f + 15.0f;
+                o->oSubAction++;
             }
-        } else {
+            break;
+        case 1:
+            cur_obj_init_animation_with_sound(1);
+            o->oMoveAngleYaw += INT_STATUS_GRABBED_MARIO;
+            if (o->oChuckyaSubActionTimer-- < 0 && (check_if_moving_over_floor(50.0f, 150.0f) ||
+                o->oChuckyaSubActionTimer < -16)) {
+                o->oSubAction++;
+            }
+            break;
+        default:
+            check = FALSE;
             cur_obj_init_animation_with_sound(3);
             if (cur_obj_check_anim_frame(18)) {
                 cur_obj_play_sound_2(SOUND_OBJ_RELEASE_MARIO);
                 o->oCommonAnchorAction = 2;
                 o->oAction = 3;
                 o->oInteractStatus &= ~INT_STATUS_GRABBED_MARIO;
+                o->oChuckyaNumPlayerEscapeActions = 0;
             }
+            break;
+    }
+    
+    if (check) {
+        o->oChuckyaNumPlayerEscapeActions += player_performed_grab_escape_action();
+        if (o->oChuckyaNumPlayerEscapeActions > 24) {
+            o->oCommonAnchorAction = 3;
+            o->oAction = 3;
+            o->oInteractStatus &= ~INT_STATUS_GRABBED_MARIO;
+            o->oChuckyaNumPlayerEscapeActions = 0;
         }
+        print_text_fmt_int(120, 48, "%d", o->oChuckyaNumPlayerEscapeActions);
     }
 }
 

@@ -14,6 +14,9 @@
 #define LAYERS_MAX       4
 #define CHANNELS_MAX     16
 
+#define SEQUENCE_CHANNELS (SEQUENCE_PLAYERS * CHANNELS_MAX)
+#define SEQUENCE_LAYERS (SEQUENCE_CHANNELS * 2)
+/*
 #ifdef EXPAND_AUDIO_HEAP // Not technically on the heap but it's memory nonetheless...
 #define SEQUENCE_CHANNELS (SEQUENCE_PLAYERS * CHANNELS_MAX)
 #define SEQUENCE_LAYERS ((SEQUENCE_CHANNELS * LAYERS_MAX) / 2) // This should be more than plenty in nearly all circumstances.
@@ -26,6 +29,7 @@
 #define SEQUENCE_LAYERS 52
 #endif
 #endif // EXPAND_AUDIO_HEAP
+*/
 
 #define VIBRATO_DISABLED_VALUE (0xFF * 8)
 
