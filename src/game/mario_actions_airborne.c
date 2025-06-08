@@ -352,6 +352,10 @@ void update_flying(struct MarioState *m) {
     update_flying_pitch(m);
     update_flying_yaw(m);
     update_flying_roll(m);
+    if (m->actionTimer < 1) {
+        vec3_zero(m->angleVel);
+        m->actionTimer++;
+    }
 
     if (!gDebugLevelSelect && !gFlightToggle) {
         if (m->flags & MARIO_WING_CAP) {
@@ -1969,13 +1973,14 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             break;
     }
 
+    m->actionTimer = 0;
     if (m->flags & MARIO_WING_CAP) m->actionArg = 1;
     switch (m->actionArg) {
         case 1:
-            if (m->vel[1] < 0.0f) set_mario_action(m, ACT_FLYING, 0);
+            if (m->vel[1] < 8.0f) set_mario_action(m, ACT_FLYING, 0);
             break;
         case 2:
-            if (m->vel[1] < 0.0f) set_mario_action(m, ACT_TWIRLING, 0);
+            if (m->vel[1] < 8.0f) set_mario_action(m, ACT_TWIRLING, 0);
             break;
     }
 
@@ -1996,10 +2001,6 @@ s32 act_shot_from_cannon(struct MarioState *m) {
 
 s32 act_flying(struct MarioState *m) {
     s16 startPitch = m->faceAngle[0];
-    if (m->actionTimer == 0) {
-        vec3_zero(m->faceAngle);
-    }
-    if (m->actionTimer < 1) m->actionTimer++;
 
     if (m->input & INPUT_Z_PRESSED) {
         if (m->area->camera->mode == FLYING_CAMERA_MODE) {

@@ -20,6 +20,7 @@ extern u8 gConfigOpen;
     extern u8 gDiveToggle;
     extern u8 gTurnToggle;
     extern u8 gABCToggle;
+    extern u8 gLVLToggle;
     extern u8 gFlightToggle;
     extern u8 gMusicToggle;
     extern u8 gLevelTroll;
@@ -41,6 +42,7 @@ enum ConfigMenuIDs {
     CFG_CTURN,
     CFG_ABC,
     CFG_HARD,
+    CFG_LVL,
     CFG_FLY,
     CFG_END,
 };

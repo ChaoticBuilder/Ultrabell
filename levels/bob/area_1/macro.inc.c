@@ -8,7 +8,7 @@ const MacroObject bob_area_1_macro_objs[] = {
 	MACRO_OBJECT(macro_red_coin, 0, -5200, 1024, -5200),
 	MACRO_OBJECT(macro_red_coin, 0, 6100, 1280, 4600),
 	MACRO_OBJECT(macro_red_coin, 0, -800, 0, 5600),
-	MACRO_OBJECT(macro_red_coin, 0, 3400, 5120, -4400),
+	MACRO_OBJECT(macro_red_coin, 0, 2200, 4994, -4000),
 	MACRO_OBJECT(macro_red_coin, 0, -1650, 550, -3333),
 	MACRO_OBJECT(macro_red_coin, 0, 4200, 3000, -2400),
 	MACRO_OBJECT(macro_red_coin, 0, 6000, 768, 0),

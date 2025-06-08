@@ -48,6 +48,7 @@ enum SeqId {
     // start of custom sequences
     SEQ_CUSTOM_DESERT,                // 0x23
     SEQ_CUSTOM_Z64,                   // 0x24
+    SEQ_CUSTOM_ATHLETIC,              // 0x25
     SEQ_COUNT
 };
 

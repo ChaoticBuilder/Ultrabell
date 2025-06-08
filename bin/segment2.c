@@ -433,7 +433,7 @@ ALIGNED8 static const Texture texture_hud_char_decimal_point[] = {
 };
 
 ALIGNED8 static const Texture texture_hud_char_beta_key[] = {
-#include "textures/segment2/segment2.06000.rgba16.inc.c"
+#include "textures/segment2/segment2.06000.custom.rgba16.inc.c"
 };
 #else
 ALIGNED8 static const Texture texture_hud_char_decimal_point[] = {

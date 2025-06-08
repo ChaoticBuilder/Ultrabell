@@ -253,7 +253,7 @@ s32 act_sleeping(struct MarioState *m) {
 
     m->marioBodyState->eyeState = MARIO_EYES_CLOSED;
     m->invincTimer = 2;
-    sleepTimer = 28;
+    sleepTimer = 24;
     stationary_ground_step(m);
     switch (m->actionState) {
         case ACT_SLEEPING_STATE_IDLE:
@@ -547,7 +547,7 @@ s32 act_crouching(struct MarioState *m) {
 }
 
 s32 act_panting(struct MarioState *m) {
-    if (!g95Toggle) m->health += 2;
+    if (!g95Toggle && gGlobalTimer % 60 == 0) m->healCounter++;
     if (m->input & INPUT_STOMPED) {
         return set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }

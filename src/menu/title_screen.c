@@ -15,6 +15,7 @@
 #include "seq_ids.h"
 #include "sm64.h"
 #include "title_screen.h"
+#include "game/ingame_menu.h"
 
 /**
  * @file title_screen.c
@@ -208,6 +209,7 @@ s32 intro_regular(void) {
 #ifdef DEBUG_LEVEL_SELECT
     if (gPlayer1Controller->buttonDown & L_TRIG) {
         gDebugLevelSelect = TRUE;
+        gLVLToggle = TRUE;
     }
 #endif
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
@@ -292,6 +294,7 @@ s32 lvl_intro_update(s16 arg, UNUSED s32 unusedArg) {
 #ifdef DEBUG_LEVEL_SELECT
             if (gPlayer1Controller->buttonDown & L_TRIG) {
                 gDebugLevelSelect = TRUE;
+                gLVLToggle = TRUE;
             }
 #endif
             // fallthrough

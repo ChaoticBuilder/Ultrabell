@@ -2667,7 +2667,7 @@ const BehaviorScript bhvBowserSubDoor[] = {
     OR_INT(oFlags, (OBJ_FLAG_ACTIVE_FROM_AFAR | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
     LOAD_COLLISION_DATA(ddd_seg7_collision_bowser_sub_door),
     SET_FLOAT(oDrawingDistance, 20000),
-    CALL_NATIVE(bhv_bowsers_sub_init),
+    CALL_NATIVE(bhv_bowsers_sub_door),
     BREAK(),
 };
 

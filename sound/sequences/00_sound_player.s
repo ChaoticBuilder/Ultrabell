@@ -3065,6 +3065,9 @@ layer_end
 chan_setbank 9
 chan_setinstr 7
 chan_setlayer 0, .layer_11E4
+chan_setval 0x45
+chan_call .delay
+chan_setvibratoextent 0xff
 chan_end
 
 .layer_11E4:
@@ -4495,7 +4498,7 @@ chan_end
 layer_somethingon
 layer_delay 0x4
 .layer_1B56:
-layer_note1 39, 0x425, 127
+layer_note1 39, 0x425, 192
 layer_jump .layer_1B56
 layer_end
 

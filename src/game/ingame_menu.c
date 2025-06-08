@@ -54,6 +54,7 @@ u8 gFlightToggle = FALSE;
 u8 g95Toggle = FALSE;
 u8 gRealToggle = FALSE;
 u8 gABCToggle = 0;
+u8 gLVLToggle = TRUE;
 u8 gMusicToggle = FALSE;
 u8 gLevelTroll = 0;
 u8 textConfigOpen[] = { TEXT_CONFIG_OPEN };
@@ -1631,7 +1632,7 @@ void config_options(void) {
             : (gKickTimer = 5);
         }
         if (gConfigScroll == CFG_DIVE) gDiveToggle = (gDiveToggle + 1) % 3;
-        if (gConfigScroll == CFG_VKICK && !gLuigiToggle && !g95Toggle && !gRealToggle) {
+        if (gConfigScroll == CFG_VKICK && !gLuigiToggle && !gRealToggle) {
             gKickToggle ^= 1;
             (!gKickToggle)
             ? (gKickTimer = 0)
@@ -1639,6 +1640,7 @@ void config_options(void) {
         }
         if (gConfigScroll == CFG_CTURN) gTurnToggle ^= 1;
         if (gConfigScroll == CFG_ABC) gABCToggle = (gABCToggle + 1) % 3;
+        if (gConfigScroll == CFG_LVL) gLVLToggle ^= 1;
         // if (gHudDisplay.stars >= 100)
         if (gConfigScroll == CFG_FLY) gFlightToggle ^= 1;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
@@ -1711,9 +1713,6 @@ void time_slider(void) {
 void config_open(void) {
     if (gPlayer1Controller->buttonPressed & R_TRIG) gConfigOpen ^= 1;
     if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
-    if (gPlayer1Controller->buttonPressed & B_BUTTON) {
-        gZ64Toggle ^= 1;
-    }
 }
 
 /**
@@ -1903,17 +1902,41 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
+    if (gDebugLevelSelect) {
+        if (gConfigScroll == CFG_LVL) print_small_text_light(160, 204, "Programmer Mode.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        if (!gLVLToggle) sprintf(currOption, "LVLSELECT Mode: Off");
+        if (gLVLToggle) sprintf(currOption, "LVLSELECT Mode: On");
+
+        print_set_envcolour(255, 255, 255, 255);
+        if (gConfigScroll != CFG_LVL) print_set_envcolour(127, 127, 127, 255);
+    } else {
+        gDebugLevelSelect = FALSE;
+
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll == CFG_LVL) print_small_text_light(160, 204, "Locked, available in Level Select.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+        sprintf(currOption, "Locked!");
+
+        print_set_envcolour(143, 143, 143, 255);
+        if (gConfigScroll != CFG_LVL) print_set_envcolour(79, 79, 79, 255);
+    }
+
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
     if (gHudDisplay.stars >= 100) {
         if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-        if (!gFlightToggle) sprintf(currOption, "Infinite Flight: On");
         if (!gFlightToggle) sprintf(currOption, "Infinite Flight: Off");
+        if (gFlightToggle) sprintf(currOption, "Infinite Flight: On");
 
         print_set_envcolour(255, 255, 255, 255);
         if (gConfigScroll != CFG_FLY) print_set_envcolour(127, 127, 127, 255);
     } else {
         print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Locked, Collect 100 stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Locked, collect 100 Stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         sprintf(currOption, "Locked!");
 
