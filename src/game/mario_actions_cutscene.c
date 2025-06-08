@@ -28,6 +28,7 @@
 #include "sound_init.h"
 #include "rumble_init.h"
 #include "print.h"
+#include "main.h"
 
 static struct Object *sIntroWarpPipeObj;
 static struct Object *sEndPeachObj;
@@ -230,28 +231,34 @@ s32 get_star_collection_dialog(struct MarioState *m) {
 void handle_save_menu(struct MarioState *m) {
     s32 dialogID;
     // wait for the menu to show up
-    if (is_anim_past_end(m) && gSaveOptSelectIndex != MENU_OPT_NONE) {
-        // save and continue / save and quit
-        if (gSaveOptSelectIndex == MENU_OPT_SAVE_AND_CONTINUE || gSaveOptSelectIndex == MENU_OPT_SAVE_AND_QUIT) {
-            save_file_do_save(gCurrSaveFileNum - 1);
-
-            if (gSaveOptSelectIndex == MENU_OPT_SAVE_AND_QUIT) {
-                fade_into_special_warp(WARP_SPECIAL_MARIO_HEAD_REGULAR, 0); // reset game
-            }
-        }
-
-        // not quitting
-        if (gSaveOptSelectIndex != MENU_OPT_SAVE_AND_QUIT) {
+    if (is_anim_past_end(m)) {
+        if (gDebugLevelSelect) {
             disable_time_stop();
             m->faceAngle[1] += 0x8000;
-            // figure out what dialog to show, if we should
-            dialogID = get_star_collection_dialog(m);
-            if (dialogID) {
-                play_peachs_jingle();
-                // look up for dialog
-                set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, dialogID);
-            } else {
-                set_mario_action(m, ACT_IDLE, 0);
+            set_mario_action(m, ACT_IDLE, 0);
+        } else if (gSaveOptSelectIndex != MENU_OPT_NONE) {
+            // save and continue / save and quit
+            if (gSaveOptSelectIndex == MENU_OPT_SAVE_AND_CONTINUE || gSaveOptSelectIndex == MENU_OPT_SAVE_AND_QUIT) {
+                save_file_do_save(gCurrSaveFileNum - 1);
+
+                if (gSaveOptSelectIndex == MENU_OPT_SAVE_AND_QUIT) {
+                    fade_into_special_warp(WARP_SPECIAL_MARIO_HEAD_REGULAR, 0); // reset game
+                }
+            }
+
+            // not quitting
+            if (gSaveOptSelectIndex != MENU_OPT_SAVE_AND_QUIT) {
+                disable_time_stop();
+                m->faceAngle[1] += 0x8000;
+                // figure out what dialog to show, if we should
+                dialogID = get_star_collection_dialog(m);
+                if (dialogID) {
+                    play_peachs_jingle();
+                    // look up for dialog
+                    set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, dialogID);
+                } else {
+                    set_mario_action(m, ACT_IDLE, 0);
+                }
             }
         }
     }
@@ -1170,8 +1177,10 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
                     enable_time_stop();
                 }
 
-                set_menu_mode(MENU_MODE_RENDER_COURSE_COMPLETE_SCREEN);
-                gSaveOptSelectIndex = MENU_OPT_NONE;
+                if (!gDebugLevelSelect) {
+                    set_menu_mode(MENU_MODE_RENDER_COURSE_COMPLETE_SCREEN);
+                    gSaveOptSelectIndex = MENU_OPT_NONE;
+                }
 
                 m->actionState = ACT_STATE_EXIT_LAND_SAVE_DIALOG_WITH_CAP; // star exit with cap
                 if (!(m->flags & MARIO_CAP_ON_HEAD)) {
