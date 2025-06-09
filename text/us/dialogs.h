@@ -425,10 +425,13 @@ You're no slouch, but I'm\n\
 a better sledder!\n\
 Better luck next time!"))
 
-DEFINE_DIALOG(DIALOG_038, 1, 3, 95, 200, _("\
-Reacting to the Star\n\
-power, the door slowly\n\
-opens."))
+DEFINE_DIALOG(DIALOG_038, 1, 2, 95, 200, _("\
+TESTING DIALOG\n\
+0123456789\n\
+ABCDEFGHIJKLM\n\
+NOPQRSTUVWXYZ\n\
+abcdefghijklm\n\
+nopqrstuvwxyz"))
 
 DEFINE_DIALOG(DIALOG_039, 1, 4, 30, 200, _("\
 No visitors allowed,\n\

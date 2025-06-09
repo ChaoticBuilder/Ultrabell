@@ -10,6 +10,7 @@
 #include "engine/math_util.h"
 #include "rumble_init.h"
 #include "ingame_menu.h"
+#include "dialog_ids.h"
 
 /**
  * Used by act_punching() to determine Mario's forward velocity during each
@@ -96,6 +97,7 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
             break;
 
         case ACT_ARG_PUNCH_SEQUENCE_BREAKDANCE:
+            create_dialog_box(DIALOG_038);
             if (g95Toggle) {
                 return set_mario_action(m, ACT_CROUCHING, 0);
             }

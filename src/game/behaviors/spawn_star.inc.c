@@ -198,7 +198,7 @@ void bhv_hidden_red_coin_star_loop(void) {
 
         case HIDDEN_STAR_ACT_ACTIVE:
             if (o->oTimer > 2) {
-                spawn_red_coin_cutscene_star(o->oPosX, o->oPosY, o->oPosZ);
+                spawn_no_exit_star(o->oPosX, o->oPosY, o->oPosZ);
                 spawn_mist_particles();
                 o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
             }
