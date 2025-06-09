@@ -2,10 +2,6 @@
 
 Make sure to check out the [Enclosed Instruction Booklet](https://docs.google.com/document/d/11Rfg5CGrtVHVqCT0m6SxOWny0ZW_q_8i5hatfc4SltU) for this E3 Kiosk!
 
-MARIO 1995: ULTRABELL
-
-*This isn't your ordinary SM64 Development build. There are secrets hidden within...*
-
 INTRO:
 Welcome to Ultrabell! *Enjoy your stay, as **Mario's Kingdom is endless!***
 
