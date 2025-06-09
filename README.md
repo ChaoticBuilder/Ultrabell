@@ -11,12 +11,12 @@ Ultrabell is my answer to that question.
 This hack is one of many others that aim to recreate a beta build of the game,
 taking place in-between the demos shown off at Shoshinkai, (later known as Space World) and E3 1996. (Dec '95 - Jan '96)
 
-I've made several changes that recreate beta mechanics / content, fix (a few) bugs, add in my own custom content including (a) brand new level(s), and other various things!
+I'm aiming to faithfully recreate beta mechanics / content, fix (a few) bugs, and even add in my own custom content including (a) brand new level(s) and other various things!
 
 CREDITS:
-spongelover6996/Tophatman for the Time Attack idea
+spongelover6996/Tophatman: The Time Attack idea
 
-xbciom for level ideas and music (yet to be added)
+xbciom: Future level ideas and music (not added yet sadge)
 
 supermariofurry/SMF128: for just existing tbh bro's based asf
 
@@ -24,9 +24,9 @@ imann0731/iman: Possibly a future lapping feature, idk yet tbh
 
 Amitabhtechz (Left the community): For helping me add Gigaleak .sou / .hms files and convert them! (Especially the 2D Stars, I've wanted to add them for a while lol!)
 
-stalechilibeans, iProgramInCpp, and the other people who worked on TPP, for Animations & *a few* Assets, comparing as a reference for my own beta content, and other miscellaneous things,
+stalechilibeans, iProgramInCpp, and the other people who worked on TPP: Animations & *a few* Assets, comparing as a reference for my own beta content, and other miscellaneous things,
 
-Kaze Emanuar, for making amazing videos on SM64 optimizations, which taught me more about the game!
+Kaze Emanuar: making amazing videos on SM64 optimizations, which taught me more about the game!
 
 And finally, Credits to the amazing people behind the [HackerSM64](https://github.com/HackerN64/HackerSM64) Repo! I couldn't make this hack without them!
 
