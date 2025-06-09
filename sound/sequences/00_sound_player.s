@@ -2217,8 +2217,7 @@ chan_setlayer 0, .layer_CDC
 chan_end
 
 .layer_CDC:
-layer_transpose_mario -2
-layer_note1_mario 41, 0x30, 120
+layer_note1_mario 39, 0x30, 120
 layer_end
 
 .sound_mario_ooof:
@@ -2228,7 +2227,7 @@ chan_setlayer 0, .layer_CEA
 chan_end
 
 .layer_CEA:
-layer_note1_mario 39, 0x30, 127
+layer_note1 37, 0x5f, 127
 layer_end
 
 .sound_mario_here_we_go:
@@ -2323,7 +2322,7 @@ chan_setlayer 0, .layer_D6D
 chan_end
 
 .layer_D6D:
-layer_note1_mario 39, 0x8c, 110
+layer_note1 37, 0x5f, 127
 layer_end
 
 .sound_mario_panting_cold:
@@ -3139,7 +3138,7 @@ chan_end
 
 .layer_1265:
 layer_portamento 0x81, 34, 127
-layer_note1 38, 0x30, 127
+layer_note1 39, 0x2d, 127
 layer_delay 0x30
 layer_end
 
@@ -3283,7 +3282,7 @@ chan_setlayer 0, .layer_1344
 chan_end
 
 .layer_1344:
-layer_note1 39, 0x7f, 115
+layer_note1 39, 0x100, 127
 layer_end
 
 .sound_general_platform:
@@ -7695,7 +7694,8 @@ chan_end
 .sound_menu_star_sound_okey_dokey:
 chan_setbank 4
 chan_setinstr 14
-chan_setlayer 0, .layer_1344
+chan_setenvelope .envelope_33FC
+chan_setlayer 0, .layer_1265
 chan_setval 1
 chan_call .delay
 chan_setbank 10
@@ -7711,7 +7711,8 @@ chan_setval 1
 chan_call .delay
 chan_setbank 4
 chan_setinstr 14
-chan_setlayer 1, .layer_1344
+chan_setenvelope .envelope_33FC
+chan_setlayer 1, .layer_1265
 chan_end
 
 .layer_311D:

@@ -1057,7 +1057,7 @@ void bhv_menu_button_manager_init(void) {
     sTextBaseAlpha = 0;
 }
 
-#define SAVE_FILE_SOUND SOUND_MENU_STAR_SOUND
+#define SAVE_FILE_SOUND SOUND_GENERAL_SHORT_STAR
 
 /**
  * In the main menu, check if a button was clicked to play it's button growing state.

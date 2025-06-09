@@ -183,7 +183,7 @@ s32 intro_level_select(void) {
 
     // start being pressed signals the stage to be started.
     if (gPlayer1Controller->buttonPressed & (START_BUTTON | A_BUTTON)) {
-        play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
+        play_sound(SOUND_GENERAL_SHORT_STAR, gGlobalSoundSource);
         return gCurrLevelNum;
     }
     return LEVEL_NONE;
@@ -213,7 +213,7 @@ s32 intro_regular(void) {
     }
 #endif
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
-        play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
+        play_sound(SOUND_GENERAL_SHORT_STAR, gGlobalSoundSource);
 #if ENABLE_RUMBLE
         queue_rumble_data(60, 70);
         queue_rumble_decay(1);
@@ -245,7 +245,7 @@ s32 intro_game_over(void) {
     print_intro_text();
 
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
-        play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
+        play_sound(SOUND_GENERAL_SHORT_STAR, gGlobalSoundSource);
 #if ENABLE_RUMBLE
         queue_rumble_data(60, 70);
         queue_rumble_decay(1);

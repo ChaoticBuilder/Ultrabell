@@ -93,7 +93,7 @@ void check_ledge_climb_down(struct MarioState *m) {
     struct WallCollisionData wallCols;
     struct Surface *floor, *wall;
 
-    if (m->forwardVel < 10.0f) {
+    if (m->forwardVel < 16.0f) {
         wallCols.x = m->pos[0];
         wallCols.y = m->pos[1];
         wallCols.z = m->pos[2];

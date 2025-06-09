@@ -841,10 +841,6 @@ void render_hud(void) {
                 debug_stats();
                 z64_draw();
                 sleep_draw();
-                // ttc(); displays the clock's current state, technically I could've kept it in but nah
-                // what makes me mad tho is the fact I had to do this in the first place
-                // these dumbass programmers coded the clock super weirdly so I had to figure out how to make it normal
-
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
             if (gCustomDebugMode) {
                 render_debug_mode();

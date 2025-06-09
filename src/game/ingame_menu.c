@@ -1841,7 +1841,7 @@ void config_options_box(void) {
 
     if (!gDiveToggle)     sprintf(currOption, "Always Dive: Off");
     if (gDiveToggle == 1) sprintf(currOption, "Always Dive: Dive");
-    if (gDiveToggle == 2) sprintf(currOption, "Always Dive: Kick");
+    if (gDiveToggle == 2) sprintf(currOption, "Always Dive: Auto");
 
     config_option_render(xPos, yPos, currOption, CFG_DIVE);
     if (xPos >= 160) yPos += 12;
