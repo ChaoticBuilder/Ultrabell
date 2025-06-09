@@ -2313,7 +2313,6 @@ chan_setlayer 0, .layer_D5E
 chan_end
 
 .layer_D5E:
-layer_transpose_mario -2
 layer_note1_mario 39, 0xc8, 127
 layer_end
 
@@ -2324,7 +2323,6 @@ chan_setlayer 0, .layer_D6D
 chan_end
 
 .layer_D6D:
-layer_transpose_mario -2
 layer_note1_mario 39, 0x8c, 110
 layer_end
 

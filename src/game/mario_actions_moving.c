@@ -543,7 +543,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
             switch (m->actionTimer) {
                 // I recreated beta walking to the best of my ability using a single gif on tcrf.net
                 case WALK_SPEED_WALKING:
-                    if (intendedSpeed > 12.0f) {
+                    if (intendedSpeed > 11.0f) {
                         m->actionTimer = WALK_SPEED_RUNNING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
@@ -576,7 +576,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                     break;
 
                 case WALK_SPEED_RUNNING:
-                    if (intendedSpeed < 10.0f) {
+                    if (intendedSpeed < 8.0f) {
                         m->actionTimer = WALK_SPEED_WALKING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
@@ -609,7 +609,7 @@ void anim_and_audio_for_hold_walk(struct MarioState *m) {
     while (inLoop) {
         switch (m->actionTimer) {
             case HOLD_WALK_SPEED_SLOW:
-                if (intendedSpeed > 0.0f) {
+                if (intendedSpeed > 6.0f) {
                     m->actionTimer = HOLD_WALK_SPEED_WALKING;
                 } else {
                     //! (Speed Crash) Crashes if Mario's speed exceeds or equals 2^15.
@@ -635,7 +635,7 @@ void anim_and_audio_for_hold_walk(struct MarioState *m) {
                 break;
 
             case HOLD_WALK_SPEED_RUN:
-                if (intendedSpeed < 9.0f) {
+                if (intendedSpeed < 8.0f) {
                     m->actionTimer = HOLD_WALK_SPEED_WALKING;
                 } else {
                     //! (Speed Crash) Crashes if Mario's speed exceeds or equals 2^16.
@@ -670,7 +670,7 @@ void push_or_sidle_wall(struct MarioState *m, Vec3f startPos) {
         dWallAngle = wallAngle - m->faceAngle[1];
     }
 
-    if (m->wall == NULL || dWallAngle <= -DEGREES(160) || dWallAngle >= DEGREES(160)) {
+    if (m->wall == NULL || dWallAngle <= -DEGREES(157.5) || dWallAngle >= DEGREES(157.5)) {
         m->flags |= MARIO_PUSHING;
         set_mario_animation(m, MARIO_ANIM_PUSHING);
         play_step_sound(m, 6, 18);
@@ -722,12 +722,11 @@ void tilt_body_walking(struct MarioState *m, UNUSED s16 startYaw) {
 
         nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(45), 0);
 
-        marioBodyState->torsoAngle[2] = 0;
         marioBodyState->torsoAngle[0] = approach_s32(marioBodyState->torsoAngle[0], nextBodyPitch, 0x400, 0x400);
     } else {
-        marioBodyState->torsoAngle[2] = 0;
         marioBodyState->torsoAngle[0] = 0;
     }
+    marioBodyState->torsoAngle[2] = 0;
 }
 
 void tilt_body_ground_shell(struct MarioState *m, s16 startYaw) {
@@ -798,7 +797,7 @@ s32 act_walking(struct MarioState *m) {
     update_walking_speed(m);
 
     if (m->actionState != ACT_STATE_WALKING_NO_WALL && (m->forwardVel < m->intendedMag)) {
-        m->intendedMag /= 1.125f;
+        m->forwardVel = m->intendedMag / 1.125f;
     }
 
     m->actionState = ACT_STATE_WALKING_NO_WALL;
