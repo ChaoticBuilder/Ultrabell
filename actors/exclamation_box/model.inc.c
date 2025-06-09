@@ -14,32 +14,32 @@ ALIGNED8 static const Texture exclamation_box_seg8_texture_08013628[] = {
 
 // 0x08014628
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08014628[] = {
-#include "actors/exclamation_box/metal_cap_box_front.custom.rgba16.inc.c"
+#include "actors/exclamation_box/metal_cap_box_front.rgba16.inc.c"
 };
 
 // 0x08014E28
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08014E28[] = {
-#include "actors/exclamation_box/metal_cap_box_side.custom.rgba16.inc.c"
+#include "actors/exclamation_box/metal_cap_box_side.rgba16.inc.c"
 };
 
 // 0x08015E28
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08015E28[] = {
-#include "actors/exclamation_box/wing_cap_box_front.custom.rgba16.inc.c"
+#include "actors/exclamation_box/wing_cap_box_front.rgba16.inc.c"
 };
 
 // 0x08016628
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08016628[] = {
-#include "actors/exclamation_box/wing_cap_box_side.custom.rgba16.inc.c"
+#include "actors/exclamation_box/wing_cap_box_side.rgba16.inc.c"
 };
 
 // 0x08017628
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08017628[] = {
-#include "actors/exclamation_box/exclamation_box_front.custom.rgba16.inc.c"
+#include "actors/exclamation_box/exclamation_box_front.rgba16.inc.c"
 };
 
 // 0x08017E28
 ALIGNED8 static const Texture exclamation_box_seg8_texture_08017E28[] = {
-#include "actors/exclamation_box/exclamation_box_side.custom.rgba16.inc.c"
+#include "actors/exclamation_box/exclamation_box_side.rgba16.inc.c"
 };
 
 // 0x08018E28

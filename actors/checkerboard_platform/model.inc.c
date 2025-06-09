@@ -4,12 +4,12 @@
 
 // 0x0800C840
 ALIGNED8 static const Texture checkerboard_platform_seg8_texture_0800C840[] = {
-#include "actors/checkerboard_platform/checkerboard_platform_side.custom.ia16.inc.c"
+#include "actors/checkerboard_platform/checkerboard_platform_side.ia16.inc.c"
 };
 
 // 0x0800CC40
 ALIGNED8 static const Texture checkerboard_platform_seg8_texture_0800CC40[] = {
-#include "actors/checkerboard_platform/checkerboard_platform.custom.ia16.inc.c"
+#include "actors/checkerboard_platform/checkerboard_platform.ia16.inc.c"
 };
 
 // 0x0800D440
