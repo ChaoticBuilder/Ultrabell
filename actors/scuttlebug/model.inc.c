@@ -6,22 +6,22 @@
 
 // 0x06010108
 ALIGNED8 static const Texture scuttlebug_seg6_texture_06010108[] = {
-#include "actors/scuttlebug/scuttlebug_eye.custom.ia16.inc.c"
+#include "actors/scuttlebug/scuttlebug_eye.ia16.inc.c"
 };
 
 // 0x06010908
 ALIGNED8 static const Texture scuttlebug_seg6_texture_06010908[] = {
-#include "actors/scuttlebug/scuttlebug_left_side.custom.rgba16.inc.c"
+#include "actors/scuttlebug/scuttlebug_left_side.rgba16.inc.c"
 };
 
 // 0x06011908
 ALIGNED8 static const Texture scuttlebug_seg6_texture_06011908[] = {
-#include "actors/scuttlebug/scuttlebug_right_side.custom.rgba16.inc.c"
+#include "actors/scuttlebug/scuttlebug_right_side.rgba16.inc.c"
 };
 
 // 0x06012908
 ALIGNED8 static const Texture scuttlebug_seg6_texture_06012908[] = {
-#include "actors/scuttlebug/scuttlebug_iris.custom.rgba16.inc.c"
+#include "actors/scuttlebug/scuttlebug_iris.rgba16.inc.c"
 };
 
 // 0x06013108
