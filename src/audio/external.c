@@ -2100,7 +2100,7 @@ void sound_banks_disable(UNUSED u8 player, u16 bankMask) {
 /**
  * Called from threads: thread5_game_loop
  */
-static void disable_all_sequence_players(void) {
+UNUSED static void disable_all_sequence_players(void) {
     u8 i;
 
     for (i = 0; i < SEQUENCE_PLAYERS; i++) {
@@ -2505,36 +2505,11 @@ void play_toads_jingle(void) {
 /**
  * Called from threads: thread5_game_loop
  */
-void sound_reset(u8 reverbPresetId) {
-    if (reverbPresetId >= ARRAY_COUNT(gReverbSettings)) {
-        reverbPresetId = 0;
-    }
-    sGameLoopTicked = 0;
-    disable_all_sequence_players();
-    sound_init();
-#ifdef VERSION_SH
-    func_802ad74c(0xF2000000, 0);
-#endif
-#if defined(VERSION_JP) || defined(VERSION_US)
-    audio_reset_session(reverbPresetId);
-#else
-    audio_reset_session_eu(reverbPresetId);
-#endif
-    osWritebackDCacheAll();
-    if (reverbPresetId != 7) {
-        preload_sequence(SEQ_EVENT_SOLVE_PUZZLE, PRELOAD_BANKS | PRELOAD_SEQUENCE);
-        preload_sequence(SEQ_EVENT_PEACH_MESSAGE, PRELOAD_BANKS | PRELOAD_SEQUENCE);
-        preload_sequence(SEQ_EVENT_CUTSCENE_STAR_SPAWN, PRELOAD_BANKS | PRELOAD_SEQUENCE);
-    }
-    seq_player_play_sequence(SEQ_PLAYER_SFX, SEQ_SOUND_PLAYER, 0);
-    sHasStartedFadeOut = FALSE;
-}
+void sound_reset(void) {
+    u8 i;
 
-UNUSED void sound_reset_beta(void) {
-    /* TODO: figure out why this isn't working idfk aaaaa
-    if (gGlobalTimer == 0) return sound_reset(0);
     sound_init();
-    seq_player_play_sequence(SEQ_PLAYER_SFX, SEQ_SOUND_PLAYER, 0);
-    sHasStartedFadeOut = FALSE;
-    */
+    for (i = 0; i < SEQUENCE_PLAYERS; i++) {
+        gSequencePlayers[i].muted = FALSE;
+    }
 }

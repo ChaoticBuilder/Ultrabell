@@ -76,7 +76,7 @@
  * [MAKE SURE TO INCLUDE EU AND JP/SH BASEROMS IN THE REPO TO OBTAIN THE ASSETS]
  * If this is disabled, backup assets will be used.
  */
-#define COMPLETE_EN_US_SEGMENT2
+// #define COMPLETE_EN_US_SEGMENT2
 
 /**
  * Removes multi-language cake screen.

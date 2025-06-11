@@ -37,7 +37,7 @@ static char sLevelSelectStageNames[64][16] = {
 #ifndef DISABLE_DEMO
 static u16 sDemoCountdown = 0;
 #endif
-static s16 sPlayMarioGreeting = TRUE;
+static u8 sPlayMarioGreeting = 0;
 static s16 sPlayMarioGameOver = TRUE;
 
 #ifndef DISABLE_DEMO
@@ -183,7 +183,7 @@ s32 intro_level_select(void) {
 
     // start being pressed signals the stage to be started.
     if (gPlayer1Controller->buttonPressed & (START_BUTTON | A_BUTTON)) {
-        play_sound(SOUND_GENERAL_SHORT_STAR, gGlobalSoundSource);
+        play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
         return gCurrLevelNum;
     }
     return LEVEL_NONE;
@@ -200,11 +200,9 @@ s32 intro_regular(void) {
     // so Mario greets the player. After that, he will always say
     // "press start to play" when it goes back to the title screen
     // (using SAVE AND QUIT)
-    if (sPlayMarioGreeting) {
-        play_sound(SOUND_MARIO_HELLO, gGlobalSoundSource);
-        // TODO: FIGURE OUT HOW TO DELAY THE SOUND
-        sPlayMarioGreeting = FALSE;
-    }
+    if (sPlayMarioGreeting == 25) play_sound(SOUND_MARIO_HELLO, gGlobalSoundSource);
+    if (sPlayMarioGreeting <= 25) sPlayMarioGreeting++;
+
     print_intro_text();
 #ifdef DEBUG_LEVEL_SELECT
     if (gPlayer1Controller->buttonDown & L_TRIG) {
@@ -213,7 +211,7 @@ s32 intro_regular(void) {
     }
 #endif
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
-        play_sound(SOUND_GENERAL_SHORT_STAR, gGlobalSoundSource);
+        play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
 #if ENABLE_RUMBLE
         queue_rumble_data(60, 70);
         queue_rumble_decay(1);
@@ -222,7 +220,7 @@ s32 intro_regular(void) {
         // defined in level_intro_mario_head_regular JUMP_IF commands
         // 100 is File Select - 101 is Level Select
         level = (LEVEL_FILE_SELECT + gDebugLevelSelect);
-        sPlayMarioGreeting = TRUE;
+        sPlayMarioGreeting = 0;
     }
 #if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
     return run_level_id_or_demo(level);
@@ -245,7 +243,7 @@ s32 intro_game_over(void) {
     print_intro_text();
 
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
-        play_sound(SOUND_GENERAL_SHORT_STAR, gGlobalSoundSource);
+        play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
 #if ENABLE_RUMBLE
         queue_rumble_data(60, 70);
         queue_rumble_decay(1);

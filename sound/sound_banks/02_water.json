@@ -24,11 +24,23 @@
             "release_rate": 208,
             "envelope": "envelope0",
             "sound": "02_swim"
+        },
+        "inst3": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "03_swim"
+        },
+        "inst4": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "04_land"
         }
     },
     "instrument_list": [
         "inst0",
         "inst1",
-        "inst2"
+        "inst2",
+        "inst3",
+        "inst4"
     ]
 }

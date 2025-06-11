@@ -630,20 +630,15 @@ void unused_set_camera_pitch_shake_env(s16 shake) {
  */
 void calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32 *focOff, f32 focMul, f32 focBound) {
     f32 floorHeight = sMarioGeometry.currFloorHeight;
-    f32 waterHeight = sMarioGeometry.waterHeight;
 
-    if (!(sMarioCamState->action & ACT_FLAG_METAL_WATER)) {
-        if (floorHeight < waterHeight) {
-            floorHeight = waterHeight;
-        }
-    }
-
+    /*
     if (sMarioCamState->action & ACT_FLAG_ON_POLE) {
         if (sMarioGeometry.currFloorHeight >= gMarioStates[0].usedObj->oPosY && sMarioCamState->pos[1]
                    < 0.7f * gMarioStates[0].usedObj->hitboxHeight + gMarioStates[0].usedObj->oPosY) {
             posBound = 1200;
         }
     }
+    */
 
     *posOff = (floorHeight - sMarioCamState->pos[1]) * posMul;
 
@@ -718,6 +713,7 @@ void set_camera_height(struct Camera *c, f32 goalHeight) {
             goalHeight = camFloorHeight;
             c->pos[1] = goalHeight;
         }
+        /*
         // Warp camera to goalHeight if further than 1000 and Mario is stuck in the ground
         if (sMarioCamState->action == ACT_BUTT_STUCK_IN_GROUND ||
             sMarioCamState->action == ACT_HEAD_STUCK_IN_GROUND ||
@@ -726,6 +722,7 @@ void set_camera_height(struct Camera *c, f32 goalHeight) {
                 c->pos[1] = goalHeight;
             }
         }
+        */
 
 #ifdef FAST_VERTICAL_CAMERA_MOVEMENT
         approachRate += ABS(c->pos[1] - goalHeight) / 40;
@@ -886,7 +883,7 @@ void radial_camera_move(struct Camera *c) {
     }
 
     if (gCameraMovementFlags & CAM_MOVE_ENTERED_ROTATE_SURFACE) {
-        rotateSpeed = 0x400;
+        rotateSpeed = 0x100;
     }
 
     if (c->mode == CAMERA_MODE_OUTWARD_RADIAL) {
@@ -1597,7 +1594,7 @@ void mode_fixed_camera(UNUSED struct Camera *c) {
     } else if (gCurrLevelNum == LEVEL_CASTLE) {
         set_fov_function(CAM_FOV_CASTLE);
     } else {
-        set_fov_function(CAM_FOV_APP_60);
+        set_fov_function(CAM_FOV_APP_45);
     }
 #else
     set_fov_function(CAM_FOV_APP_45);
@@ -1858,7 +1855,7 @@ s16 update_slide_camera(struct Camera *c) {
         sStatusFlags |= CAM_FLAG_BLOCK_SMOOTH_MOVEMENT;
 
         // Stay above the slide floor
-        floorHeight = find_floor(c->pos[0], c->pos[1] + 200.f, c->pos[2], &floor) + 125.f;
+        floorHeight = find_floor(c->pos[0], c->pos[1], c->pos[2], &floor) + 125.f;
         if (c->pos[1] < floorHeight) {
             c->pos[1] = floorHeight;
         }
@@ -2019,7 +2016,6 @@ s16 update_default_camera(struct Camera *c) {
             sYawSpeed = 0;
             vec3f_get_dist_and_angle(sMarioCamState->pos, c->pos, &dist, &pitch, &yaw);
         }
-        closeToMario |= 1;
     }
 
     if (-16 < gPlayer1Controller->stickY) {
@@ -2197,13 +2193,11 @@ s16 update_default_camera(struct Camera *c) {
         dist = 50.f;
         vec3f_set_dist_and_angle(cPos, c->pos, dist, tempPitch, tempYaw);
     }
-    if (gMarioState->action != ACT_FALL_AFTER_STAR_GRAB || sMarioGeometry.currFloorType != SURFACE_DEATH_PLANE) {
-        // This code causes the camera to zoom out for no reason, why does it exist? I have no idea!!! Don't use this!!!
-        vec3f_get_dist_and_angle(c->focus, c->pos, &dist, &tempPitch, &tempYaw);
-        if (dist > zoomDist) {
-            dist = zoomDist;
-            vec3f_set_dist_and_angle(c->focus, c->pos, dist, tempPitch, tempYaw);
-        }
+    // sorry I misspoke in the previous comment in this section of code, I meant why would you not use this!!!
+    vec3f_get_dist_and_angle(c->focus, c->pos, &dist, &tempPitch, &tempYaw);
+    if (dist > zoomDist) {
+        dist = zoomDist;
+        vec3f_set_dist_and_angle(c->focus, c->pos, dist, tempPitch, tempYaw);
     }
     if (ceilHeight != CELL_HEIGHT_LIMIT) {
         if (c->pos[1] > (ceilHeight -= 150.f)
@@ -2216,7 +2210,7 @@ s16 update_default_camera(struct Camera *c) {
         yaw = clamp_positions_and_find_yaw(c->pos, c->focus, 2254.f, -3789.f, 3790.f, -2253.f);
     }
 #endif
-    if (c->mode != CAMERA_MODE_CLOSE || c->mode != CAMERA_MODE_8_DIRECTIONS) {
+    if (c->mode != CAMERA_MODE_CLOSE && c->mode != CAMERA_MODE_8_DIRECTIONS) {
         lakitu_zoom(400.f, 0x600);
         vec3f_set_dist_and_angle(c->pos, c->pos, sLakituDist, sLakituPitch + 0x1000, yaw);
     }

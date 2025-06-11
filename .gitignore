@@ -948,7 +948,6 @@ sound/samples/instruments/15_strings_4.aiff
 sound/samples/instruments/16_french_horns.aiff
 sound/samples/instruments/17_trumpet.aiff
 sound/samples/instruments/18_timpani.aiff
-sound/samples/instruments/19_brass.aiff
 sound/samples/instruments/1A_slap_bass.aiff
 sound/samples/instruments/1B_organ_2.aiff
 sound/samples/instruments/1C.aiff
@@ -961,7 +960,6 @@ sound/samples/instruments/22_boys_choir.aiff
 sound/samples/instruments/23_strings_1.aiff
 sound/samples/instruments/24_strings_2.aiff
 sound/samples/instruments/25_strings_3.aiff
-sound/samples/instruments/26_crystal_rhodes.aiff
 sound/samples/instruments/27_harpsichord.aiff
 sound/samples/instruments/28_sitar_1.aiff
 sound/samples/instruments/29_orchestra_hit.aiff
@@ -1951,7 +1949,6 @@ textures/segment2/segment2.081D0.rgba16.png
 textures/segment2/segment2.0F458.ia8.png
 textures/segment2/segment2.0FC58.ia8.png
 textures/segment2/segment2.10458.ia8.png
-textures/segment2/segment2.11458.ia8.png
 textures/segment2/segment2.11C58.rgba16.png
 textures/segment2/segment2.12458.rgba16.png
 textures/segment2/segment2.12C58.rgba16.png

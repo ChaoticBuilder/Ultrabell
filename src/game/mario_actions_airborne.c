@@ -421,8 +421,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     switch (stepResult) {
         case AIR_STEP_NONE:
             if (animation == MARIO_ANIM_SLIDEFLIP) {
-                if (!gLuigiToggle) set_mario_anim_with_accel(m, animation, 0x20000);
-                if (gLuigiToggle) set_mario_anim_with_accel(m, animation, 0x18000);
+                set_mario_anim_with_accel(m, animation, 0x18000);
             }
             if (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
             (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
