@@ -80,12 +80,6 @@
             "envelope": "envelope0",
             "sound": "0D_mario_thank_you_playing_my_game"
         },
-        "inst14": {
-            "ifdef": ["VERSION_US", "VERSION_EU", "VERSION_SH"],
-            "release_rate": 208,
-            "envelope": "envelope0",
-            "sound": "0E_peach_dear_mario"
-        },
         "inst15": {
             "ifdef": ["VERSION_US", "VERSION_EU", "VERSION_SH"],
             "release_rate": 208,
@@ -151,7 +145,6 @@
         "inst11",
         "inst12",
         "inst13",
-        "inst14",
         "inst15",
         "inst16",
         "inst17",

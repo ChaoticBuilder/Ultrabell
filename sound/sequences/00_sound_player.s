@@ -597,7 +597,7 @@ chan_setlayer 0, .layer_328
 chan_end
 
 .layer_328:
-layer_note1 39, 0x18, 85
+layer_note1 39, 0x18, 100
 layer_end
 
 .sound_action_step_grass:
@@ -3257,7 +3257,7 @@ chan_setlayer 0, .layer_1344
 chan_end
 
 .layer_1344:
-layer_note1 39, 0xe4, 127
+layer_note1 39, 0xe4, 115
 layer_end
 
 .sound_general_platform:
@@ -5349,7 +5349,7 @@ chan_setlayer 0, .layer_2136
 chan_end
 
 .layer_2136:
-layer_note1 50, 0xc, 60
+layer_note1 39, 0xc, 105
 layer_end
 
 .sound_obj_pounding_cannon:
@@ -5522,8 +5522,11 @@ layer_end
 .sound_obj_bobomb_walk:
 chan_setbank 6
 chan_setinstr 12
-chan_setenvelope .envelope_32D4
-chan_setlayer 0, .layer_2253
+chan_setlayer 0, .layer_21C9
+chan_setval 1
+chan_call .delay
+chan_setbank 0
+chan_setinstr 4
 chan_end
 
 .layer_2253:
@@ -6190,14 +6193,14 @@ chan_end
 
 .layer_2684:
 layer_portamento 0x83, 44, 200
-layer_note0 57, 0xc, 127, 127
-layer_note0 48, 0x12, 127, 155
-layer_note0 47, 0xb, 127, 127
+layer_note0 60, 0xc, 127, 127
+layer_note0 51, 0x12, 127, 155
+layer_note0 50, 0xb, 127, 127
 layer_portamento 0x83, 41, 200
-layer_note0 59, 0xa, 127, 127
-layer_note0 56, 0x12, 127, 80
-layer_note0 54, 0xa, 127, 127
-layer_note0 56, 0xb, 127, 127
+layer_note0 62, 0xa, 127, 127
+layer_note0 59, 0x12, 127, 80
+layer_note0 57, 0xa, 127, 127
+layer_note0 59, 0xb, 127, 127
 layer_end
 
 .chan_26A9:
