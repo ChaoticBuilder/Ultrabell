@@ -2481,21 +2481,23 @@ void move_mario_head_c_up(UNUSED struct Camera *c) {
     sCUpCameraPitch += (s16)(gPlayer1Controller->stickY * 10.f);
     sModeOffsetYaw -= (s16)(gPlayer1Controller->stickX * 10.f);
 
-    // Bound looking up to nearly 80 degrees.
-    if (sCUpCameraPitch > 0x38E3) {
-        sCUpCameraPitch = 0x38E3;
+    // Bound looking up to 80 degrees.
+    if (sCUpCameraPitch > DEGREES(80)) {
+        sCUpCameraPitch = DEGREES(80);
     }
     // Bound looking down to -45 degrees
     if (sCUpCameraPitch < -0x2000) {
         sCUpCameraPitch = -0x2000;
     }
 
-    // Bound the camera yaw to +-120 degrees
-    if (sModeOffsetYaw > 0x5555) {
-        sModeOffsetYaw = 0x5555;
-    }
-    if (sModeOffsetYaw < -0x5555) {
-        sModeOffsetYaw = -0x5555;
+    if (g95Toggle || gMarioState->actionArg != 0) {
+        // Bound the camera yaw to +-135 degrees
+        if (sModeOffsetYaw > 0x6000) {
+            sModeOffsetYaw = 0x6000;
+        }
+        if (sModeOffsetYaw < -0x6000) {
+            sModeOffsetYaw = -0x6000;
+        }
     }
 
     // Give Mario's neck natural-looking constraints

@@ -25,6 +25,8 @@ imann0731/iman: Possibly a future lapping feature, idk yet tbh
 Amitabhtechz (Left the community): For helping me add Gigaleak .sou / .hms files and convert them! (Especially the 2D Stars, I've wanted to add them for a while lol)
 
 stalechilibeans, iProgramInCpp, and the other people who worked on TPP: Animations & *a few* Assets, comparing as a reference for my own beta content, and other miscellaneous things!
+https://github.com/96flashbacks/showfloor
+https://github.com/96flashbacks/96flashbacks
 
 Kaze Emanuar: making amazing videos on SM64 optimizations, which taught me more about the game!
 

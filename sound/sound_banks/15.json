@@ -67,7 +67,7 @@
         "inst0": {
             "release_rate": 34,
             "envelope": "envelope0",
-            "sound": "41_pan_flute"
+            "sound": "1A_slap_bass"
         },
         "inst1": {
             "release_rate": 208,
@@ -79,12 +79,12 @@
             "sound_hi": "20_cabasa"
         },
         "inst2": {
-            "release_rate": 10,
+            "release_rate": 24,
             "envelope": "envelope2",
-            "sound": "21_sine_bass"
+            "sound": "26_crystal_rhodes"
         },
         "inst3": {
-            "release_rate": 1,
+            "release_rate": 16,
             "envelope": "envelope3",
             "sound": "37_square_synth"
         },
@@ -94,9 +94,9 @@
             "sound": "21_sine_bass"
         },
         "inst5": {
-            "release_rate": 53,
+            "release_rate": 48,
             "envelope": "envelope5",
-            "sound": "04_bright_piano"
+            "sound": "26_crystal_rhodes"
         },
         "inst6": {
             "release_rate": 208,

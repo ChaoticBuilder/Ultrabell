@@ -627,10 +627,8 @@ s32 act_ledge_grab(struct MarioState *m) {
         play_sound_if_no_flag(m, SOUND_MARIO_WHOA, MARIO_MARIO_SOUND_PLAYED);
     }
 
-    m->marioBodyState->eyeState = MARIO_EYES_LOOK_UP;
     stop_and_set_height_to_floor(m);
     set_mario_animation(m, MARIO_ANIM_IDLE_ON_LEDGE);
-
     return FALSE;
 }
 

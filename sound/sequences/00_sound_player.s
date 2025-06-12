@@ -2555,7 +2555,7 @@ chan_setlayer 0, .layer_EAC
 chan_end
 
 .layer_EAC:
-layer_note1_mario 41, 0x80, 127
+layer_note1_mario 41, 0x80, 100
 layer_end
 
 .sound_mario_press_start_to_play:
@@ -3257,7 +3257,7 @@ chan_setlayer 0, .layer_1344
 chan_end
 
 .layer_1344:
-layer_note1 39, 0xff, 127
+layer_note1 39, 0xe4, 127
 layer_end
 
 .sound_general_platform:
@@ -5520,8 +5520,8 @@ layer_note1 32, 0x18, 105
 layer_end
 
 .sound_obj_bobomb_walk:
-chan_setbank 9
-chan_setinstr 1
+chan_setbank 6
+chan_setinstr 12
 chan_setenvelope .envelope_32D4
 chan_setlayer 0, .layer_2253
 chan_end

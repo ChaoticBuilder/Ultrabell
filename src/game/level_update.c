@@ -393,7 +393,7 @@ void init_mario_after_warp(void) {
     switch (marioSpawnType) {
         case MARIO_SPAWN_DOOR_WARP:
         case MARIO_SPAWN_SPIN_AIRBORNE_CIRCLE:
-            play_transition(WARP_TRANSITION_FADE_FROM_CIRCLE, 0x10, 0x00, 0x00, 0x00);
+            play_transition(WARP_TRANSITION_FADE_FROM_CIRCLE, 0x14, 0x00, 0x00, 0x00);
             break;
         case MARIO_SPAWN_TELEPORT:
             play_transition(WARP_TRANSITION_FADE_FROM_COLOR, 0x10, 0xFF, 0xFF, 0xFF);
@@ -723,6 +723,7 @@ void initiate_painting_warp(void) {
  * Return the time left until the delayed warp is initiated.
  */
 s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
+    s32 fadeMusic = FALSE;
     if (sDelayedWarpOp == WARP_OP_NONE) {
         m->invincTimer = -1;
         sDelayedWarpArg = WARP_FLAGS_NONE;
@@ -804,13 +805,15 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
             case WARP_OP_TELEPORT:
                 sDelayedWarpTimer = 0x10;
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
+                fadeMusic = !music_unchanged_through_warp(sSourceWarpNodeId);
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
             case WARP_OP_WARP_DOOR:
-                sDelayedWarpTimer = 0x10;
+                sDelayedWarpTimer = 0x14;
                 sDelayedWarpArg = m->actionArg;
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
+                fadeMusic = !music_unchanged_through_warp(sSourceWarpNodeId);
                 play_transition(WARP_TRANSITION_FADE_INTO_CIRCLE, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
@@ -836,11 +839,9 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 break;
         }
 
-        /*
         if (fadeMusic && gCurrDemoInput == NULL) {
             fadeout_music((sDelayedWarpTimer * 0xC));
         }
-        */
     }
 
     return sDelayedWarpTimer;
@@ -864,7 +865,7 @@ void initiate_delayed_warp(void) {
     if (sDelayedWarpOp != WARP_OP_NONE && --sDelayedWarpTimer == 0) {
         reset_dialog_render_state();
 
-        if (gLVLToggle && (sDelayedWarpOp & WARP_OP_TRIGGERS_LEVEL_SELECT)) {
+        if (gLVLToggle && gDebugLevelSelect && (sDelayedWarpOp & WARP_OP_TRIGGERS_LEVEL_SELECT)) {
             warp_special(WARP_SPECIAL_LEVEL_SELECT);
         } else if (gCurrDemoInput != NULL) {
             if (sDelayedWarpOp == WARP_OP_DEMO_END) {
@@ -1070,7 +1071,7 @@ s32 play_mode_normal(void) {
         } else if (sTransitionTimer != 0) {
             set_play_mode(PLAY_MODE_CHANGE_AREA);
         } else if (pressed_pause()) {
-            lower_background_noise(1);
+            lower_background_noise(2);
 #if ENABLE_RUMBLE
             cancel_rumble();
 #endif
@@ -1086,12 +1087,12 @@ s32 play_mode_paused(void) {
     if (gMenuOptSelectIndex == MENU_OPT_NONE) {
         set_menu_mode(MENU_MODE_RENDER_PAUSE_SCREEN);
     } else if (gMenuOptSelectIndex == MENU_OPT_DEFAULT) {
-        raise_background_noise(1);
+        raise_background_noise(2);
         gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
         set_play_mode(PLAY_MODE_NORMAL);
 #ifndef DISABLE_EXIT_COURSE
     } else { // MENU_OPT_EXIT_COURSE
-        if (gLVLToggle) {
+        if (gLVLToggle && gDebugLevelSelect) {
             fade_into_special_warp(WARP_SPECIAL_LEVEL_SELECT, 1);
         } else {
 #ifdef DEATH_ON_EXIT_COURSE

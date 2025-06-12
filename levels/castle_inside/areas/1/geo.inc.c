@@ -267,7 +267,7 @@ const GeoLayout castle_geo_001400[] = {
       GEO_CLOSE_NODE(),
       GEO_ZBUFFER(1),
       GEO_OPEN_NODE(),
-         GEO_CAMERA_FRUSTUM_WITH_FUNC(64, 96, 6800, geo_camera_fov),
+         GEO_CAMERA_FRUSTUM_WITH_FUNC(60, 128, 7040, geo_camera_fov),
          GEO_OPEN_NODE(),
             GEO_CAMERA(CAMERA_MODE_FIXED, 0, 2000, 6000, 0, 0, 0, geo_camera_main),
             GEO_OPEN_NODE(),

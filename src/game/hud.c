@@ -584,21 +584,21 @@ u8 musicBank = 0xFF;
 void music_menu_scroll(void) {
     if (!gMusicToggle || gConfigOpen) return;
     if (gGlobalTimer % 4 == 0) {
-        if (gPlayer1Controller->buttonDown == U_JPAD) {
+        if (gPlayer1Controller->buttonDown & U_JPAD) {
             debugScroll--;
             play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
         }
-        if (gPlayer1Controller->buttonDown == D_JPAD) {
+        if (gPlayer1Controller->buttonDown & D_JPAD) {
             debugScroll++;
             play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
         }
-        if (gPlayer1Controller->buttonDown == L_JPAD) {
+        if (gPlayer1Controller->buttonDown & L_JPAD) {
             if (debugScroll == 1) musicID--;
             if (debugScroll == 2) musicBank--;
             if (debugScroll == 4) pitchInvert--;
             if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
-        if (gPlayer1Controller->buttonDown == R_JPAD) {
+        if (gPlayer1Controller->buttonDown & R_JPAD) {
             if (debugScroll == 1) musicID++;
             if (debugScroll == 2) musicBank++;
             if (debugScroll == 4) pitchInvert++;
