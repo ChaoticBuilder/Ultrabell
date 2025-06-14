@@ -74,6 +74,12 @@ void bhv_celebration_star_sparkle_loop(void) {
     }
 }
 
+void bhv_star_dust(void) {
+    if (o->oTimer == 30) {
+        o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
+    }
+}
+
 void bhv_star_key_collection_puff_spawner_loop(void) {
     spawn_mist_particles_variable(0, 10, 30.0f);
     o->activeFlags = ACTIVE_FLAG_DEACTIVATED;

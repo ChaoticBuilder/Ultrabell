@@ -16,12 +16,8 @@ enum ActionStatesPickingUp { // act_picking_up, act_picking_up_bowser
 };
 
 enum ActionArgsPunchSequence { // mario_update_punch_sequence
-    ACT_ARG_PUNCH_SEQUENCE_YAH,
     ACT_ARG_PUNCH_SEQUENCE_FIRST_PUNCH,
     ACT_ARG_PUNCH_SEQUENCE_FIRST_PUNCH_FAST,
-    ACT_ARG_PUNCH_SEQUENCE_WAH,
-    // ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH,
-    // ACT_ARG_PUNCH_SEQUENCE_SECOND_PUNCH_FAST,
     ACT_ARG_PUNCH_SEQUENCE_GROUND_KICK,
     ACT_ARG_PUNCH_SEQUENCE_BREAKDANCE = 9,
 };

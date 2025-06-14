@@ -830,7 +830,8 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
             starGrabAction = ACT_FALL_AFTER_STAR_GRAB;
         }
 
-        spawn_object(obj, MODEL_STARDUST, bhvStarKeyCollectionPuffSpawner);
+        spawn_object(obj, MODEL_SPARKLES, bhvCoinSparkles);
+        spawn_object_relative(0, 0, 100, 0, obj, MODEL_STARDUST, bhvStarDust);
 
         obj->oInteractStatus = INT_STATUS_INTERACTED;
         m->interactObj       = obj;

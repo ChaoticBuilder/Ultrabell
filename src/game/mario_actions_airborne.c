@@ -1927,8 +1927,11 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             lava_boost_on_wall(m);
             break;
     }
+    if (m->actionTimer == 0) m->particleFlags |= PARTICLE_FIRE;
 
-    m->actionTimer = 0;
+    if (m->vel[1] > 8.0f) m->actionTimer++;
+    if (m->vel[1] < 8.0f) m->actionTimer = 0;
+
     if (m->flags & MARIO_WING_CAP) m->actionArg = 1;
     switch (m->actionArg) {
         case 1:
@@ -1943,11 +1946,6 @@ s32 act_shot_from_cannon(struct MarioState *m) {
         mario_set_forward_vel(m, 10.0f);
     }
 
-    if (gGlobalTimer % 2 == 0) {
-        if (m->vel[1] > 0.0f) {
-            m->particleFlags |= PARTICLE_DUST;
-        }
-    }
 #if ENABLE_RUMBLE
     reset_rumble_timers_slip();
 #endif

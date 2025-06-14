@@ -248,7 +248,7 @@ extern const Gfx sand_seg3_dl_particle[];
 
 // star
 extern const GeoLayout star_geo[];
-extern const GeoLayout stardust_geo[];
+extern const GeoLayout RCP_HmsItemStarDust[];
 extern const Gfx star_seg3_sub_dl_body[];
 extern const Gfx star_seg3_dl_body[];
 extern const Gfx star_seg3_sub_dl_eyes[];

@@ -468,7 +468,7 @@
 #define MODEL_BURN_SMOKE                  0x94        // burn_smoke_geo
 #define MODEL_SPARKLES                    0x95        // sparkles_geo
 #define MODEL_SMOKE                       0x96        // smoke_geo
-#define MODEL_STARDUST                    0x97        // stardust_geo
+#define MODEL_STARDUST                    0x97        // RCP_HmsItemStarDust
 // find me
 // find me
 // find me

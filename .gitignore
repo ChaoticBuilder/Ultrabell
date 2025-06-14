@@ -1331,8 +1331,6 @@ textures/generic/bob_textures.0A000.rgba16.png
 textures/generic/bob_textures.0A800.rgba16.png
 textures/generic/bob_textures.0B000.ia16.png
 textures/grass/wf_textures.00000.rgba16.png
-textures/grass/wf_textures.00800.rgba16.png
-textures/grass/wf_textures.01000.rgba16.png
 textures/grass/wf_textures.01800.rgba16.png
 textures/grass/wf_textures.02000.rgba16.png
 textures/grass/wf_textures.02800.rgba16.png
@@ -1341,13 +1339,10 @@ textures/grass/wf_textures.03800.rgba16.png
 textures/grass/wf_textures.04000.rgba16.png
 textures/grass/wf_textures.04800.rgba16.png
 textures/grass/wf_textures.05000.rgba16.png
-textures/grass/wf_textures.05800.rgba16.png
 textures/grass/wf_textures.06000.rgba16.png
-textures/grass/wf_textures.06800.rgba16.png
 textures/grass/wf_textures.07000.rgba16.png
 textures/grass/wf_textures.07800.rgba16.png
 textures/grass/wf_textures.08000.rgba16.png
-textures/grass/wf_textures.08800.rgba16.png
 textures/grass/wf_textures.09000.rgba16.png
 textures/grass/wf_textures.09800.rgba16.png
 textures/grass/wf_textures.0A000.rgba16.png
@@ -1956,10 +1951,6 @@ textures/spooky/bbh_textures.0A000.rgba16.png
 textures/spooky/bbh_textures.0A800.ia16.png
 textures/spooky/bbh_textures.0B000.ia16.png
 textures/spooky/bbh_textures.0B800.ia16.png
-textures/title_screen_bg/title_screen_bg.001C0.rgba16.png
-textures/title_screen_bg/title_screen_bg.00E40.rgba16.png
-textures/title_screen_bg/title_screen_bg.01AC0.rgba16.png
-textures/title_screen_bg/title_screen_bg.02740.rgba16.png
 textures/title_screen_bg/title_screen_bg.033C0.rgba16.png
 textures/title_screen_bg/title_screen_bg.04040.rgba16.png
 textures/title_screen_bg/title_screen_bg.04CC0.rgba16.png

@@ -46,7 +46,7 @@ const GeoLayout star_geo[] = {
 /********************************************************************************/
 /*	Hierarchy data of star dust.												*/
 /********************************************************************************/
-const GeoLayout stardust_geo[] = {
+const GeoLayout RCP_HmsItemStarDust[] = {
 	hmsGroup()
 	hmsBegin()
 		hmsSelect(8, ControlShapeAnime)
