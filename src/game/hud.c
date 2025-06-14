@@ -96,10 +96,6 @@ struct PowerMeterHUD {
     s16 y;
 };
 
-struct CameraHUD {
-    s16 status;
-};
-
 // Stores health segmented value defined by numHealthWedges
 // When the HUD is rendered this value is 8, full health.
 static s16 sPowerMeterStoredHealth;
@@ -124,8 +120,6 @@ static struct PowerMeterHUD sBreathMeterHUD = {
 };
 s32 sBreathMeterVisibleTimer = 0;
 #endif
-
-//static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
 
 s32 gHudShakeX;
 s32 gHudShakeY;
@@ -248,8 +242,6 @@ static void animate_power_meter_deemphasizing(void) {
  */
 static void animate_power_meter_hiding(void) {
     approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_HIDDEN_Y, sqr(sPowerMeterVisibleTimer));
-    // Yes, the power meter is on screen for such a small amount of time (~5 frames) we need to make it a power of itself, then multiply it by 2
-    // just so it can look smooth
     if (sPowerMeterHUD.y >= HUD_POWER_METER_HIDDEN_Y) {
         sPowerMeterHUD.animation = POWER_METER_HIDDEN;
         sPowerMeterVisibleTimer = 0;
@@ -437,9 +429,7 @@ void render_hud_mario_lives(void) {
         }
 
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(31) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
-        (gLevelTroll != 1)
-        ? print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives)
-        : print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%02d", gHudDisplay.lives);
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(46) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives);
     }
 }
 
@@ -459,17 +449,13 @@ void render_debug_mode(void) {
  * Renders the amount of coins collected.
  */
 void render_hud_coins(void) {
-    u8 top = HUD_TOP_Y;
-    if (gLevelTroll == 2) top += 17;
     if (gHudDisplay.coins == 1996) {
         // Thank you-a so much for-a playing my game!
-        print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X)) + gHudShakeX, (top - 17) + gHudShakeY, "%d", gHudDisplay.coins);
+        print_text(HUD_STATS_X + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "1996");
     } else {
-        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, (top - 17) + gHudShakeY, "$"); // 'Coin' glyph
-        print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, (top - 17) + gHudShakeY, "*"); // 'X' glyph
-        (gLevelTroll != 1) 
-        ? print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, (top - 17) + gHudShakeY, "%d", gHudDisplay.coins)
-        : print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, (top - 17) + gHudShakeY, "%02d", gHudDisplay.coins);
+        print_text(HUD_STATS_X + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "$"); // 'Coin' glyph
+        print_text((HUD_STATS_X + 16) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "*"); // 'X' glyph
+        print_text_fmt_int((HUD_STATS_X + 31) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "%d", gHudDisplay.coins);
     }
 }
 
@@ -478,13 +464,9 @@ void render_hud_coins(void) {
  * Disables "X" glyph when Mario has 100 stars or more.
  */
 void render_hud_stars(void) {
-    u8 top = HUD_TOP_Y;
-    if (gLevelTroll == 2) top -= 17;
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X) + gHudShakeX, top + gHudShakeY, "^"); // 'Star' glyph
-    print_text((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 16)) + gHudShakeX, top + gHudShakeY, "*"); // 'X' glyph
-    (gLevelTroll != 1) 
-    ? print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, top + gHudShakeY, "%d", gHudDisplay.stars)
-    : print_text_fmt_int((GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_STARS_X - 31)) + gHudShakeX, top + gHudShakeY, "%02d", gHudDisplay.stars);
+    print_text(HUD_STATS_X + gHudShakeX, HUD_TOP_Y + gHudShakeY, "^"); // 'Star' glyph
+    print_text((HUD_STATS_X + 16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
+    print_text_fmt_int((HUD_STATS_X + 31) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.stars);
 }
 
 /**

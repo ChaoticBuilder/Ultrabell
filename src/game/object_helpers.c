@@ -564,7 +564,7 @@ void cur_obj_set_pos_relative(struct Object *other, f32 dleft, f32 dy, f32 dforw
     o->oPosZ = other->oPosZ + dz;
 }
 
-UNUSED void cur_obj_unused_init_on_floor(void) {
+void cur_obj_unused_init_on_floor(void) {
     cur_obj_enable_rendering();
 
     o->oPosY = find_floor_height(o->oPosX, o->oPosY, o->oPosZ);

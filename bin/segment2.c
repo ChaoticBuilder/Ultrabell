@@ -1633,15 +1633,15 @@ ALIGNED8 static const Texture texture_font_char_eu_eszeet[] = {
 // US Small Font
 #else
 ALIGNED8 static const Texture texture_font_char_us_0[] = {
-#include "textures/segment2/font_graphics.05900.custom.ia4.inc.c"
+#include "textures/segment2/font_graphics.05900.ia4.inc.c"
 };
 
 ALIGNED8 static const Texture texture_font_char_us_1[] = {
-#include "textures/segment2/font_graphics.05940.custom.ia4.inc.c"
+#include "textures/segment2/font_graphics.05940.ia4.inc.c"
 };
 
 ALIGNED8 static const Texture texture_font_char_us_2[] = {
-#include "textures/segment2/font_graphics.05980.custom.ia4.inc.c"
+#include "textures/segment2/font_graphics.05980.ia4.inc.c"
 };
 
 ALIGNED8 static const Texture texture_font_char_us_3[] = {

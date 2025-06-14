@@ -9763,19 +9763,14 @@ void cutscene_door_move_behind_mario(struct Camera *c) {
     Vec3f camOffset;
     s16 doorRotation;
 
-    reset_pan_distance(c);
     determine_pushing_or_pulling_door(&doorRotation);
     set_focus_rel_mario(c, 0.f, 125.f, 0.f, 0);
     vec3s_set(sCutsceneVars[0].angle, 0, sMarioCamState->faceAngle[1] + doorRotation, 0);
-    vec3f_set(camOffset, 0.f, 125.f, 250.f);
 
-    
-    if (doorRotation == 0) {
-        camOffset[0] = 64.f;
-        camOffset[1] = 288.f;
-    } else {
-        camOffset[0] = -48.f;
-        camOffset[1] = 0.f;
+    if (doorRotation == 0) {    /* Pull */
+        vec3f_set(camOffset, 128.f, 384.f, -224.f);
+    } else {                    /* Push */
+        vec3f_set(camOffset, -128.f, 8.f, -480.f);
     }
 
     offset_rotated(c->pos, sMarioCamState->pos, camOffset, sCutsceneVars[0].angle);
@@ -9787,13 +9782,13 @@ void cutscene_door_move_behind_mario(struct Camera *c) {
 void cutscene_door_follow_mario(struct Camera *c) {
     s16 pitch, yaw;
     f32 dist;
-    s16 doorRotation;
 
-    determine_pushing_or_pulling_door(&doorRotation);
     set_focus_rel_mario(c, 0.f, 125.f, 0.f, 0);
     vec3f_get_dist_and_angle(c->focus, c->pos, &dist, &pitch, &yaw);
-    camera_approach_f32_symmetric_bool(&dist, 175.f, 9.f);
-    camera_approach_s16_symmetric_bool(&pitch, 0, 64);
+    if (pitch < 0) camera_approach_s16_symmetric_bool(&pitch, 0, 96);
+    /*
+    camera_approach_f32_symmetric_bool(&dist, 200.f, 10.f);
+    */
     vec3f_set_dist_and_angle(c->focus, c->pos, dist, pitch, yaw);
     update_camera_yaw(c);
 }
@@ -9820,7 +9815,6 @@ void cutscene_door_end(struct Camera *c) {
  * Used for entering a room that uses a specific camera mode, like the castle lobby or BBH
  */
 void cutscene_door_mode(struct Camera *c) {
-    reset_pan_distance(c);
 #ifdef USE_COURSE_DEFAULT_MODE
     c->mode = c->defMode;
 #else
@@ -9918,9 +9912,9 @@ struct Cutscene sCutsceneDoorPull[] = {
 // HackerSM64 TODO: Properly transition when moving through doors
 #ifndef FORCED_CAMERA_MODE
     { cutscene_door_start, 1 },
-    { cutscene_door_fix_cam, 18 },
+    { cutscene_door_fix_cam, 24 },
     { cutscene_door_move_behind_mario, 1 },
-    { cutscene_door_follow_mario, 40 },
+    { cutscene_door_follow_mario, 30 },
 #endif
     { cutscene_door_end, 0 }
 };
@@ -9934,7 +9928,7 @@ struct Cutscene sCutsceneDoorPush[] = {
     { cutscene_door_start, 1 },
     { cutscene_door_fix_cam, 12 },
     { cutscene_door_move_behind_mario, 1 },
-    { cutscene_door_follow_mario, 40 },
+    { cutscene_door_follow_mario, 30 },
 #endif
     { cutscene_door_end, 0 }
 };
@@ -9947,7 +9941,7 @@ struct Cutscene sCutsceneDoorPullMode[] = {
 // HackerSM64 TODO: Properly transition when moving through doors
 #ifndef FORCED_CAMERA_MODE
     { cutscene_door_start, 1 },
-    { cutscene_door_fix_cam, 18 },
+    { cutscene_door_fix_cam, 2 },
 #endif
     { cutscene_door_mode, CUTSCENE_LOOP }
 };
@@ -9960,7 +9954,7 @@ struct Cutscene sCutsceneDoorPushMode[] = {
 // HackerSM64 TODO: Properly transition when moving through doors
 #ifndef FORCED_CAMERA_MODE
     { cutscene_door_start, 1 },
-    { cutscene_door_fix_cam, 12 },
+    { cutscene_door_fix_cam, 2 },
 #endif
     { cutscene_door_mode, CUTSCENE_LOOP }
 };

@@ -3,10 +3,10 @@
 
 #include <PR/ultratypes.h>
 
-#define TEXRECT_MIN_X 10
-#define TEXRECT_MAX_X 300
-#define TEXRECT_MIN_Y 5
-#define TEXRECT_MAX_Y 220
+#define TEXRECT_MIN_X 8
+#define TEXRECT_MAX_X 312
+#define TEXRECT_MIN_Y 6
+#define TEXRECT_MAX_Y 234
 
 enum PrintfGlyphs {
     GLYPH_SPACE           = -1,

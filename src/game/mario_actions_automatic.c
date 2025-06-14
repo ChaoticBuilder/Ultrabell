@@ -171,6 +171,7 @@ s32 act_climbing_pole(struct MarioState *m) {
         add_tree_leaf_particles(m);
         m->faceAngle[1] += 0x8000;
         m->forwardVel = 32.0f;
+        m->vel[1] = 42.0f;
         return set_mario_action(m, ACT_JUMP, 1);
     }
 

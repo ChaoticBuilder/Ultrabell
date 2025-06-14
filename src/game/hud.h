@@ -4,17 +4,15 @@
 #include <PR/ultratypes.h>
 #include <PR/gbi.h>
 
-#define HUD_POWER_METER_X            152
-#define HUD_POWER_METER_EMPHASIZED_Y 164
-#define HUD_POWER_METER_Y            202
-#define HUD_POWER_METER_HIDDEN_Y     266
-
-#define HUD_TOP_Y 212
+#define HUD_TOP_Y (SCREEN_HEIGHT - 28) // 12px from top
 #define HUD_BOTTOM_Y 9
 
-// #define HUD_COINS_X 168
-#define HUD_STARS_X 84 // This starts counting from the right edge
-// #define HUD_CAMERA_X 54 // This starts counting from the right edge
+#define HUD_POWER_METER_X            (SCREEN_CENTER_X - 8)
+#define HUD_POWER_METER_EMPHASIZED_Y (HUD_TOP_Y - 42)
+#define HUD_POWER_METER_Y            (HUD_TOP_Y - 9)
+#define HUD_POWER_METER_HIDDEN_Y     (HUD_TOP_Y + 55)
+
+#define HUD_STATS_X (SCREEN_CENTER_X + 32)
 
 extern s32 gHudShakeX;
 extern s32 gHudShakeY;
@@ -38,18 +36,6 @@ enum BreathMeterAnimation {
 };
 #endif
 
-/* DISABLED FEATURE:
-enum CameraHUDLUT {
-    GLYPH_CAM_CAMERA,
-    GLYPH_CAM_MARIO_HEAD,
-    GLYPH_CAM_LAKITU_HEAD,
-    GLYPH_CAM_FIXED,
-    GLYPH_CAM_ARROW_UP,
-    GLYPH_CAM_ARROW_DOWN
-};
-*/
-
-// void set_hud_camera_status(s16 status);
 void render_hud(void);
 
 #endif // HUD_H
