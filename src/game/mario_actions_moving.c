@@ -282,13 +282,13 @@ void apply_slope_accel(struct MarioState *m) {
 
         switch (slopeClass) {
             case SURFACE_CLASS_VERY_SLIPPERY:
-                slopeAccel = 6.0f;
+                slopeAccel = 5.3f;
                 break;
             case SURFACE_CLASS_SLIPPERY:
-                slopeAccel = 2.5f;
+                slopeAccel = 2.7f;
                 break;
             default:
-                slopeAccel = 1.5f;
+                slopeAccel = 1.7f;
                 break;
             case SURFACE_CLASS_NOT_SLIPPERY:
                 slopeAccel = 0.0f;
@@ -1647,8 +1647,10 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
     s32 animFrame = set_mario_animation(m, animation);
     if (animFrame < checkFrame) {
         apply_landing_accel(m, 0.9f);
+    } else if (m->forwardVel >= 0.0f) {
+        mario_set_forward_vel(m, 0.1f);
     } else {
-        mario_set_forward_vel(m, 0.0f);
+        mario_set_forward_vel(m, -0.1f);
     }
 
     if (perform_ground_step(m) == GROUND_STEP_LEFT_GROUND) {
@@ -1659,16 +1661,15 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
             m->forwardVel = 0.5f;
             set_mario_action(m, ACT_FORWARD_AIR_KB, 4);
         }
-    } else {
+    } else if (is_anim_at_end(m)) {
         if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) mario_bonk_reflection(m, TRUE);
-        if (is_anim_at_end(m)) {
-            set_mario_action(m, ACT_IDLE, 0);
-            m->forwardVel = 16.0f;
-            if (actionArg > 0 && actionArg != 4) {
-                m->invincTimer = 30;
-            }
+        set_mario_action(m, ACT_IDLE, 0);
+        m->forwardVel = 16.0f;
+        if (actionArg > 0 && actionArg != 4) {
+            m->invincTimer = 30;
         }
     }
+    
     return animFrame;
 }
 
@@ -1765,7 +1766,7 @@ u32 common_landing_action(struct MarioState *m, s16 animation, u32 airAction) {
     stepResult = perform_ground_step(m);
     switch (stepResult) {
         case GROUND_STEP_LEFT_GROUND:
-            set_mario_action(m, airAction, 4);
+            set_mario_action(m, airAction, 0);
             break;
 
         case GROUND_STEP_HIT_WALL:

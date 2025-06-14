@@ -967,7 +967,7 @@ u32 set_mario_action_cutscene(struct MarioState *m, u32 action, UNUSED u32 actio
 
         case ACT_SPECIAL_EXIT_AIRBORNE:
         case ACT_SPECIAL_DEATH_EXIT:
-            m->vel[1] = 52.0f;
+            m->vel[1] = 64.0f;
             break;
     }
 
