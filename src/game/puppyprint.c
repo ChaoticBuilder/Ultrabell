@@ -495,12 +495,14 @@ void print_basic_profiling(void) {
     u32 cpuTime = profiler_get_cpu_microseconds();
     u32 rspTime = profiler_get_rsp_microseconds();
     u32 rdpTime = profiler_get_rdp_microseconds();
-    print_fps(16, 40);
-    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)",
+    u32 ramUse = -(gGfxPoolEnd - (u8 *) gDisplayListHead) + 0x80000000;
+    print_fps(16, 56);
+    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)\nRAM: %x (%d%%)",
             cpuTime, (cpuTime / 333),
             rspTime, (rspTime / 333),
-            rdpTime, (rdpTime / 333));
-    print_small_text_light(16, 52, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
+            rdpTime, (rdpTime / 333),
+            ramUse,  (ramUse / 0x147AE14));
+    print_small_text_light(16, 68, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
 }
 
 void puppyprint_render_standard(void) {

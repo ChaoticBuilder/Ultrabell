@@ -1018,7 +1018,6 @@
 "sound/sequences/sh/22_cutscene_lakitu.m64": [317,{"sh":[7984512]}],
 "sound/sequences/us/01_cutscene_collect_star.m64": [619,{"us":[8076816]}],
 "sound/sequences/us/05_level_water.m64": [4780,{"us":[8093328]}],
-"sound/sequences/us/06_level_hot.m64": [2451,{"us":[8098112]}],
 "sound/sequences/us/07_level_boss_koopa.m64": [3418,{"us":[8100576]}],
 "sound/sequences/us/0A_level_spooky.m64": [5674,{"us":[8119584]}],
 "sound/sequences/us/0B_event_piranha_plant.m64": [1395,{"us":[8125264]}],

@@ -20,7 +20,7 @@ STUB_LEVEL("", LEVEL_UNKNOWN_2, COURSE_NONE, 20000, 0x00, 0x00, 0x00, _, _) // A
 STUB_LEVEL("", LEVEL_UNKNOWN_3, COURSE_NONE, 20000, 0x00, 0x00, 0x00, _, _) // DONJON
 DEFINE_LEVEL(" P KAISHI ERIA", LEVEL_CASTLE_GROUNDS, COURSE_NONE, castle_grounds, outside, 25000, 0x08, 0x08, 0x08, _, _) // Starting Area
 DEFINE_LEVEL(" P KOTOYADO", LEVEL_CASTLE_COURTYARD, COURSE_NONE, castle_courtyard, outside, 20000, 0x08, 0x08, 0x08, _, _) // Courtyard
-DEFINE_LEVEL(" P PEACH KYUDEN", LEVEL_CASTLE, COURSE_NONE, castle_inside, inside, 20000, 0x20, 0x20, 0x30, _, sCamCastle) // Peach's Palace
+DEFINE_LEVEL(" P PEACH KYUDEN", LEVEL_CASTLE, COURSE_NONE, castle_inside, inside, 20000, 0x00, 0x00, 0x00, _, sCamCastle) // Peach's Palace
 DEFINE_LEVEL(" 1 BOMU HIRANO", LEVEL_BOB, COURSE_BOB, bob, generic, 20000, 0x08, 0x00, 0x00, _, sCamBOB) // Bob-omb Plains
 DEFINE_LEVEL(" 2 YOUSAI TOU", LEVEL_WF, COURSE_WF, wf, grass, 13000, 0x08, 0x08, 0x08, _, _) // Tower Fortress
 DEFINE_LEVEL(" 3 NOTI KARUBEI", LEVEL_JRB, COURSE_JRB, jrb, water, 20000, 0x10, 0x18, 0x18, sDynJrb, _) // Nautical Bay

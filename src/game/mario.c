@@ -1703,6 +1703,8 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
         m->marioObj->hitboxHeight = 160.0f;
     }
 
+    if (m->prevAction == ACT_FIRST_PERSON) fadeWarpTarget = 0xFF;
+
     if (m->fadeWarpOpacity != fadeWarpTarget) {
         alphaTimer++;
         if (m->fadeWarpOpacity > fadeWarpTarget) {

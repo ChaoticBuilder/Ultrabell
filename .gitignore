@@ -1225,7 +1225,6 @@ sound/sequences/sh/21_menu_file_select.m64
 sound/sequences/sh/22_cutscene_lakitu.m64
 sound/sequences/us/01_cutscene_collect_star.m64
 sound/sequences/us/05_level_water.m64
-sound/sequences/us/06_level_hot.m64
 sound/sequences/us/07_level_boss_koopa.m64
 sound/sequences/us/0A_level_spooky.m64
 sound/sequences/us/0B_event_piranha_plant.m64
