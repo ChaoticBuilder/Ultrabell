@@ -399,7 +399,7 @@ ALIGNED8 static const Texture texture_hud_char_multiply[] = {
 };
 
 ALIGNED8 static const Texture texture_hud_char_coin[] = {
-#include "textures/segment2/segment2.05800.custom.rgba16.inc.c"
+#include "textures/segment2/segment2.05800.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_red_coin[] = {
@@ -411,20 +411,20 @@ ALIGNED8 static const Texture texture_hud_char_silver_coin[] = {
 };
 
 ALIGNED8 static const Texture texture_hud_char_mario_head[] = {
-#include "textures/segment2/segment2.05A00.custom.rgba16.inc.c"
+#include "textures/segment2/segment2.05A00.rgba16.inc.c"
 };
 
 // l is real
 ALIGNED8 static const Texture texture_hud_char_luigi_head[] = {
-    #include "textures/segment2/segment2.05A01.custom.rgba16.inc.c"
+    #include "textures/segment2/segment2.05A40.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_ultrabell[] = {
-    #include "textures/segment2/segment2.05A02.custom.rgba16.inc.c"
+    #include "textures/segment2/segment2.05A80.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_star[] = {
-#include "textures/segment2/segment2.05C00.custom.rgba16.inc.c"
+#include "textures/segment2/segment2.05C00.rgba16.inc.c"
 };
 
 #if defined(VERSION_JP) || defined(VERSION_SH) || defined(COMPLETE_EN_US_SEGMENT2)
@@ -432,18 +432,16 @@ ALIGNED8 static const Texture texture_hud_char_decimal_point[] = {
 #include "textures/segment2/segment2.05E00.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture texture_hud_char_beta_key[] = {
-#include "textures/segment2/segment2.06000.custom.rgba16.inc.c"
-};
 #else
 ALIGNED8 static const Texture texture_hud_char_decimal_point[] = {
 #include "textures/segment2/segment2.decimal_point.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture texture_hud_char_beta_key[] = {
-#include "textures/segment2/segment2.beta_key.rgba16.inc.c"
-};
 #endif
+
+ALIGNED8 static const Texture texture_hud_char_beta_key[] = {
+#include "textures/segment2/segment2.06000.rgba16.inc.c"
+};
 
 ALIGNED8 static const Texture texture_credits_char_3[] = {
 #include "textures/segment2/segment2.06200.rgba16.inc.c"

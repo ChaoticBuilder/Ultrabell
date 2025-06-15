@@ -12,7 +12,7 @@
 #define HUD_POWER_METER_Y            (HUD_TOP_Y - 9)
 #define HUD_POWER_METER_HIDDEN_Y     (HUD_TOP_Y + 55)
 
-#define HUD_STATS_X (SCREEN_CENTER_X + 32)
+#define HUD_STATS_X (SCREEN_CENTER_X + 48)
 
 extern s32 gHudShakeX;
 extern s32 gHudShakeY;

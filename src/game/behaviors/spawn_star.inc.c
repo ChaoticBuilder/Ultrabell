@@ -46,17 +46,6 @@ void bhv_star_spawn_init(void) {
     o->oVelY = (o->oHomeY - o->oPosY) / 30.0f;
     o->oForwardVel = o->oStarSpawnDisFromHome / 30.0f;
     o->oStarSpawnVelY = o->oPosY;
-
-#ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
-    if (o->oBehParams2ndByte == SPAWN_STAR_ARC_CUTSCENE_BP_DEFAULT_STAR || gCurrCourseNum == COURSE_BBH) {
-#else
-    if (o->oBehParams2ndByte == SPAWN_STAR_ARC_CUTSCENE_BP_DEFAULT_STAR) {
-#endif
-        cutscene_object(CUTSCENE_STAR_SPAWN, o);
-    } else {
-        cutscene_object(CUTSCENE_RED_COIN_STAR_SPAWN, o);
-    }
-    gMarioState->invincTimer = 120;
     cur_obj_become_intangible();
 }
 
@@ -107,9 +96,6 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_END:
-            if (o->oTimer == 20) {
-                gObjCutsceneDone = TRUE;
-            }
             if (o->oTimer < 20) {
                 o->oAnimState++;
             } else {

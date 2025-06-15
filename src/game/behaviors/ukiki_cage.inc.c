@@ -39,8 +39,7 @@ void bhv_ukiki_cage_star_loop(void) {
             break;
     }
 
-    // Spin to look like a star.
-    o->oFaceAngleYaw += 0x400;
+    if (gGlobalTimer % 2 == 0) o->oAnimState++;
 }
 
 /**

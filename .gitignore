@@ -1085,7 +1085,6 @@ sound/samples/sfx_mario/10_mario_doh.aiff
 sound/samples/sfx_mario/11_mario_game_over.aiff
 sound/samples/sfx_mario/13_mario_press_start_to_play.aiff
 sound/samples/sfx_mario/14_mario_twirl_bounce.aiff
-sound/samples/sfx_mario/15_mario_snoring3.aiff
 sound/samples/sfx_mario/16_mario_bye_bye.aiff
 sound/samples/sfx_mario/16_mario_so_longa_bowser.aiff
 sound/samples/sfx_mario/17_mario_ima_tired.aiff
@@ -1674,11 +1673,7 @@ textures/segment2/segment2.05000.rgba16.png
 textures/segment2/segment2.05200.rgba16.png
 textures/segment2/segment2.05400.rgba16.png
 textures/segment2/segment2.05600.rgba16.png
-textures/segment2/segment2.05800.rgba16.png
-textures/segment2/segment2.05A00.rgba16.png
-textures/segment2/segment2.05C00.rgba16.png
 textures/segment2/segment2.05E00.rgba16.png
-textures/segment2/segment2.06000.rgba16.png
 textures/segment2/segment2.06200.rgba16.png
 textures/segment2/segment2.06280.rgba16.png
 textures/segment2/segment2.06300.rgba16.png

@@ -212,6 +212,7 @@ s32 act_start_sleeping(struct MarioState *m) {
 
         case ACT_STATE_START_SLEEPING_SCRATCH:
             /* animFrame = */ set_mario_animation(m, MARIO_ANIM_START_SLEEP_SCRATCH);
+            m->marioBodyState->eyeState = MARIO_EYES_HALF_CLOSED;
             break;
 
         case ACT_STATE_START_SLEEPING_YAWN:

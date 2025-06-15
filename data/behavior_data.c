@@ -1398,6 +1398,7 @@ const BehaviorScript bhvUkikiCageChild[] = {
 const BehaviorScript bhvUkikiCageStar[] = {
     BEGIN(OBJ_LIST_DEFAULT),
     OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
+    BILLBOARD(),
     SET_HOME(),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_ukiki_cage_star_loop),

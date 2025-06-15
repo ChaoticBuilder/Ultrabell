@@ -99,10 +99,6 @@ void bhv_spawned_star_loop(void) {
         }
         spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
     } else if (o->oAction == SPAWN_STAR_POS_CUTSCENE_ACT_END) {
-        if (gCamera->cutscene == 0 && gRecentCutscene == 0) {
-            o->oAction++; // SPAWN_STAR_POS_CUTSCENE_ACT_SLOW_STAR_ROTATION
-        }
-    } else { // SPAWN_STAR_POS_CUTSCENE_ACT_SLOW_STAR_ROTATION
         set_sparkle_spawn_star_hitbox();
         // slow_star_rotation();
     }

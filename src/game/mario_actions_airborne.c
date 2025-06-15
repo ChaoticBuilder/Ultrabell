@@ -388,9 +388,6 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
-            if (animation == MARIO_ANIM_SLIDEFLIP) {
-                set_mario_anim_with_accel(m, animation, 0x18000);
-            }
             if (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
             (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
                 set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000);
@@ -684,6 +681,7 @@ s32 act_side_flip(struct MarioState *m) {
     if (m->marioObj->header.gfx.animInfo.animFrame == 4) {
         play_sound(SOUND_ACTION_SIDE_FLIP_UNK, m->marioObj->header.gfx.cameraToObject);
     }
+
     return FALSE;
 }
 
