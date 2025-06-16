@@ -25,6 +25,22 @@
 
 #include "game/object_list_processor.h"
 
+const LevelScript level_intro_entry_error_screen[] = {
+    INIT_LEVEL(),
+    FIXED_LOAD(/*loadAddr*/ _goddardSegmentStart, /*romStart*/ _goddardSegmentRomStart, /*romEnd*/ _goddardSegmentRomEnd),
+    LOAD_YAY0(/*seg*/ 0x07, _intro_segment_7SegmentRomStart, _intro_segment_7SegmentRomEnd),
+    LOAD_TITLE_SCREEN_BG(),
+    ALLOC_LEVEL_POOL(),
+
+    AREA(/*index*/ 1, intro_geo_error_screen),
+    END_AREA(),
+
+    FREE_LEVEL_POOL(),
+    LOAD_AREA(/*area*/ 1),
+    SLEEP(/*frames*/ 32767),
+    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_error_screen),
+};
+
 const LevelScript level_intro_splash_screen[] = {
 #ifdef SKIP_TITLE_SCREEN
     EXIT_AND_EXECUTE_WITH_CODE(/*seg*/ SEGMENT_MENU_INTRO, _introSegmentRomStart, _introSegmentRomEnd, level_intro_mario_head_regular, _introSegmentBssStart, _introSegmentBssEnd),

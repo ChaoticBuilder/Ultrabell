@@ -28,4 +28,8 @@ extern const LevelScript script_intro_main_level_entry_stop_music[];
 extern const LevelScript script_intro_main_level_entry[];
 extern const LevelScript script_intro_splash_screen[];
 
+extern const GeoLayout intro_geo_error_screen[];
+extern const LevelScript level_intro_entry_error_screen[];
+extern Gfx *geo18_display_error_message(u32 run);
+
 #endif

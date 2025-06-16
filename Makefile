@@ -702,11 +702,12 @@ ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) asm/debug $(GODDA
 # Make sure build directory exists before compiling anything
 DUMMY != mkdir -p $(ALL_DIRS)
 
-$(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
-$(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
-$(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
-$(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
-$(BUILD_DIR)/src/game/puppycam2.o:   $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/include/text_strings.h:      $(BUILD_DIR)/include/text_menu_strings.h
+$(BUILD_DIR)/src/menu/file_select.o:      $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/menu/star_select.o:      $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/ingame_menu.o:      $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/mem_error_screen.o: $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/puppycam2.o:        $(BUILD_DIR)/include/text_strings.h
 
 
 

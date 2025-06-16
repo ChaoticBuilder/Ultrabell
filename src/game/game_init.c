@@ -409,6 +409,7 @@ void draw_reset_bars(void) {
  * Initial settings for the first rendered frame.
  */
 void render_init(void) {
+    // if (sizeof(gGfxPool->buffer))
 #ifdef DEBUG_FORCE_CRASH_ON_BOOT
     FORCE_CRASH
 #endif

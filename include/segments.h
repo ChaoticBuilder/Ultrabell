@@ -32,6 +32,7 @@
 
 // Ending address of RAM
 #define RAM_END (RAM_START + TOTAL_RAM_SIZE)
+#define RAM_END_4MB (RAM_START + (RAM_1MB * 4))
 
 /*
  * Workaround for running out of pool space due to

@@ -79,6 +79,10 @@
 #define TEXT_PAUSE _("PAUSE") // Pause text, Castle Courses
 #define TEXT_HUD_CONGRATULATIONS _("CONGRATULATIONS") // Course Complete Text, Bowser Courses
 
+// Memory Expansion Error Screen
+#define EXPAK_REQUIRED _("Sorry Mario!\nAn Expansion Pak is required\nto play this ROM Hack!\n\nPlease power off the Console.")
+#define EXT_RAM _("Oops! You accidentally\ndisabled USE EXT RAM In the code!\nPlease recompile.")
+
 //Widescreen stuff
 #if defined(WIDE) && !defined(PUPPYCAM)
 #define TEXT_HUD_CURRENT_RATIO_43 _("ASPECT RATIO: 4:3")

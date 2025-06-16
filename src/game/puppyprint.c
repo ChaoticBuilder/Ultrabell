@@ -503,6 +503,10 @@ void print_basic_profiling(void) {
             rdpTime, (rdpTime / 333),
             ramUse,  (ramUse / 0x147AE14));
     print_small_text_light(16, 68, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
+    /*
+    sprintf(textBytes, "buf: %x, %x", gDisplayListHead, sizeof(gDisplayListHead));
+    print_small_text_light(160, 80, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
+    */
 }
 
 void puppyprint_render_standard(void) {

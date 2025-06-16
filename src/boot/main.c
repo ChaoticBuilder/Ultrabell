@@ -22,6 +22,7 @@
 #include "game/puppyprint.h"
 #include "game/profiling.h"
 #include "game/emutest.h"
+#include "game/mem_error_screen.h"
 
 // Message IDs
 enum MessageIDs {
@@ -111,6 +112,9 @@ void setup_mesg_queues(void) {
 void alloc_pool(void) {
     void *start = (void *) SEG_POOL_START;
     void *end = (void *) (SEG_POOL_START + POOL_SIZE);
+
+    // WHY DOES THE EMULATOR FREEZE ON A WHITE SCREEN :sob:
+    // if (does_pool_end_lie_out_of_bounds(end)) end = (void *)SEG_POOL_END_4MB;
 
     main_pool_init(start, end);
     gEffectsMemoryPool = mem_pool_init(EFFECTS_MEMORY_POOL, MEMORY_POOL_LEFT);
@@ -398,6 +402,7 @@ void thread3_main(UNUSED void *arg) {
     osStartThread(&gSoundThread);
 
     create_thread(&gGameLoopThread, THREAD_5_GAME_LOOP, thread5_game_loop, NULL, gThread5Stack + THREAD5_STACK, 10);
+    // create_thread(&gGameLoopThread, THREAD_5_GAME_LOOP, thread5_mem_error_message_loop, NULL, gThread5Stack + THREAD5_STACK, 10);
     osStartThread(&gGameLoopThread);
 
     while (TRUE) {

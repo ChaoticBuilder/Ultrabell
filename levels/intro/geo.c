@@ -17,6 +17,24 @@
 
 #include "config.h"
 
+const GeoLayout intro_geo_error_screen[] = {
+   GEO_NODE_SCREEN_AREA(0, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2),
+   GEO_OPEN_NODE(),
+      GEO_ZBUFFER(0),
+      GEO_OPEN_NODE(),
+         GEO_NODE_ORTHO(100),
+         GEO_OPEN_NODE(),
+            GEO_ASM(0, geo_intro_regular_backdrop),
+         GEO_CLOSE_NODE(),
+      GEO_CLOSE_NODE(),
+      GEO_ZBUFFER(0),
+      GEO_OPEN_NODE(),
+         GEO_ASM(0, geo18_display_error_message),
+      GEO_CLOSE_NODE(),
+   GEO_CLOSE_NODE(),
+   GEO_END(),
+};
+
 // 0x0E0002D0
 const GeoLayout intro_geo_splash_screen[] = {
    GEO_NODE_SCREEN_AREA(0, SCREEN_CENTER_X, SCREEN_CENTER_Y, SCREEN_CENTER_X, SCREEN_CENTER_Y),
