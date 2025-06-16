@@ -495,18 +495,18 @@ void print_basic_profiling(void) {
     u32 cpuTime = profiler_get_cpu_microseconds();
     u32 rspTime = profiler_get_rsp_microseconds();
     u32 rdpTime = profiler_get_rdp_microseconds();
-    u32 ramUse = -(gGfxPoolEnd - (u8 *) gDisplayListHead) + 0x80000000;
+    u32 ramUse = -(gGfxPoolEnd - (u8 *) gDisplayListHead) + (GFX_POOL_SIZE * 0x10);
+    u8 ramUseP1 = (ramUse / 0x147AE14);
+    u8 ramUseP2 = (ramUse / 0x20C49B) % 10;
+    u8 ramUseP3 = (ramUse / 0x346DC) % 10;
+    u8 ramUseP4 = (ramUse / 0x53E2) % 10;
     print_fps(16, 56);
-    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)\nRAM: %x (%d%%)",
+    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)\nRAM: %x (%d.%d%d%d%%)",
             cpuTime, (cpuTime / 333),
             rspTime, (rspTime / 333),
             rdpTime, (rdpTime / 333),
-            ramUse,  (ramUse / 0x147AE14));
+            ramUse,   ramUseP1, ramUseP2, ramUseP3, ramUseP4);
     print_small_text_light(16, 68, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
-    /*
-    sprintf(textBytes, "buf: %x, %x", gDisplayListHead, sizeof(gDisplayListHead));
-    print_small_text_light(160, 80, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
-    */
 }
 
 void puppyprint_render_standard(void) {
