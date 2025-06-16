@@ -38,7 +38,6 @@ static char sLevelSelectStageNames[64][16] = {
 static u16 sDemoCountdown = 0;
 #endif
 static u8 sPlayMarioGreeting = 0;
-static s16 sPlayMarioGameOver = TRUE;
 
 #ifndef DISABLE_DEMO
 #define PRESS_START_DEMO_TIMER 800
@@ -235,10 +234,8 @@ s32 intro_regular(void) {
 s32 intro_game_over(void) {
     s32 level = LEVEL_NONE;
 
-    if (sPlayMarioGameOver == TRUE) {
-        play_sound(SOUND_MARIO_GAME_OVER, gGlobalSoundSource);
-        sPlayMarioGameOver = FALSE;
-    }
+    if (sPlayMarioGreeting == 15) play_sound(SOUND_MARIO_WAAAOOOW, gGlobalSoundSource);
+    if (sPlayMarioGreeting <= 15) sPlayMarioGreeting++;
 
     print_intro_text();
 
@@ -250,7 +247,7 @@ s32 intro_game_over(void) {
 #endif
         // same criteria as intro_regular
         level = LEVEL_FILE_SELECT + gDebugLevelSelect;
-        sPlayMarioGameOver = TRUE;
+        sPlayMarioGreeting = 0;
     }
 #if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
     return run_level_id_or_demo(level);
