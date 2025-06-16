@@ -351,7 +351,11 @@ void create_gfx_task_structure(void) {
     gGfxSPTask->task.t.yield_data_size = OS_YIELD_DATA_SIZE;
 
     // credits to gheskett for the Add debug asserts for exceeding GFX and audio pool sizes pull request!
-    assert_args((u8*) gDisplayListHead <= gGfxPoolEnd, "GFX pool exceeded: %d command(s) over!", ((s32) gGfxPoolEnd - (s32) gDisplayListHead) / sizeof(Gfx));
+    if ((u8*) gDisplayListHead > gGfxPoolEnd) {
+        char errorMsg[40];
+        sprintf(errorMsg, "GFX pool: %d command(s) over!", ((s32) gGfxPoolEnd - (s32) gDisplayListHead) / sizeof(Gfx));
+        error(errorMsg);
+    }
 }
 
 /**

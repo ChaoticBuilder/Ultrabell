@@ -495,17 +495,16 @@ void print_basic_profiling(void) {
     u32 cpuTime = profiler_get_cpu_microseconds();
     u32 rspTime = profiler_get_rsp_microseconds();
     u32 rdpTime = profiler_get_rdp_microseconds();
-    u32 ramUse = -(gGfxPoolEnd - (u8 *) gDisplayListHead) + (GFX_POOL_SIZE * 0x10);
-    u8 ramUseP1 = (ramUse / 0x147AE14);
-    u8 ramUseP2 = (ramUse / 0x20C49B) % 10;
-    u8 ramUseP3 = (ramUse / 0x346DC) % 10;
-    u8 ramUseP4 = (ramUse / 0x53E2) % 10;
+    u32 gfxUse = ((u32)gDisplayListHead - ((u32)gGfxPool->buffer)) / 2;
+    u32 gfxUsePercent = (gfxUse / (GFX_POOL_SIZE / 100));
+    u32 ramLeft = gGfxPoolEnd - (u8 *) gDisplayListHead;
     print_fps(16, 56);
-    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)\nRAM: %x (%d.%d%d%d%%)",
+    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)\nGFX: %X / %X (%d%%)\nRAM: %X",
             cpuTime, (cpuTime / 333),
             rspTime, (rspTime / 333),
             rdpTime, (rdpTime / 333),
-            ramUse,   ramUseP1, ramUseP2, ramUseP3, ramUseP4);
+            gfxUse,   GFX_POOL_SIZE, gfxUsePercent,
+            ramLeft);
     print_small_text_light(16, 68, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
 }
 
@@ -520,7 +519,7 @@ void puppyprint_render_standard(void) {
             gPuppyCallCounter.collision_water,
             gPuppyCallCounter.collision_raycast
     );
-    print_small_text_light(SCREEN_WIDTH-16, 32, textBytes, PRINT_TEXT_ALIGN_RIGHT, PRINT_ALL, FONT_OUTLINE);
+    print_small_text_light(SCREEN_WIDTH-16, 48, textBytes, PRINT_TEXT_ALIGN_RIGHT, PRINT_ALL, FONT_OUTLINE);
 }
 
 void puppyprint_render_minimal(void) {
@@ -1031,7 +1030,7 @@ void puppyprint_render_general_vars(void) {
             (s32)(gMarioState->waterLevel)
             );
         print_small_text_light(16, 36, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
-        sprintf(textBytes, "Gfx Pool: %d / %d", ((u32)gDisplayListHead - ((u32)gGfxPool->buffer)) / 4, GFX_POOL_SIZE);
+        sprintf(textBytes, "Gfx Pool: %X / %X", ((u32)gDisplayListHead - ((u32)gGfxPool->buffer)) / 2, GFX_POOL_SIZE);
         print_small_text_light(SCREEN_WIDTH/2, SCREEN_HEIGHT-16, textBytes, PRINT_TEXT_ALIGN_CENTRE, PRINT_ALL, FONT_OUTLINE);
     }
 #endif
