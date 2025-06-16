@@ -497,9 +497,10 @@ void print_basic_profiling(void) {
     u32 rdpTime = profiler_get_rdp_microseconds();
     u32 gfxUse = ((u32)gDisplayListHead - ((u32)gGfxPool->buffer)) / 2;
     u32 gfxUsePercent = (gfxUse / (GFX_POOL_SIZE / 100));
-    u32 ramLeft = gGfxPoolEnd - (u8 *) gDisplayListHead;
+    u32 ramLeft = (RAM_END - 0x80000000) - (main_pool_available() - 0x400);
+    // u32 ramLeft = gGfxPoolEnd - (u8 *) gDisplayListHead;
     print_fps(16, 56);
-    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)\nGFX: %X / %X (%d%%)\nRAM: %X",
+    sprintf(textBytes, "CPU: %dus (%d%%)\nRSP: %dus (%d%%)\nRDP: %dus (%d%%)\nGFX: %04X / %X (%d%%)\nRAM: %06X",
             cpuTime, (cpuTime / 333),
             rspTime, (rspTime / 333),
             rdpTime, (rdpTime / 333),
