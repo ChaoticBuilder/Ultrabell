@@ -687,7 +687,7 @@ void initiate_painting_warp(void) {
         struct WarpNode *pWarpNode = get_painting_warp_node();
 
         if (pWarpNode != NULL) {
-            if (gMarioState->action & ACT_FLAG_INTANGIBLE && gMarioState->action != ACT_FALL_AFTER_STAR_GRAB) {
+            if (gMarioState->action & ACT_FLAG_INTANGIBLE && gMarioState->action != ACT_FALL_AFTER_STAR_GRAB && gMarioState->action != ACT_DEBUG_FREE_MOVE) {
                 play_painting_eject_sound();
             } else if (pWarpNode->id != 0) {
                 warpNode = *pWarpNode;

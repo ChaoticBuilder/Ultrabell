@@ -66,7 +66,6 @@ void bhv_spawned_star_loop(void) {
     if (o->oAction == SPAWN_STAR_POS_CUTSCENE_ACT_START) {
         if (o->oTimer == 0) {
             cur_obj_become_intangible();
-            cutscene_object(CUTSCENE_STAR_SPAWN, o);
             if (o->oBehParams2ndByte == SPAWN_STAR_POS_CUTSCENE_BP_SPAWN_AT_MARIO) {
                 spawned_star_set_target_above_mario();             
             } else {

@@ -2137,9 +2137,6 @@ s16 update_default_camera(struct Camera *c) {
     if (c->mode == CAMERA_MODE_FREE_ROAM) {
         if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
             posHeight = 375.f;
-            if (gCurrLevelArea == AREA_SSL_PYRAMID) {
-                posHeight /= 2;
-            }
         } else {
             posHeight = 100.f;
         }
@@ -2210,7 +2207,7 @@ s16 update_default_camera(struct Camera *c) {
         yaw = clamp_positions_and_find_yaw(c->pos, c->focus, 2254.f, -3789.f, 3790.f, -2253.f);
     }
 #endif
-    if (c->mode != CAMERA_MODE_CLOSE && c->mode != CAMERA_MODE_8_DIRECTIONS) {
+    if (c->mode != CAMERA_MODE_CLOSE) {
         lakitu_zoom(400.f, 0x600);
         vec3f_set_dist_and_angle(c->pos, c->pos, sLakituDist, sLakituPitch + 0x1000, yaw);
     }
@@ -9997,7 +9994,7 @@ struct Cutscene sCutsceneEnterPainting[] = {
  * Cutscene that plays when Mario dies and warps back to the castle.
  */
 struct Cutscene sCutsceneDeathExit[] = {
-    { cutscene_exit_painting, 118 },
+    { cutscene_exit_painting, 35 },
     { cutscene_exit_painting_end, 0 }
 };
 
@@ -10005,7 +10002,7 @@ struct Cutscene sCutsceneDeathExit[] = {
  * Cutscene that plays when Mario warps to the castle after collecting a star.
  */
 struct Cutscene sCutsceneExitPaintingSuccess[] = {
-    { cutscene_exit_painting, 180 },
+    { cutscene_exit_painting, 35 },
     { cutscene_exit_painting_end, 0 }
 };
 
@@ -10126,7 +10123,7 @@ struct Cutscene sCutsceneSuffocation[] = {
  * Cutscene that plays when entering bowser's arenas.
  */
 struct Cutscene sCutsceneEnterBowserArena[] = {
-    { cutscene_bowser_arena, 180 },
+    { cutscene_bowser_arena, 90 },
 //    { cutscene_bowser_arena_dialog, CUTSCENE_LOOP },
     { cutscene_bowser_arena_end, 0 }
 };
@@ -10874,7 +10871,7 @@ void approach_fov_45(struct MarioState *m) {
     f32 targetFoV = sFOVState.fov;
 
     if (m->area->camera->mode == CAMERA_MODE_FIXED && m->area->camera->cutscene == 0) {
-        targetFoV = 45.f;
+        targetFoV = 60.f;
     } else {
         targetFoV = 45.f;
     }

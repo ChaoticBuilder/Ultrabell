@@ -32,6 +32,7 @@ void bhv_star_door_loop(void) {
             o->oLeftVel = -8.0f;
             star_door_update_pos();
             if (o->oTimer > 15) {
+                cur_obj_play_sound_2(SOUND_PEACH_HELP);
                 o->oAction++; // STAR_DOOR_ACT_OPEN
             }
             break;

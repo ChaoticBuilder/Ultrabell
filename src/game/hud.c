@@ -666,8 +666,8 @@ void music_menu(void) {
 void debug_stats(void) {
     if (!gDebugToggle) return;
     char debug[32];
-    if (gEmulator == EMU_CONSOLE) {
-        sprintf(debug, "EMU: N64!", gEmulator); // noway someone's playing my hack on everdrive!!!
+    if (gIsConsole) {
+        sprintf(debug, "E3 KIOSK", gEmulator); // noway someone's playing my hack on everdrive!!!
     } else {
         (gEmulator != EMU_MUPEN64PLUS_NEXT)
         ? sprintf(debug, "EMU: 0x0%x", gEmulator) // 0x0xxx
@@ -675,6 +675,13 @@ void debug_stats(void) {
     }
 
     print_small_text_light(16, 210, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+}
+
+void demo_mode(void) {
+    if (!gDebugLevelSelect || gLVLToggle) return;
+    char textBytes[32];
+    sprintf(textBytes, "DEMO", gEmulator);
+    print_small_text_light((SCREEN_CENTER_X - 16), 220, textBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
 u8 sleepTimer = 0;
@@ -821,6 +828,7 @@ void render_hud(void) {
                 visualizer_display();
                 music_menu();
                 debug_stats();
+                demo_mode();
                 z64_draw();
                 sleep_draw();
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG

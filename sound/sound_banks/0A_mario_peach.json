@@ -127,6 +127,11 @@
             "release_rate": 208,
             "envelope": "envelope0",
             "sound": "16_peach_mario2"
+        },
+        "inst23": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "17_peach_help"
         }
     },
     "instrument_list": [
@@ -152,6 +157,7 @@
         "inst19",
         "inst20",
         "inst21",
-        "inst22"
+        "inst22",
+        "inst23"
     ]
 }

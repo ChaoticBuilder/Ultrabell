@@ -2095,6 +2095,7 @@ sound_ref .sound_peach_something_special
 sound_ref .sound_peach_bake_a_cake
 sound_ref .sound_peach_for_mario
 sound_ref .sound_peach_mario2
+sound_ref .sound_peach_help
 
 .sound_mario_jump_hoo:
 chan_setbank 8
@@ -2590,7 +2591,7 @@ layer_loop 50
 layer_call .layer_fn_EE1
 layer_loopend
 layer_setinstr 21
-layer_note1_mario 39, 0x44c, 127
+layer_note1_mario 39, 0x300, 127
 layer_jump .layer_ED1
 layer_end
 
@@ -2625,7 +2626,7 @@ layer_end
 
 .sound_peach_mario:
 chan_setbank 10
-chan_setinstr 16
+chan_setinstr 15
 chan_setlayer 0, .layer_F18
 chan_setlayer 1, .layer_F18
 chan_end
@@ -2636,7 +2637,7 @@ layer_end
 
 .sound_peach_power_of_the_stars:
 chan_setbank 10
-chan_setinstr 17
+chan_setinstr 16
 chan_setlayer 0, .layer_F27
 chan_setlayer 1, .layer_F27
 chan_end
@@ -2647,7 +2648,7 @@ layer_end
 
 .sound_peach_thanks_to_you:
 chan_setbank 10
-chan_setinstr 18
+chan_setinstr 17
 chan_setlayer 0, .layer_F37
 chan_setlayer 1, .layer_F37
 chan_end
@@ -2658,7 +2659,7 @@ layer_end
 
 .sound_peach_thank_you_mario:
 chan_setbank 10
-chan_setinstr 19
+chan_setinstr 18
 chan_setlayer 0, .layer_F47
 chan_setlayer 1, .layer_F47
 chan_end
@@ -2669,7 +2670,7 @@ layer_end
 
 .sound_peach_something_special:
 chan_setbank 10
-chan_setinstr 20
+chan_setinstr 19
 chan_setlayer 0, .layer_F56
 chan_setlayer 1, .layer_F56
 chan_end
@@ -2680,7 +2681,7 @@ layer_end
 
 .sound_peach_bake_a_cake:
 chan_setbank 10
-chan_setinstr 21
+chan_setinstr 20
 chan_setlayer 0, .layer_F66
 chan_setlayer 1, .layer_F66
 chan_end
@@ -2691,7 +2692,7 @@ layer_end
 
 .sound_peach_for_mario:
 chan_setbank 10
-chan_setinstr 22
+chan_setinstr 21
 chan_setlayer 0, .layer_F76
 chan_setlayer 1, .layer_F76
 chan_end
@@ -2702,7 +2703,7 @@ layer_end
 
 .sound_peach_mario2:
 chan_setbank 10
-chan_setinstr 23
+chan_setinstr 22
 chan_setval 20
 chan_call .set_reverb
 chan_setlayer 0, .layer_F8A
@@ -2713,17 +2714,15 @@ chan_end
 layer_note1 39, 0x50, 127
 layer_end
 
-#if defined(VERSION_EU) || defined(VERSION_SH)
-  .chan_unused_F9A_eu:
-  chan_setbank 8
-  chan_setinstr 0
-  chan_setlayer 0, .layer_FA2_eu
-  chan_end
-  
-  .layer_FA2_eu:
-  layer_delay 0x5
-  layer_end
-#endif
+.sound_peach_help:
+chan_setbank 10
+chan_setinstr 23
+chan_setlayer 0, .layer_FA2
+chan_end
+
+.layer_FA2:
+layer_note1 42, 0xc0, 127
+layer_end
 
 .channel38_table:
 sound_ref .sound_general_activate_cap_switch
@@ -3022,7 +3021,7 @@ chan_setlayer 0, .layer_1185
 chan_end
 
 .layer_1185:
-layer_note1 39, 0x40, 120
+layer_note1 39, 0x40, 255
 layer_end
 
 .sound_general_wall_explosion:
