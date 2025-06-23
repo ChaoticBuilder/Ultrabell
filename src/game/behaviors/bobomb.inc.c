@@ -70,11 +70,19 @@ void bobomb_act_patrol(void) {
     s16 collisionFlags = object_step();
     if (obj_return_home_if_safe(o, o->oHomeX, o->oHomeY, o->oHomeZ, 400)
      && obj_check_if_facing_toward_angle(o->oMoveAngleYaw, o->oAngleToMario, 0x2000)) {
+        o->oVelY = 32.0f;
+        o->oForwardVel = 0;
         o->oBobombFuseLit = TRUE;
-        o->oAction = BOBOMB_ACT_CHASE_MARIO;
+        o->oAction = BOBOMB_ACT_JUMP;
     }
 
     obj_check_floor_death(collisionFlags, sObjFloor);
+}
+
+void bobomb_act_jump(void) {
+    s16 collisionFlags = object_step();
+    if ((collisionFlags & OBJ_COL_FLAG_GROUNDED) == OBJ_COL_FLAG_GROUNDED) o->oAction = BOBOMB_ACT_CHASE_MARIO;
+    o->oMoveAngleYaw = o->oAngleToMario;
 }
 
 void bobomb_act_chase_mario(void) {
@@ -108,6 +116,10 @@ void generic_bobomb_free_loop(void) {
             bobomb_act_launched();
             break;
 
+        case BOBOMB_ACT_JUMP:
+            bobomb_act_jump();
+            break;
+
         case BOBOMB_ACT_CHASE_MARIO:
             bobomb_act_chase_mario();
             break;
@@ -131,7 +143,7 @@ void generic_bobomb_free_loop(void) {
     bobomb_check_interactions();
 
     if (o->oBobombFuseTimer > 180) {
-        o->oAction = 3;
+        o->oAction = BOBOMB_ACT_EXPLODE;
     }
 }
 
@@ -159,12 +171,8 @@ void stationary_bobomb_free_loop(void) {
 
     bobomb_check_interactions();
 
-    if (o->oBobombFuseTimer > 150) {
-        COND_BIT((o->oBobombFuseTimer & 0x1), o->header.gfx.node.flags, GRAPH_RENDER_INVISIBLE);
-    }
-
     if (o->oBobombFuseTimer > 180) {
-        o->oAction = 3;
+        o->oAction = BOBOMB_ACT_EXPLODE;
     }
 }
 
@@ -261,11 +269,7 @@ void bhv_bobomb_loop(void) {
         curr_obj_random_blink(&o->oBobombBlinkTimer);
 
         if (o->oBobombFuseLit) {
-            if (o->oBobombFuseTimer > 120) {
-                dustPeriodMinus1 = 1;
-            } else {
-                dustPeriodMinus1 = 7;
-            }
+            dustPeriodMinus1 = 3;
 
             // oBobombFuseTimer % 2 or oBobombFuseTimer % 8
             if (!(dustPeriodMinus1 & o->oBobombFuseTimer)) {
@@ -287,7 +291,7 @@ void bhv_bobomb_fuse_smoke_init(void) {
 }
 
 void bhv_bobomb_buddy_init(void) {
-    o->oGravity = 4.0f;
+    o->oGravity = 3.0f;
     o->oFriction = 0.8f;
     o->oBuoyancy = 1.3f;
     o->oInteractionSubtype = INT_SUBTYPE_NPC;
@@ -295,7 +299,7 @@ void bhv_bobomb_buddy_init(void) {
 
 void bobomb_buddy_act_idle(void) {
     s16 animFrame = o->header.gfx.animInfo.animFrame;
-    o->oForwardVel = 5.0f;
+    o->oForwardVel = 2.5f;
 
     // vec3f_copy(&o->oBobombBuddyPosCopyVec, &o->oPosVec);
 
@@ -305,11 +309,6 @@ void bobomb_buddy_act_idle(void) {
         cur_obj_play_sound_2(SOUND_OBJ_BOBOMB_WALK);
     }
 
-    /*
-    if (o->oDistanceToMario < 1000.0f) {
-        o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, o->oAngleToMario, 0x140);
-    }
-    */
     obj_return_home_if_safe(o, o->oHomeX, o->oHomeY, o->oHomeZ, 0);
 
     if (o->oInteractStatus == INT_STATUS_INTERACTED) {

@@ -436,7 +436,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
     }
     if (m->actionState < 9) {
         set_mario_animation(m, m->prevAction == ACT_STAR_DANCE_WATER ? MARIO_ANIM_WATER_IDLE
-                                                                     : MARIO_ANIM_IDLE_HEAD_LEFT);
+                                                                     : MARIO_ANIM_FIRST_PERSON);
         // m->actionTimer -= 1024;
     } else {
         // set Mario dialog
@@ -918,8 +918,8 @@ s32 act_entering_star_door(struct MarioState *m) {
         // targetDX and targetDZ are the offsets to add to Mario's position to
         // have Mario stand 150 units in front of the door
 
-        targetDX = m->usedObj->oPosX + 300.0f * sins(targetAngle) - m->pos[0];
-        targetDZ = m->usedObj->oPosZ + 300.0f * coss(targetAngle) - m->pos[2];
+        targetDX = m->usedObj->oPosX + 225.0f * sins(targetAngle) - m->pos[0];
+        targetDZ = m->usedObj->oPosZ + 225.0f * coss(targetAngle) - m->pos[2];
 
         m->marioObj->oMarioReadingSignDPosX = targetDX / 20.0f;
         m->marioObj->oMarioReadingSignDPosZ = targetDZ / 20.0f;
@@ -937,7 +937,7 @@ s32 act_entering_star_door(struct MarioState *m) {
         m->pos[0] += m->marioObj->oMarioReadingSignDPosX;
         m->pos[2] += m->marioObj->oMarioReadingSignDPosZ;
 
-        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00060000);
+        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00050000);
     }
 
     else {
@@ -947,15 +947,15 @@ s32 act_entering_star_door(struct MarioState *m) {
             m->faceAngle[1] += 0x8000;
         }
 
-        m->pos[0] += 24.0f * sins(m->faceAngle[1]);
-        m->pos[2] += 24.0f * coss(m->faceAngle[1]);
+        m->pos[0] += 18.0f * sins(m->faceAngle[1]);
+        m->pos[2] += 18.0f * coss(m->faceAngle[1]);
 
-        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00060000);
+        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00050000);
     }
 
     stop_and_set_height_to_floor(m);
 
-    if (m->actionTimer >= 45) {
+    if (m->actionTimer >= 48) {
         set_mario_action(m, ACT_IDLE, 0);
     }
 
@@ -1046,7 +1046,7 @@ s32 act_warp_door_spawn(struct MarioState *m) {
             set_mario_action(m, ACT_IDLE, 0);
         }
     }
-    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
+    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
     stop_and_set_height_to_floor(m);
     return FALSE;
 }

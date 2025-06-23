@@ -390,6 +390,7 @@ enum oBehParams2ndByteBobOmb {
 enum oActionsBobOmb {
     BOBOMB_ACT_PATROL,
     BOBOMB_ACT_LAUNCHED,
+    BOBOMB_ACT_JUMP,
     BOBOMB_ACT_CHASE_MARIO,
     BOBOMB_ACT_EXPLODE
 };

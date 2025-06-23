@@ -121,14 +121,9 @@ void check_ledge_climb_down(struct MarioState *m) {
     }
 }
 
-void slide_bonk(struct MarioState *m, u32 fastAction, u32 slowAction) {
-    if (m->forwardVel > 8.0f) {
-        mario_bonk_reflection(m, TRUE);
-        drop_and_set_mario_action(m, fastAction, 0);
-    } else {
-        mario_set_forward_vel(m, 0.0f);
-        set_mario_action(m, slowAction, 0);
-    }
+void slide_bonk(struct MarioState *m, u32 fastAction, UNUSED u32 slowAction) {
+    mario_bonk_reflection(m, TRUE);
+    drop_and_set_mario_action(m, fastAction, 0);
 }
 
 s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 actionArg) {
@@ -183,7 +178,7 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
     m->faceAngle[1] = m->slideYaw + newFacingDYaw;
 
     m->vel[0] = m->slideVelX;
-    m->vel[1] = (m->forwardVel / 2);
+    m->vel[1] = (m->forwardVel / 3);
     m->vel[2] = m->slideVelZ;
 
     mario_update_moving_sand(m);
@@ -191,10 +186,18 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
 
     //! Speed is capped a frame late (butt slide HSG)
     m->forwardVel = sqrtf(sqr(m->slideVelX) + sqr(m->slideVelZ));
-    if (m->forwardVel > 108.0f) {
+    if (m->forwardVel > 96.0f) {
         m->slideVelX /= 1.03f;
         m->slideVelZ /= 1.03f;
     }
+    // print_text_fmt_int(160, 16, "%d", m->forwardVel);
+
+    /*
+    if (m->forwardVel > 96.0f) {
+        m->slideVelX = m->slideVelX * 96.0f / m->forwardVel;
+        m->slideVelZ = m->slideVelZ * 96.0f / m->forwardVel;
+    }
+    */
 
     if (newFacingDYaw < -0x4000 || newFacingDYaw > 0x4000) {
         m->forwardVel *= -1.0f;
@@ -622,7 +625,9 @@ void anim_and_audio_for_hold_walk(struct MarioState *m) {
                 break;
 
             case HOLD_WALK_SPEED_WALKING:
-                if (intendedSpeed > 11.0f) {
+                if (intendedSpeed < 3.0f) {
+                    m->actionTimer = HOLD_WALK_SPEED_SLOW;
+                } else if (intendedSpeed > 11.0f) {
                     m->actionTimer = HOLD_WALK_SPEED_RUN;
                 } else {
                     //! (Speed Crash) Crashes if Mario's speed exceeds or equals 2^15.
@@ -1632,7 +1637,7 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
         play_mario_heavy_landing_sound_once(m, SOUND_ACTION_TERRAIN_BODY_HIT_GROUND);
     }
 
-    if (actionArg > 0) {
+    if (actionArg > 0 && m->actionTimer != 4) {
         play_sound_if_no_flag(m, SOUND_MARIO_ATTACKED, MARIO_MARIO_SOUND_PLAYED);
     } else {
         play_sound_if_no_flag(m, SOUND_MARIO_OOOF2, MARIO_MARIO_SOUND_PLAYED);
@@ -1655,6 +1660,7 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
     }
 
     if (perform_ground_step(m) == GROUND_STEP_LEFT_GROUND) {
+        if (actionArg == 4) return set_mario_action(m, ACT_IDLE, 0); // edge softlock bugfix
         if (m->forwardVel >= 0.0f) {
             m->forwardVel = -0.5f;
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 4);
@@ -1665,10 +1671,8 @@ s32 common_ground_knockback_action(struct MarioState *m, s32 animation, s32 chec
     } else if (is_anim_at_end(m)) {
         if (perform_ground_step(m) == GROUND_STEP_HIT_WALL) mario_bonk_reflection(m, TRUE);
         set_mario_action(m, ACT_IDLE, 0);
+        if (actionArg > 0 && m->actionTimer != 4) m->invincTimer = 30;
         m->forwardVel = 16.0f;
-        if (actionArg > 0 && actionArg != 4) {
-            m->invincTimer = 30;
-        }
     }
     
     return animFrame;

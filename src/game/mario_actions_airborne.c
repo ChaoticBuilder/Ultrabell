@@ -791,12 +791,10 @@ s32 act_twirling(struct MarioState *m) {
             break;
     }
 
-    if (m->actionArg < 2) {
-        if (auto_dive(m)) return TRUE;
+    if (auto_dive(m)) return TRUE;
 
-        if (m->input & INPUT_Z_PRESSED) {
-            return set_mario_action(m, ACT_GROUND_POUND, 0);
-        }
+    if (m->actionArg < 2 && m->input & INPUT_Z_PRESSED) {
+        return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
 
     if (startTwirlYaw > m->twirlYaw) {
@@ -1295,9 +1293,8 @@ s32 act_backward_air_kb(struct MarioState *m) {
         return TRUE;
     }
 
-    (m->actionArg < 4)
-    ? (m->forwardVel = CLAMP(m->forwardVel, -32.0f, -8.0f))
-    : (m->forwardVel = CLAMP(m->forwardVel, -2.0f, 32.0f));
+    if (m->actionArg < 4) m->forwardVel = CLAMP(m->forwardVel, -24.0f, -8.0f);
+    else m->forwardVel = CLAMP(m->forwardVel, -2.0f, 24.0f);
 
     common_air_knockback_step(m, ACT_BACKWARD_GROUND_KB, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, m->forwardVel);
     return FALSE;
@@ -1308,9 +1305,8 @@ s32 act_forward_air_kb(struct MarioState *m) {
         return TRUE;
     }
 
-    (m->actionArg < 4)
-    ? (m->forwardVel = CLAMP(m->forwardVel, 8.0f, 32.0f))
-    : (m->forwardVel = CLAMP(m->forwardVel, -2.0f, 32.0f));
+    if (m->actionArg < 4) m->forwardVel = CLAMP(m->forwardVel, 8.0f, 24.0f);
+    else m->forwardVel = CLAMP(m->forwardVel, -2.0f, 24.0f);
 
     common_air_knockback_step(m, ACT_FORWARD_GROUND_KB, ACT_HARD_FORWARD_GROUND_KB, MARIO_ANIM_AIR_FORWARD_KB, m->forwardVel);
     return FALSE;
@@ -1925,11 +1921,12 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             lava_boost_on_wall(m);
             break;
     }
-    if (m->actionTimer == 0) m->particleFlags |= PARTICLE_FIRE;
+    if (m->actionTimer == 0) {
+        m->particleFlags |= PARTICLE_FIRE;
+        m->actionTimer++;
+    }
 
-    if (m->vel[1] > 8.0f) m->actionTimer++;
     if (m->vel[1] < 8.0f) m->actionTimer = 0;
-
     if (m->flags & MARIO_WING_CAP) m->actionArg = 1;
     switch (m->actionArg) {
         case 1:

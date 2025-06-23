@@ -769,16 +769,6 @@ s16 look_down_slopes(s16 camYaw) {
     return pitch;
 }
 
-/**
- * Look ahead to the left or right in the direction the player is facing
- * The calculation for pan[0] could be simplified to:
- *      yaw = -yaw;
- *      pan[0] = sins(sMarioCamState->faceAngle[1] + yaw) * sins(0xC00) * dist;
- * Perhaps, early in development, the pan used to be calculated for both the x and z directions
- *
- * Since this function only affects the camera's focus, Mario's movement direction isn't affected.
- */
-
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
 s16 find_in_bounds_yaw_wdw_bob_thi(Vec3f pos, Vec3f origin, s16 yaw) {
     switch (gCurrLevelArea) {
@@ -2190,7 +2180,6 @@ s16 update_default_camera(struct Camera *c) {
         dist = 50.f;
         vec3f_set_dist_and_angle(cPos, c->pos, dist, tempPitch, tempYaw);
     }
-    // sorry I misspoke in the previous comment in this section of code, I meant why would you not use this!!!
     vec3f_get_dist_and_angle(c->focus, c->pos, &dist, &tempPitch, &tempYaw);
     if (dist > zoomDist) {
         dist = zoomDist;
@@ -3691,9 +3680,6 @@ s32 find_c_buttons_pressed(u16 currentState, u16 buttonsPressed, u16 buttonsDown
     return currentState;
 }
 
-/**
- * Determine which icon to show on the HUD
- */
 /**
  * Check `pos` for collisions within `radius`, and update `pos`
  *

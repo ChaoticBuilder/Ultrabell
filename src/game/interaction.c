@@ -382,7 +382,7 @@ void mario_retrieve_cap(void) {
 u32 able_to_grab_object(struct MarioState *m, UNUSED struct Object *obj) {
     u32 action = m->action;
 
-    if (action == ACT_DIVE_SLIDE || action == ACT_DIVE || action == ACT_GRAPPLE_HOOKED) {
+    if (action == ACT_DIVE_SLIDE || action == ACT_DIVE) {
         if (!(obj->oInteractionSubtype & INT_SUBTYPE_GRABS_MARIO)) {
             return TRUE;
         }
