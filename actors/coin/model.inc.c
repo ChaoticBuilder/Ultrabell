@@ -488,55 +488,55 @@ ALIGNED8 static const Texture coin_seg3_texture_tilt_left[] = {
 /* YELLOW */
 
 ALIGNED8 static const Texture coin_yellow_front[] = {
-#include "actors/coin/coin_front.rgba16.inc.c"
+#include "actors/coin/coinyellow_front.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_yellow_tilt_right[] = {
-#include "actors/coin/coin_tilt_right.rgba16.inc.c"
+#include "actors/coin/coinyellow_tilt_right.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_yellow_side[] = {
-#include "actors/coin/coin_side.rgba16.inc.c"
+#include "actors/coin/coinyellow_side.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_yellow_tilt_left[] = {
-#include "actors/coin/coin_tilt_left.rgba16.inc.c"
+#include "actors/coin/coinyellow_tilt_left.rgba16.inc.c"
 };
 
 /* RED */
 
 ALIGNED8 static const Texture coin_red_front[] = {
-#include "actors/coin/redcoin_front.rgba16.inc.c"
+#include "actors/coin/coinred_front.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_red_tilt_right[] = {
-#include "actors/coin/redcoin_tilt_right.rgba16.inc.c"
+#include "actors/coin/coinred_tilt_right.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_red_side[] = {
-#include "actors/coin/redcoin_side.rgba16.inc.c"
+#include "actors/coin/coinred_side.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_red_tilt_left[] = {
-#include "actors/coin/redcoin_tilt_left.rgba16.inc.c"
+#include "actors/coin/coinred_tilt_left.rgba16.inc.c"
 };
 
 /* BLUE */
 
 ALIGNED8 static const Texture coin_blue_front[] = {
-#include "actors/coin/bluecoin_front.rgba16.inc.c"
+#include "actors/coin/coinblue_front.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_blue_tilt_right[] = {
-#include "actors/coin/bluecoin_tilt_right.rgba16.inc.c"
+#include "actors/coin/coinblue_tilt_right.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_blue_side[] = {
-#include "actors/coin/bluecoin_side.rgba16.inc.c"
+#include "actors/coin/coinblue_side.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture coin_blue_tilt_left[] = {
-#include "actors/coin/bluecoin_tilt_left.rgba16.inc.c"
+#include "actors/coin/coinblue_tilt_left.rgba16.inc.c"
 };
 #endif
 
