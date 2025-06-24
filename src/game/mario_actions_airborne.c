@@ -101,10 +101,11 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 }
 
 s32 auto_dive(struct MarioState *m) {
+    s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
     if (m->input & INPUT_B_PRESSED) {
         if (m->action == ACT_SIDE_FLIP) m->marioObj->header.gfx.angle[1] += 0x8000;
         if (gDiveToggle != 2) return set_mario_action(m, ACT_JUMP_KICK, 0);
-        return set_mario_action(m, m->controller->stickMag > 32.0f ? ACT_DIVE : ACT_JUMP_KICK, 0);
+        return set_mario_action(m, (ABS(intendedDYaw) < 0x4000 && m->input & INPUT_NONZERO_ANALOG) ? ACT_DIVE : ACT_JUMP_KICK, 0);
     }
     return FALSE;
 }

@@ -4,18 +4,17 @@
 #include <PR/ultratypes.h>
 #include <PR/gbi.h>
 
-#define HUD_TOP_Y (SCREEN_HEIGHT - 28) // 12px from top
+#define HUD_TOP_Y (SCREEN_HEIGHT - 28) /* 12px from top */
 #define HUD_BOTTOM_Y 9
 
-#define HUD_POWER_METER_X            (SCREEN_CENTER_X - 8)
+#define HUD_POWER_METER_X            42 /* Counts from the right edge*/
 #define HUD_POWER_METER_EMPHASIZED_Y (HUD_TOP_Y - 42)
 #define HUD_POWER_METER_Y            (HUD_TOP_Y - 9)
 #define HUD_POWER_METER_HIDDEN_Y     (HUD_TOP_Y + 55)
 
-#define HUD_STATS_X (SCREEN_CENTER_X + 48)
+#define HUD_STATS_X 56
 
-extern s32 gHudShakeX;
-extern s32 gHudShakeY;
+extern s16 gHudShakeX, gHudShakeY;
 extern u8 pitchInvert;
 extern u8 sleepTimer;
 

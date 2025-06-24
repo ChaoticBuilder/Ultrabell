@@ -4327,13 +4327,10 @@ void increment_shake_offset(s16 *offset, s16 increment) {
 void shake_camera_pitch(Vec3f pos, Vec3f focus) {
     f32 dist;
     s16 pitch, yaw;
-    s16 x = ((random_float() - 0.5) * 14);
-    s16 y = ((random_float() - 0.5) * 6);
 
     if (gLakituState.shakeMagnitude[0] | gLakituState.shakeMagnitude[1]) {
-        gHudShakeX = approach_s16(gHudShakeX, x, 7, 7);
-        gHudShakeY = approach_s16(gHudShakeY, y, 3, 3);
-        // I have no idea if this makes that much of a difference visually but
+        gHudShakeX = (random_float() - 0.5f) * 8.0f;
+        gHudShakeY = (random_float() - 0.5f) * 4.0f;
 
         vec3f_get_dist_and_angle(pos, focus, &dist, &pitch, &yaw);
         pitch += gLakituState.shakeMagnitude[0] * sins(gLakituState.shakePitchPhase);
@@ -4344,8 +4341,8 @@ void shake_camera_pitch(Vec3f pos, Vec3f focus) {
             gLakituState.shakePitchPhase = 0;
         }
     } else {
-        gHudShakeX = approach_s16(gHudShakeX, 0, 7, 7);
-        gHudShakeY = approach_s16(gHudShakeY, 0, 3, 3);
+        gHudShakeX = 0;
+        gHudShakeY = 0;
     }
 }
 
