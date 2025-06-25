@@ -349,7 +349,7 @@ s32 char_to_glyph_index(char c) {
     }
 
     if (c == '~') {
-        return GLYPH_ULTRABELL; // Imagine L being real
+        return GLYPH_ULTRABELL;
     }
 
     if (c == '^') {

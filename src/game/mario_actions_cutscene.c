@@ -436,7 +436,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
     }
     if (m->actionState < 9) {
         set_mario_animation(m, m->prevAction == ACT_STAR_DANCE_WATER ? MARIO_ANIM_WATER_IDLE
-                                                                     : MARIO_ANIM_FIRST_PERSON);
+                                                                     : MARIO_ANIM_IDLE_HEAD_LEFT);
         // m->actionTimer -= 1024;
     } else {
         // set Mario dialog
@@ -1032,7 +1032,7 @@ s32 act_warp_door_spawn(struct MarioState *m) {
             set_mario_action(m, ACT_IDLE, 0);
         }
     }
-    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
     stop_and_set_height_to_floor(m);
     return FALSE;
 }
@@ -1476,7 +1476,7 @@ s32 act_bbh_enter_jump(struct MarioState *m) {
 s32 act_teleport_fade_out(struct MarioState *m) {
     play_sound_if_no_flag(m, SOUND_ACTION_TELEPORT, MARIO_ACTION_SOUND_PLAYED);
     set_mario_animation(m, m->prevAction == ACT_CROUCHING ? MARIO_ANIM_CROUCHING
-                                                          : MARIO_ANIM_FIRST_PERSON);
+                                                          : MARIO_ANIM_IDLE_HEAD_LEFT);
 
 #if ENABLE_RUMBLE
     if (m->actionTimer == 0) {
@@ -1500,7 +1500,7 @@ s32 act_teleport_fade_out(struct MarioState *m) {
 
 s32 act_teleport_fade_in(struct MarioState *m) {
     play_sound_if_no_flag(m, SOUND_ACTION_TELEPORT, MARIO_ACTION_SOUND_PLAYED);
-    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_RIGHT);
 
 #if ENABLE_RUMBLE
     if (m->actionTimer == 0) {
@@ -1523,6 +1523,7 @@ s32 act_teleport_fade_in(struct MarioState *m) {
             set_mario_action(m, ACT_WATER_IDLE, 0);
         } else {
             set_mario_action(m, ACT_IDLE, 0);
+            m->actionState = 2;
         }
     }
 

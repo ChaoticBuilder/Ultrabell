@@ -12,7 +12,7 @@
 #define HUD_POWER_METER_Y            (HUD_TOP_Y - 9)
 #define HUD_POWER_METER_HIDDEN_Y     (HUD_TOP_Y + 55)
 
-#define HUD_STATS_X 56
+#define HUD_STATS_X 32
 
 extern s16 gHudShakeX, gHudShakeY;
 extern u8 pitchInvert;

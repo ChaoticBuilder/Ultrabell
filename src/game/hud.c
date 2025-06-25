@@ -204,8 +204,6 @@ void render_dl_power_meter(s16 numHealthWedges) {
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
 }
 
-u8 statHide = FALSE; // FIX LATER
-
 /**
  * Power meter animation called when there's less than 8 health segments
  * Checks its timer to later change into deemphasizing mode.
@@ -302,8 +300,6 @@ void render_hud_power_meter(void) {
     }
     render_dl_power_meter(shownHealthWedges);
     sPowerMeterVisibleTimer++;
-
-
 }
 
 #ifdef BREATH_METER
@@ -408,43 +404,39 @@ void render_hud_breath_meter(void) {
 }
 #endif
 
-u8 statOffset = 0;
-u8 statInc;
+u8 statX = 0;
 u16 hudStatsX;
-
+u8 addOffset = 0;
+u8 hurtShake = FALSE;
 void handle_stats(void) {
     u8 goal = (sPowerMeterHUD.animation == POWER_METER_DEEMPHASIZING ||
                sPowerMeterHUD.animation == POWER_METER_VISIBLE) ? 56 : 0;
-    u8 div = 6;
+    
+    /* Star / Coin power of 10 increase */
+    u8 addGoal = 0;
+    if ((gHudDisplay.stars | gHudDisplay.coins) >= 100) addGoal = 26;
+    else if ((gHudDisplay.stars | gHudDisplay.coins) >= 10) addGoal = 13;
+    if (addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 4);
 
-    if (goal > 0) div = 4;
-    u8 statInc = (div / 3) + ABS(((goal - statOffset) + 1) / div);
+    /* Power Meter offset calculation */
+    u8 div = (goal > 0) ? 6 : 4;
+    statX = approach_s16_symmetric(statX, goal, (div / 3 + ABS((goal - statX) + 1) / div));
+    hudStatsX = ABS(HUD_STATS_X) + statX + addOffset;
 
-    statOffset = approach_s16(statOffset, goal, statInc, statInc);
-    hudStatsX = ABS(HUD_STATS_X) + statOffset;
+    if (gMarioState->hurtCounter) hurtShake = TRUE;
+    else if (sPowerMeterHUD.animation == POWER_METER_EMPHASIZED && sPowerMeterVisibleTimer >= 20) hurtShake = FALSE;
 }
-
-u8 hurtShake = FALSE;
 
 /**
  * Renders the amount of lives Mario has.
  */
 void render_hud_mario_lives(void) {
-    if (gMarioState->hurtCounter != 0) hurtShake = TRUE;
-    else hurtShake = FALSE;
-
-    if (hurtShake == TRUE) {
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "ROLA!");
-    } else {
-        if (!gLuigiToggle) {
-            print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ","); // 'Mario' glyph
-        } else {
-            print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ";"); // 'Luigi' glyph
-        }
-
+    if (!hurtShake) {
+        if (!gLuigiToggle)  print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ","); // 'Mario' glyph
+        else                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ";"); // 'Luigi' glyph
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(31) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(47) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives);
-    }
+    } else print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "ROLA!");
 }
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
@@ -463,7 +455,7 @@ void render_debug_mode(void) {
  * Renders the amount of coins collected.
  */
 void render_hud_coins(void) {
-    if (statHide && gGlobalTimer % 3 == 0) return;
+    if (hurtShake && gGlobalTimer % 3 == 0) return;
     if (gHudDisplay.coins == 1996) {
         // Thank you-a so much for-a playing my game!
         print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "1996");
@@ -479,7 +471,7 @@ void render_hud_coins(void) {
  * Disables "X" glyph when Mario has 100 stars or more.
  */
 void render_hud_stars(void) {
-    if (statHide && gGlobalTimer % 3 == 0) return;
+    if (hurtShake && gGlobalTimer % 3 == 0) return;
     print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "^"); // 'Star' glyph
     print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
     print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.stars);

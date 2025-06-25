@@ -1730,14 +1730,11 @@ s32 act_lava_boost(struct MarioState *m) {
 }
 
 f32 SKspeed = 0;
-
+f32 inc;
 s32 act_slide_kick(struct MarioState *m) {
-    f32 inc = inc;
     f32 intendedDYaw = m->intendedMag * coss(m->intendedYaw - m->faceAngle[1]);
-    u8 offset = 0;
-
-    if (g95Toggle)
-        return set_mario_action(m, ACT_FREEFALL, 2);
+    
+    if (g95Toggle) return set_mario_action(m, ACT_FREEFALL, 2);
     if (gLuigiToggle) return set_mario_action(m, ACT_SHOT_FROM_CANNON, 0);
     
     if (m->actionTimer < 4 && m->actionArg != 2)
@@ -1750,19 +1747,17 @@ s32 act_slide_kick(struct MarioState *m) {
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_HOOHOO);
 
+    u8 offset = 0;
     if (m->actionArg == 0) {
         set_mario_anim_with_accel(m, MARIO_ANIM_HANDSTAND_JUMP, 0x20000);
-        (m->actionTimer <= 0)
-        ? (offset = 0x6C)
-        : (offset = 0x7F);
+        (m->actionTimer == 0) ? (offset = 0x6C) : (offset = 0x7F);
+
         if (m->marioObj->header.gfx.animInfo.animFrame >= 0x22) {
             set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
             offset = 0;
             m->actionArg = 3;
         }
-    } else {
-        offset = 0;
-    }
+    } else offset = 0;
 
     if (m->actionArg == 2) set_mario_animation(m, MARIO_ANIM_SLIDE_KICK);
 
@@ -1794,17 +1789,12 @@ s32 act_slide_kick(struct MarioState *m) {
     }
 
     update_air_without_turn(m);
-
     m->actionTimer++;
-
     switch (perform_air_step(m, 0)) {
         case AIR_STEP_NONE:
-            if (m->actionState == ACT_STATE_SLIDE_KICK_SLIDING) {
-                if (m->actionArg == 2) {
-                    m->marioObj->header.gfx.angle[0] = atan2s(m->forwardVel, -m->vel[1]);
-                    if (m->marioObj->header.gfx.angle[0] > 0x1800) m->marioObj->header.gfx.angle[0] = 0x1800;
-                }
-                
+            if (m->actionState == ACT_STATE_SLIDE_KICK_SLIDING && m->actionArg == 2) {
+                m->marioObj->header.gfx.angle[0] = atan2s(m->forwardVel, -m->vel[1]);
+                if (m->marioObj->header.gfx.angle[0] > 0x1800) m->marioObj->header.gfx.angle[0] = 0x1800;
             }
             break;
 
@@ -1836,7 +1826,6 @@ s32 act_slide_kick(struct MarioState *m) {
     }
 
     m->marioObj->header.gfx.pos[1] -= offset;
-
     return FALSE;
 }
 

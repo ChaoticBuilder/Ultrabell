@@ -416,11 +416,11 @@ ALIGNED8 static const Texture texture_hud_char_mario_head[] = {
 
 // l is real
 ALIGNED8 static const Texture texture_hud_char_luigi_head[] = {
-    #include "textures/segment2/segment2.05A40.rgba16.inc.c"
+#include "textures/segment2/segment2.05A40.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_ultrabell[] = {
-    #include "textures/segment2/segment2.05A80.rgba16.inc.c"
+#include "textures/segment2/segment2.05A80.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_star[] = {
