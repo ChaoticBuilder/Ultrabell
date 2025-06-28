@@ -7,7 +7,7 @@
 /**
  * Do not restart the music on cap grabs.
  */
-#define PERSISTENT_CAP_MUSIC
+// #define PERSISTENT_CAP_MUSIC
 
 /**
  * Red coins should use the unchanging JP sound effect.

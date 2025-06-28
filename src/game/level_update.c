@@ -962,6 +962,15 @@ void update_hud_values(void) {
             }
         }
 
+#if defined(ENABLE_LIVES) && !defined(X_COIN_STAR)
+        if (gHudDisplay.coins >= 100 && gMarioState->numCoins != 1996) {
+            gMarioState->numLives++;
+            play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
+            gMarioState->numCoins -= 100;
+            gHudDisplay.coins -= 100;
+        }
+#endif
+
 #ifdef ENABLE_LIVES
         if (gMarioState->numLives > MAX_NUM_LIVES) {
             gMarioState->numLives = MAX_NUM_LIVES;

@@ -807,15 +807,14 @@ s32 act_unlocking_key_door(struct MarioState *m) {
         set_mario_animation(m, MARIO_ANIM_UNLOCK_DOOR);
     }
     if (m->actionTimer == 135) set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
-    if (m->actionTimer >= 136) {
+    if (m->actionTimer > 135) {
         if (m->actionTimer < 142) {
             m->faceAngle[1] -= DEGREES(15);
         } else if (m->actionTimer < 148) {
-            set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 0x00050000);
+            set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 0x00010000);
             m->pos[0] += 12.0f * sins(m->faceAngle[1]);
             m->pos[2] += 12.0f * coss(m->faceAngle[1]);
         } else if (m->actionTimer <= 153) {
-            set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
             m->faceAngle[1] += DEGREES(15);
         }
     }
@@ -836,11 +835,9 @@ s32 act_unlocking_key_door(struct MarioState *m) {
         if (GET_BPARAM1(m->usedObj->oBehParams) == KEY_DOOR_BP1_UPSTAIRS) {
             save_file_set_flags(SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR);
             save_file_clear_flags(SAVE_FLAG_HAVE_KEY_2);
-            m->numKeys--;
         } else {
             save_file_set_flags(SAVE_FLAG_UNLOCKED_BASEMENT_DOOR);
             save_file_clear_flags(SAVE_FLAG_HAVE_KEY_1);
-            m->numKeys--;
         }
         set_mario_action(m, ACT_WALKING, 0);
     }
