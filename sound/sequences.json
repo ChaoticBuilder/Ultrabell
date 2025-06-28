@@ -37,5 +37,6 @@
     "22_cutscene_lakitu": {"ifdef": ["VERSION_US", "VERSION_EU", "VERSION_SH"], "banks": ["1B"]},
 	"23_custom_desert": ["0F"],
     "24_custom_z64": ["11"],
-    "25_custom_athletic": ["26"]
+    "25_custom_athletic": ["26"],
+    "26_reverse_castle": ["27"]
 }

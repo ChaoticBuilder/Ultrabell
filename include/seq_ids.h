@@ -49,6 +49,7 @@ enum SeqId {
     SEQ_CUSTOM_DESERT,                // 0x23
     SEQ_CUSTOM_Z64,                   // 0x24
     SEQ_CUSTOM_ATHLETIC,              // 0x25
+    SEQ_REVERSE_CASTLE,               // 0x26
     SEQ_COUNT
 };
 

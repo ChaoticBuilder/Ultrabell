@@ -2756,7 +2756,7 @@ s32 mario_execute_cutscene_action(struct MarioState *m) {
         case ACT_DISAPPEARED:                cancel = act_disappeared(m);                break;
         case ACT_INTRO_CUTSCENE:             cancel = act_intro_cutscene(m);             break;
         case ACT_BETA_INTRO:                 cancel = act_beta_intro(m);                 break;
-        case ACT_STAR_DANCE_EXIT:            cancel = act_star_dance(m);                 break;
+        case ACT_STAR_DANCE_EXIT:
         case ACT_STAR_DANCE_NO_EXIT:         cancel = act_star_dance(m);                 break;
         case ACT_STAR_DANCE_WATER:           cancel = act_star_dance_water(m);           break;
         case ACT_FALL_AFTER_STAR_GRAB:       cancel = act_fall_after_star_grab(m);       break;

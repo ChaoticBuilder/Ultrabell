@@ -1384,9 +1384,9 @@ s32 act_burning_ground(struct MarioState *m) {
 
 void tilt_body_butt_slide(struct MarioState *m) {
     s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
-    f32 mag = DEGREES(30) * m->intendedMag / 32.0f;
+    s32 mag = DEGREES(30) * (s32)(m->intendedMag) / 32;
     // m->marioBodyState->torsoAngle[0] = (s32)(mag * coss(intendedDYaw));
-    m->marioBodyState->torsoAngle[2] = (s32)(-(mag * sins(intendedDYaw)));
+    m->marioBodyState->torsoAngle[2] = -(mag * sins(intendedDYaw));
 }
 
 void common_slide_action(struct MarioState *m, u32 endAction, u32 airAction, s32 animation) {

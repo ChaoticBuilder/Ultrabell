@@ -596,26 +596,6 @@ void unload_deactivated_objects(void) {
 }
 
 /**
- * Unused profiling function.
- */
-UNUSED static u16 unused_get_elapsed_time(u64 *cycleCounts, s32 index) {
-    u16 time;
-    f64 cycles;
-
-    cycles = cycleCounts[index] - cycleCounts[index - 1];
-    if (cycles < 0) {
-        cycles = 0;
-    }
-
-    time = (u16)(((u64) cycles * 1000000 / osClockRate) / 16667.0 * 1000.0);
-    if (time > 999) {
-        time = 999;
-    }
-
-    return time;
-}
-
-/**
  * Clear all floors tied to dynamic collision, as they become invalid once the dynamic
  * surfaces are cleared.
  * 

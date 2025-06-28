@@ -414,8 +414,8 @@ void handle_stats(void) {
     
     /* Star / Coin power of 10 increase */
     u8 addGoal = 0;
-    if ((gHudDisplay.stars | gHudDisplay.coins) >= 100) addGoal = 26;
-    else if ((gHudDisplay.stars | gHudDisplay.coins) >= 10) addGoal = 13;
+    if (ABS(gHudDisplay.stars | gHudDisplay.coins) >= 100) addGoal = 26;
+    else if (ABS(gHudDisplay.stars | gHudDisplay.coins) >= 10) addGoal = 13;
     if (addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 4);
 
     /* Power Meter offset calculation */
