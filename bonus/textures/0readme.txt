@@ -1,1 +1,0 @@
-I make all of the pixel art for the hack in the paid program Aseprite, so if you don't have it, then tough luck, go buy it :3

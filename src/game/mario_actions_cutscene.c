@@ -548,8 +548,8 @@ s32 act_debug_free_move(struct MarioState *m) {
         } else if (m->pos[1] <= m->floorHeight + 32) {
             return set_mario_action(m, ACT_IDLE, 0);
         } else {
-            m->vel[1] = 8.0f;
-            gPlayer1Controller->buttonDown &= ~U_JPAD;
+            m->vel[1] = 10.0f;
+            gPlayer1Controller->buttonDown &= ~D_JPAD;
             return set_mario_action(m, ACT_FREEFALL, 0);
         }
     }
@@ -1870,6 +1870,7 @@ static void intro_cutscene_lower_pipe(struct MarioState *m) {
 static void intro_cutscene_set_mario_to_idle(struct MarioState *m) {
     if (gCamera->cutscene == CUTSCENE_NONE) {
         gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
+        sound_reset();
         set_mario_action(m, ACT_IDLE, 0);
     }
 

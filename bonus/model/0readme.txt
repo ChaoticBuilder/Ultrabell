@@ -1,1 +1,0 @@
-I recommend opening these in blender 4.1, why? because fast64 crashes if you try to do like anything at all in later versions, so I made these in 4.1

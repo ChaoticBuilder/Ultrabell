@@ -1023,11 +1023,11 @@ void puppyprint_render_general_vars(void) {
             (s32)(gMarioState->pos[1]),
             (s32)(gMarioState->pos[2]),
             (u16)(gMarioState->faceAngle[1]),
-            (f32)(gMarioState->forwardVel),
-            (f32)(gMarioState->vel[1]),
+                  gMarioState->forwardVel,
+                  gMarioState->vel[1],
             (s32)(gMarioState->health),
             (u32)(gMarioState->action & ACT_ID_MASK),
-            (u32)(floorType),
+                  floorType,
             (s32)(gMarioState->waterLevel)
             );
         print_small_text_light(16, 36, textBytes, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
@@ -2062,7 +2062,7 @@ void render_multi_image(Texture *image, s32 x, s32 y, s32 width, s32 height, UNU
     num = 2;
     // Find the width mask
     while (TRUE) {
-        if ((s32) num == imW) {
+        if (num == imW) {
             break;
         }
         num *= 2;
@@ -2075,7 +2075,7 @@ void render_multi_image(Texture *image, s32 x, s32 y, s32 width, s32 height, UNU
     num = 2;
     // Find the height mask
     while (TRUE) {
-        if ((s32) num == imH) {
+        if (num == imH) {
             break;
         }
         num *= 2;

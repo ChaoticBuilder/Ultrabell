@@ -473,7 +473,7 @@ static void obj_die_if_health_non_positive(void) {
             spawn_mist_particles();
         }
 
-        if ((s32)o->oNumLootCoins < 0) {
+        if (o->oNumLootCoins < 0) {
             spawn_object(o, MODEL_BLUE_COIN, bhvMrIBlueCoin);
         } else {
             obj_spawn_loot_yellow_coins(o, o->oNumLootCoins, 20.0f);

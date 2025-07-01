@@ -73,6 +73,7 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
                 set_mario_action(m, endAction, 0);
             }
             break;
+            
         case ACT_ARG_PUNCH_SEQUENCE_GROUND_KICK:
             animFrame = set_mario_animation(m, MARIO_ANIM_GROUND_KICK);
             if (animFrame == 0) {

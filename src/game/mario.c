@@ -1767,7 +1767,7 @@ s32 execute_mario_action(UNUSED struct Object *obj) {
 #ifdef ENABLE_DEBUG_FREE_MOVE
         if (!gMusicToggle) {
             if (
-                (gMarioState->controller->buttonDown & U_JPAD) &&
+                (gMarioState->controller->buttonDown & D_JPAD) &&
                 !(gMarioState->controller->buttonDown & L_TRIG)
             ) {
                 set_camera_mode(gMarioState->area->camera, CAMERA_MODE_8_DIRECTIONS, 1);

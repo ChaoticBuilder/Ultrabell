@@ -1,5 +1,5 @@
 ---
-Checks: ',misc-*,altera-id-dependent-backward-branch,-misc-no-recursion,-clang-diagnostic-incompatible-library-redeclaration'
+Checks: '-*'
 WarningsAsErrors: ''
 HeaderFilterRegex: '(src|include|enhancements)\/.*\.h$'
 FormatStyle: 'file'

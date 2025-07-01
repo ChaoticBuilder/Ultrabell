@@ -514,7 +514,7 @@ void obj_return_and_displace_home(struct Object *obj, f32 homeX, UNUSED f32 home
 s32 obj_check_if_facing_toward_angle(u32 base, u32 goal, s16 range) {
     s16 dAngle = (u16) goal - (u16) base;
 
-    if (((f32) sins(-range) < (f32) sins(dAngle)) && ((f32) sins(dAngle) < (f32) sins(range))
+    if ((sins(-range) < sins(dAngle)) && (sins(dAngle) < (sins(range)))
         && (coss(dAngle) > 0)) {
         return TRUE;
     }

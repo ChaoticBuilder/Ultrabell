@@ -705,7 +705,7 @@ void geo_process_billboard(struct GraphNodeBillboard *node) {
  * parent node. It processes its children if it has them.
  */
 void geo_process_display_list(struct GraphNodeDisplayList *node) {
-    append_dl_and_return((struct GraphNodeDisplayList *)node);
+    append_dl_and_return(node);
 
     gMatStackIndex++;
 }
