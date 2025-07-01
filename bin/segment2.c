@@ -395,7 +395,7 @@ ALIGNED8 static const Texture texture_hud_char_minus[] = {
 };
 
 ALIGNED8 static const Texture texture_hud_char_multiply[] = {
-#include "textures/segment2/segment2.05600.custom.rgba16.inc.c"
+#include "textures/segment2/segment2.05600.rgba16.inc.c"
 };
 
 ALIGNED8 static const Texture texture_hud_char_coin[] = {

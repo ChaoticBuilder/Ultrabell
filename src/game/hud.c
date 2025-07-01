@@ -434,8 +434,8 @@ void render_hud_mario_lives(void) {
     if (!hurtShake) {
         if (!gLuigiToggle)  print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ","); // 'Mario' glyph
         else                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ";"); // 'Luigi' glyph
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(31) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(47) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives);
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(32) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(48) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives);
     } else print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "ROLA!");
 }
 

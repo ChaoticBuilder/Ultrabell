@@ -1034,8 +1034,6 @@ s32 act_ground_pound(struct MarioState *m) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
 
-    play_sound_if_no_flag(m, SOUND_MARIO_UH, MARIO_MARIO_SOUND_PLAYED);
-
     if (m->actionTimer < 10) {
         yOffset = 20 - 2 * m->actionTimer;
         if (m->pos[1] + yOffset + 160.0f < m->ceilHeight) {
@@ -1060,7 +1058,7 @@ s32 act_ground_pound(struct MarioState *m) {
                                                                        : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND);
     if (m->actionTimer == 0) {
         play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
-        play_sound(SOUND_MARIO_GROUND_POUND_WAH, m->marioObj->header.gfx.cameraToObject);
+        play_sound(SOUND_MARIO_UH, m->marioObj->header.gfx.cameraToObject);
 
         if (m->actionArg < 2) {
             (!g95Toggle)
