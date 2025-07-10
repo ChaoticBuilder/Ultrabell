@@ -517,7 +517,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if ((m->forwardVel > 24.0f) || (gLuigiToggle == TRUE && m->forwardVel >= 6.0f && !(m->flags & MARIO_METAL_CAP))) {
+    if (m->forwardVel > 16.0f && (!gLuigiToggle || (m->flags & MARIO_METAL_CAP))) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -550,7 +550,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                         m->actionTimer = WALK_SPEED_RUNNING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
-                        animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);
+                        animSpeed = (s32)(intendedSpeed * 0x4000);
                         set_mario_anim_with_accel(m, MARIO_ANIM_START_TIPTOE, animSpeed);
                         play_step_sound(m, 7, 22);
                         targetPitch = tilt_body_running(m);
@@ -583,7 +583,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                         m->actionTimer = WALK_SPEED_WALKING;
                     } else {
                         //! (Speed Crash) If Mario's speed is more than 2^17.
-                        animSpeed = (s32)(intendedSpeed / 4.0f * 0x10000);
+                        animSpeed = (s32)(intendedSpeed * 0x4000);
                         set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, animSpeed);
                         play_step_sound(m, 9, 45);
                         targetPitch = tilt_body_running(m);
@@ -769,12 +769,11 @@ s32 act_walking(struct MarioState *m) {
         return begin_braking_action(m);
     }
 
+    if (m->input & INPUT_Z_PRESSED) {
+        return set_mario_action(m, ACT_CROUCH_SLIDE, 0);
+    }
+
     if (m->input & INPUT_A_PRESSED) {
-#ifdef EASIER_LONG_JUMPS
-        if (m->input & INPUT_Z_PRESSED && m->forwardVel > 10.0f) {
-            return set_mario_action(m, ACT_CROUCH_SLIDE, 0);
-        }
-#endif
         return set_jump_from_landing(m);
     }
 
@@ -792,10 +791,6 @@ s32 act_walking(struct MarioState *m) {
     if (analog_stick_held_back(m) && m->forwardVel >= 16.0f) {
 #endif
         return set_mario_action(m, ACT_TURNING_AROUND, 0);
-    }
-
-    if (m->input & INPUT_Z_PRESSED) {
-        return set_mario_action(m, ACT_CROUCH_SLIDE, 0);
     }
 
     vec3f_copy(startPos, m->pos);
@@ -883,6 +878,10 @@ s32 act_hold_walking(struct MarioState *m) {
         return set_mario_action(m, ACT_HOLD_BEGIN_SLIDING, 0);
     }
 
+    if (m->input & INPUT_Z_PRESSED) {
+        return drop_and_set_mario_action(m, ACT_CROUCH_SLIDE, 0);
+    }
+
     if (m->input & INPUT_B_PRESSED) {
         return set_mario_action(m, ACT_THROWING, 0);
     }
@@ -893,10 +892,6 @@ s32 act_hold_walking(struct MarioState *m) {
 
     if (m->input & INPUT_IDLE) {
         return set_mario_action(m, ACT_HOLD_DECELERATING, 0);
-    }
-
-    if (m->input & INPUT_Z_PRESSED) {
-        return drop_and_set_mario_action(m, ACT_CROUCH_SLIDE, 0);
     }
 
     m->intendedMag *= 0.4f;
@@ -1144,7 +1139,7 @@ s32 act_decelerating(struct MarioState *m) {
         }
     } else {
         // (Speed Crash) Crashes if speed exceeds 2^17.
-        s32 animSpeed = (s32)(m->forwardVel / 4.0f * 0x10000);
+        s32 animSpeed = (s32)(m->forwardVel * 0x4000);
         if (animSpeed < 0x1000) {
             animSpeed = 0x1000;
         }

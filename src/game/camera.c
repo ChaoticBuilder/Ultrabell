@@ -4620,41 +4620,41 @@ void handle_c_button_movement(struct Camera *c) {
             }
         }
     }
-        // Zoom out
-        if (gPlayer1Controller->buttonPressed & D_CBUTTONS) {
-            if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
-                gCameraMovementFlags |= CAM_MOVE_ALREADY_ZOOMED_OUT;
-                sZoomAmount = gCameraZoomDist + 400.f;
-                play_camera_buzz_if_cdown();
-            } else {
-                gCameraMovementFlags |= CAM_MOVE_ZOOMED_OUT;
-                sZoomAmount = gCameraZoomDist + 400.f;
-                play_sound_cbutton_down();
-            }
+    // Zoom out
+    if (gPlayer1Controller->buttonPressed & D_CBUTTONS) {
+        if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
+            gCameraMovementFlags |= CAM_MOVE_ALREADY_ZOOMED_OUT;
+            sZoomAmount = gCameraZoomDist + 400.f;
+            play_camera_buzz_if_cdown();
+        } else {
+            gCameraMovementFlags |= CAM_MOVE_ZOOMED_OUT;
+            sZoomAmount = gCameraZoomDist + 400.f;
+            play_sound_cbutton_down();
         }
+    }
 
-        // Rotate left or right
-        cSideYaw = 0x1000;
-        if (gPlayer1Controller->buttonPressed & R_CBUTTONS) {
-            if (gCameraMovementFlags & CAM_MOVE_ROTATE_LEFT) {
-                gCameraMovementFlags &= ~CAM_MOVE_ROTATE_LEFT;
-            } else {
-                gCameraMovementFlags |= CAM_MOVE_ROTATE_RIGHT;
-                if (sCSideButtonYaw == 0) {
-                    play_sound_cbutton_side();
-                }
-                sCSideButtonYaw = -cSideYaw;
+    // Rotate left or right
+    cSideYaw = 0x1000;
+    if (gPlayer1Controller->buttonPressed & R_CBUTTONS) {
+        if (gCameraMovementFlags & CAM_MOVE_ROTATE_LEFT) {
+            gCameraMovementFlags &= ~CAM_MOVE_ROTATE_LEFT;
+        } else {
+            gCameraMovementFlags |= CAM_MOVE_ROTATE_RIGHT;
+            if (sCSideButtonYaw == 0) {
+                play_sound_cbutton_side();
             }
+            sCSideButtonYaw = -cSideYaw;
         }
-        if (gPlayer1Controller->buttonPressed & L_CBUTTONS) {
-            if (gCameraMovementFlags & CAM_MOVE_ROTATE_RIGHT) {
-                gCameraMovementFlags &= ~CAM_MOVE_ROTATE_RIGHT;
-            } else {
-                gCameraMovementFlags |= CAM_MOVE_ROTATE_LEFT;
-                if (sCSideButtonYaw == 0) {
-                    play_sound_cbutton_side();
-                }
-                sCSideButtonYaw = cSideYaw;
+    }
+    if (gPlayer1Controller->buttonPressed & L_CBUTTONS) {
+        if (gCameraMovementFlags & CAM_MOVE_ROTATE_RIGHT) {
+            gCameraMovementFlags &= ~CAM_MOVE_ROTATE_RIGHT;
+        } else {
+            gCameraMovementFlags |= CAM_MOVE_ROTATE_LEFT;
+            if (sCSideButtonYaw == 0) {
+                play_sound_cbutton_side();
+            }
+            sCSideButtonYaw = cSideYaw;
         }
     }
 }

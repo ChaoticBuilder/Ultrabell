@@ -8,10 +8,10 @@ enum MarioEyesGSCId {
     /*0x01*/ MARIO_EYES_OPEN,
     /*0x02*/ MARIO_EYES_HALF_CLOSED,
     /*0x03*/ MARIO_EYES_CLOSED,
-    /*0x04*/ MARIO_EYES_LOOK_LEFT,  // unused
-    /*0x05*/ MARIO_EYES_LOOK_RIGHT, // unused
-    /*0x06*/ MARIO_EYES_LOOK_UP,    // unused
-    /*0x07*/ MARIO_EYES_LOOK_DOWN,  // unused
+    /*0x04*/ MARIO_EYES_LOOK_LEFT,
+    /*0x05*/ MARIO_EYES_LOOK_RIGHT,
+    /*0x06*/ MARIO_EYES_LOOK_UP,
+    /*0x07*/ MARIO_EYES_LOOK_DOWN,
     /*0x08*/ MARIO_EYES_DEAD
 };
 

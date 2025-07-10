@@ -253,7 +253,7 @@ u16 sLevelAcousticReaches[LEVEL_COUNT] = {
 
 #define AUDIO_MAX_DISTANCE 22000.0f
 
-#define LOW_VOLUME_REVERB 40.0f
+#define LOW_VOLUME_REVERB 48.0f
 
 #ifdef VERSION_JP
 #define VOLUME_RANGE_UNK1 0.8f

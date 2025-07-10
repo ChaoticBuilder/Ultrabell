@@ -428,7 +428,7 @@ struct MarioState {
     /*0x9C*/ struct Controller *controller;
     /*0xA0*/ struct DmaHandlerList *animList;
     /*0xA4*/ u32 collidedObjInteractTypes;
-    /*0xA8*/ s16 numCoins;
+    /*0xA8*/ u8 numCoins;
     /*0xAA*/ s16 numStars;
     /*0xAC*/ s8 numKeys; // Unused key mechanic
     /*0xAD*/ s8 numLives;

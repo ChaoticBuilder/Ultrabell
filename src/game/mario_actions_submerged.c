@@ -448,20 +448,6 @@ static void reset_bob_variables(struct MarioState *m) {
     sBobHeight = m->faceAngle[0] / 256.0f + 20.0f;
 }
 
-/**
- * Controls the bobbing that happens when you swim near the surface.
- */
-static void surface_swim_bob(struct MarioState *m) {
-    if (sBobIncrement != 0 && m->pos[1] > m->waterLevel - 85 && m->faceAngle[0] >= 0) {
-        if ((sBobTimer += sBobIncrement) >= 0) {
-            m->marioObj->header.gfx.pos[1] += sBobHeight * sins(sBobTimer);
-            return;
-        }
-    }
-
-    sBobIncrement = 0;
-}
-
 static void common_swimming_step(struct MarioState *m, s16 swimStrength) {
     s16 floorPitch;
     update_swimming_yaw(m, FALSE);
@@ -502,7 +488,6 @@ static void common_swimming_step(struct MarioState *m, s16 swimStrength) {
     update_water_pitch(m);
     m->marioBodyState->headAngle[0] = approach_s32(m->marioBodyState->headAngle[0], 0, 0x200, 0x200);
 
-    surface_swim_bob(m);
     set_swimming_at_surface_particles(m, PARTICLE_WAVE_TRAIL);
 }
 

@@ -740,7 +740,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
     switch (action) {
         case ACT_DOUBLE_JUMP:
-            set_mario_y_vel_based_on_fspeed(m, 62.0f, 0.25f);
+            set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.25f);
             if (g95Toggle) set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f);
             if (gRealToggle) set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
             m->forwardVel *= 0.875f;
@@ -762,7 +762,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_FLYING_TRIPLE_JUMP:
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
             break;
 
         case ACT_WATER_JUMP:
@@ -770,21 +770,21 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             if (actionArg == 0) {
                 (!gRealToggle)
                 ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-                : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+                : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
             }
             break;
 
         case ACT_BURNING_JUMP:
             (!gRealToggle)
             ? (m->vel[1] = 42.0f)
-            : (m->vel[1] = 28.0f);
+            : (m->vel[1] = 30.0f);
             m->forwardVel = 32.0f;
             break;
 
         case ACT_RIDING_SHELL_JUMP:
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
             break;
 
         case ACT_JUMP:
@@ -792,7 +792,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;
 
@@ -826,12 +826,12 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
             m->faceAngle[0] = -0x2000;
             break;
 
         case ACT_LAVA_BOOST:
-            (!g95Toggle) ? (m->vel[1] = 76.0f) : (m->vel[1] = 60.0f);
+            m->vel[1] = 80.0f;
             break;
 
         case ACT_DIVE:
@@ -1482,8 +1482,8 @@ void update_mario_health(struct MarioState *m) {
                         m->health -= (terrainIsSnow ? 3 : 1);
                     }
 #endif
-                } else if (g95Toggle && !gRealToggle && gGlobalTimer % 120 == 0) {
-                    m->healCounter++;
+                } else if (g95Toggle && !gRealToggle && gGlobalTimer % 2 == 0) {
+                    m->health++;
                 }
             }
         }

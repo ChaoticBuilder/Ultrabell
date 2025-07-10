@@ -424,7 +424,7 @@ void handle_stats(void) {
     hudStatsX = ABS(HUD_STATS_X) + statX + addOffset;
 
     if (gMarioState->hurtCounter) hurtShake = TRUE;
-    else if (sPowerMeterHUD.animation == POWER_METER_EMPHASIZED && sPowerMeterVisibleTimer >= 20) hurtShake = FALSE;
+    else if (sPowerMeterHUD.animation > POWER_METER_EMPHASIZED) hurtShake = FALSE;
 }
 
 /**
@@ -456,7 +456,7 @@ void render_debug_mode(void) {
  */
 void render_hud_coins(void) {
     if (hurtShake && gGlobalTimer % 3 == 0) return;
-    if (gHudDisplay.coins == 1996) {
+    if (gMarioState->numLives == MAX_NUM_LIVES) {
         // Thank you-a so much for-a playing my game!
         print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "1996");
     } else {

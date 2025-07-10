@@ -65,9 +65,9 @@
     },
     "instruments": {
         "inst0": {
-            "release_rate": 34,
+            "release_rate": 24,
             "envelope": "envelope0",
-            "sound": "1A_slap_bass"
+            "sound": "1D"
         },
         "inst1": {
             "release_rate": 208,
@@ -86,7 +86,7 @@
         "inst3": {
             "release_rate": 16,
             "envelope": "envelope3",
-            "sound": "26_crystal_rhodes"
+            "sound": "3C_acoustic_guitar"
         },
         "inst4": {
             "release_rate": 114,
@@ -96,7 +96,7 @@
         "inst5": {
             "release_rate": 48,
             "envelope": "envelope5",
-            "sound": "26_crystal_rhodes"
+            "sound": "3C_acoustic_guitar"
         },
         "inst6": {
             "release_rate": 208,

@@ -3082,20 +3082,35 @@ chan_setvibratoextent 12
 chan_setval 25
 chan_call .set_reverb
 chan_setlayer 0, .layer_1242
-chan_setlayer 1, .layer_1254
 chan_setval 1
+chan_call .delay
+chan_setbank 4
+chan_setinstr 6
+chan_setval 1
+chan_call .delay
+chan_setbank 9
+chan_setinstr 3
+chan_setenvelope .envelope_3358
+chan_setval 9
+chan_call .delay
+chan_setbank 4
+chan_setinstr 6
+chan_setval 3
+chan_call .delay
+chan_setbank 9
+chan_setinstr 3
+chan_setenvelope .envelope_3358
+chan_setval 6
+chan_call .delay
+chan_setbank 4
+chan_setinstr 6
+chan_setval 49
 chan_call .delay
 chan_setvibratoextent 0xff
 chan_end
 
 .layer_1242:
-layer_delay 1
-layer_setinstr 6
-layer_transpose 22
-layer_note1 39, 0xa, 55
-layer_note1 39, 0x9, 60
-layer_note1 39, 0x8, 65
-layer_delay 0x29
+layer_note1 39, 0x4E, 127
 layer_end
 
 .layer_1254:

@@ -113,7 +113,7 @@ extern u8 introz64;
 
 struct HudDisplay {
     /*0x00*/ s16 lives;
-    /*0x02*/ s16 coins;
+    /*0x02*/ u8 coins;
     /*0x04*/ s16 stars;
     /*0x06*/ s16 wedges;
     /*0x08*/ s16 keys;

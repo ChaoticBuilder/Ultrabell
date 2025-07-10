@@ -745,7 +745,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 break;
 
             case WARP_OP_STAR_EXIT:
-                sDelayedWarpTimer = 0x20;
+                sDelayedWarpTimer = 0x28;
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
                 gSavedCourseNum = COURSE_NONE;
                 play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0xFF, 0xFF, 0xC5);
@@ -757,7 +757,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                     sDelayedWarpOp = WARP_OP_GAME_OVER;
                 }
 #endif
-                sDelayedWarpTimer = 0x20;
+                sDelayedWarpTimer = 0x28;
                 sSourceWarpNodeId = WARP_NODE_DEATH;
                 play_transition(WARP_TRANSITION_FADE_INTO_BOWSER, sDelayedWarpTimer, 0x42, 0x00, 0x08);
                 play_sound(SOUND_MENU_BOWSER_LAUGH, gGlobalSoundSource);
@@ -961,7 +961,7 @@ void update_hud_values(void) {
         }
 
 #if defined(ENABLE_LIVES) && !defined(X_COIN_STAR)
-        if (gHudDisplay.coins >= 100 && gMarioState->numCoins != 1996) {
+        if (gHudDisplay.coins >= 100) {
             gMarioState->numLives++;
             play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
             gMarioState->numCoins -= 100;
@@ -973,20 +973,7 @@ void update_hud_values(void) {
         if (gMarioState->numLives > MAX_NUM_LIVES) {
             gMarioState->numLives = MAX_NUM_LIVES;
         }
-        if (gMarioState->numLives == MAX_NUM_LIVES) {
-            gMarioState->numCoins = 1996;
-            gHudDisplay.coins = 1996;
-        }
 #endif
-
-        if (gMarioState->numCoins > MAX_NUM_COINS) {
-            gMarioState->numCoins = MAX_NUM_COINS;
-        }
-
-        if (gHudDisplay.coins > MAX_NUM_COINS) {
-            gHudDisplay.coins = MAX_NUM_COINS;
-        }
-
         gHudDisplay.stars = gMarioState->numStars;
         gHudDisplay.lives = gMarioState->numLives;
         gHudDisplay.keys = gMarioState->numKeys;

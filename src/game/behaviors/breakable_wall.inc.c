@@ -1,7 +1,7 @@
 // breakable_wall.inc.c
 
 void bhv_wf_breakable_wall_loop(void) {
-    if (gMarioState->action == ACT_SHOT_FROM_CANNON) {
+    if (gMarioState->action == ACT_SHOT_FROM_CANNON || gMarioState->action == ACT_FLYING) {
         cur_obj_become_tangible();
 
         if (obj_check_if_collided_with_object(o, gMarioObject)) {

@@ -532,7 +532,6 @@ s32 act_crouching(struct MarioState *m) {
     if (m->input & INPUT_NONZERO_ANALOG) {
         return set_mario_action(m, ACT_START_CRAWLING, 0);
     }
-
     
     if (m->input & INPUT_B_PRESSED) {
         if (!g95Toggle) {
@@ -548,7 +547,7 @@ s32 act_crouching(struct MarioState *m) {
 }
 
 s32 act_panting(struct MarioState *m) {
-    if (!g95Toggle && gGlobalTimer % 60 == 0) m->healCounter++;
+    if (!g95Toggle) m->health++;
     if (m->input & INPUT_STOMPED) {
         return set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }
