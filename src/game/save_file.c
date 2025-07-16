@@ -489,22 +489,16 @@ void save_file_collect_star_or_key(s16 coinScore, s16 starIndex) {
                 save_file_set_flags(SAVE_FLAG_HAVE_KEY_2);
             }
             break;
-
-        case LEVEL_BOWSER_3:
-            break;
-
-        default:
-#ifdef GLOBAL_STAR_IDS
-            if (!(save_file_get_star_flags(fileIndex, starByte) & starFlag)) {
-                save_file_set_star_flags(fileIndex, starByte, starFlag);
-            }
-#else
-            if (!(save_file_get_star_flags(fileIndex, courseIndex) & starFlag)) {
-                save_file_set_star_flags(fileIndex, courseIndex, starFlag);
-            }
-#endif
-            break;
     }
+#ifdef GLOBAL_STAR_IDS
+    if (!(save_file_get_star_flags(fileIndex, starByte) & starFlag)) {
+        save_file_set_star_flags(fileIndex, starByte, starFlag);
+    }
+#else
+    if (!(save_file_get_star_flags(fileIndex, courseIndex) & starFlag)) {
+        save_file_set_star_flags(fileIndex, courseIndex, starFlag);
+    }
+#endif
 }
 
 s32 save_file_exists(s32 fileIndex) {

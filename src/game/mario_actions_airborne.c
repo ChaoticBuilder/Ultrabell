@@ -66,7 +66,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     f32 damageHeight = FALL_DAMAGE_HEIGHT_SMALL;
     f32 damageHeightLarge = FALL_DAMAGE_HEIGHT_LARGE;
 
-    if (gLuigiToggle) {
+    if (gLuigiToggle && !gRealToggle) {
         damageHeight += 384.0f;
         damageHeightLarge += 768.0f;
     }
@@ -385,7 +385,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
-            if (gLuigiToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
+            if (gLuigiToggle && !gRealToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
             (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
                 set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000);
             } else {

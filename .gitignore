@@ -1106,11 +1106,9 @@ sound/samples/sfx_mario_peach/13_peach_something_special.aiff
 sound/samples/sfx_mario_peach/14_peach_bake_a_cake.aiff
 sound/samples/sfx_mario_peach/15_peach_for_mario.aiff
 sound/samples/sfx_mario_peach/16_peach_mario2.aiff
-sound/samples/sfx_terrain/00_step_default.aiff
 sound/samples/sfx_terrain/01_step_grass.aiff
 sound/samples/sfx_terrain/02_step_stone.aiff
 sound/samples/sfx_terrain/03_step_spooky.aiff
-sound/samples/sfx_terrain/04_step_snow.aiff
 sound/samples/sfx_terrain/05_step_ice.aiff
 sound/samples/sfx_terrain/06_step_metal.aiff
 sound/samples/sfx_terrain/07_step_sand.aiff

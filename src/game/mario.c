@@ -429,20 +429,20 @@ s32 mario_get_floor_class(struct MarioState *m) {
 s8 sTerrainSounds[7][6] = {
     // default,              hard,                  slippery,
     // very slippery,        noisy default,         noisy slippery
-    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_STONE,   SOUND_TERRAIN_DEFAULT,
-      SOUND_TERRAIN_STONE,   SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT }, // TERRAIN_GRASS
-    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_STONE,
-      SOUND_TERRAIN_ICE,     SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT }, // TERRAIN_STONE
-    { SOUND_TERRAIN_SNOW,    SOUND_TERRAIN_DEFAULT,     SOUND_TERRAIN_SNOW,
-      SOUND_TERRAIN_ICE,     SOUND_TERRAIN_STONE,   SOUND_TERRAIN_STONE }, // TERRAIN_SNOW
+    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT,
+      SOUND_TERRAIN_GRASS,   SOUND_TERRAIN_STONE,   SOUND_TERRAIN_STONE }, // TERRAIN_GRASS
+    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT,
+      SOUND_TERRAIN_STONE,   SOUND_TERRAIN_GRASS,   SOUND_TERRAIN_GRASS }, // TERRAIN_STONE
+    { SOUND_TERRAIN_SNOW,    SOUND_TERRAIN_STONE,   SOUND_TERRAIN_SNOW,
+      SOUND_TERRAIN_ICE,     SOUND_TERRAIN_SAND,    SOUND_TERRAIN_ICE },   // TERRAIN_SNOW
     { SOUND_TERRAIN_SAND,    SOUND_TERRAIN_STONE,   SOUND_TERRAIN_SAND,
       SOUND_TERRAIN_SAND,    SOUND_TERRAIN_STONE,   SOUND_TERRAIN_STONE }, // TERRAIN_SAND
     { SOUND_TERRAIN_SPOOKY,  SOUND_TERRAIN_SPOOKY,  SOUND_TERRAIN_SPOOKY,
       SOUND_TERRAIN_SPOOKY,  SOUND_TERRAIN_STONE,   SOUND_TERRAIN_STONE }, // TERRAIN_SPOOKY
-    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_STONE,   SOUND_TERRAIN_DEFAULT,
-      SOUND_TERRAIN_ICE,     SOUND_TERRAIN_STONE,   SOUND_TERRAIN_ICE }, // TERRAIN_WATER
-    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_STONE,   SOUND_TERRAIN_DEFAULT,
-      SOUND_TERRAIN_STONE,   SOUND_TERRAIN_ICE,     SOUND_TERRAIN_ICE }, // TERRAIN_SLIDE
+    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_STONE,   SOUND_TERRAIN_STONE,
+      SOUND_TERRAIN_ICE,     SOUND_TERRAIN_STONE,   SOUND_TERRAIN_ICE },   // TERRAIN_WATER
+    { SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_DEFAULT,
+      SOUND_TERRAIN_STONE,   SOUND_TERRAIN_STONE,   SOUND_TERRAIN_STONE }, // TERRAIN_SLIDE
 };
 // clang-format on
 
@@ -742,7 +742,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_DOUBLE_JUMP:
             set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.25f);
             if (g95Toggle) set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f);
-            if (gRealToggle) set_mario_y_vel_based_on_fspeed(m, 28.0f, 0.0f);
+            if (gRealToggle) set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;
 
@@ -762,7 +762,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_FLYING_TRIPLE_JUMP:
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             break;
 
         case ACT_WATER_JUMP:
@@ -770,21 +770,21 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             if (actionArg == 0) {
                 (!gRealToggle)
                 ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-                : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+                : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             }
             break;
 
         case ACT_BURNING_JUMP:
             (!gRealToggle)
             ? (m->vel[1] = 42.0f)
-            : (m->vel[1] = 30.0f);
+            : (m->vel[1] = 32.0f);
             m->forwardVel = 32.0f;
             break;
 
         case ACT_RIDING_SHELL_JUMP:
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             break;
 
         case ACT_JUMP:
@@ -792,7 +792,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;
 
@@ -826,7 +826,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             m->faceAngle[0] = -0x2000;
             break;
 

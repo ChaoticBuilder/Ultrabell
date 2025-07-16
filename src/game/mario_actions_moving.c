@@ -223,22 +223,22 @@ s32 update_sliding(struct MarioState *m, f32 stopSpeed) {
 
     switch (mario_get_floor_class(m)) {
         case SURFACE_CLASS_VERY_SLIPPERY:
-            accel = 15.0f;
+            accel = 10.0f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.98f;
             break;
 
         case SURFACE_CLASS_SLIPPERY:
-            accel = 12.0f;
+            accel = 8.0f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.96f;
             break;
 
         default:
-            accel = 10.5f;
+            accel = 7.0f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
             break;
 
         case SURFACE_CLASS_NOT_SLIPPERY:
-            accel = 7.5f;
+            accel = 5.0f;
             lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
             break;
     }
@@ -412,7 +412,7 @@ s32 apply_slope_decel(struct MarioState *m, f32 decelCoef) {
 s32 update_decelerating_speed(struct MarioState *m) {
     s32 stopped = FALSE;
 
-    if ((m->forwardVel = approach_f32(m->forwardVel, 0.0f, 1.0f, 1.0f)) == 0.0f) {
+    if ((m->forwardVel = approach_f32(m->forwardVel, 0.0f, 2.0f, 2.0f)) == 0.0f) {
         stopped = TRUE;
     }
 
@@ -517,7 +517,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if (m->forwardVel > 16.0f && (!gLuigiToggle || (m->flags & MARIO_METAL_CAP))) {
+    if (m->forwardVel > 20.0f || (gLuigiToggle && !(m->flags & MARIO_METAL_CAP))) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 

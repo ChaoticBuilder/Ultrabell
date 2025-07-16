@@ -124,13 +124,7 @@ void bhv_bowser_body_anchor_loop(void) {
     // If Bowser is dead, set interaction type to text
     // so that he can be ready to speak his dialog
     if (o->parentObj->oAction == BOWSER_ACT_DEAD) {
-        // Clear interaction type at the last sub action in BitS
-        // Fixes collision coliding after defeating him
-        if (o->parentObj->oSubAction == BOWSER_SUB_ACT_DEAD_FINAL_END_OVER) {
-            o->oInteractType = 0;
-        } else {
-            o->oInteractType = INTERACT_TEXT;
-        }
+        cur_obj_become_intangible();
     } else {
         // Do damage if Mario touches Bowser
         o->oInteractType = INTERACT_DAMAGE;
@@ -952,6 +946,7 @@ void bowser_act_thrown(void) {
         if (o->oMoveFlags & OBJ_MOVE_ON_GROUND) {
             o->oForwardVel = 0.0f;
             o->oSubAction++; // stops this current subaction
+            cur_obj_play_sound_2(SOUND_OBJ_BOWSER_TAIL_PICKUP);
         }
     // Stand up and after play, set to default act
     } else if (cur_obj_init_animation_and_check_if_near_end(BOWSER_ANIM_STAND_UP)) {
@@ -997,7 +992,7 @@ void bowser_act_jump_onto_stage(void) {
             if (o->oTimer == 0) {
                 o->oFaceAnglePitch = 0;
                 o->oFaceAngleRoll = 0;
-            } //? missing else
+            } else if (o->oTimer == 5) cur_obj_play_sound_2(SOUND_OBJ2_BOWSER_ROAR);
             o->oFaceAnglePitch += 0x800;
             o->oFaceAngleRoll += 0x800;
             if (!(o->oFaceAnglePitch & 0xFFFF)) {
@@ -1093,11 +1088,10 @@ void bowser_act_dance(void) {
  * Spawns a Key in BitDW/BitFS or Grand Star in BitS
  */
 void bowser_spawn_collectable(void) {
+    obj_spawn_loot_yellow_coins(o, 20, 0.0f);
     if (o->oBehParams2ndByte == BOWSER_BP_BITS) {
-        obj_spawn_loot_yellow_coins(o, 16, 16.0f);
         gSecondCameraFocus = spawn_object(o, MODEL_STAR, bhvGrandStar);
     } else {
-        obj_spawn_loot_yellow_coins(o, 16, 16.0f);
         gSecondCameraFocus = spawn_object(o, MODEL_BOWSER_KEY, bhvBowserKey);
         cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_KEY);
     }
@@ -1111,12 +1105,11 @@ void bowser_fly_back_dead(void) {
     cur_obj_init_animation_with_sound(BOWSER_ANIM_FLIP_DOWN);
     // More knockback in BitS
     if (o->oBehParams2ndByte == BOWSER_BP_BITS) {
-        o->oForwardVel = -400.0f;
-    } else {
         o->oForwardVel = -200.0f;
+    } else {
+        o->oForwardVel = -100.0f;
     }
     o->oVelY = 100.0f;
-    o->oMoveAngleYaw = o->oBowserAngleToCenter + 0x8000;
     o->oBowserTimer = 0;
     o->oSubAction++; // BOWSER_SUB_ACT_DEAD_BOUNCE
 }
@@ -1125,7 +1118,6 @@ void bowser_fly_back_dead(void) {
  * Plays bounce effects after landing upside down
  */
 void bowser_dead_bounce(void) {
-    o->oBowserEyesShut = TRUE; // close eyes
     bowser_bounce_effects(&o->oBowserTimer);
     if (o->oMoveFlags & OBJ_MOVE_LANDED) {
         cur_obj_play_sound_2(SOUND_OBJ_BOWSER_WALK);
@@ -1137,27 +1129,13 @@ void bowser_dead_bounce(void) {
 }
 
 /**
- * Wait for Mario to get close while Bowser is defeated
- * Returns TRUE if he is close enough
- */
-s32 bowser_dead_wait_for_mario(void) {
-    s32 ret = FALSE;
-    cur_obj_become_intangible();
-    if (cur_obj_init_animation_and_check_if_near_end(BOWSER_ANIM_LAY_DOWN) && o->oDistanceToMario < 700.0f
-        && abs_angle_diff(gMarioObject->oMoveAngleYaw, o->oAngleToMario) > 0x6000) {
-        ret = TRUE;
-    }
-    cur_obj_extend_animation_if_at_end();
-    o->oBowserTimer = 0;
-    return ret;
-}
-
-/**
  * Makes Bowser twirl up by changing his scale
  * Returns TRUE once done
  */
 s32 bowser_dead_twirl_up(void) {
     s32 ret = FALSE;
+
+    o->oBowserEyesShut = TRUE;
 
     // Set angle rotation once he has low X scale value
     if (o->header.gfx.scale[0] < 0.8f) {
@@ -1192,6 +1170,7 @@ s32 bowser_dead_twirl_up(void) {
  */
 void bowser_dead_hide(void) {
     cur_obj_scale(0);
+    cur_obj_become_intangible();
     o->oForwardVel = 0;
     o->oVelY = 0;
     o->oGravity = 0;
@@ -1207,19 +1186,9 @@ s16 sBowserDefeatedDialogText[3] = { DIALOG_119, DIALOG_120, DIALOG_121 };
  * Returns TRUE once done
  */
 s32 bowser_dead_default_stage_ending(void) {
-    if (o->oBowserTimer < 2) {
-        // Lower music volume
-        if (o->oBowserTimer == 0) {
-            seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
-        }
-            o->oBowserTimer++;
-            cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_EXPLODE);
-            seq_player_unlower_volume(SEQ_PLAYER_LEVEL, 60);
-            seq_player_fade_out(SEQ_PLAYER_LEVEL, 1);
-    // Hide Bowser and spawn collectable once done twirling
-    } else if (bowser_dead_twirl_up()) {
+    if (cur_obj_init_animation_and_check_if_near_end(17)) o->oBowserTimer++;
+    if (o->oBowserTimer > 0 && bowser_dead_twirl_up()) {
         bowser_dead_hide();
-        spawn_triangle_break_particles(20, MODEL_YELLOW_COIN, 1.0f, 0);
         bowser_spawn_collectable();
         return TRUE;
     }
@@ -1281,17 +1250,14 @@ void bowser_act_dead(void) {
             break;
 
         case BOWSER_SUB_ACT_DEAD_WAIT:
-            // Check if Mario is close to Bowser
-            if (bowser_dead_wait_for_mario()) {
-                o->oBowserTimer = 0;
-                // Set different (final) subaction in BitS
-                // Non-BitS Bowser uses default subaction and sets dithering
-                if (o->oBehParams2ndByte == BOWSER_BP_BITS) {
-                    o->oSubAction = BOWSER_SUB_ACT_DEAD_FINAL_END;
-                } else {
-                    o->activeFlags |= ACTIVE_FLAG_DITHERED_ALPHA;
-                    o->oSubAction++; // BOWSER_SUB_ACT_DEAD_DEFAULT_END
-                }
+            o->oBowserTimer = 0;
+            // Set different (final) subaction in BitS
+            // Non-BitS Bowser uses default subaction and sets dithering
+            if (o->oBehParams2ndByte == BOWSER_BP_BITS) {
+                o->oSubAction = BOWSER_SUB_ACT_DEAD_FINAL_END;
+            } else {
+                o->activeFlags |= ACTIVE_FLAG_DITHERED_ALPHA;
+                o->oSubAction++; // BOWSER_SUB_ACT_DEAD_DEFAULT_END
             }
             break;
 
