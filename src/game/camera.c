@@ -8954,11 +8954,11 @@ void cutscene_unlock_key_door_fov_shake(UNUSED struct Camera *c) {
  */
 void cutscene_unlock_key_door(UNUSED struct Camera *c) {
     cutscene_event(cutscene_unlock_key_door_start, c, 0, 0);
-    cutscene_event(cutscene_unlock_key_door_approach_mario, c, 0, 123);
-    cutscene_event(cutscene_unlock_key_door_fly_back, c, 124, -1);
-    cutscene_event(cutscene_unlock_key_door_fov_shake, c, 79, 79);
-    cutscene_event(cutscene_unlock_key_door_focus_lock, c, 70, 110);
-    cutscene_event(cutscene_unlock_key_door_stub, c, 112, 112);
+    cutscene_event(cutscene_unlock_key_door_approach_mario, c, 0, (123 * (gDeltaTime / 30.0f)));
+    cutscene_event(cutscene_unlock_key_door_fly_back, c, (124 * (gDeltaTime / 30.0f)), -1);
+    cutscene_event(cutscene_unlock_key_door_fov_shake, c, (79 * (gDeltaTime / 30.0f)), (79 * (gDeltaTime / 30.0f)));
+    cutscene_event(cutscene_unlock_key_door_focus_lock, c, (70 * (gDeltaTime / 30.0f)), (110 * (gDeltaTime / 30.0f)));
+    cutscene_event(cutscene_unlock_key_door_stub, c, (112 * (gDeltaTime / 30.0f)), (112 * (gDeltaTime / 30.0f)));
 }
 
 /**

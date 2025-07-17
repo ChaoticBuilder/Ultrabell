@@ -474,7 +474,7 @@ void update_walking_speed(struct MarioState *m) {
 #else
     // Vanilla
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800 / (gDeltaTime / 30.0f), 0x800 / (gDeltaTime / 30.0f));
 #endif
     apply_slope_accel(m);
 }

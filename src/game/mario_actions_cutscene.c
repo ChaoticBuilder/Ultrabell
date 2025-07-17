@@ -790,12 +790,12 @@ s32 launch_mario_until_land(struct MarioState *m, s32 endAction, s32 animation, 
     return airStepLanded;
 }
 
-u8 unlockEnd;
+u32 unlockEnd;
 
 s32 act_unlocking_key_door(struct MarioState *m) {
     if (m->actionTimer == 0) {
         set_mario_animation(m, MARIO_ANIM_UNLOCK_DOOR);
-        unlockEnd = m->marioObj->header.gfx.animInfo.curAnim->loopEnd;
+        unlockEnd = m->marioObj->header.gfx.animInfo.curAnim->loopEnd * (gDeltaTime / 30.0f);
     }
 
     if (m->actionTimer < unlockEnd) m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
@@ -813,13 +813,13 @@ s32 act_unlocking_key_door(struct MarioState *m) {
 
     if (m->actionTimer > unlockEnd) {
         if (m->actionTimer < (unlockEnd + 5)) {
-            m->faceAngle[1] -= DEGREES(22.5f);
+            m->faceAngle[1] -= DEGREES(22.5f / (gDeltaTime / 30.0f));
         } else if (m->actionTimer <= (unlockEnd + 10)) {
             set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 0x00020000);
             m->pos[0] += 12.5f * sins(m->faceAngle[1]);
             m->pos[2] += 12.5f * coss(m->faceAngle[1]);
         } else if (m->actionTimer < (unlockEnd + 15)) {
-            m->faceAngle[1] += DEGREES(22.5f);
+            m->faceAngle[1] += DEGREES(22.5f / (gDeltaTime / 30.0f));
         }
     }
 
@@ -965,15 +965,15 @@ s32 act_entering_star_door(struct MarioState *m) {
     return FALSE;
 }
 
+u8 doorTroll = FALSE;
+
 s32 act_going_through_door(struct MarioState *m) {
     f32 rand = random_float();
     u8 troll = FALSE;
-    u8 troll2 = FALSE;
-    u8 doorTroll = FALSE;
 
     if (rand < 0.03125f) troll = TRUE;
-    if (rand > 0.96875f) troll2 = TRUE;
     if (m->actionTimer == 0) {
+        if (rand > 0.9375f) doorTroll = TRUE;
         if (m->actionArg & WARP_FLAG_DOOR_PULLED) {
             m->interactObj->oInteractStatus = INT_STATUS_DOOR_PULLED;
             if (!troll) set_mario_animation(m, MARIO_ANIM_PULL_DOOR_WALK_IN);
@@ -992,12 +992,10 @@ s32 act_going_through_door(struct MarioState *m) {
     stop_and_set_height_to_floor(m);
 
     if (m->actionArg & WARP_FLAG_DOOR_IS_WARP) {
-        if (troll2) {
-            doorTroll = TRUE;
-        }
         if (!doorTroll) {
-            if (m->actionTimer == (0xC * (gDeltaTime / 30.0f))) {
+            if (m->actionTimer >= (0xC * (gDeltaTime / 30.0f))) {
                 level_trigger_warp(m, WARP_OP_WARP_DOOR);
+                doorTroll = FALSE;
             }
         } else {
             if (m->actionTimer >= (0x60 * (gDeltaTime / 30.0f))) {
