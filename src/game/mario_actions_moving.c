@@ -18,6 +18,7 @@
 #include "camera.h"
 #include "game_init.h"
 #include "ingame_menu.h"
+#include "hud.h"
 
 #include "config.h"
 
@@ -436,19 +437,19 @@ void update_walking_speed(struct MarioState *m) {
     targetSpeed = m->intendedMag < maxTargetSpeed ? m->intendedMag : maxTargetSpeed;
 
     if (m->quicksandDepth > 10.0f) {
-        targetSpeed *= 6.25f / m->quicksandDepth;
+        targetSpeed *= (6.25f / (gDeltaTime / 30.0f)) / m->quicksandDepth;
     }
 
     if (m->forwardVel <= 0.0f) {
         // Slow down if moving backwards
-        m->forwardVel += 1.0f;
+        m->forwardVel += 1.0f / (gDeltaTime / 30.0f);
     } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
-        m->forwardVel += 0.5f;
-        if (!g95Toggle) m->forwardVel += 0.25f;
-        if (gRealToggle) m->forwardVel += 0.5f;
+        m->forwardVel += 0.5f / (gDeltaTime / 30.0f);
+        if (!g95Toggle) m->forwardVel += 0.25f / (gDeltaTime / 30.0f);
+        if (gRealToggle) m->forwardVel += 0.5f / (gDeltaTime / 30.0f);
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.125f;
+        m->forwardVel -= 0.125f / (gDeltaTime / 30.0f);
     }
 
     if (m->forwardVel > 64.0f) {

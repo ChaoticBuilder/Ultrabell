@@ -2743,10 +2743,10 @@ void update_lakitu(struct Camera *c) {
                                          gLakituState.focHSpeed, gLakituState.focVSpeed,
                                          gLakituState.focHSpeed);
         // Adjust Lakitu's speed back to normal
-        set_or_approach_f32_asymptotic(&gLakituState.focHSpeed, 0.75f, 0.05f);
-        set_or_approach_f32_asymptotic(&gLakituState.focVSpeed, 0.375f, 0.05f);
-        set_or_approach_f32_asymptotic(&gLakituState.posHSpeed, 0.25f, 0.05f);
-        set_or_approach_f32_asymptotic(&gLakituState.posVSpeed, 0.25f, 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.focHSpeed, (0.75f / (gDeltaTime / 30.0f)), 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.focVSpeed, (0.375f / (gDeltaTime / 30.0f)), 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.posHSpeed, (0.25f / (gDeltaTime / 30.0f)), 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.posVSpeed, (0.25f / (gDeltaTime / 30.0f)), 0.05f);
 
         // Turn on smooth movement when it hasn't been blocked for 2 frames
         if (sStatusFlags & CAM_FLAG_BLOCK_SMOOTH_MOVEMENT) {
@@ -10819,16 +10819,16 @@ void fov_default(struct MarioState *m) {
 
     // Apparently Mario's idle was a sleeping state?
     if ((m->action == ACT_IDLE) || (m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
-        if (m->sleepTimer < 400) {
+        if (m->sleepTimer < (400 * (gDeltaTime / 30.0f))) { // really jank but so is the beta so this is chaotic approved
             m->sleepTimer++; // Increase the timer
-            camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 45.f);
+            camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, ((45.f - sFOVState.fov) / 45.f) / (gDeltaTime / 30.0f));
         } else { // Gradually set the FOV to 30 if the threshold is reached
-            camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (30.f - sFOVState.fov) / 30.f);
+            camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, ((30.f - sFOVState.fov) / 30.f) / (gDeltaTime / 30.0f));
             sStatusFlags |= CAM_FLAG_SLEEPING;
         }
     } else {
         m->sleepTimer = 0; // Reset the timer and set the FOV back to 45 when Mario isn't sleeping
-        camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 45.f);
+        camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, ((45.f - sFOVState.fov) / 45.f) / (gDeltaTime / 30.0f));
         sFOVState.unusedIsSleeping = 0;				   
     }
     if (m->area->camera->cutscene == CUTSCENE_0F_UNUSED) {
@@ -10837,17 +10837,17 @@ void fov_default(struct MarioState *m) {
 }
 
 void approach_fov_30(UNUSED struct MarioState *m) {
-    camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, 1.f);
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (1.f / (gDeltaTime / 30.0f)));
 }
 void approach_fov_30_fast(UNUSED struct MarioState *m) {
-    camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, 2.f);
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (2.f / (gDeltaTime / 30.0f)));
 }
 void approach_fov_45_fast(UNUSED struct MarioState *m) {
-    camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, 2.f);
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (2.f / (gDeltaTime / 30.0f)));
 }
 
 void approach_fov_60(UNUSED struct MarioState *m) {
-    camera_approach_f32_symmetric_bool(&sFOVState.fov, 60.f, 1.f);
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 60.f, (1.f / (gDeltaTime / 30.0f)));
 }
 
 void approach_fov_45(struct MarioState *m) {
@@ -10859,11 +10859,11 @@ void approach_fov_45(struct MarioState *m) {
         targetFoV = 45.f;
     }
 
-    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, 2.f, 2.f);
+    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, (2.f / (gDeltaTime / 30.0f)), (2.f / (gDeltaTime / 30.0f)));
 }
 
 void approach_fov_80(UNUSED struct MarioState *m) {
-    camera_approach_f32_symmetric_bool(&sFOVState.fov, 80.f, 3.5f);
+    camera_approach_f32_symmetric_bool(&sFOVState.fov, 80.f, (3.5f / (gDeltaTime / 30.0f)));
 }
 
 /**
@@ -10879,7 +10879,7 @@ void set_fov_bbh(struct MarioState *m) {
         targetFoV = 45.f;
     }
 
-    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, 2.f, 2.f);
+    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, (2.f / (gDeltaTime / 30.0f)), (2.f / (gDeltaTime / 30.0f)));
 }
 
 /**

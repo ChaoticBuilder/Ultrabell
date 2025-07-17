@@ -33,6 +33,7 @@
 #include "sound_init.h"
 #include "rumble_init.h"
 #include "ingame_menu.h"
+#include "hud.h"
 
 /**************************************************
  *                    ANIMATIONS                  *
@@ -60,32 +61,7 @@ s32 is_anim_past_end(struct MarioState *m) {
  * Sets Mario's animation without any acceleration, running at its default rate.
  */
 s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
-    struct Object *marioObj = m->marioObj;
-    struct Animation *targetAnim = m->animList->bufTarget;
-
-    if (load_patchable_table(m->animList, targetAnimID)) {
-        targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
-        targetAnim->index  = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->index);
-    }
-
-    if (marioObj->header.gfx.animInfo.animID != targetAnimID) {
-        marioObj->header.gfx.animInfo.animID = targetAnimID;
-        marioObj->header.gfx.animInfo.curAnim = targetAnim;
-        marioObj->header.gfx.animInfo.animAccel = 0;
-        marioObj->header.gfx.animInfo.animYTrans = m->animYTrans;
-
-        if (targetAnim->flags & ANIM_FLAG_NO_ACCEL) {
-            marioObj->header.gfx.animInfo.animFrame = targetAnim->startFrame;
-        } else {
-            if (targetAnim->flags & ANIM_FLAG_FORWARD) {
-                marioObj->header.gfx.animInfo.animFrame = targetAnim->startFrame + 1;
-            } else {
-                marioObj->header.gfx.animInfo.animFrame = targetAnim->startFrame - 1;
-            }
-        }
-    }
-
-    return marioObj->header.gfx.animInfo.animFrame;
+    return set_mario_anim_with_accel(m, targetAnimID, 0x10000);
 }
 
 /**
@@ -95,6 +71,8 @@ s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
 s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel) {
     struct Object *marioObj = m->marioObj;
     struct Animation *targetAnim = m->animList->bufTarget;
+
+    accel /= (gDeltaTime / 30.0f);
 
     if (load_patchable_table(m->animList, targetAnimID)) {
         targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
@@ -720,7 +698,7 @@ void set_steep_jump_action(struct MarioState *m) {
 void set_mario_y_vel_based_on_fspeed(struct MarioState *m, f32 initialVelY, f32 multiplier) {
     // get_additive_y_vel_for_jumps is always 0 and a stubbed function.
     // It was likely trampoline related based on code location.
-    m->vel[1] = initialVelY + get_additive_y_vel_for_jumps() + m->forwardVel * multiplier;
+    m->vel[1] = initialVelY + m->forwardVel * multiplier;
 
     if (m->squishTimer != 0 || m->quicksandDepth > 1.0f) {
         m->vel[1] *= 0.5f;

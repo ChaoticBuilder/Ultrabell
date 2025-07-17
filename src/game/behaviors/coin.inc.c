@@ -71,7 +71,7 @@ void bhv_yellow_coin_init(void) {
 
 void bhv_yellow_coin_loop(void) {
     bhv_coin_sparkles_init();
-    o->oAnimState++;
+    if (gGlobalTimer % (u8)(gDeltaTime / 30.0f + 0.5f) == 0) o->oAnimState++;
 }
 
 void bhv_temp_coin_loop(void) {

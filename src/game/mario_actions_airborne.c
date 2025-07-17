@@ -16,6 +16,7 @@
 #include "save_file.h"
 #include "rumble_init.h"
 #include "ingame_menu.h"
+#include "hud.h"
 
 #include "config.h"
 
@@ -187,8 +188,8 @@ void update_air_with_turn(struct MarioState *m) {
             intendedDYaw = m->intendedYaw - m->faceAngle[1];
             intendedMag = m->intendedMag / 32.0f;
 
-            m->forwardVel += 1.5f * coss(intendedDYaw) * intendedMag;
-            m->faceAngle[1] += 512.0f * sins(intendedDYaw) * intendedMag;
+            m->forwardVel += (1.5f / (gDeltaTime / 30.0f)) * coss(intendedDYaw) * intendedMag;
+            m->faceAngle[1] += (512.0f / (gDeltaTime / 30.0f)) * sins(intendedDYaw) * intendedMag;
         }
 
         //! Uncapped air speed. Net positive when moving forward.
@@ -212,21 +213,21 @@ void update_air_without_turn(struct MarioState *m) {
 
     if (!check_horizontal_wind(m)) {
         dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
-        m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.375f, 0.375f);
+        m->forwardVel = approach_f32(m->forwardVel, 0.0f, (0.375f / (gDeltaTime / 30.0f)), (0.375f / (gDeltaTime / 30.0f)));
 
         if (m->input & INPUT_NONZERO_ANALOG) {
             intendedDYaw = m->intendedYaw - m->faceAngle[1];
             intendedMag = m->intendedMag / 32.0f;
 
-            m->forwardVel += intendedMag * coss(intendedDYaw) * 1.5f;
+            m->forwardVel += intendedMag * coss(intendedDYaw) * (1.5f / (gDeltaTime / 30.0f));
             if (m->action != ACT_LONG_JUMP && m->action != ACT_WALL_KICK_AIR && m->action != ACT_BACKFLIP) {
                 if (gLuigiToggle) {
-                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1152.0f;
+                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * (1152.0f / (gDeltaTime / 30.0f));
                 } else {
-                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1024.0f;
+                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * (1024.0f / (gDeltaTime / 30.0f));
                 }
             } else {
-                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 96.0f;
+                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * (96.0f / (gDeltaTime / 30.0f));
             }
             sidewaysSpeed = intendedMag * sins(intendedDYaw) * 10.0f;
         }
@@ -766,7 +767,7 @@ s32 act_twirling(struct MarioState *m) {
 #endif
 
     m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
-    m->twirlYaw += m->angleVel[1];
+    m->twirlYaw += (m->angleVel[1] / (gDeltaTime / 30.0f));
 
     switch (m->actionArg) {
         case 0:

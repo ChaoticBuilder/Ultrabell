@@ -212,7 +212,7 @@ void fade_into_special_warp(u32 arg, u32 color) {
     }
 
     fadeout_music(190);
-    play_transition(WARP_TRANSITION_FADE_INTO_COLOR, 0x10, color, color, color);
+    play_transition(WARP_TRANSITION_FADE_INTO_COLOR, (0x10 * (gDeltaTime / 30.0f)), color, color, color);
     level_set_transition(0x10, NULL);
 
     warp_special(arg);
@@ -393,19 +393,19 @@ void init_mario_after_warp(void) {
     switch (marioSpawnType) {
         case MARIO_SPAWN_DOOR_WARP:
         case MARIO_SPAWN_SPIN_AIRBORNE_CIRCLE:
-            play_transition(WARP_TRANSITION_FADE_FROM_CIRCLE, 0x14, 0x00, 0x00, 0x00);
+            play_transition(WARP_TRANSITION_FADE_FROM_CIRCLE, (0x14 * (gDeltaTime / 30.0f)), 0x00, 0x00, 0x00);
             break;
         case MARIO_SPAWN_TELEPORT:
-            play_transition(WARP_TRANSITION_FADE_FROM_COLOR, 0x10, 0xFF, 0xFF, 0xFF);
+            play_transition(WARP_TRANSITION_FADE_FROM_COLOR, (0x10 * (gDeltaTime / 30.0f)), 0xFF, 0xFF, 0xFF);
             break;
         case MARIO_SPAWN_SPIN_AIRBORNE:
-            play_transition(WARP_TRANSITION_FADE_FROM_MARIO, 0x18, 0xFF, 0xFF, 0xFF);
+            play_transition(WARP_TRANSITION_FADE_FROM_MARIO, (0x18 * (gDeltaTime / 30.0f)), 0xFF, 0xFF, 0xFF);
             break;
         case MARIO_SPAWN_FADE_FROM_BLACK:
-            play_transition(WARP_TRANSITION_FADE_FROM_COLOR, 0x18, 0x00, 0x00, 0x00);
+            play_transition(WARP_TRANSITION_FADE_FROM_COLOR, (0x18 * (gDeltaTime / 30.0f)), 0x00, 0x00, 0x00);
             break;
         default:
-            play_transition(WARP_TRANSITION_FADE_FROM_STAR, 0x10, 0xFF, 0xFF, 0xFF);
+            play_transition(WARP_TRANSITION_FADE_FROM_STAR, (0x10 * (gDeltaTime / 30.0f)), 0xFF, 0xFF, 0xFF);
             break;
     }
 
@@ -519,7 +519,7 @@ void warp_credits(void) {
     sWarpDest.type = WARP_TYPE_NOT_WARPING;
     sDelayedWarpOp = WARP_OP_NONE;
 
-    play_transition(WARP_TRANSITION_FADE_FROM_COLOR, 0x14, 0x00, 0x00, 0x00);
+    play_transition(WARP_TRANSITION_FADE_FROM_COLOR, (0x14 * (gDeltaTime / 30.0f)), 0x00, 0x00, 0x00);
 
     if (gCurrCreditsEntry == NULL || gCurrCreditsEntry == sCreditsSequence) {
 #ifdef BETTER_REVERB
@@ -699,8 +699,8 @@ void initiate_painting_warp(void) {
                 initiate_warp(warpNode.destLevel & 0x7F, warpNode.destArea, warpNode.destNode, WARP_FLAGS_NONE);
                 check_if_should_set_warp_checkpoint(&warpNode);
 
-                play_transition_after_delay(WARP_TRANSITION_FADE_INTO_MARIO, 0x18, 255, 255, 255, 45);
-                level_set_transition(74, basic_update);
+                play_transition_after_delay(WARP_TRANSITION_FADE_INTO_MARIO, (0x18 * (gDeltaTime / 30.0f)), 255, 255, 255, (45 * (gDeltaTime / 30.0f)));
+                level_set_transition((74 * (gDeltaTime / 30.0f)), basic_update);
 
                 set_mario_action(gMarioState, ACT_DISAPPEARED, 0);
 
@@ -731,21 +731,21 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
         switch (warpOp) {
             case WARP_OP_DEMO_NEXT:
             case WARP_OP_DEMO_END:
-                sDelayedWarpTimer = 0x14;
+                sDelayedWarpTimer = (0x14 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
                 gSavedCourseNum = COURSE_NONE;
                 play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
 
             case WARP_OP_CREDITS_END:
-                sDelayedWarpTimer = 0x30;
+                sDelayedWarpTimer = (0x30 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
                 gSavedCourseNum = COURSE_NONE;
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
 
             case WARP_OP_STAR_EXIT:
-                sDelayedWarpTimer = 0x28;
+                sDelayedWarpTimer = (0x28 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
                 gSavedCourseNum = COURSE_NONE;
                 play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0xFF, 0xFF, 0xC5);
@@ -757,7 +757,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                     sDelayedWarpOp = WARP_OP_GAME_OVER;
                 }
 #endif
-                sDelayedWarpTimer = 0x28;
+                sDelayedWarpTimer = (0x28 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = WARP_NODE_DEATH;
                 play_transition(WARP_TRANSITION_FADE_INTO_BOWSER, sDelayedWarpTimer, 0x42, 0x00, 0x08);
                 play_sound(SOUND_MENU_BOWSER_LAUGH, gGlobalSoundSource);
@@ -784,53 +784,53 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                     }                    
                 }
 
-                sDelayedWarpTimer = 0x10;
+                sDelayedWarpTimer = (0x10 * (gDeltaTime / 30.0f));
                 play_transition(WARP_TRANSITION_FADE_INTO_CIRCLE, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
 
             case WARP_OP_LOOK_UP: // enter totwc
-                sDelayedWarpTimer = 0x18;
+                sDelayedWarpTimer = (0x18 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = WARP_NODE_LOOK_UP;
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
                 break;
 
             case WARP_OP_SPIN_SHRINK: // bbh enter
-                sDelayedWarpTimer = 0x18;
+                sDelayedWarpTimer = (0x18 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
             case WARP_OP_TELEPORT:
-                sDelayedWarpTimer = 0x10;
+                sDelayedWarpTimer = (0x10 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
             case WARP_OP_WARP_DOOR:
-                sDelayedWarpTimer = 0x14;
+                sDelayedWarpTimer = (0x14 * (gDeltaTime / 30.0f));
                 sDelayedWarpArg = m->actionArg;
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
                 play_transition(WARP_TRANSITION_FADE_INTO_CIRCLE, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
             case WARP_OP_WARP_OBJECT:
-                sDelayedWarpTimer = 0x14;
+                sDelayedWarpTimer = (0x14 * (gDeltaTime / 30.0f));
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
                 play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
 
             case WARP_OP_CREDITS_START:
-                sDelayedWarpTimer = 0x14;
+                sDelayedWarpTimer = (0x14 * (gDeltaTime / 30.0f));
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
 
             case WARP_OP_CREDITS_NEXT:
                 if (gCurrCreditsEntry == &sCreditsSequence[0]) {
-                    sDelayedWarpTimer = 0x30;
+                    sDelayedWarpTimer = (0x30 * (gDeltaTime / 30.0f));
                     play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 } else {
-                    sDelayedWarpTimer = 0x14;
+                    sDelayedWarpTimer = (0x14 * (gDeltaTime / 30.0f));
                     play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 }
                 break;
@@ -1304,9 +1304,9 @@ s32 init_level(void) {
         }
 #endif
         if (fadeFromColor) {
-            play_transition(WARP_TRANSITION_FADE_FROM_COLOR, 0x3C, 0xFF, 0xFF, 0xFF);
+            play_transition(WARP_TRANSITION_FADE_FROM_COLOR, (0x3C * (gDeltaTime / 30.0f)), 0xFF, 0xFF, 0xFF);
         } else {
-            play_transition(WARP_TRANSITION_FADE_FROM_STAR, 0x18, 0xFF, 0xFF, 0xFF);
+            play_transition(WARP_TRANSITION_FADE_FROM_STAR, (0x18 * (gDeltaTime / 30.0f)), 0xFF, 0xFF, 0xFF);
         }
 
         if (gCurrDemoInput == NULL) {

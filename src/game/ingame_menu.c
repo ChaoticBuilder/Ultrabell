@@ -1643,6 +1643,7 @@ void config_options(void) {
         if (gConfigScroll == CFG_LVL) gLVLToggle ^= 1;
         // if (gHudDisplay.stars >= 100)
         if (gConfigScroll == CFG_FLY) gFlightToggle ^= 1;
+        if (gConfigScroll == CFG_FPS) gFPSCap = (gFPSCap + 1) % 4;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed & B_BUTTON) {
@@ -1709,6 +1710,8 @@ void time_slider(void) {
     ? (gKickTimer = CLAMP(gKickTimer, 0, 20))
     : (gKickTimer = CLAMP(gKickTimer, 1, 15));
 }
+
+u8 gFPSCap = 0;
 
 void config_open(void) {
     if (gPlayer1Controller->buttonPressed & R_TRIG) gConfigOpen ^= 1;
@@ -1945,6 +1948,17 @@ void config_options_box(void) {
     }
 
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
+    if (gConfigScroll == CFG_FPS) print_small_text_light(160, 204, "FPS Cap", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    if (!gFPSCap) sprintf(currOption, "FPS: 30");
+    if (gFPSCap == 1) sprintf(currOption, "FPS: 45");
+    if (gFPSCap == 2) sprintf(currOption, "FPS: 60");
+    if (gFPSCap == 3) sprintf(currOption, "FPS: 20");
+
+    config_option_render(xPos, yPos, currOption, CFG_FPS);
     /*
     if (xPos >= 160) xPos -= 160;
     yPos += 32;

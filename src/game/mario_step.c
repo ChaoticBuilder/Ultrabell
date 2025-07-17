@@ -11,6 +11,7 @@
 #include "mario_step.h"
 #include "ingame_menu.h"
 #include "print.h"
+#include "hud.h"
 
 #include "config.h"
 
@@ -356,8 +357,8 @@ s32 perform_ground_step(struct MarioState *m) {
     set_mario_wall(m, NULL);
 
     for (i = 0; i < 4; i++) {
-        intendedPos[0] = m->pos[0] + m->floor->normal.y * (m->vel[0] / numSteps);
-        intendedPos[2] = m->pos[2] + m->floor->normal.y * (m->vel[2] / numSteps);
+        intendedPos[0] = m->pos[0] + m->floor->normal.y * (m->vel[0] / numSteps / (gDeltaTime / 30.0f));
+        intendedPos[2] = m->pos[2] + m->floor->normal.y * (m->vel[2] / numSteps / (gDeltaTime / 30.0f));
         intendedPos[1] = m->pos[1];
 
         stepResult = perform_ground_quarter_step(m, intendedPos);
@@ -586,11 +587,11 @@ void apply_twirl_gravity(struct MarioState *m) {
 
 #ifdef Z_TWIRL
     f32 terminalVelocity = -75.0f * heaviness * Zmodifier;
-    m->vel[1] -= 4.0f * heaviness * Zmodifier;
+    m->vel[1] -= (4.0f / (gDeltaTime / 30.0f)) * heaviness * Zmodifier;
 #else
     f32 terminalVelocity = -75.0f * heaviness;
 
-    m->vel[1] -= 4.0f * heaviness;
+    m->vel[1] -= (4.0f / (gDeltaTime / 30.0f)) * heaviness;
 #endif
     if (m->vel[1] < terminalVelocity) {
         m->vel[1] = terminalVelocity;
@@ -622,45 +623,45 @@ void apply_gravity(struct MarioState *m) {
     if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) {
         apply_twirl_gravity(m);
     } else if (m->action == ACT_SHOT_FROM_CANNON) {
-        m->vel[1] -= 1.0f;
+        m->vel[1] -= 1.0f / (gDeltaTime / 30.0f);
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
-                m->vel[1] += 0.5f;
-                m->vel[1] -= (m->vel[1] / 80);
+                m->vel[1] += 0.5f / (gDeltaTime / 30.0f);
+                m->vel[1] -= m->vel[1] / 80.0f / (gDeltaTime / 30.0f);
             }
             sTerminalVelocity = TRUE;
         }
     } else if (m->action == ACT_LONG_JUMP || m->action == ACT_BBH_ENTER_SPIN) {
-        m->vel[1] -= 2.0f;
+        m->vel[1] -= 2.0f / (gDeltaTime / 30.0f);
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
-                m->vel[1] += 1.0f;
-                m->vel[1] -= (m->vel[1] / 80);
+                m->vel[1] += 1.0f / (gDeltaTime / 30.0f);
+                m->vel[1] -= m->vel[1] / 80.0f / (gDeltaTime / 30.0f);
             }
             sTerminalVelocity = TRUE;
         }
     } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_SLIDE_KICK || m->action == ACT_FALL_AFTER_STAR_GRAB) {
-        m->vel[1] -= 3.5f;
+        m->vel[1] -= 3.5f / (gDeltaTime / 30.0f);
         if (m->vel[1] < -64.0f) {
             if (!gRealToggle) {
-                m->vel[1] += 1.75f;
-                m->vel[1] -= (m->vel[1] / 40);
+                m->vel[1] += 1.75f / (gDeltaTime / 30.0f);
+                m->vel[1] -= (m->vel[1] / 40) / (gDeltaTime / 30.0f);
             }
             sTerminalVelocity = TRUE;
         }
     } else if (m->action == ACT_GETTING_BLOWN) {
-        m->vel[1] -= m->windGravity;
+        m->vel[1] -= m->windGravity / (gDeltaTime / 30.0f);
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
-                m->vel[1] += 2.0f;
-                m->vel[1] -= (m->vel[1] / 32);
+                m->vel[1] += 2.0f / (gDeltaTime / 30.0f);
+                m->vel[1] -= (m->vel[1] / 32) / (gDeltaTime / 30.0f);
             }
             sTerminalVelocity = TRUE;
         }
     } else if (should_strengthen_gravity_for_jump_ascent(m)) {
-        m->vel[1] /= 4.0f;
+        m->vel[1] /= 4.0f / (gDeltaTime / 30.0f);
     } else if (m->action & ACT_FLAG_METAL_WATER) {
-        m->vel[1] -= 1.0f;
+        m->vel[1] -= 1.0f / (gDeltaTime / 30.0f);
         if (m->vel[1] < -24.0f) {
             m->vel[1] = -24.0f;
             if (gRealToggle) { sTerminalVelocity = TRUE; }
@@ -668,22 +669,22 @@ void apply_gravity(struct MarioState *m) {
     } else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
 
-        m->vel[1] -= 2.0f;
-        if (gRealToggle) m->vel[1] -= 0.5f;
+        m->vel[1] -= 2.0f / (gDeltaTime / 30.0f);
+        if (gRealToggle) m->vel[1] -= 0.5f / (gDeltaTime / 30.0f);
         if (m->vel[1] < -40.0f) {
             if (!gRealToggle) {
-                m->vel[1] += 1.0f;
-                m->vel[1] -= (m->vel[1] / 40);
+                m->vel[1] += 1.0f / (gDeltaTime / 30.0f);
+                m->vel[1] -= m->vel[1] / 40.0f / (gDeltaTime / 30.0f);
             }
             sTerminalVelocity = TRUE;
         }
     } else {
-        m->vel[1] -= 4.0f;
-        if (gRealToggle) m->vel[1] -= 1.0f;
+        m->vel[1] -= 4.0f / (gDeltaTime / 30.0f);
+        if (gRealToggle) m->vel[1] -= 1.0f / (gDeltaTime / 30.0f);
         if (m->vel[1] < normalMax) {
             if (!gRealToggle) {
-                m->vel[1] += 2.0f;
-                m->vel[1] -= (m->vel[1] / 48);
+                m->vel[1] += 2.0f / (gDeltaTime / 30.0f);
+                m->vel[1] -= m->vel[1] / 48.0f / (gDeltaTime / 30.0f);
             }
             sTerminalVelocity = TRUE;
         }
@@ -733,8 +734,8 @@ void apply_vertical_wind(struct MarioState *m) {
 }
 
 s32 perform_air_step(struct MarioState *m, u32 stepArg) {
-    Vec3f intendedPos;
     const f32 numSteps = 4.0f;
+    Vec3f intendedPos;
     s32 i;
     s32 quarterStepResult;
     s32 stepResult = AIR_STEP_NONE;
@@ -742,9 +743,15 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
     set_mario_wall(m, NULL);
 
     for (i = 0; i < 4; i++) {
-        intendedPos[0] = m->pos[0] + m->vel[0] / numSteps;
-        intendedPos[1] = m->pos[1] + m->vel[1] / numSteps;
-        intendedPos[2] = m->pos[2] + m->vel[2] / numSteps;
+        Vec3f step = {
+            m->vel[0] / numSteps / (gDeltaTime / 30.0f),
+            m->vel[1] / numSteps / (gDeltaTime / 30.0f),
+            m->vel[2] / numSteps / (gDeltaTime / 30.0f),
+        };
+
+        intendedPos[0] = m->pos[0] + step[0];
+        intendedPos[1] = m->pos[1] + step[1];
+        intendedPos[2] = m->pos[2] + step[2];
 
         quarterStepResult = perform_air_quarter_step(m, intendedPos, stepArg);
 

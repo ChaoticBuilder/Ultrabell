@@ -8,6 +8,7 @@
 #include "game/rendering_graph_node.h"
 #include "game/area.h"
 #include "geo_layout.h"
+#include "game/game_init.h"
 
 /**
  * Initialize a geo node with a given type. Sets all links such that there
@@ -734,15 +735,7 @@ void geo_obj_init_spawninfo(struct GraphNodeObject *graphNode, struct SpawnInfo 
  * Initialize the animation of an object node
  */
 void geo_obj_init_animation(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr) {
-    struct Animation **animSegmented = segmented_to_virtual(animPtrAddr);
-    struct Animation *anim = segmented_to_virtual(*animSegmented);
-
-    if (graphNode->animInfo.curAnim != anim) {
-        graphNode->animInfo.curAnim = anim;
-        graphNode->animInfo.animFrame = anim->startFrame + ((anim->flags & ANIM_FLAG_FORWARD) ? 1 : -1);
-        graphNode->animInfo.animAccel = 0;
-        graphNode->animInfo.animYTrans = 0;
-    }
+    return geo_obj_init_animation_accel(graphNode, animPtrAddr, 0x10000);
 }
 
 /**
@@ -751,6 +744,8 @@ void geo_obj_init_animation(struct GraphNodeObject *graphNode, struct Animation 
 void geo_obj_init_animation_accel(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr, u32 animAccel) {
     struct Animation **animSegmented = segmented_to_virtual(animPtrAddr);
     struct Animation *anim = segmented_to_virtual(*animSegmented);
+
+    animAccel /= (gDeltaTime / 30.0f);
 
     if (graphNode->animInfo.curAnim != anim) {
         graphNode->animInfo.curAnim = anim;

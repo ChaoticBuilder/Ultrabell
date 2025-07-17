@@ -1011,7 +1011,7 @@ s32 act_twirl_land(struct MarioState *m) {
             m->angleVel[1] = 0;
         }
 
-        m->twirlYaw += m->angleVel[1];
+        m->twirlYaw += (m->angleVel[1] / (gDeltaTime / 30.0f));
     }
 
     m->marioObj->header.gfx.angle[1] += m->twirlYaw;

@@ -31,14 +31,14 @@ void bhv_star_door_loop(void) {
             cur_obj_become_intangible();
             o->oLeftVel = -8.0f;
             star_door_update_pos();
-            if (o->oTimer > 15) {
+            if (o->oTimer > (15 * (gDeltaTime / 30.0f))) {
                 cur_obj_play_sound_2(SOUND_PEACH_HELP);
                 o->oAction++; // STAR_DOOR_ACT_OPEN
             }
             break;
 
         case STAR_DOOR_ACT_OPEN:
-            if (o->oTimer > 30) {
+            if (o->oTimer > (30 * (gDeltaTime / 30.0f))) {
                 o->oAction++; // STAR_DOOR_ACT_CLOSING
             }
             break;
@@ -52,7 +52,7 @@ void bhv_star_door_loop(void) {
             }
             o->oLeftVel = 8.0f;
             star_door_update_pos();
-            if (o->oTimer > 15) {
+            if (o->oTimer > (15 * (gDeltaTime / 30.0f))) {
                 o->oAction++; // STAR_DOOR_ACT_RESET
             }
             break;

@@ -24,6 +24,7 @@ extern u8 gConfigOpen;
     extern u8 gFlightToggle;
     extern u8 gMusicToggle;
     extern u8 gLevelTroll;
+    extern u8 gFPSCap;
 
 enum ConfigMenuIDs {
     CFG_1,
@@ -44,6 +45,7 @@ enum ConfigMenuIDs {
     CFG_HARD,
     CFG_LVL,
     CFG_FLY,
+    CFG_FPS,
     CFG_END,
 };
 

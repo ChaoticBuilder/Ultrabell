@@ -55,6 +55,8 @@ u8 curFrameTimeIndex = 0;
 
 #include "PR/os_convert.h"
 
+f32 gDeltaTime;
+
 #ifdef USE_PROFILER
 float profiler_get_fps();
 #else
@@ -72,15 +74,24 @@ f32 calculate_and_update_fps() {
 }
 #endif
 
+void fps_calc(void) {
+    #ifdef USE_PROFILER
+        gDeltaTime = profiler_get_fps();
+    #else
+        gDeltaTime = calculate_and_update_fps();
+    #endif
+}
+
 void print_fps(s32 x, s32 y) {
-#ifdef USE_PROFILER
-    f32 fps = profiler_get_fps();
-#else
-    f32 fps = calculate_and_update_fps();
-#endif
+    #ifdef USE_PROFILER
+        gDeltaTime = profiler_get_fps();
+    #else
+        gDeltaTime = calculate_and_update_fps();
+    #endif
+
     char text[14];
 
-    sprintf(text, "FPS %2.2f", fps);
+    sprintf(text, "FPS %2.2f", gDeltaTime);
 #ifdef PUPPYPRINT
     print_small_text(x, y, text, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
 #else
@@ -717,63 +728,16 @@ void z64_draw(void) {
     if (gZ64Toggle) print_small_text_light(16, 28, "LIVES", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
-/**
- * Sets HUD status camera value depending of the actions
- * defined in update_camera_status.
- */
-/* DISABLED FEATURE:
-void set_hud_camera_status(s16 status) {
-    sCameraHUD.status = status;
+void fps_testing(void) {
+    print_text_fmt_int(160, 16, "%d", gDeltaTime);
 }
-*/
-
-/**
- * Renders camera HUD glyphs using a table list, depending of
- * the camera status called, a defined glyph is rendered.
- */
-/* DISABLED FEATURE:
-void render_hud_camera_status(void) {
-    Texture *(*cameraLUT)[6] = segmented_to_virtual(&main_hud_camera_lut);
-    s32 x = GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_CAMERA_X);
-    s32 y = 205;
-
-    if (sCameraHUD.status == CAM_STATUS_NONE) {
-        return;
-    }
-
-    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
-    render_hud_tex_lut(x, y, (*cameraLUT)[GLYPH_CAM_CAMERA]);
-
-    switch (sCameraHUD.status & CAM_STATUS_MODE_GROUP) {
-        case CAM_STATUS_MARIO:
-            render_hud_tex_lut(x + 16, y, (*cameraLUT)[GLYPH_CAM_MARIO_HEAD]);
-            break;
-        case CAM_STATUS_LAKITU:
-            render_hud_tex_lut(x + 16, y, (*cameraLUT)[GLYPH_CAM_LAKITU_HEAD]);
-            break;
-        case CAM_STATUS_FIXED:
-            render_hud_tex_lut(x + 16, y, (*cameraLUT)[GLYPH_CAM_FIXED]);
-            break;
-    }
-
-    switch (sCameraHUD.status & CAM_STATUS_C_MODE_GROUP) {
-        case CAM_STATUS_C_DOWN:
-            render_hud_small_tex_lut(x + 4, y + 16, (*cameraLUT)[GLYPH_CAM_ARROW_DOWN]);
-            break;
-        case CAM_STATUS_C_UP:
-            render_hud_small_tex_lut(x + 4, y - 8, (*cameraLUT)[GLYPH_CAM_ARROW_UP]);
-            break;
-    }
-
-    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
-}
-*/
 
 /**
  * Render HUD strings using hudDisplayFlags with it's render functions,
  * excluding the cannon reticle which detects a camera preset for it.
  */
 void render_hud(void) {
+    fps_calc();
     s16 hudDisplayFlags = gHudDisplay.flags;
     if (!gHudToggle) {
         if (hudDisplayFlags == HUD_DISPLAY_NONE) {
@@ -832,19 +796,20 @@ void render_hud(void) {
             if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
                 render_hud_timer();
             }
-                attack_timer();
-                timer_troll();
-                visualizer_display();
-                music_menu();
-                debug_stats();
-                demo_mode();
-                z64_draw();
-                sleep_draw();
+            attack_timer();
+            timer_troll();
+            visualizer_display();
+            music_menu();
+            debug_stats();
+            demo_mode();
+            z64_draw();
+            sleep_draw();
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
             if (gCustomDebugMode) {
                 render_debug_mode();
             }
 #endif
+            // fps_testing();
         }
     }
 }
