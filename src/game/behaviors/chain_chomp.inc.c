@@ -137,8 +137,8 @@ static void chain_chomp_sub_act_turn(void) {
     cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x300);
 
     if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x200) {
-        if (o->oTimer >= 45) {
-            o->oTimer = 45;
+        if (o->oTimer >= 45 * gDeltaTime) {
+            o->oTimer = 45 * gDeltaTime;
             if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
                 // Increase the maximum distance from the pivot and enter
                 // the lunging sub-action.
@@ -171,7 +171,7 @@ static void chain_chomp_sub_act_turn(void) {
 
 static void chain_chomp_sub_act_lunge(void) {
     obj_face_pitch_approach(o->oChainChompTargetPitch, 0x400);
-    o->oTimer = 45;
+    o->oTimer = 45 * gDeltaTime;
     if (o->oForwardVel != 0.0f) {
         // f32 val04;
 
@@ -180,13 +180,6 @@ static void chain_chomp_sub_act_lunge(void) {
             o->oChainChompSignedMaxDistBetweenChainParts = 30.0f;
         }
 
-        // // TODO: What is this
-        // if ((val04 = (900.0f - o->oChainChompDistToPivot)) > 220.0f) {
-        //     val04 = 220.0f;
-        // }
-
-        // o->oChainChompMaxDistBetweenChainParts =
-        //     ((val04 / 220.0f) * o->oChainChompMaxDistFromPivotPerChainPart);
         o->oTimer = 0;
     } else {
         // Turn toward pivot
@@ -233,7 +226,7 @@ static void chain_chomp_released_lunge_around(void) {
         // Before first bounce, turn toward mario and wait 2 seconds
         if (o->oChainChompNumLunges == 0) {
             if (cur_obj_rotate_yaw_toward(o->oAngleToMario, 800)) {
-                if (o->oTimer > 60) {
+                if (o->oTimer > 60 * gDeltaTime) {
                     o->oChainChompNumLunges++;
                     // enable wall collision
                     o->oWallHitboxRadius = 200.0f;

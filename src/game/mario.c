@@ -72,7 +72,7 @@ s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel)
     struct Object *marioObj = m->marioObj;
     struct Animation *targetAnim = m->animList->bufTarget;
 
-    accel /= (gDeltaTime / 30.0f);
+    accel /= gDeltaTime;
 
     if (load_patchable_table(m->animList, targetAnimID)) {
         targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
@@ -709,8 +709,6 @@ void set_mario_y_vel_based_on_fspeed(struct MarioState *m, f32 initialVelY, f32 
  * Transitions for a variety of airborne actions.
  */
 u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
-    f32 forwardVel;
-
     if ((m->squishTimer != 0 || m->quicksandDepth >= 1.0f) &&
         (action == ACT_DOUBLE_JUMP || action == ACT_TWIRLING)) {
         action = ACT_JUMP;
@@ -818,20 +816,14 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 m->vel[1] /= 2.0f;
                 m->vel[1] += 28.0f;
 
-                if (m->forwardVel >= 0 && m->forwardVel < 32.0f) m->forwardVel = 32.0f;
-                m->forwardVel += 8.0f;
-                s16 spdcap = 60;
-                if (gFlightToggle || m->flags & MARIO_METAL_CAP) spdcap = 96;
+                if (m->forwardVel >= 0.0f) m->forwardVel += 16.0f;
+                
+                s16 spdcap = (gFlightToggle || m->flags & MARIO_METAL_CAP) ? 96 : 60;
                 if (m->forwardVel > spdcap) m->forwardVel = spdcap;
             } else {
                 if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
-                if (m->forwardVel >= 0) {
-                    if (forwardVel + 16.0f >= 48.0f) {
-                        forwardVel = 48.0f;
-                    }
-                mario_set_forward_vel(m, forwardVel);
-                }
-            } 
+                if ((m->forwardVel *= 1.5f) > 48.0f) m->forwardVel = 48.0f;
+            }
             
             break;
 
@@ -842,9 +834,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
             //! (BLJ's) This properly handles long jumps from getting forward speed with
             //  too much velocity, but misses backwards longs allowing high negative speeds.
-            if ((m->forwardVel *= 1.5f) > 48.0f) {
-                m->forwardVel = 48.0f;
-            }
+            if ((m->forwardVel *= 1.5f) > 48.0f) m->forwardVel = 48.0f;
             break;
 
         case ACT_SLIDE_KICK:
@@ -1613,16 +1603,18 @@ u32 update_and_return_cap_flags(struct MarioState *m) {
             }
         }
 
-        if (m->capTimer == 60) {
-            fadeout_cap_music();
-        }
+        if (m->capTimer < 64) {
+            if (m->capTimer == 60) {
+                fadeout_cap_music();
+            }
 
-        // This code flickers the cap through a long binary string, increasing in how
-        // common it flickers near the end.
-        if ((m->capTimer < 64) && ((1ULL << m->capTimer) & sCapFlickerFrames)) {
-            flags &= ~MARIO_SPECIAL_CAPS;
-            if (!(flags & MARIO_CAPS)) {
-                flags &= ~MARIO_CAP_ON_HEAD;
+            // This code flickers the cap through a long binary string, increasing in how
+            // common it flickers near the end.
+            if (((1ULL << m->capTimer) & sCapFlickerFrames)) {
+                flags &= ~MARIO_SPECIAL_CAPS;
+                if (!(flags & MARIO_CAPS)) {
+                    flags &= ~MARIO_CAP_ON_HEAD;
+                }
             }
         }
     }

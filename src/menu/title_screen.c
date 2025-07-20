@@ -94,6 +94,7 @@ u8 gLevelSelectExitTimer = 0;
  */
 s32 intro_level_select(void) {
     u32 index = 0;
+    if (gFPSCap == FPS_MENU) gFPSCap = FPS_60;
 
     if (gPlayer1Controller->buttonDown == Z_TRIG) { // quit level select
         gLevelSelectExitTimer++;

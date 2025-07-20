@@ -80,15 +80,10 @@ void fps_calc(void) {
     #else
         gDeltaTime = calculate_and_update_fps();
     #endif
+    gDeltaTime /= 30.0f;
 }
 
 void print_fps(s32 x, s32 y) {
-    #ifdef USE_PROFILER
-        gDeltaTime = profiler_get_fps();
-    #else
-        gDeltaTime = calculate_and_update_fps();
-    #endif
-
     char text[14];
 
     sprintf(text, "FPS %2.2f", gDeltaTime);
@@ -507,9 +502,9 @@ void render_hud_keys(void) {
 void render_hud_timer(void) {
     Texture *(*hudLUT)[58] = segmented_to_virtual(&main_hud_lut);
     u16 timerValFrames = gHudDisplay.timer;
-    u16 timerMins = timerValFrames / (30 * 60);
-    u16 timerSecs = (timerValFrames - (timerMins * 1800)) / 30;
-    u16 timerFracSecs = ((timerValFrames - (timerMins * 1800) - (timerSecs * 30)) & 0xFFFF) / 3;
+    u16 timerMins = timerValFrames / (gDeltaTime * 1800.0f);
+    u16 timerSecs = (timerValFrames - (timerMins * 1800)) / (gDeltaTime * 30.0f);
+    u16 timerFracSecs = (timerValFrames / (u8)(gDeltaTime * 3.0f + 0.5f)) % 10;
 
 #if MULTILANG
     switch (eu_get_language()) {

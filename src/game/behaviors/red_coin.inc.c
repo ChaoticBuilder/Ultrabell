@@ -42,6 +42,7 @@ void bhv_red_coin_init(void) {
  * the orange number counter.
  */
 void bhv_red_coin_loop(void) {
+    if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
     // If Mario interacted with the object...
     if (o->oInteractStatus & INT_STATUS_INTERACTED) {
         // ...and there is a red coin star in the level...

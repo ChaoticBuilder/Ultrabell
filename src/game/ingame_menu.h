@@ -49,6 +49,15 @@ enum ConfigMenuIDs {
     CFG_END,
 };
 
+enum FPSPresets {
+    FPS_30,
+    FPS_45,
+    FPS_60,
+    FPS_20,
+    FPS_USER_END,
+    FPS_MENU,
+};
+
 #define ASCII_TO_DIALOG(asc)                                       \
     (((asc) >= '0' && (asc) <= '9') ? ((asc) - '0') :              \
      ((asc) >= 'A' && (asc) <= 'Z') ? ((asc) - 'A' + 0x0A) :       \

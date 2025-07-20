@@ -188,16 +188,16 @@ void update_air_with_turn(struct MarioState *m) {
             intendedDYaw = m->intendedYaw - m->faceAngle[1];
             intendedMag = m->intendedMag / 32.0f;
 
-            m->forwardVel += (1.5f / (gDeltaTime / 30.0f)) * coss(intendedDYaw) * intendedMag;
-            m->faceAngle[1] += (512.0f / (gDeltaTime / 30.0f)) * sins(intendedDYaw) * intendedMag;
+            m->forwardVel += 1.5f * coss(intendedDYaw) * intendedMag / gDeltaTime;
+            m->faceAngle[1] += 512.0f * sins(intendedDYaw) * intendedMag / gDeltaTime;
         }
 
         //! Uncapped air speed. Net positive when moving forward.
         if (m->forwardVel > dragThreshold) {
-            m->forwardVel -= 1.125f;
+            m->forwardVel -= 1.125f / gDeltaTime;
         }
         if (m->forwardVel < -16.0f) {
-            m->forwardVel += 1.5f;
+            m->forwardVel += 1.5f / gDeltaTime;
         }
 
         m->vel[0] = m->slideVelX = m->forwardVel * sins(m->faceAngle[1]);
@@ -213,21 +213,21 @@ void update_air_without_turn(struct MarioState *m) {
 
     if (!check_horizontal_wind(m)) {
         dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
-        m->forwardVel = approach_f32(m->forwardVel, 0.0f, (0.375f / (gDeltaTime / 30.0f)), (0.375f / (gDeltaTime / 30.0f)));
+        m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.375f / gDeltaTime, 0.375f / gDeltaTime);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
             intendedDYaw = m->intendedYaw - m->faceAngle[1];
             intendedMag = m->intendedMag / 32.0f;
 
-            m->forwardVel += intendedMag * coss(intendedDYaw) * (1.5f / (gDeltaTime / 30.0f));
+            m->forwardVel += intendedMag * coss(intendedDYaw) * 1.5f / gDeltaTime;
             if (m->action != ACT_LONG_JUMP && m->action != ACT_WALL_KICK_AIR && m->action != ACT_BACKFLIP) {
                 if (gLuigiToggle) {
-                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * (1152.0f / (gDeltaTime / 30.0f));
+                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1152.0f / gDeltaTime;
                 } else {
-                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * (1024.0f / (gDeltaTime / 30.0f));
+                    m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 1024.0f / gDeltaTime;
                 }
             } else {
-                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * (96.0f / (gDeltaTime / 30.0f));
+                m->faceAngle[1] += intendedMag * sins(intendedDYaw) * 96.0f / gDeltaTime;
             }
             sidewaysSpeed = intendedMag * sins(intendedDYaw) * 10.0f;
         }
@@ -303,8 +303,8 @@ void update_flying_yaw(struct MarioState *m) {
         m->angleVel[1] = approach_s32(m->angleVel[1], 0, 0x40, 0x40);
     }
 
-    m->faceAngle[1] += m->angleVel[1];
-    m->faceAngle[2] = 20 * -m->angleVel[1];
+    m->faceAngle[1] += m->angleVel[1] / gDeltaTime;
+    m->faceAngle[2] = (20 * -m->angleVel[1]) / gDeltaTime;
 }
 
 void update_flying_pitch(struct MarioState *m) {
@@ -344,10 +344,10 @@ void update_flying(struct MarioState *m) {
 
     if ((!gLVLToggle || !gDebugLevelSelect) && !gFlightToggle) {
         if (m->flags & MARIO_WING_CAP) {
-            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x2000) - 0.25f;
+            m->forwardVel -= (1.5f * ((f32) m->faceAngle[0] / 0x2000) - 0.25f);
             if (m->forwardVel > 0.0f) m->forwardVel /= 1.0078125f;
         } else {
-            m->forwardVel -= 1.5f * ((f32) m->faceAngle[0] / 0x2000);
+            m->forwardVel -= (1.5f * ((f32) m->faceAngle[0] / 0x2000));
             if (m->forwardVel > 0.0f) m->forwardVel /= 1.015625f;
         }
     } else {
@@ -360,19 +360,19 @@ void update_flying(struct MarioState *m) {
     }
 
     if (m->forwardVel < 16.0f) {
-        m->faceAngle[0] -= (m->faceAngle[0] / 16 + 448);
+        m->faceAngle[0] -= (m->faceAngle[0] / 16 + 448) / gDeltaTime;
     } else if (m->forwardVel > 192.0f) {
         m->forwardVel = 192.0f;
     }
 
-    m->faceAngle[0] += m->angleVel[0];
+    m->faceAngle[0] += (m->angleVel[0] / gDeltaTime);
 
     m->faceAngle[0] = CLAMP(m->faceAngle[0], DEGREES(-90), DEGREES(67.5));
     m->faceAngle[2] = CLAMP(m->faceAngle[2], DEGREES(-60), DEGREES(60));
 
-    m->vel[0] = m->forwardVel * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);
-    m->vel[1] = m->forwardVel * sins(m->faceAngle[0]);
-    m->vel[2] = m->forwardVel * coss(m->faceAngle[0]) * coss(m->faceAngle[1]);
+    m->vel[0] = m->forwardVel * coss(m->faceAngle[0]) * sins(m->faceAngle[1]) / gDeltaTime;
+    m->vel[1] = m->forwardVel * sins(m->faceAngle[0]) / gDeltaTime;
+    m->vel[2] = m->forwardVel * coss(m->faceAngle[0]) * coss(m->faceAngle[1]) / gDeltaTime;
 
     m->slideVelX = m->vel[0];
     m->slideVelZ = m->vel[2];
@@ -767,7 +767,7 @@ s32 act_twirling(struct MarioState *m) {
 #endif
 
     m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
-    m->twirlYaw += (m->angleVel[1] / (gDeltaTime / 30.0f));
+    m->twirlYaw += (m->angleVel[1] / gDeltaTime);
 
     switch (m->actionArg) {
         case 0:
@@ -1031,8 +1031,8 @@ s32 act_ground_pound(struct MarioState *m) {
         set_mario_action(m, ACT_SOFT_BONK, 0);
     }
 
-    if (m->actionTimer < 10) {
-        yOffset = 20 - 2 * m->actionTimer;
+    if (m->actionTimer < (10 * gDeltaTime)) {
+        yOffset = 20 - 2 * (m->actionTimer / gDeltaTime);
         if (m->pos[1] + yOffset + 160.0f < m->ceilHeight) {
             m->pos[1] += yOffset;
             m->peakHeight = m->pos[1];
@@ -1045,14 +1045,12 @@ s32 act_ground_pound(struct MarioState *m) {
 
     u8 speed = 0x10;
     if (m->actionArg > 0) {
-        if (m->actionTimer < 8) speed = -m->actionTimer + 0x18;
+        if (m->actionTimer < (8 * gDeltaTime)) speed = (-m->actionTimer + (0x18 * gDeltaTime)) / gDeltaTime;
     }
 
     set_mario_anim_with_accel(m, m->actionArg == ACT_ARG_GROUND_POUND_NORMAL
                                  ? MARIO_ANIM_START_GROUND_POUND : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND,
                                  (speed * 0x1000));
-    set_mario_animation(m, m->actionArg == ACT_ARG_GROUND_POUND_NORMAL ? MARIO_ANIM_START_GROUND_POUND
-                                                                       : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND);
     if (m->actionTimer == 0) {
         play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
         play_sound(SOUND_MARIO_UH, m->marioObj->header.gfx.cameraToObject);
@@ -1063,12 +1061,12 @@ s32 act_ground_pound(struct MarioState *m) {
             : (m->vel[1] = 0.0f);
         }
     }
-    if (g95Toggle && m->actionTimer < 4 && m->actionArg < 2) {
-        m->vel[1] -= 4.0f;
+    if (g95Toggle && m->actionTimer < (4 * gDeltaTime) && m->actionArg < 2) {
+        m->vel[1] -= 4.0f / gDeltaTime;
     }
 
     m->actionTimer++;
-    if (m->actionTimer >= m->marioObj->header.gfx.animInfo.curAnim->loopEnd + 4) {
+    if (m->actionTimer >= (m->marioObj->header.gfx.animInfo.curAnim->loopEnd + 4) * gDeltaTime) {
         m->actionState = ACT_STATE_GROUND_POUND_FALL;
     }
     if (m->actionState > 0) {
@@ -1402,7 +1400,7 @@ s32 act_wall_slide (struct MarioState *m) {
             mario_set_forward_vel(m, -0.01f);
             m->vel[1] -= 1.0f;
         } else if (gRealToggle) {
-            if (m->wallKickTimer == gKickTimer) m->vel[1] = 0;
+            if (m->wallKickTimer == (gKickTimer * gDeltaTime)) m->vel[1] = 0;
         }
 
         if (check_wall_kick(m)) {
@@ -1472,7 +1470,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
         mario_drop_held_object(m);
     }
 
-    m->wallKickTimer = gKickTimer;
+    m->wallKickTimer = (gKickTimer * gDeltaTime);
     if (gKickToggle) {
         if (!gRealToggle) m->vel[1] = 24.0f;
         set_mario_action(m, ACT_WALL_SLIDE, 0);
@@ -2030,7 +2028,7 @@ s32 act_flying(struct MarioState *m) {
         m->particleFlags |= PARTICLE_DUST;
     }
     if (m->faceAngle[0] <= -DEGREES(45)) {
-        if (gGlobalTimer % 4 == 0) {
+        if (gGlobalTimer % (u8)(gDeltaTime * 4.0f + 0.5f) == 0) {
             m->particleFlags |= PARTICLE_FIRE;
         }
     }

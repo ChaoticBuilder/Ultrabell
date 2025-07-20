@@ -548,6 +548,7 @@ const Gfx coin_seg3_sub_dl_begin[] = {
     gsDPSetCombineMode(G_CC_MODULATEIA, G_CC_MODULATEIA),
 #else
     gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsDPSetTextureFilter(G_TF_POINT),
 #endif
     gsSPTexture(0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON),
 #ifdef IA8_COINS
@@ -573,6 +574,7 @@ const Gfx coin_seg3_sub_dl_end[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPSetGeometryMode(G_LIGHTING),
+    gsDPSetTextureFilter(G_TF_BILERP),
     gsSPEndDisplayList(),
 };
 

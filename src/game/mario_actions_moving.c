@@ -249,8 +249,8 @@ s32 update_sliding(struct MarioState *m, f32 stopSpeed) {
     //! This is attempting to use trig derivatives to rotate Mario's speed.
     // It is slightly off/asymmetric since it uses the new X speed, but the old
     // Z speed.
-    m->slideVelX += m->slideVelZ * (m->intendedMag / 32.0f) * sideward * 0.05f;
-    m->slideVelZ -= m->slideVelX * (m->intendedMag / 32.0f) * sideward * 0.05f;
+    m->slideVelX += m->slideVelZ * ((m->intendedMag / 32.0f) * sideward * 0.05f) / gDeltaTime;
+    m->slideVelZ -= m->slideVelX * ((m->intendedMag / 32.0f) * sideward * 0.05f) / gDeltaTime;
 
     newSpeed = sqrtf(m->slideVelX * m->slideVelX + m->slideVelZ * m->slideVelZ);
 
@@ -437,19 +437,19 @@ void update_walking_speed(struct MarioState *m) {
     targetSpeed = m->intendedMag < maxTargetSpeed ? m->intendedMag : maxTargetSpeed;
 
     if (m->quicksandDepth > 10.0f) {
-        targetSpeed *= (6.25f / (gDeltaTime / 30.0f)) / m->quicksandDepth;
+        targetSpeed *= 6.25f / m->quicksandDepth;
     }
 
     if (m->forwardVel <= 0.0f) {
         // Slow down if moving backwards
-        m->forwardVel += 1.0f / (gDeltaTime / 30.0f);
+        m->forwardVel += 1.0f / gDeltaTime;
     } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
-        m->forwardVel += 0.5f / (gDeltaTime / 30.0f);
-        if (!g95Toggle) m->forwardVel += 0.25f / (gDeltaTime / 30.0f);
-        if (gRealToggle) m->forwardVel += 0.5f / (gDeltaTime / 30.0f);
+        m->forwardVel += 0.5f / gDeltaTime;
+        if (!g95Toggle) m->forwardVel += 0.25f / gDeltaTime;
+        if (gRealToggle) m->forwardVel += 0.5f / gDeltaTime;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.125f / (gDeltaTime / 30.0f);
+        m->forwardVel -= 0.125f / gDeltaTime;
     }
 
     if (m->forwardVel > 64.0f) {
@@ -474,7 +474,7 @@ void update_walking_speed(struct MarioState *m) {
 #else
     // Vanilla
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800 / (gDeltaTime / 30.0f), 0x800 / (gDeltaTime / 30.0f));
+        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800 / gDeltaTime, 0x800 / gDeltaTime);
 #endif
     apply_slope_accel(m);
 }

@@ -1563,22 +1563,22 @@ void render_pause_red_coins(void) {
 void config_options_scroll(void) {
     if (gHighlightToggle)
         return;
-    if ((gPlayer1Controller->buttonPressed == L_JPAD) || (gPlayer1Controller->rawStickX <= -32.0f && gGlobalTimer % 5 == 0)) {
+    if ((gPlayer1Controller->buttonPressed == L_JPAD) || (gPlayer1Controller->rawStickX <= -32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         gConfigScroll--;
         // if (gConfigScroll == CFG_SPAC0) gConfigScroll--;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 32.0f && gGlobalTimer % 5 == 0)) {
+    if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         gConfigScroll -= 2;
         // if (gConfigScroll == CFG_SPAC0) gConfigScroll -= 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 32.0f && gGlobalTimer % 5 == 0)) {
+    if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         gConfigScroll++;
         // if (gConfigScroll == CFG_SPAC0) gConfigScroll++;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -32.0f && gGlobalTimer % 5 == 0)) {
+    if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         gConfigScroll += 2;
         // if (gConfigScroll == CFG_SPAC0) gConfigScroll += 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
@@ -1597,7 +1597,10 @@ void config_options_scroll(void) {
     }
 }
 
+u8 gFPSSignal = FALSE;
+
 void config_options(void) {
+    gFPSSignal = FALSE;
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
         if (gConfigScroll == CFG_WIDE) {
 #ifdef WIDE
@@ -1643,7 +1646,10 @@ void config_options(void) {
         if (gConfigScroll == CFG_LVL) gLVLToggle ^= 1;
         // if (gHudDisplay.stars >= 100)
         if (gConfigScroll == CFG_FLY) gFlightToggle ^= 1;
-        if (gConfigScroll == CFG_FPS) gFPSCap = (gFPSCap + 1) % 4;
+        if (gConfigScroll == CFG_FPS) {
+            gFPSCap = (gFPSCap + 1) % FPS_USER_END;
+            gFPSSignal = TRUE;
+        }
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed & B_BUTTON) {
@@ -1954,9 +1960,9 @@ void config_options_box(void) {
     if (gConfigScroll == CFG_FPS) print_small_text_light(160, 204, "FPS Cap", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gFPSCap) sprintf(currOption, "FPS: 30");
-    if (gFPSCap == 1) sprintf(currOption, "FPS: 45");
-    if (gFPSCap == 2) sprintf(currOption, "FPS: 60");
-    if (gFPSCap == 3) sprintf(currOption, "FPS: 20");
+    if (gFPSCap == FPS_45) sprintf(currOption, "FPS: 45");
+    if (gFPSCap == FPS_60) sprintf(currOption, "FPS: 60");
+    if (gFPSCap == FPS_20) sprintf(currOption, "FPS: 20");
 
     config_option_render(xPos, yPos, currOption, CFG_FPS);
     /*

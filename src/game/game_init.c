@@ -33,6 +33,7 @@
 #include "emutest.h"
 #include "debug.h"
 #include "ingame_menu.h"
+#include "level_update.h"
 
 // Emulators that the Instant Input patch should not be applied to
 #define INSTANT_INPUT_BLACKLIST (EMU_CONSOLE | EMU_WIIVC | EMU_ARES | EMU_SIMPLE64 | EMU_CEN64)
@@ -466,8 +467,9 @@ void display_and_vsync(void) {
     exec_display_list(&gGfxPool->spTask);
     osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
     osViSwapBuffer((void *) PHYSICAL_TO_VIRTUAL(gPhysicalFramebuffers[sRenderedFramebuffer]));
-    if (!gFPSCap || gFPSCap == 3 || (gFPSCap == 1 && gGlobalTimer % 3 == 0)) osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-    if (gFPSCap == 3) osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+    if (!gFPSCap || gFPSCap == FPS_MENU || gFPSCap == FPS_20 || (gFPSCap == FPS_45 && gGlobalTimer % 3 == 0))
+        osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+    if (gFPSCap == FPS_20) osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
 /*
 #ifndef UNLOCK_FPS
     osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);

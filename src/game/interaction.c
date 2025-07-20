@@ -1592,6 +1592,7 @@ u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o
             case MARIO_METAL_CAP:  capTime = 1050; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
             case MARIO_WING_CAP:   capTime = 1800; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
         }
+        if (gLVLToggle) capTime *= 2;
 
         if (capTime > m->capTimer) {
             m->capTimer = capTime;
@@ -1897,7 +1898,7 @@ void pss_end_slide(struct MarioState *m) {
     //! This flag isn't set on death or level entry, allowing double star spawn
     if (sPssSlideStarted) {
         u16 slideTime = level_control_timer(TIMER_CONTROL_STOP);
-        if (slideTime < 630) {
+        if (slideTime < 630 * gDeltaTime) {
             m->marioObj->oBehParams = (1 << 24);
             spawn_default_star(-6358.0f, -4300.0f, 4700.0f);
         }

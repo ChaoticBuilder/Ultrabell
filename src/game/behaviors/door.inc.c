@@ -39,14 +39,14 @@ void play_door_open_noise(void) {
         cur_obj_play_sound_2(sDoorOpenSounds[isMetalDoor]);
         gTimeStopState |= TIME_STOP_MARIO_OPENED_DOOR;
     }
-    if (o->oTimer == (70 * (gDeltaTime / 30.0f))) {
+    if (o->oTimer == (70 * gDeltaTime)) {
         cur_obj_play_sound_2(sDoorCloseSounds[isMetalDoor]);
     }
 }
 
 void play_warp_door_open_noise(void) {
     s32 isMetalDoor = cur_obj_has_model(MODEL_HMC_METAL_DOOR);
-    if (o->oTimer == (30 * (gDeltaTime / 30.0f))) {
+    if (o->oTimer == (30 * gDeltaTime)) {
         cur_obj_play_sound_2(sDoorCloseSounds[isMetalDoor]);
     }
 }

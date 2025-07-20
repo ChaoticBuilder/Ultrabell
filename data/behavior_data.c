@@ -936,7 +936,6 @@ const BehaviorScript bhvMrIBlueCoin[] = {
     SET_HITBOX(/*Radius*/ 120, /*Height*/ 64),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_coin_loop),
-        ADD_INT(oAnimState, 1),
     END_LOOP(),
 };
 
@@ -2846,7 +2845,6 @@ const BehaviorScript bhvHiddenBlueCoin[] = {
     SET_INT(oAnimState, OBJ_ANIM_STATE_INIT_ANIM),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_hidden_blue_coin_loop),
-        ADD_INT(oAnimState, 1),
     END_LOOP(),
 };
 
@@ -3640,7 +3638,6 @@ const BehaviorScript bhvMovingBlueCoin[] = {
     CALL_NATIVE(bhv_moving_blue_coin_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_moving_blue_coin_loop),
-        ADD_INT(oAnimState, 1),
     END_LOOP(),
 };
 
@@ -3653,7 +3650,6 @@ const BehaviorScript bhvBlueCoinSliding[] = {
     CALL_NATIVE(bhv_blue_coin_sliding_jumping_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_blue_coin_sliding_loop),
-        ADD_INT(oAnimState, 1),
     END_LOOP(),
 };
 
@@ -3666,7 +3662,6 @@ const BehaviorScript bhvBlueCoinJumping[] = {
     CALL_NATIVE(bhv_blue_coin_sliding_jumping_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_blue_coin_jumping_loop),
-        ADD_INT(oAnimState, 1),
     END_LOOP(),
 };
 
@@ -4594,7 +4589,6 @@ const BehaviorScript bhvRedCoin[] = {
     CALL_NATIVE(bhv_red_coin_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_red_coin_loop),
-        ADD_INT(oAnimState, 1),
     END_LOOP(),
 };
 
