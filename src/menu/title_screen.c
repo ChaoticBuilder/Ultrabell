@@ -105,33 +105,24 @@ s32 intro_level_select(void) {
         }
         if (gLevelSelectExitTimer >= 60) {
             gDebugLevelSelect = FALSE;
+            gLVLToggle = FALSE;
             return LEVEL_RESTART_GAME;
         }
-    } else {
-        gLevelSelectExitTimer = 0;
-    }
+    } else gLevelSelectExitTimer = 0;
 
-    if (gPlayer1Controller->rawStickY < -60
-        || gPlayer1Controller->rawStickX < -60
-        || gPlayer1Controller->buttonDown & (D_CBUTTONS | D_JPAD | L_CBUTTONS | L_JPAD)
-    ) {
-            index++;
-    }
+    if (gPlayer1Controller->rawStickY < -60 ||
+        gPlayer1Controller->rawStickX < -60 ||
+        gPlayer1Controller->buttonDown & (D_CBUTTONS | D_JPAD | L_CBUTTONS | L_JPAD))
+        index++;
 
-    if (gPlayer1Controller->rawStickY > 60
-        || gPlayer1Controller->rawStickX > 60
-        || gPlayer1Controller->buttonDown & (U_CBUTTONS | U_JPAD | R_CBUTTONS | R_JPAD)
-    ) {
-            index += 2;
-    }
+    if (gPlayer1Controller->rawStickY > 60 ||
+        gPlayer1Controller->rawStickX > 60 ||
+        gPlayer1Controller->buttonDown & (U_CBUTTONS | U_JPAD | R_CBUTTONS | R_JPAD))
+        index += 2;
 
     if (gPlayer1Controller->buttonPressed & L_TRIG) {
         play_sound(SOUND_GENERAL_LEVEL_SELECT_CHANGE, gGlobalSoundSource);
-        gCurrActNum += 1;
-        // I would've loved to modulo here but it keeps throwing compiler errors so
-        if (gCurrActNum > 6) {
-            gCurrActNum = 0;
-        }
+        gCurrActNum = (gCurrActNum + 1) % 7;
     }
 
     if (((index ^ gLevelSelectHoldKeyIndex) & index) == 2) {

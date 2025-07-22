@@ -45,7 +45,7 @@ s32 lava_boost_on_wall(struct MarioState *m) {
         m->forwardVel = 16.0f;
     }
 
-    if (!(m->flags & MARIO_METAL_CAP) && (!gLVLToggle || !gDebugLevelSelect)) {
+    if (!(m->flags & MARIO_METAL_CAP) && !gLVLToggle) {
         m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 8 : 12;
     }
 
@@ -342,7 +342,7 @@ void update_flying(struct MarioState *m) {
         m->actionTimer++;
     }
 
-    if ((!gLVLToggle || !gDebugLevelSelect) && !gFlightToggle) {
+    if (!gLVLToggle && !gFlightToggle) {
         if (m->flags & MARIO_WING_CAP) {
             m->forwardVel -= (1.5f * ((f32) m->faceAngle[0] / 0x2000) - 0.25f);
             if (m->forwardVel > 0.0f) m->forwardVel /= 1.0078125f;
@@ -1120,7 +1120,7 @@ s32 act_burning_jump(struct MarioState *m) {
 
     m->marioObj->oMarioBurnTimer += 3;
 
-    if(!gLVLToggle || !gDebugLevelSelect) {
+    if (!gLVLToggle) {
         m->health -= 10;
         if (m->health < 0x100) {
             m->health = 0xFF;
@@ -1144,7 +1144,7 @@ s32 act_burning_fall(struct MarioState *m) {
     m->particleFlags |= PARTICLE_FIRE;
     m->marioObj->oMarioBurnTimer += 3;
 
-    if(!gLVLToggle || !gDebugLevelSelect) {
+    if (!gLVLToggle) {
         m->health -= 10;
         if (m->health < 0x100) {
             m->health = 0xFF;
@@ -1708,7 +1708,7 @@ s32 act_lava_boost(struct MarioState *m) {
         }
     }
 
-    if (m->flags & MARIO_METAL_CAP || (gLVLToggle && gDebugLevelSelect)) m->hurtCounter = 0;
+    if (m->flags & MARIO_METAL_CAP || gLVLToggle) m->hurtCounter = 0;
     if (m->health < 0x100) {
         level_trigger_warp(m, WARP_OP_DEATH);
     }
