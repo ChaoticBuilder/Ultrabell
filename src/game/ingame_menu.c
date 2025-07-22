@@ -42,7 +42,7 @@ s16 gCutsceneMsgXOffset;
 s16 gCutsceneMsgYOffset;
 s8 gRedCoinsCollected;
 u8 gConfigOpen = FALSE;
-u8 gConfigScroll = 2;
+u8 gConfigScroll = 1;
 u8 gHighlightToggle = FALSE;
 u8 gDebugToggle = FALSE;
 u8 gDiveToggle = 0;
@@ -1198,6 +1198,8 @@ void render_dialog_entries(void) {
                     play_sound(SOUND_MENU_MESSAGE_NEXT_PAGE, gGlobalSoundSource);
                 }
             }
+            if (gPlayer1Controller->buttonPressed & Z_TRIG) gDialogBoxState = DIALOG_STATE_CLOSING; // how the actual fuck was this not in the game before
+
             lowerBound = 1;
             break;
         case DIALOG_STATE_HORIZONTAL: // scrolling
@@ -1563,38 +1565,28 @@ void render_pause_red_coins(void) {
 void config_options_scroll(void) {
     if (gHighlightToggle)
         return;
-    if ((gPlayer1Controller->buttonPressed == L_JPAD) || (gPlayer1Controller->rawStickX <= -32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
+
+    if ((gPlayer1Controller->buttonDown == L_JPAD || gPlayer1Controller->rawStickX <= -16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
         gConfigScroll--;
-        // if (gConfigScroll == CFG_SPAC0) gConfigScroll--;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
-        gConfigScroll -= 2;
-        // if (gConfigScroll == CFG_SPAC0) gConfigScroll -= 2;
-        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
+    if ((gPlayer1Controller->buttonDown == R_JPAD || gPlayer1Controller->rawStickX >= 16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
         gConfigScroll++;
-        // if (gConfigScroll == CFG_SPAC0) gConfigScroll++;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -32.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
-        gConfigScroll += 2;
-        // if (gConfigScroll == CFG_SPAC0) gConfigScroll += 2;
+    if ((gPlayer1Controller->buttonDown == U_JPAD || gPlayer1Controller->rawStickY >= 16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
+        if (gConfigScroll == (CFG_START + 1)) gConfigScroll = (CFG_END - 2);
+        else gConfigScroll -= 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gConfigScroll == CFG_2) {
-        gConfigScroll = (CFG_END - 1);
+    if ((gPlayer1Controller->buttonDown == D_JPAD || gPlayer1Controller->rawStickY <= -16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
+        if (gConfigScroll == (CFG_END - 1)) gConfigScroll = (CFG_START + 2);
+        else gConfigScroll += 2;
+        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if (gConfigScroll < CFG_2) {
-        gConfigScroll = (CFG_END - 2);
-    }
-    if (gConfigScroll == CFG_END) {
-        gConfigScroll = 2;
-    }
-    if (gConfigScroll > CFG_END) {
-        gConfigScroll = 3;
-    }
+
+    if (gConfigScroll == CFG_START) gConfigScroll = (CFG_END - 1);
+    if (gConfigScroll == CFG_END) gConfigScroll = (CFG_START + 1);
 }
 
 u8 gFPSSignal = FALSE;
@@ -1718,11 +1710,6 @@ void time_slider(void) {
 }
 
 u8 gFPSCap = 0;
-
-void config_open(void) {
-    if (gPlayer1Controller->buttonPressed & R_TRIG) gConfigOpen ^= 1;
-    if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
-}
 
 /**
  * Function for drawing options in the Hack Config.
@@ -2282,7 +2269,9 @@ s32 gCourseCompleteCoins = 0;
 s32 render_pause_courses_and_castle(void) {
     s16 index;
 
-    config_open();
+    if (gPlayer1Controller->buttonPressed & R_TRIG) gConfigOpen ^= 1;
+    if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
+    
     if (!gConfigOpen) {
         switch (gDialogBoxState) {
             case DIALOG_STATE_OPENING:

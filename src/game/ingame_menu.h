@@ -27,13 +27,11 @@ extern u8 gConfigOpen;
     extern u8 gFPSCap;
 
 enum ConfigMenuIDs {
-    CFG_1,
-    CFG_2,
+    CFG_START,
     CFG_WIDE,
     CFG_FOV,
     CFG_HUD,
     CFG_STATS,
-    // CFG_SPAC0,
     CFG_LUIGI,
     CFG_TIMER,
     CFG_SSK,
