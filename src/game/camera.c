@@ -8999,12 +8999,6 @@ void peach_letter_text(UNUSED struct Camera *c) {
     create_dialog_box(DIALOG_020);
 }
 
-#ifndef VERSION_JP
-void play_sound_peach_reading_letter(UNUSED struct Camera *c) {
-    play_sound(SOUND_PEACH_DEAR_MARIO, gGlobalSoundSource);
-}
-#endif
-
 /**
  * Move the camera from peach reading the letter all the way to Mario's warp pipe. Follow the
  * sIntroStartToPipe splines.
@@ -9123,9 +9117,6 @@ void cutscene_intro_peach_letter(struct Camera *c) {
     cutscene_event(cutscene_intro_peach_start_letter_music, c, 65, 65);
     cutscene_event(cutscene_intro_peach_start_to_pipe_spline, c, 0, 0);
     cutscene_event(peach_letter_text, c, 65, 65);
-#ifndef VERSION_JP
-    cutscene_event(play_sound_peach_reading_letter, c, 83, 83);
-#endif
 
     if ((gCutsceneTimer > 120) && (get_dialog_id() == DIALOG_NONE)) {
         // Start the next scene

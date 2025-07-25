@@ -2044,7 +2044,6 @@ sound_ref .sound_mario_eeuh
 sound_ref .sound_mario_attacked
 sound_ref .sound_mario_ooof
 sound_ref .sound_mario_here_we_go
-sound_ref .sound_mario_yawning
 sound_ref .sound_mario_snoring1
 sound_ref .sound_mario_snoring2
 sound_ref .sound_mario_waaaooow
@@ -2085,7 +2084,6 @@ sound_ref .sound_mario_hello
 sound_ref .sound_mario_twirl_bounce
 sound_ref .sound_mario_snoring3
 sound_ref .sound_mario_so_longa_bowser
-sound_ref .sound_mario_ima_tired
 sound_ref .sound_peach_mario
 sound_ref .sound_peach_power_of_the_stars
 sound_ref .sound_peach_thanks_to_you
@@ -2236,17 +2234,6 @@ chan_end
 
 .layer_CF8:
 layer_note1_mario 38, 0x85, 127
-layer_end
-
-.sound_mario_yawning:
-chan_setbank 8
-chan_setinstr 13
-chan_setlayer 0, .layer_D09
-chan_end
-
-.layer_D09:
-layer_transpose_mario -2
-layer_note1_mario 39, 0x7f, 105
 layer_end
 
 .sound_mario_snoring1:
@@ -2601,16 +2588,6 @@ chan_end
 .layer_EF7:
 layer_portamento_mario 0x82, 42, 200
 layer_note1_mario 39, 0xc8, 110
-layer_end
-
-.sound_mario_ima_tired:
-chan_setbank 8
-chan_setinstr 23
-chan_setlayer 0, .layer_F08
-chan_end
-
-.layer_F08:
-layer_note1_mario 39, 0x96, 110
 layer_end
 
 .sound_peach_mario:
