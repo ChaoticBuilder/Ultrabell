@@ -2082,7 +2082,6 @@ sound_ref .sound_mario_yippee
 sound_ref .sound_mario_doh
 sound_ref .sound_mario_game_over
 sound_ref .sound_mario_hello
-sound_ref .sound_mario_press_start_to_play
 sound_ref .sound_mario_twirl_bounce
 sound_ref .sound_mario_snoring3
 sound_ref .sound_mario_so_longa_bowser
@@ -2105,7 +2104,7 @@ chan_end
 
 .layer_C3C:
 layer_portamento_mario 0x82, 41, 127
-layer_note1_mario 38, 0x14, 127
+layer_note1_mario 37, 0x14, 127
 layer_end
 
 .sound_mario_jump_wah:
@@ -2120,15 +2119,15 @@ layer_note1_mario 36, 0x18, 127
 layer_end
 
 .sound_mario_jump_yah:
-chan_setbank 10
-chan_setinstr 9
+chan_setbank 8
+chan_setinstr 2
 chan_setlayer 0, .layer_C5A
 chan_end
 
 .layer_C5A:
 .layer_C5C:
-layer_portamento_mario 0x82, 39, 200
-layer_note1_mario 36, 0x24, 120
+layer_portamento_mario 0x82, 37, 200
+layer_note1_mario 37, 0x10, 120
 layer_end
 
 .sound_mario_hoohoo:
@@ -2557,16 +2556,6 @@ chan_end
 
 .layer_EAC:
 layer_note1_mario 41, 0x80, 100
-layer_end
-
-.sound_mario_press_start_to_play:
-chan_setbank 8
-chan_setinstr 19
-chan_setlayer 0, .layer_EB8
-chan_end
-
-.layer_EB8:
-layer_note1_mario 39, 0x12c, 127
 layer_end
 
 .sound_mario_twirl_bounce:

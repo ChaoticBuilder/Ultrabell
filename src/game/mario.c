@@ -1223,7 +1223,7 @@ void update_mario_button_inputs(struct MarioState *m) {
     if (m->controller->buttonDown    & A_BUTTON) m->input |= INPUT_A_DOWN;
     
     if (!gLuigiToggle) m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_MARIO];
-    else m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LUIGI];
+    else               m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LUIGI];
 
     // Don't update for these buttons if squished.
     if (m->squishTimer == 0) {
@@ -1253,7 +1253,7 @@ void update_mario_joystick_inputs(struct MarioState *m) {
     struct Controller *controller = m->controller;
     f32 mag = ((controller->stickMag / 64.0f) * (controller->stickMag / 64.0f)) * 64.0f;
 
-    m->intendedMag = mag / 2.0f;
+    m->intendedMag = mag / ((!(m->flags & MARIO_METAL_CAP)) ? 2.0f : 1.25f);
 
     if (m->intendedMag > 0.0f) {
         m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;

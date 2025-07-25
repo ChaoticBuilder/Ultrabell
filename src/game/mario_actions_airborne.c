@@ -176,12 +176,12 @@ s32 check_horizontal_wind(struct MarioState *m) {
 }
 
 void update_air_with_turn(struct MarioState *m) {
-    f32 dragThreshold;
+    // f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
+        // dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.375f, 0.375f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -193,7 +193,7 @@ void update_air_with_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > dragThreshold) {
+        if (m->forwardVel > 32.0f) {
             m->forwardVel -= 1.125f / gDeltaTime;
         }
         if (m->forwardVel < -16.0f) {
@@ -207,12 +207,12 @@ void update_air_with_turn(struct MarioState *m) {
 
 void update_air_without_turn(struct MarioState *m) {
     f32 sidewaysSpeed = 0.0f;
-    f32 dragThreshold;
+    // f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
+        // dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.375f / gDeltaTime, 0.375f / gDeltaTime);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -233,7 +233,7 @@ void update_air_without_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > dragThreshold) {
+        if (m->forwardVel > 32.0f) {
             m->forwardVel -= 1.125f;
         }
         if (m->action != ACT_LONG_JUMP_LAND) {
@@ -1732,7 +1732,6 @@ s32 act_slide_kick(struct MarioState *m) {
         m->vel[1] = sqr((m->actionTimer + 3));
     
     if (m->input & INPUT_A_PRESSED) {
-        if (m->forwardVel > 48.0f) m->forwardVel = 48.0f;
         return set_mario_action(m, ACT_SOFT_BONK, 0);
     }
 
@@ -1746,20 +1745,20 @@ s32 act_slide_kick(struct MarioState *m) {
         if (m->marioObj->header.gfx.animInfo.animFrame >= 0x22) {
             set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
             offset = 0;
-            m->actionArg = 3;
+            m->actionArg = 2;
         }
     } else offset = 0;
 
-    if (m->actionArg == 2) set_mario_animation(m, MARIO_ANIM_SLIDE_KICK);
+    if (m->actionArg == 3) set_mario_animation(m, MARIO_ANIM_SLIDE_KICK);
 
-    if (m->forwardVel >= SKspeed && m->actionArg == 3)
+    if (m->forwardVel >= SKspeed && m->actionArg == 2)
         m->actionArg = 1;
 
     switch (m->actionArg) {
-        case 3:
+        case 2:
         case 0:
             if (m->actionTimer == 0) {
-                SKspeed = m->forwardVel * 2.0f;
+                SKspeed = m->forwardVel * 1.5f;
                 m->forwardVel = 0;
             }
             inc = SKspeed / (m->actionTimer + 5);
@@ -1774,28 +1773,18 @@ s32 act_slide_kick(struct MarioState *m) {
 
             m->forwardVel += intendedDYaw;
             break;
-        case 2:
-            if (m->forwardVel > 48.0f) m->forwardVel /= 1.0625f;
-            break;
     }
 
     update_air_without_turn(m);
     m->actionTimer++;
     switch (perform_air_step(m, 0)) {
-        case AIR_STEP_NONE:
-            if (m->actionState == ACT_STATE_SLIDE_KICK_SLIDING && m->actionArg == 2) {
-                m->marioObj->header.gfx.angle[0] = atan2s(m->forwardVel, -m->vel[1]);
-                if (m->marioObj->header.gfx.angle[0] > 0x1800) m->marioObj->header.gfx.angle[0] = 0x1800;
-            }
-            break;
-
         case AIR_STEP_LANDED:
             if (m->actionState == ACT_STATE_SLIDE_KICK_SLIDING && m->vel[1] < 0.0f) {
                 m->vel[1] = -m->vel[1] - 20.0f;
                 if (m->vel[1] < 24.0f) m->vel[1] = 24.0f;
                 m->actionState = ACT_STATE_SLIDE_KICK_END;
                 m->actionTimer = 0;
-                m->actionArg = 2;
+                m->actionArg = 3;
             } else {
                 set_mario_action(m, ACT_SLIDE_KICK_SLIDE, 0);
             }

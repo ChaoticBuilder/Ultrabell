@@ -256,13 +256,10 @@ s32 act_sleeping(struct MarioState *m) {
     m->invincTimer = 2;
     sleepTimer = 24;
     stationary_ground_step(m);
+    play_secondary_music(0x0B, 0, 255, 1000);
     switch (m->actionState) {
         case ACT_SLEEPING_STATE_IDLE:
             animFrame = set_mario_animation(m, MARIO_ANIM_SLEEP_IDLE);
-
-            if (animFrame == -1 && !m->actionTimer) {
-                play_secondary_music(0x0B, 0, 255, 1000);
-            }
 
             if (animFrame == 2) {
                 play_sound(SOUND_MARIO_SNORING1, m->marioObj->header.gfx.cameraToObject);

@@ -28,3 +28,5 @@ I couldn't make this hack without them!
 
 I can't wait to add even more things as time goes on.
 Have fun! :3
+
+This hack was started on January 14th, 2025. Why am I saying this? Idk, just wanted to put this somewhere -w-
