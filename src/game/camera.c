@@ -8675,7 +8675,7 @@ void cutscene_exit_succ_shake_landing(UNUSED struct Camera *c) {
 void cutscene_exit_bowser_succ(struct Camera *c) {
     cutscene_event(cutscene_exit_succ_start, c, 0, 0);
     cutscene_event(cutscene_non_painting_set_cam_pos, c, 0, -1);
-    // cutscene_event(cutscene_exit_bowser_succ_focus_left, c, 18, -1);
+    cutscene_event(cutscene_exit_bowser_succ_focus_left, c, 18, -1);
     cutscene_event(cutscene_non_painting_set_cam_focus, c, 0, -1);
     cutscene_event(cutscene_exit_bowser_key_toss_shake, c, 125, 125);
     cutscene_event(cutscene_exit_succ_shake_landing, c, 41, 41);

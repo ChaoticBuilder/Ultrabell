@@ -585,7 +585,7 @@ s32 act_ledge_grab(struct MarioState *m) {
     s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
     s32 hasSpaceForMario = (m->ceilHeight - m->floorHeight >= 160.0f);
 
-    if (m->actionTimer < 10) {
+    if (m->actionTimer < 10 * gDeltaTime) {
         m->actionTimer++;
     }
     if (m->floor->normal.y < COS25) {

@@ -1728,7 +1728,7 @@ s32 act_slide_kick(struct MarioState *m) {
     if (g95Toggle) return set_mario_action(m, ACT_FREEFALL, 2);
     if (gLuigiToggle) return set_mario_action(m, ACT_SHOT_FROM_CANNON, 0);
     
-    if (m->actionTimer < 4 && m->actionArg != 2)
+    if (m->actionTimer < 4 && m->actionArg != 3)
         m->vel[1] = sqr((m->actionTimer + 3));
     
     if (m->input & INPUT_A_PRESSED) {

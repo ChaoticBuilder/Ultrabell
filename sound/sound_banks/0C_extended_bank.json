@@ -536,8 +536,10 @@
         },
         "Music Box": {
             "release_rate": 119,
+            "normal_range_hi": 65,
             "envelope": "envelope28",
-            "sound": "3A_music_box"
+            "sound": "4C_music_box_1",
+            "sound_hi": "4D_music_box_2"
         },
         "Synth Voice 2": {
             "release_rate": 19,
