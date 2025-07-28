@@ -477,5 +477,4 @@ void render_game(void) {
 #ifdef PUPPYPRINT_DEBUG
     puppyprint_render_profiler();
 #endif
-    if (vBlankTimer >= 2) vBlankTimer = 0;
 }

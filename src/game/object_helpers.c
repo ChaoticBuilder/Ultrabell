@@ -1144,7 +1144,7 @@ void cur_obj_move_y_with_terminal_vel(void) {
     o->oPosY += o->oVelY;
 }
 
-void cur_obj_compute_vel_xz(s8 vSync) {
+void cur_obj_compute_vel_xz(u8 vSync) {
     if (vSync < 2) return;
     o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw) * (vSync >> 1);
     o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw) * (vSync >> 1);
@@ -1471,9 +1471,10 @@ UNUSED static s32 cur_obj_within_bounds(f32 bounds) {
     return TRUE;
 }
 
-void cur_obj_move_using_vel_and_gravity(s8 vSync) {
+void cur_obj_move_using_vel_and_gravity(u8 vSync) {
     if (vSync < 2) return;
-    o->oVelY += o->oGravity * (vSync >> 1); //! No terminal velocity
+    o->oVelY += o->oGravity; //! No terminal velocity
+    o->oVelY *= (vSync >> 1);
     vec3f_add(&o->oPosVec, &o->oVelVec);
 }
 

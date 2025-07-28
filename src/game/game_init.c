@@ -483,6 +483,7 @@ void display_and_vsync(void) {
     }
     
     gGlobalTimer++;
+    if (vBlankTimer >= 2) vBlankTimer = 0;
 }
 
 /*
