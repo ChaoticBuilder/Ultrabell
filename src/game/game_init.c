@@ -467,14 +467,11 @@ void display_and_vsync(void) {
     exec_display_list(&gGfxPool->spTask);
     osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
     osViSwapBuffer((void *) PHYSICAL_TO_VIRTUAL(gPhysicalFramebuffers[sRenderedFramebuffer]));
-    if (!gFPSCap || gFPSCap == FPS_MENU || gFPSCap == FPS_20 || (gFPSCap == FPS_45 && gGlobalTimer % 3 == 0))
+    if (!gFPSCap || gFPSCap == FPS_MENU || gFPSCap == FPS_20 || gFPSCap == FPS_15 || (gFPSCap == FPS_45 && gGlobalTimer % 3 == 0))
         osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-    if (gFPSCap == FPS_20) osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-/*
-#ifndef UNLOCK_FPS
-    osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-#endif
-*/
+    if (gFPSCap == FPS_20 || gFPSCap == FPS_15) osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+    if (gFPSCap == FPS_15) osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+
     // Skip swapping buffers on inaccurate emulators other than VC so that they display immediately as the Gfx task finishes
     if (gEmulator & INSTANT_INPUT_BLACKLIST) {
         if (++sRenderedFramebuffer == 3) {
@@ -484,8 +481,21 @@ void display_and_vsync(void) {
             sRenderingFramebuffer = 0;
         }
     }
+    
     gGlobalTimer++;
 }
+
+/*
+u8 delta(u8 rune, u8 spd, f32 delta) {
+    u8 mod = roundf(delta);
+    return (gGlobalTimer % (rune * mod / spd) * spd) / mod;
+}
+
+u8 deltalite(u8 rune, f32 delta) {
+    u8 cat = roundf(delta);
+    return (gGlobalTimer % (rune * cat)) / cat;
+}
+*/
 
 #if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
 // this function records distinct inputs over a 255-frame interval to RAM locations and was likely

@@ -17,6 +17,7 @@
 #include "rumble_init.h"
 #include "ingame_menu.h"
 #include "hud.h"
+#include "print.h"
 
 #include "config.h"
 
@@ -176,12 +177,12 @@ s32 check_horizontal_wind(struct MarioState *m) {
 }
 
 void update_air_with_turn(struct MarioState *m) {
-    // f32 dragThreshold;
+    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        // dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
+        dragThreshold = m->flags & MARIO_METAL_CAP ? 48.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.375f, 0.375f);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -193,8 +194,8 @@ void update_air_with_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > 32.0f) {
-            m->forwardVel -= 1.125f / gDeltaTime;
+        if (m->forwardVel > dragThreshold) {
+            m->forwardVel -= ((m->flags & MARIO_METAL_CAP) ? 1.5f : 1.0f) / gDeltaTime;
         }
         if (m->forwardVel < -16.0f) {
             m->forwardVel += 1.5f / gDeltaTime;
@@ -207,12 +208,12 @@ void update_air_with_turn(struct MarioState *m) {
 
 void update_air_without_turn(struct MarioState *m) {
     f32 sidewaysSpeed = 0.0f;
-    // f32 dragThreshold;
+    f32 dragThreshold;
     s16 intendedDYaw;
     f32 intendedMag;
 
     if (!check_horizontal_wind(m)) {
-        // dragThreshold = m->flags & MARIO_METAL_CAP ? 64.0f : 32.0f;
+        dragThreshold = m->flags & MARIO_METAL_CAP ? 48.0f : 32.0f;
         m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.375f / gDeltaTime, 0.375f / gDeltaTime);
 
         if (m->input & INPUT_NONZERO_ANALOG) {
@@ -233,12 +234,12 @@ void update_air_without_turn(struct MarioState *m) {
         }
 
         //! Uncapped air speed. Net positive when moving forward.
-        if (m->forwardVel > 32.0f) {
-            m->forwardVel -= 1.125f;
+        if (m->forwardVel > dragThreshold) {
+            m->forwardVel -= ((m->flags & MARIO_METAL_CAP) ? 1.5f : 1.0f) / gDeltaTime;
         }
         if (m->action != ACT_LONG_JUMP_LAND) {
             if (m->forwardVel < -16.0f) {
-                m->forwardVel += 1.5f;
+                m->forwardVel += 1.5f / gDeltaTime;
             }
         }
 

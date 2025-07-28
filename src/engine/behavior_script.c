@@ -14,6 +14,7 @@
 #include "math_util.h"
 #include "graph_node.h"
 #include "surface_collision.h"
+#include "game/main.h"
 
 // Macros for retrieving arguments from behavior scripts.
 #define BHV_CMD_GET_1ST_U8(index)     (u8)((gCurBhvCommand[index] >> 24) & 0xFF) // unused
@@ -858,7 +859,7 @@ void cur_obj_update(void) {
 
     // Increment the object's timer.
     if (o->oTimer < 0x3FFFFFFF) {
-        o->oTimer++;
+        if (vBlankTimer >= 2) o->oTimer += (vBlankTimer >> 1);
     }
 
     // If the object's action has changed, reset the action timer.

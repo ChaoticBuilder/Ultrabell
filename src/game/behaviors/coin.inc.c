@@ -71,11 +71,18 @@ void bhv_yellow_coin_init(void) {
 
 void bhv_yellow_coin_loop(void) {
     bhv_coin_sparkles_init();
-    if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+
+    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
+    
+    // o->oAnimState = delta(8, 4, gDeltaTime * 4);
+    // "vblank updates at 60 fps regardless of framerate"
+
+    // ...
+    // fuck
 }
 
 void bhv_temp_coin_loop(void) {
-    if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
 
     if (cur_obj_wait_then_blink(200, 20)) {
         obj_mark_for_deletion(o);
@@ -181,7 +188,7 @@ void bhv_coin_formation_spawned_coin_loop(void) {
         if (bhv_coin_sparkles_init()) {
             o->parentObj->oCoinRespawnBits |= (1 << o->oBehParams2ndByte);
         }
-        if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+        if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
     }
     if (o->parentObj->oAction == COIN_FORMATION_ACT_DEACTIVATE) {
         obj_mark_for_deletion(o);

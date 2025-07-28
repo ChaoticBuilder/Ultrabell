@@ -137,8 +137,8 @@ static void chain_chomp_sub_act_turn(void) {
     cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x300);
 
     if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x200) {
-        if (o->oTimer >= 45 * gDeltaTime) {
-            o->oTimer = 45 * gDeltaTime;
+        if (o->oTimer >= 45) {
+            o->oTimer = 45;
             if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
                 // Increase the maximum distance from the pivot and enter
                 // the lunging sub-action.
@@ -166,12 +166,12 @@ static void chain_chomp_sub_act_turn(void) {
             o->oVelY = 24.0f;
         }
     }
-    // print_text_fmt_int(160, 32, "%d", o->oTimer);
+    print_text_fmt_int(160, 32, "%d", o->oTimer);
 }
 
 static void chain_chomp_sub_act_lunge(void) {
     obj_face_pitch_approach(o->oChainChompTargetPitch, 0x400);
-    o->oTimer = 45 * gDeltaTime;
+    o->oTimer = 45;
     if (o->oForwardVel != 0.0f) {
         // f32 val04;
 
@@ -226,7 +226,7 @@ static void chain_chomp_released_lunge_around(void) {
         // Before first bounce, turn toward mario and wait 2 seconds
         if (o->oChainChompNumLunges == 0) {
             if (cur_obj_rotate_yaw_toward(o->oAngleToMario, 800)) {
-                if (o->oTimer > 60 * gDeltaTime) {
+                if (o->oTimer > 60) {
                     o->oChainChompNumLunges++;
                     // enable wall collision
                     o->oWallHitboxRadius = 200.0f;

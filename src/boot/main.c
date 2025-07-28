@@ -68,7 +68,8 @@ struct SPTask        *sCurrentDisplaySPTask = NULL;
 struct SPTask        *sNextAudioSPTask      = NULL;
 struct SPTask        *sNextDisplaySPTask    = NULL;
 s8  gAudioEnabled      = TRUE;
-u32 gNumVblanks        = 0;
+u32 vBlanks            = 0;
+u8  vBlankTimer        = 0;
 s8  gResetTimer        = 0;
 s8  gNmiResetBarsTimer = 0;
 s8  gDebugLevelSelect  = FALSE;
@@ -202,7 +203,8 @@ void pretend_audio_sptask_done(void) {
 }
 
 void handle_vblank(void) {
-    gNumVblanks++;
+    vBlanks++;
+    vBlankTimer++;
     if (gResetTimer > 0 && gResetTimer < 100) {
         gResetTimer++;
     }

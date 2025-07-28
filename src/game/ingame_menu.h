@@ -51,6 +51,7 @@ enum FPSPresets {
     FPS_30,
     FPS_45,
     FPS_60,
+    FPS_15,
     FPS_20,
     FPS_USER_END,
     FPS_MENU,

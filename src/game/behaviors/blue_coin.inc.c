@@ -10,7 +10,7 @@
  */
 void bhv_hidden_blue_coin_loop(void) {
     struct Object *blueCoinSwitch;
-    if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
 
     switch (o->oAction) {
         case HIDDEN_BLUE_COIN_ACT_INACTIVE:
@@ -112,9 +112,9 @@ void bhv_blue_coin_switch_loop(void) {
             // This is probably an off-by-one error, since the switch is 100 units tall
             // and recedes at 20 units/frame, which means it will fully recede after 5 frames.
 #ifdef BLUE_COIN_SWITCH_RETRY
-            if (o->oTimer > 3 * gDeltaTime) {
+            if (o->oTimer > 3) {
 #else
-            if (o->oTimer > 5 * gDeltaTime) {
+            if (o->oTimer > 5) {
                 cur_obj_hide();
 #endif
                 // Set to BLUE_COIN_SWITCH_ACT_TICKING
@@ -141,7 +141,7 @@ void bhv_blue_coin_switch_loop(void) {
 
         case BLUE_COIN_SWITCH_ACT_TICKING:
             // Tick faster when the blue coins start blinking
-            if (o->oTimer < 200 * gDeltaTime) {
+            if (o->oTimer < 200) {
                 play_sound(SOUND_GENERAL2_SWITCH_TICK_FAST, gGlobalSoundSource);
             } else {
                 play_sound(SOUND_GENERAL2_SWITCH_TICK_SLOW, gGlobalSoundSource);
@@ -151,7 +151,7 @@ void bhv_blue_coin_switch_loop(void) {
                 spawn_mist_particles_variable(0, 0, 46.0f);
                 obj_mark_for_deletion(o);
             // Set to BLUE_COIN_SWITCH_ACT_EXTENDING after the coins unload after the 240-frame timer expires.
-            } else if (o->oTimer > 240 * gDeltaTime) {
+            } else if (o->oTimer > 240) {
                 o->oAction  = BLUE_COIN_SWITCH_ACT_EXTENDING;
                 o->oVelY    = 16.0f;
                 o->oGravity =  0.0f;
@@ -163,7 +163,7 @@ void bhv_blue_coin_switch_loop(void) {
                 // This code can be executed if the last blue coin is collected at the very end of the timer.
                 spawn_mist_particles_variable(0, 0, 46.0f);
                 obj_mark_for_deletion(o);
-            } else if (o->oTimer > 3 * gDeltaTime) {
+            } else if (o->oTimer > 3) {
                 // Set to BLUE_COIN_SWITCH_ACT_IDLE
                 o->oAction = BLUE_COIN_SWITCH_ACT_IDLE;
             } else {
@@ -175,7 +175,7 @@ void bhv_blue_coin_switch_loop(void) {
 #else
             // Delete the switch (which stops the sound) after the last coin is collected,
             // or after the coins unload after the 240-frame timer expires.
-            if ((cur_obj_nearest_object_with_behavior(bhvHiddenBlueCoin) == NULL) || (o->oTimer > 240 * gDeltaTime)) {
+            if ((cur_obj_nearest_object_with_behavior(bhvHiddenBlueCoin) == NULL) || o->oTimer > 240) {
                 obj_mark_for_deletion(o);
             }
 #endif

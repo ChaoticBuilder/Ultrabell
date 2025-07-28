@@ -1950,6 +1950,7 @@ void config_options_box(void) {
     if (gFPSCap == FPS_45) sprintf(currOption, "FPS: 45");
     if (gFPSCap == FPS_60) sprintf(currOption, "FPS: 60");
     if (gFPSCap == FPS_20) sprintf(currOption, "FPS: 20");
+    if (gFPSCap == FPS_15) sprintf(currOption, "FPS: 15");
 
     config_option_render(xPos, yPos, currOption, CFG_FPS);
     /*

@@ -37,7 +37,6 @@ static char sLevelSelectStageNames[64][16] = {
 #ifndef DISABLE_DEMO
 static u16 sDemoCountdown = 0;
 #endif
-static u8 sPlayMarioGreeting = 0;
 
 #ifndef DISABLE_DEMO
 #define PRESS_START_DEMO_TIMER 800
@@ -187,12 +186,10 @@ s32 intro_level_select(void) {
 s32 intro_regular(void) {
     s32 level = LEVEL_NONE;
 
-    // When the game stars, gGlobalTimer is less than 129 frames,
-    // so Mario greets the player. After that, he will always say
-    // "press start to play" when it goes back to the title screen
-    // (using SAVE AND QUIT)
+    /*
     if (sPlayMarioGreeting == 25) play_sound(SOUND_MARIO_HELLO, gGlobalSoundSource);
     if (sPlayMarioGreeting <= 25) sPlayMarioGreeting++;
+    */
 
     print_intro_text();
 #ifdef DEBUG_LEVEL_SELECT
@@ -211,7 +208,6 @@ s32 intro_regular(void) {
         // defined in level_intro_mario_head_regular JUMP_IF commands
         // 100 is File Select - 101 is Level Select
         level = (LEVEL_FILE_SELECT + gDebugLevelSelect);
-        sPlayMarioGreeting = 0;
     }
 #if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
     return run_level_id_or_demo(level);
@@ -226,9 +222,6 @@ s32 intro_regular(void) {
 s32 intro_game_over(void) {
     s32 level = LEVEL_NONE;
 
-    if (sPlayMarioGreeting == 15) play_sound(SOUND_MARIO_WAAAOOOW, gGlobalSoundSource);
-    if (sPlayMarioGreeting <= 15) sPlayMarioGreeting++;
-
     print_intro_text();
 
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
@@ -239,7 +232,6 @@ s32 intro_game_over(void) {
 #endif
         // same criteria as intro_regular
         level = LEVEL_FILE_SELECT + gDebugLevelSelect;
-        sPlayMarioGreeting = 0;
     }
 #if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
     return run_level_id_or_demo(level);

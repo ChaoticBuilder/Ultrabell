@@ -96,9 +96,9 @@ void bhv_checkerboard_platform_loop(void) {
     if (o->oCheckerBoardPlatformRotateAction == 1) {
         o->oAngleVelPitch = 0;
         o->oFaceAnglePitch &= ~0x7FFF;
-        cur_obj_move_using_fvel_and_gravity();
+        cur_obj_move_using_fvel_and_gravity_delta();
     } else {
-        cur_obj_move_using_fvel_and_gravity();
+        cur_obj_move_using_fvel_and_gravity_delta();
     }
 
     load_object_collision_model();

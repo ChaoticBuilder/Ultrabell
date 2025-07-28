@@ -2,7 +2,7 @@
 
 void bhv_white_puff_exploding_loop(void) {
     if (o->oTimer == 0) {
-        cur_obj_compute_vel_xz();
+        cur_obj_compute_vel_xz(1);
         o->oWhitePuffScaleX = o->header.gfx.scale[0];
         switch (o->oBehParams2ndByte) {
             case 2:
@@ -18,7 +18,7 @@ void bhv_white_puff_exploding_loop(void) {
         }
     }
 
-    cur_obj_move_using_vel_and_gravity();
+    cur_obj_move_using_vel_and_gravity(1);
     cur_obj_apply_drag_xz(o->oDragStrength);
 
     if (o->oVelY > 100.0f) {

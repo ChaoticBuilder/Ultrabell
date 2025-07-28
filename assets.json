@@ -1725,7 +1725,6 @@
 "sound/samples/instruments/1D.aiff": [0,{"jp":["@sound",149],"us":["@sound",170],"eu":["@sound",170],"sh":["@sound",170]}],
 "sound/samples/instruments/1E_closed_triangle.aiff": [0,{"jp":["@sound",150],"us":["@sound",171],"eu":["@sound",171],"sh":["@sound",171]}],
 "sound/samples/instruments/1F_open_triangle.aiff": [0,{"jp":["@sound",151],"us":["@sound",172],"eu":["@sound",172],"sh":["@sound",172]}],
-"sound/samples/instruments/20_cabasa.aiff": [0,{"jp":["@sound",152],"us":["@sound",173],"eu":["@sound",173],"sh":["@sound",173]}],
 "sound/samples/instruments/21_sine_bass.aiff": [0,{"jp":["@sound",153],"us":["@sound",174],"eu":["@sound",174],"sh":["@sound",174]}],
 "sound/samples/instruments/22_boys_choir.aiff": [0,{"jp":["@sound",154],"us":["@sound",175],"eu":["@sound",175],"sh":["@sound",175]}],
 "sound/samples/instruments/23_strings_1.aiff": [0,{"jp":["@sound",155],"us":["@sound",176],"eu":["@sound",176],"sh":["@sound",176]}],

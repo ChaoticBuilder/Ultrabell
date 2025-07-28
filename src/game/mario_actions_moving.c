@@ -300,9 +300,9 @@ void apply_slope_accel(struct MarioState *m) {
         }
 
         if (floorDYaw < 0x4000) {
-            m->forwardVel += slopeAccel * steepness;
+            m->forwardVel += (slopeAccel * steepness) / gDeltaTime;
         } else {
-            m->forwardVel -= slopeAccel * steepness;
+            m->forwardVel -= (slopeAccel * steepness) / gDeltaTime;
         }
     }
 

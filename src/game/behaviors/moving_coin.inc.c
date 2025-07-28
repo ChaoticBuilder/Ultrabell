@@ -60,19 +60,19 @@ void bhv_moving_yellow_coin_init(void) {
 
 void bhv_moving_yellow_coin_loop(void) {
     s16 collisionFlags;
-    if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
 
     switch (o->oAction) {
         case MOV_YCOIN_ACT_IDLE:
             coin_step(&collisionFlags);
 
-            if (o->oTimer < 10 * gDeltaTime) {
+            if (o->oTimer < 10) {
                 cur_obj_become_intangible();
             } else {
                 cur_obj_become_tangible();
             }
 
-            if (o->oTimer > 300 * gDeltaTime) {
+            if (o->oTimer > 300) {
                 o->oAction = MOV_YCOIN_ACT_BLINKING;
             }
             break;
@@ -110,7 +110,7 @@ void bhv_moving_blue_coin_init(void) {
 
 void bhv_moving_blue_coin_loop(void) {
     s16 collisionFlags;
-    if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
 
     switch (o->oAction) {
         case MOV_BCOIN_ACT_STILL:
@@ -135,7 +135,7 @@ void bhv_moving_blue_coin_loop(void) {
                 o->oForwardVel = 75.0f;
             }
 
-            obj_flicker_and_disappear(o, 600 * gDeltaTime);
+            obj_flicker_and_disappear(o, 600);
             break;
     }
 
@@ -181,7 +181,7 @@ void blue_coin_sliding_slow_down(void) {
         o->oAction = MOV_BCOIN_ACT_MOVING;
     }
 
-    if (o->oTimer > 150 * gDeltaTime) {
+    if (o->oTimer > 150) {
         o->oAction = MOV_BCOIN_ACT_STOPPED;
     }
 }
@@ -195,7 +195,7 @@ void bhv_blue_coin_sliding_loop(void) {
                 o->oAction = MOV_BCOIN_ACT_MOVING;
             }
 
-            set_object_visibility(o, 3000 * gDeltaTime);
+            set_object_visibility(o, 3000);
             break;
 
         case MOV_BCOIN_ACT_MOVING:
@@ -204,12 +204,12 @@ void bhv_blue_coin_sliding_loop(void) {
 
         case MOV_BCOIN_ACT_SLOWING_DOWN:
             blue_coin_sliding_slow_down();
-            set_object_visibility(o, 3000 * gDeltaTime);
+            set_object_visibility(o, 3000);
             break;
 
         case MOV_BCOIN_ACT_STOPPED:
             coin_step(&collisionFlags);
-            if (o->oTimer > 60 * gDeltaTime) {
+            if (o->oTimer > 60) {
                 o->oAction = MOV_BCOIN_ACT_FLICKERING;
             }
             break;
@@ -239,7 +239,7 @@ void bhv_blue_coin_sliding_loop(void) {
 
 void bhv_blue_coin_jumping_loop(void) {
     s16 collisionFlags;
-    if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
 
     switch (o->oAction) {
         case MOV_BCOIN_ACT_STILL:
@@ -250,7 +250,7 @@ void bhv_blue_coin_jumping_loop(void) {
 
             object_step();
 
-            if (o->oTimer == 15 * gDeltaTime) {
+            if (o->oTimer == 15) {
                 cur_obj_become_tangible();
                 o->oAction = MOV_BCOIN_ACT_MOVING;
             }
@@ -262,12 +262,12 @@ void bhv_blue_coin_jumping_loop(void) {
 
         case MOV_BCOIN_ACT_SLOWING_DOWN:
             blue_coin_sliding_slow_down();
-            set_object_visibility(o, 3000 * gDeltaTime);
+            set_object_visibility(o, 3000);
             break;
 
         case MOV_BCOIN_ACT_STOPPED:
             coin_step(&collisionFlags);
-            if (o->oTimer > 60 * gDeltaTime) {
+            if (o->oTimer > 60) {
                 o->oAction = MOV_BCOIN_ACT_FLICKERING;
             }
             break;

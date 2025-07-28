@@ -27,6 +27,7 @@
 #include "spawn_object.h"
 #include "spawn_sound.h"
 #include "print.h"
+#include "main.h"
 
 u32 gUnimportantCounter;
 
@@ -239,7 +240,7 @@ s32 cur_obj_rotate_yaw_toward(s16 target, s16 increment) {
     startYaw = (s16) o->oMoveAngleYaw;
     o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, target, increment);
 
-    if ((o->oAngleVelYaw = (s16)((s16) (o->oMoveAngleYaw - startYaw) / gDeltaTime)) == 0) {
+    if ((o->oAngleVelYaw = (s16)((s16) o->oMoveAngleYaw - startYaw)) == 0) {
         return TRUE;
     } else {
         return FALSE;
@@ -445,7 +446,6 @@ struct Object *spawn_object_relative_with_scale(s16 behaviorParam, s16 relativeP
 }
 
 void cur_obj_move_using_vel(void) {
-    o->oVelVec /= gDeltaTime;
     vec3f_add(&o->oPosVec, &o->oVelVec);
 }
 
@@ -942,7 +942,6 @@ static void apply_drag_to_value(f32 *value, f32 dragStrength) {
 }
 
 void cur_obj_apply_drag_xz(f32 dragStrength) {
-    dragStrength /= gDeltaTime;
     apply_drag_to_value(&o->oVelX, dragStrength);
     apply_drag_to_value(&o->oVelZ, dragStrength);
 }
@@ -950,8 +949,8 @@ void cur_obj_apply_drag_xz(f32 dragStrength) {
 static void cur_obj_move_xz(f32 steepSlopeNormalY, s32 careAboutEdgesAndSteepSlopes) {
     struct Surface *intendedFloor;
 
-    f32 intendedX = o->oPosX + (o->oVelX / gDeltaTime);
-    f32 intendedZ = o->oPosZ + (o->oVelZ / gDeltaTime);
+    f32 intendedX = o->oPosX + o->oVelX;
+    f32 intendedZ = o->oPosZ + o->oVelZ;
 
     f32 intendedFloorHeight = find_floor(intendedX, o->oPosY, intendedZ, &intendedFloor);
     f32 deltaFloorHeight = intendedFloorHeight - o->oFloorHeight;
@@ -1133,8 +1132,8 @@ void cur_obj_move_xz_using_fvel_and_yaw(void) {
     o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw);
     o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw);
 
-    o->oPosX += (o->oVelX / gDeltaTime);
-    o->oPosZ += (o->oVelZ / gDeltaTime);
+    o->oPosX += o->oVelX;
+    o->oPosZ += o->oVelZ;
 }
 
 void cur_obj_move_y_with_terminal_vel(void) {
@@ -1142,12 +1141,13 @@ void cur_obj_move_y_with_terminal_vel(void) {
         o->oVelY = -70.0f;
     }
 
-    o->oPosY += (o->oVelY / gDeltaTime);
+    o->oPosY += o->oVelY;
 }
 
-void cur_obj_compute_vel_xz(void) {
-    o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw);
-    o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw);
+void cur_obj_compute_vel_xz(s8 vSync) {
+    if (vSync < 2) return;
+    o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw) * (vSync >> 1);
+    o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw) * (vSync >> 1);
 }
 
 f32 increment_velocity_toward_range(f32 value, f32 center, f32 zeroThreshold, f32 increment) {
@@ -1448,7 +1448,7 @@ void cur_obj_move_standard(s16 steepSlopeAngleDegrees) {
             steepSlopeNormalY = coss(DEGREES(steepSlopeAngleDegrees));
         }
 
-        cur_obj_compute_vel_xz();
+        cur_obj_compute_vel_xz(1);
         cur_obj_apply_drag_xz(dragStrength);
 
         cur_obj_move_xz(steepSlopeNormalY, careAboutEdgesAndSteepSlopes);
@@ -1471,15 +1471,20 @@ UNUSED static s32 cur_obj_within_bounds(f32 bounds) {
     return TRUE;
 }
 
-void cur_obj_move_using_vel_and_gravity(void) {
-    o->oVelY += o->oGravity / gDeltaTime; //! No terminal velocity
-    o->oVelVec /= gDeltaTime;
+void cur_obj_move_using_vel_and_gravity(s8 vSync) {
+    if (vSync < 2) return;
+    o->oVelY += o->oGravity * (vSync >> 1); //! No terminal velocity
     vec3f_add(&o->oPosVec, &o->oVelVec);
 }
 
 void cur_obj_move_using_fvel_and_gravity(void) {
-    cur_obj_compute_vel_xz();
-    cur_obj_move_using_vel_and_gravity(); //! No terminal velocity
+    cur_obj_compute_vel_xz(1);
+    cur_obj_move_using_vel_and_gravity(1); //! No terminal velocity
+}
+
+void cur_obj_move_using_fvel_and_gravity_delta(void) {
+    cur_obj_compute_vel_xz(vBlankTimer);
+    cur_obj_move_using_vel_and_gravity(vBlankTimer); //! No terminal velocity
 }
 
 void obj_set_pos_relative(struct Object *obj, struct Object *other, f32 dleft, f32 dy, f32 dforward) {
@@ -1567,7 +1572,6 @@ void cur_obj_rotate_move_angle_using_vel(void) {
 }
 
 void cur_obj_rotate_face_angle_using_vel(void) {
-    o->oAngleVelVec /= gDeltaTime;
     vec3i_add(&o->oFaceAngleVec, &o->oAngleVelVec);
 }
 
@@ -2285,8 +2289,8 @@ s32 player_performed_grab_escape_action(void) {
     s16 y = gPlayer1Controller->rawStickY;
     if (((x | y) >  0 && grabPTS == 1) ||
         ((x | y) < -0 && grabPTS == 3) ||
-     (x < -0 && y > 0 && grabPTS == 0) ||
-     (x > 0 && y < -0 && grabPTS == 2)) {
+    (x < -0 && y >  0 && grabPTS == 0) ||
+    (x >  0 && y < -0 && grabPTS == 2)) {
         grabPTS = (grabPTS + 1) % 4;
         return TRUE;
     }

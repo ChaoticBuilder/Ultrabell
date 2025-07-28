@@ -63,7 +63,7 @@ void bhv_wf_sliding_tower_platform_loop(void) {
             break;
     }
 
-    cur_obj_compute_vel_xz();
+    cur_obj_compute_vel_xz(1);
 
     o->oPosX += o->oVelX;
     o->oPosZ += o->oVelZ;

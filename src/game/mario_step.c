@@ -357,9 +357,8 @@ s32 perform_ground_step(struct MarioState *m) {
     set_mario_wall(m, NULL);
 
     for (i = 0; i < numSteps; i++) {
-        f32 normal = (m->floor->normal.y - 1.0f) / gDeltaTime + 1.0f;
-        intendedPos[0] = m->pos[0] + (normal * (m->vel[0] / gDeltaTime / numSteps));
-        intendedPos[2] = m->pos[2] + (normal * (m->vel[2] / gDeltaTime / numSteps));
+        intendedPos[0] = m->pos[0] + (m->floor->normal.y * (m->vel[0] / numSteps)) / gDeltaTime;
+        intendedPos[2] = m->pos[2] + (m->floor->normal.y * (m->vel[2] / numSteps)) / gDeltaTime;
         intendedPos[1] = m->pos[1];
 
         stepResult = perform_ground_quarter_step(m, intendedPos);
