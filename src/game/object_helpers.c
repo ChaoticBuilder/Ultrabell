@@ -235,10 +235,11 @@ void cur_obj_forward_vel_approach_upward(f32 target, f32 increment) {
 }
 
 s32 cur_obj_rotate_yaw_toward(s16 target, s16 increment) {
+    if (!vBlankTimer) return FALSE;
     s16 startYaw;
 
     startYaw = (s16) o->oMoveAngleYaw;
-    o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, target, increment);
+    o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, target, increment); //* vBlankTimer
 
     if ((o->oAngleVelYaw = (s16)((s16) o->oMoveAngleYaw - startYaw)) == 0) {
         return TRUE;
@@ -1145,9 +1146,9 @@ void cur_obj_move_y_with_terminal_vel(void) {
 }
 
 void cur_obj_compute_vel_xz(u8 vSync) {
-    if (vSync < 2) return;
-    o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw) * (vSync >> 1);
-    o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw) * (vSync >> 1);
+    if (!vSync) return;
+    o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw); //* vSync
+    o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw); //* vSync
 }
 
 f32 increment_velocity_toward_range(f32 value, f32 center, f32 zeroThreshold, f32 increment) {
@@ -1472,9 +1473,9 @@ UNUSED static s32 cur_obj_within_bounds(f32 bounds) {
 }
 
 void cur_obj_move_using_vel_and_gravity(u8 vSync) {
-    if (vSync < 2) return;
+    if (!vSync) return;
     o->oVelY += o->oGravity; //! No terminal velocity
-    o->oVelY *= (vSync >> 1);
+    // o->oVelY *= vSync;
     vec3f_add(&o->oPosVec, &o->oVelVec);
 }
 

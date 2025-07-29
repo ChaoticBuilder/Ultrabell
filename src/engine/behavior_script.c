@@ -859,7 +859,8 @@ void cur_obj_update(void) {
 
     // Increment the object's timer.
     if (o->oTimer < 0x3FFFFFFF) {
-        if (vBlankTimer >= 2) o->oTimer += (vBlankTimer >> 1);
+        if (vBlankTimer) o->oTimer++; // UPDATE WHEN I'VE FIGURED OUT HOW TO FIX BELOW 30FPS
+        // o->oTimer += vBlankTimer;
     }
 
     // If the object's action has changed, reset the action timer.

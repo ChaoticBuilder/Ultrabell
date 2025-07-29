@@ -84,8 +84,8 @@ void bhv_checkerboard_platform_loop(void) {
             break;
     }
 
-    o->oMoveAnglePitch += absi(o->oAngleVelPitch);
-    o->oFaceAnglePitch += absi(o->oAngleVelPitch);
+    if (vBlankTimer) o->oMoveAnglePitch += absi(o->oAngleVelPitch);
+    if (vBlankTimer) o->oFaceAnglePitch += absi(o->oAngleVelPitch);
     o->oFaceAngleYaw = o->oMoveAngleYaw;
 
     if (o->oMoveAnglePitch != 0) {

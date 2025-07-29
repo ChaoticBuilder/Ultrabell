@@ -226,7 +226,7 @@ void calc_new_obj_vel_and_pos_y(struct Surface *objFloor, f32 objFloorY, f32 obj
     f32 objFriction;
 
     // Caps vertical speed with a "terminal velocity".
-    o->oVelY -= o->oGravity;
+    o->oVelY -= o->oGravity / gDeltaTime;
     if (o->oVelY > 75.0) {
         o->oVelY = 75.0;
     }
@@ -234,7 +234,7 @@ void calc_new_obj_vel_and_pos_y(struct Surface *objFloor, f32 objFloorY, f32 obj
         o->oVelY = -75.0;
     }
 
-    o->oPosY += o->oVelY;
+    o->oPosY += o->oVelY / gDeltaTime;
 
     // Snap the object up to the floor.
     if (o->oPosY < objFloorY) {
@@ -273,7 +273,7 @@ void calc_new_obj_vel_and_pos_y_underwater(struct Surface *objFloor, f32 floorY,
     f32 floor_nZ = objFloor->normal.z;
 
     f32 netYAccel = (1.0f - o->oBuoyancy) * (-1.0f * o->oGravity);
-    o->oVelY -= netYAccel;
+    o->oVelY -= netYAccel / gDeltaTime;
 
     // Caps vertical speed with a "terminal velocity".
     if (o->oVelY > 75.0f) {
@@ -283,7 +283,7 @@ void calc_new_obj_vel_and_pos_y_underwater(struct Surface *objFloor, f32 floorY,
         o->oVelY = -75.0f;
     }
 
-    o->oPosY += o->oVelY;
+    o->oPosY += o->oVelY / gDeltaTime;
 
     // Snap the object up to the floor.
     if (o->oPosY < floorY) {
@@ -323,8 +323,8 @@ void calc_new_obj_vel_and_pos_y_underwater(struct Surface *objFloor, f32 floorY,
 
     // Decreases both vertical velocity and forward velocity. Likely so that skips above
     // don't loop infinitely.
-    o->oForwardVel = sqrtf(sqr(objVelX) + sqr(objVelZ)) * 0.8f;
-    o->oVelY *= 0.8f;
+    o->oForwardVel = sqrtf(sqr(objVelX) + sqr(objVelZ)) * 0.8f / gDeltaTime;
+    o->oVelY *= 0.8f / gDeltaTime;
 }
 
 /**
@@ -369,8 +369,8 @@ s16 object_step(void) {
     f32 floorY;
     f32 waterY = FLOOR_LOWER_LIMIT_MISC;
 
-    f32 objVelX = o->oForwardVel * sins(o->oMoveAngleYaw);
-    f32 objVelZ = o->oForwardVel * coss(o->oMoveAngleYaw);
+    f32 objVelX = o->oForwardVel * sins(o->oMoveAngleYaw) / gDeltaTime;
+    f32 objVelZ = o->oForwardVel * coss(o->oMoveAngleYaw) / gDeltaTime;
 
     s16 collisionFlags = 0;
 

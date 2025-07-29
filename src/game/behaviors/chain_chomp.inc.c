@@ -166,7 +166,7 @@ static void chain_chomp_sub_act_turn(void) {
             o->oVelY = 24.0f;
         }
     }
-    print_text_fmt_int(160, 32, "%d", o->oTimer);
+    // print_text_fmt_int(160, 32, "%d", o->oTimer);
 }
 
 static void chain_chomp_sub_act_lunge(void) {

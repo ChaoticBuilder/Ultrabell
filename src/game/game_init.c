@@ -483,7 +483,6 @@ void display_and_vsync(void) {
     }
     
     gGlobalTimer++;
-    if (vBlankTimer >= 2) vBlankTimer = 0;
 }
 
 /*
@@ -782,6 +781,8 @@ void setup_game_memory(void) {
     load_segment_decompress(SEGMENT_SEGMENT2, _segment2_mio0SegmentRomStart, _segment2_mio0SegmentRomEnd);
 }
 
+u32 vBlanksPrev = 0;
+
 /**
  * Main game loop thread. Runs forever as long as the game continues.
  */
@@ -815,6 +816,12 @@ void thread5_game_loop(UNUSED void *arg) {
     render_init();
 
     while (TRUE) {
+        vBlankTimer = 0;
+        while (vBlanksPrev < vBlanks) {
+            vBlanksPrev++;
+            if (vBlanksPrev % 2 == 0) vBlankTimer++;
+        }
+
         profiler_frame_setup();
         // If the reset timer is active, run the process to reset the game.
         if (gResetTimer != 0) {

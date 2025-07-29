@@ -204,7 +204,6 @@ void pretend_audio_sptask_done(void) {
 
 void handle_vblank(void) {
     vBlanks++;
-    vBlankTimer++;
     if (gResetTimer > 0 && gResetTimer < 100) {
         gResetTimer++;
     }

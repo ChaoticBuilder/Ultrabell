@@ -25,7 +25,7 @@ The Mario Brothers need your help after all!
 - stalechilibeans, iProgramInCpp, and the other based people who worked on TPP / 96FB: Animations and some assets, help with my own beta content, and other miscellaneous things!
 You can find their repositories here: [TPP](https://github.com/96flashbacks/showfloor) [96FB](https://github.com/96flashbacks/96flashbacks)
 - The [Newer VGM Instrument Source Doc!](https://docs.google.com/spreadsheets/d/1JJBlHHDc65fhZmKUGLrDTLCm6rfUU83-kbuD8Y0zU0o/edit?gid=717751203#gid=717751203)
-- The helpful SM64Romhacks [Discord Server](https://discord.com/invite/BYrpMBG)!
+- The helpful SM64Romhacks [Discord Server!](https://discord.com/invite/BYrpMBG)
 - And finally, credits to the amazing people behind the [HackerSM64](https://github.com/HackerN64/HackerSM64) Repository, I couldn't make this hack without them!
 
 I can't wait to add even more things as time goes on.
