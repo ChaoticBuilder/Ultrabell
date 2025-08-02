@@ -345,11 +345,11 @@ void update_flying(struct MarioState *m) {
 
     if (!gLVLToggle && !gFlightToggle) {
         if (m->flags & MARIO_WING_CAP) {
-            m->forwardVel -= (1.5f * ((f32) m->faceAngle[0] / 0x2000) - 0.25f);
-            if (m->forwardVel > 0.0f) m->forwardVel /= 1.0078125f;
+            m->forwardVel -= 1.5f * (f32)(m->faceAngle[0] / 0x2000) - 0.25f;
+            if (m->forwardVel >= 16.0f) m->forwardVel /= 1.00390625f;
         } else {
-            m->forwardVel -= (1.5f * ((f32) m->faceAngle[0] / 0x2000));
-            if (m->forwardVel > 0.0f) m->forwardVel /= 1.015625f;
+            m->forwardVel -= 1.5f * (f32)(m->faceAngle[0] / 0x2000);
+            if (m->forwardVel >= 16.0f) m->forwardVel /= 1.005859375f;
         }
     } else {
         m->forwardVel += 2.0f;
@@ -361,10 +361,11 @@ void update_flying(struct MarioState *m) {
     }
 
     if (m->forwardVel < 16.0f) {
-        m->faceAngle[0] -= (m->faceAngle[0] / 16 + 448) / gDeltaTime;
+        m->faceAngle[0] -= sqr((u16)(m->faceAngle[0] + 0x4000) / 0x200) / gDeltaTime;
     } else if (m->forwardVel > 192.0f) {
         m->forwardVel = 192.0f;
     }
+    // print_text_fmt_int(160, 16, "%d", m->faceAngle[0]);
 
     m->faceAngle[0] += (m->angleVel[0] / gDeltaTime);
 

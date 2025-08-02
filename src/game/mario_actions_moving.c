@@ -19,6 +19,7 @@
 #include "game_init.h"
 #include "ingame_menu.h"
 #include "hud.h"
+#include "puppyprint.h"
 
 #include "config.h"
 
@@ -145,7 +146,7 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
 
     struct Surface *floor = m->floor;
     s16 slopeAngle = atan2s(floor->normal.z, floor->normal.x);
-    f32 steepness = sqrtf(floor->normal.x * floor->normal.x + floor->normal.z * floor->normal.z);
+    f32 steepness = sqrtf(sqr(floor->normal.x) + sqr(floor->normal.z));
 
     m->slideVelX += accel * steepness * sins(slopeAngle);
     m->slideVelZ += accel * steepness * coss(slopeAngle);
@@ -187,11 +188,12 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
 
     //! Speed is capped a frame late (butt slide HSG)
     m->forwardVel = sqrtf(sqr(m->slideVelX) + sqr(m->slideVelZ));
-    if (m->forwardVel > 96.0f) {
-        m->slideVelX /= 1.03f;
-        m->slideVelZ /= 1.03f;
+    /*
+    if (m->forwardVel > sqr(steepness + 2.0f)) {
+        m->slideVelX /= (steepness / 12.0f) + 1.0f;
+        m->slideVelZ /= (steepness / 12.0f) + 1.0f;
     }
-    // print_text_fmt_int(160, 16, "%d", m->forwardVel);
+    */
 
     /*
     if (m->forwardVel > 96.0f) {
@@ -225,22 +227,25 @@ s32 update_sliding(struct MarioState *m, f32 stopSpeed) {
     switch (mario_get_floor_class(m)) {
         case SURFACE_CLASS_VERY_SLIPPERY:
             accel = 10.0f;
-            lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.98f;
+            lossFactor = m->intendedMag / 32.0f;
+            // lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.98f;
             break;
 
         case SURFACE_CLASS_SLIPPERY:
             accel = 8.0f;
-            lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.96f;
+            lossFactor = m->intendedMag / 32.0f;
+            // lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.96f;
             break;
 
         default:
             accel = 7.0f;
-            lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
+            lossFactor = m->intendedMag / 32.0f;
+            // lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
             break;
 
         case SURFACE_CLASS_NOT_SLIPPERY:
             accel = 5.0f;
-            lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
+            lossFactor = m->intendedMag / 32.0f;
             break;
     }
 

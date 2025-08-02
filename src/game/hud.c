@@ -737,6 +737,20 @@ void fps_testing(void) {
     */
 }
 
+void testing(void) {
+    char debug[64];
+    sprintf(debug, "%2.1f", gMarioState->forwardVel);
+    print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    /*
+    struct Surface *floor = gMarioState->floor;
+    f32 steepness = sqrtf(floor->normal.x * floor->normal.x + floor->normal.z * floor->normal.z);
+    sprintf(debug, "%2.4f", (steepness + 8.0f) * 16.0f);
+    print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    sprintf(debug, "%2.4f", (steepness / 12.0f) + 1.0f);
+    print_small_text_light(120, 224, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    */
+}
+
 /**
  * Render HUD strings using hudDisplayFlags with it's render functions,
  * excluding the cannon reticle which detects a camera preset for it.
@@ -814,7 +828,8 @@ void render_hud(void) {
                 render_debug_mode();
             }
 #endif
-            fps_testing();
+            // fps_testing();
+            testing();
         }
     }
 }
