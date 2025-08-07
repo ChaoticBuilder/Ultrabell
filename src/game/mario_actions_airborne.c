@@ -195,7 +195,7 @@ void update_air_with_turn(struct MarioState *m) {
 
         //! Uncapped air speed. Net positive when moving forward.
         if (m->forwardVel > dragThreshold) {
-            m->forwardVel -= ((m->flags & MARIO_METAL_CAP) ? 1.5f : 1.0f) / gDeltaTime;
+            m->forwardVel -= ((m->flags & MARIO_METAL_CAP) ? 1.625f : 1.0f) / gDeltaTime;
         }
         if (m->forwardVel < -16.0f) {
             m->forwardVel += 1.5f / gDeltaTime;
@@ -235,7 +235,7 @@ void update_air_without_turn(struct MarioState *m) {
 
         //! Uncapped air speed. Net positive when moving forward.
         if (m->forwardVel > dragThreshold) {
-            m->forwardVel -= ((m->flags & MARIO_METAL_CAP) ? 1.5f : 1.0f) / gDeltaTime;
+            m->forwardVel -= ((m->flags & MARIO_METAL_CAP) ? 1.625f : 1.0f) / gDeltaTime;
         }
         if (m->action != ACT_LONG_JUMP_LAND) {
             if (m->forwardVel < -16.0f) {

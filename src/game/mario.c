@@ -335,6 +335,23 @@ void play_mario_sound(struct MarioState *m, s32 actionSound, s32 marioSound) {
     }
 }
 
+u16 dustType = PARTICLE_NONE;
+u16 dustTimer = 0;
+u8  dustMod = 0;
+
+void m_spawn_dust(u16 type, u16 timer, u8 mod) {
+    dustTimer = timer;
+     dustType = type;
+      dustMod = mod;
+}
+
+void spawn_mario_particles(struct MarioState *m) {
+    if (dustTimer > 0 && gGlobalTimer % dustMod == 0) {
+        m->particleFlags |= dustType;
+        dustTimer--;
+    }
+}
+
 /**************************************************
  *                     ACTIONS                    *
  **************************************************/
@@ -1786,7 +1803,8 @@ s32 execute_mario_action(UNUSED struct Object *obj) {
                 case ACT_GROUP_OBJECT:     inLoop = mario_execute_object_action(gMarioState);     break;
             }
         }
-
+        
+        spawn_mario_particles(gMarioState);
         sink_mario_in_quicksand(gMarioState);
         squish_mario_model(gMarioState);
         set_submerged_cam_preset_and_spawn_bubbles(gMarioState);

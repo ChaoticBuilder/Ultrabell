@@ -860,6 +860,7 @@ void cur_obj_update(void) {
     // Increment the object's timer.
     if (o->oTimer < 0x3FFFFFFF) {
         if (vBlankTimer) o->oTimer++; // UPDATE WHEN I'VE FIGURED OUT HOW TO FIX BELOW 30FPS
+        if (vBlankTimer) o->oDeltaTimer += vBlankTimer; // UPDATE WHEN I'VE FIGURED OUT HOW TO FIX BELOW 30FPS
         // o->oTimer += vBlankTimer;
     }
 

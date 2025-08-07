@@ -231,7 +231,7 @@ void animate_power_meter_emphasized(void) {
 static void animate_power_meter_deemphasizing(void) {
     s16 speed = 1 + (((HUD_POWER_METER_Y - sPowerMeterHUD.y) + 1) / 6);
 
-    if (vBlanks > vBlankTimer) approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_Y, speed);
+    if (vBlankTimer) approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_Y, speed);
     if (sPowerMeterHUD.y > HUD_POWER_METER_Y) {
         sPowerMeterHUD.y = HUD_POWER_METER_Y;
         sPowerMeterHUD.animation = POWER_METER_VISIBLE;
@@ -243,7 +243,7 @@ static void animate_power_meter_deemphasizing(void) {
  * Moves power meter y pos quickly until it's at 301 to be hidden.
  */
 static void animate_power_meter_hiding(void) {
-    if ((vBlanks % 2) == 0) approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_HIDDEN_Y, sqr(sPowerMeterVisibleTimer));
+    if (vBlankTimer) approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_HIDDEN_Y, sqr(sPowerMeterVisibleTimer));
     if (sPowerMeterHUD.y >= HUD_POWER_METER_HIDDEN_Y) {
         sPowerMeterHUD.animation = POWER_METER_HIDDEN;
         sPowerMeterVisibleTimer = 0;
@@ -305,7 +305,7 @@ void render_hud_power_meter(void) {
         default:                                                             break;
     }
     render_dl_power_meter(shownHealthWedges);
-    if ((vBlanks % 2) == 0) sPowerMeterVisibleTimer++;
+    if (vBlankTimer) sPowerMeterVisibleTimer++;
 }
 
 #ifdef BREATH_METER
@@ -422,11 +422,11 @@ void handle_stats(void) {
     u8 addGoal = 0;
     if (ABS(gHudDisplay.stars) >= 100 || ABS(gHudDisplay.coins) >= 100) addGoal = 26;
     else if (ABS(gHudDisplay.stars) >= 10 || ABS(gHudDisplay.coins) >= 10) addGoal = 13;
-    if ((vBlanks % 2) == 0 && addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 4);
+    if (vBlankTimer && addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 4);
 
     /* Power Meter offset calculation */
     u8 div = (goal > 0) ? 6 : 4;
-    if ((vBlanks % 2) == 0) statX = approach_s16_symmetric(statX, goal, (div / 3 + ABS((goal - statX) + 1) / div));
+    if (vBlankTimer) statX = approach_s16_symmetric(statX, goal, (div / 3 + ABS((goal - statX) + 1) / div));
     hudStatsX = ABS(HUD_STATS_X) + statX + addOffset;
 
     if (gMarioState->hurtCounter) hurtShake = TRUE;

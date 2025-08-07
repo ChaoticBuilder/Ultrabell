@@ -358,6 +358,7 @@ extern const BehaviorScript bhvBowserBomb[];
 extern const BehaviorScript bhvBowserBombExplosion[];
 extern const BehaviorScript bhvBowserBombSmoke[];
 extern const BehaviorScript bhvCelebrationStar[];
+extern const BehaviorScript bhvCelebrationKey[];
 extern const BehaviorScript bhvCelebrationStarSparkle[];
 extern const BehaviorScript bhvStarDust[];
 extern const BehaviorScript bhvStarKeyCollectionPuffSpawner[];

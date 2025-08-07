@@ -39,14 +39,17 @@ void celeb_star_act_spin_around_mario(void) {
 
 void celeb_star_act_face_camera(void) {
     if (o->oTimer < 10) {
-        if (o->oCelebStarIsBowserKey == FALSE) {
+        if (!o->oCelebStarIsBowserKey) {
             cur_obj_scale((f32) o->oTimer / 10.0f);
+            if (gGlobalTimer % 2 == 0) o->oAnimState++;
         } else {
             cur_obj_scale((f32) o->oTimer / 30.0f);
+            o->oFaceAngleYaw += 0x1000;
         }
-        if (gGlobalTimer % 2 == 0) o->oAnimState++;
+        
     } else {
-        if (o->oAnimState != 0) o->oAnimState++;
+        if (o->oCelebStarIsBowserKey) o->oFaceAngleYaw = gMarioObject->header.gfx.angle[1];
+        else if (o->oAnimState != 0) o->oAnimState++;
     }
 
     if (o->oTimer == 70) {

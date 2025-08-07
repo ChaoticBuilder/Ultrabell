@@ -815,11 +815,13 @@ s32 act_walking(struct MarioState *m) {
 
         case GROUND_STEP_NONE:
             anim_and_audio_for_walk(m);
+            /*
             if (m->intendedMag - m->forwardVel > 16.0f) {
                 if (gGlobalTimer % 4 == 0) {
                     m->particleFlags |= PARTICLE_DUST;
                 }
             }
+            */
             break;
 
         case GROUND_STEP_HIT_WALL:

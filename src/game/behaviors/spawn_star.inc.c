@@ -30,7 +30,7 @@ void bhv_collect_star_init(void) {
 }
 
 void bhv_collect_star_loop(void) {
-    if (gGlobalTimer % (u8)(gDeltaTime * 2.0f + 0.5f) == 0) o->oAnimState++;
+    o->oAnimState = (vBlanks >> 2) % 8;
 
     if (o->oInteractStatus & INT_STATUS_INTERACTED) {
         obj_mark_for_deletion(o);
@@ -52,9 +52,9 @@ void bhv_star_spawn_init(void) {
 void bhv_star_spawn_loop(void) {
     switch (o->oAction) {
         case SPAWN_STAR_ARC_CUTSCENE_ACT_START:
-            o->oAnimState += 2 / gDeltaTime;
+            o->oAnimState = (vBlanks >> 1) % 8;
             cur_obj_become_intangible();
-            if (o->oTimer > 20 * gDeltaTime) {
+            if (o->oTimer > 20) {
                 o->oAction = SPAWN_STAR_ARC_CUTSCENE_ACT_GO_TO_HOME;
             }
             break;
@@ -63,10 +63,10 @@ void bhv_star_spawn_loop(void) {
             obj_move_xyz_using_fvel_and_yaw(o);
             o->oStarSpawnVelY += o->oVelY;
             o->oPosY = o->oStarSpawnVelY + sins((o->oTimer * 0x8000) / 30) * (400.0f / gDeltaTime);
-            o->oAnimState += 2 / gDeltaTime;
+            o->oAnimState = (vBlanks >> 1) % 8;
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
             cur_obj_play_sound_1(SOUND_ENV_STAR);
-            if (o->oTimer >= 29 * gDeltaTime) {
+            if (o->oTimer >= 29) {
                 o->oAction = SPAWN_STAR_ARC_CUTSCENE_ACT_BOUNCE;
                 o->oForwardVel = 0;
                 // Set to exact home coordinates
@@ -76,13 +76,13 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_BOUNCE:
-            if (o->oTimer < 20 * gDeltaTime) {
-                o->oVelY = 20 - o->oTimer;
+            if (o->oTimer < 20) {
+                o->oVelY = (20 - o->oTimer) / gDeltaTime;
             } else {
-                o->oVelY = -10.0f;
+                o->oVelY = -10.0f / gDeltaTime;
             }
 
-            if (gGlobalTimer % (u8)(gDeltaTime + 0.5f) == 0) o->oAnimState++;
+            o->oAnimState = (vBlanks >> 1) % 8;
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
             obj_move_xyz_using_fvel_and_yaw(o);
             cur_obj_play_sound_1(SOUND_ENV_STAR);
@@ -96,10 +96,10 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_END:
-            if (o->oTimer < 20 * gDeltaTime) {
-                o->oAnimState++;
+            if (o->oTimer < 20) {
+                o->oAnimState = (vBlanks / 3) % 8;
             } else {
-                if (gGlobalTimer % (u8)(gDeltaTime * 2.0f + 0.5f) == 0) o->oAnimState++;
+                o->oAnimState = (vBlanks >> 2) % 8;
             }
 
             if (o->oInteractStatus & INT_STATUS_INTERACTED) {
@@ -183,7 +183,7 @@ void bhv_hidden_red_coin_star_loop(void) {
             break;
 
         case HIDDEN_STAR_ACT_ACTIVE:
-            if (o->oTimer > 2 * gDeltaTime) {
+            if (o->oTimer > 2) {
                 spawn_no_exit_star(o->oPosX, o->oPosY, o->oPosZ);
                 spawn_mist_particles();
                 o->activeFlags = ACTIVE_FLAG_DEACTIVATED;

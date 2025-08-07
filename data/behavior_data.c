@@ -4130,6 +4130,15 @@ const BehaviorScript bhvCelebrationStar[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvCelebrationKey[] = {
+    BEGIN(OBJ_LIST_LEVEL),
+    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
+    CALL_NATIVE(bhv_celebration_star_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_celebration_star_loop),
+    END_LOOP(),
+};
+
 const BehaviorScript bhvCelebrationStarSparkle[] = {
     BEGIN(OBJ_LIST_UNIMPORTANT),
     BILLBOARD(),

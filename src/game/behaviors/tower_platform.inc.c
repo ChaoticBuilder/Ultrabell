@@ -19,7 +19,7 @@ void bhv_wf_elevator_tower_platform_loop(void) {
             if (o->oTimer > 140) {
                 o->oAction++;
             } else {
-                o->oPosY += 5.0f;
+                o->oPosY += 5.0f / gDeltaTime;
             }
             break;
 
@@ -34,7 +34,7 @@ void bhv_wf_elevator_tower_platform_loop(void) {
             if (o->oTimer > 140) {
                 o->oAction = 0;
             } else {
-                o->oPosY -= 5.0f;
+                o->oPosY -= 5.0f / gDeltaTime;
             }
             break;
     }
@@ -52,14 +52,14 @@ void bhv_wf_sliding_tower_platform_loop(void) {
             if (o->oTimer > moveTimer) {
                 o->oAction++;
             }
-            o->oForwardVel = -o->oPlatformWFTowerForwardVel;
+            o->oForwardVel = (-o->oPlatformWFTowerForwardVel / gDeltaTime);
             break;
 
         case 1:
             if (o->oTimer > moveTimer) {
                 o->oAction = 0;
             }
-            o->oForwardVel = o->oPlatformWFTowerForwardVel;
+            o->oForwardVel = (o->oPlatformWFTowerForwardVel / gDeltaTime);
             break;
     }
 
