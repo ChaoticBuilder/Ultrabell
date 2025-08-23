@@ -18,7 +18,7 @@ static s32 sDoorOpenSounds[] = { SOUND_GENERAL_OPEN_WOOD_DOOR, SOUND_GENERAL_OPE
 static s32 sDoorCloseSounds[] = { SOUND_GENERAL_CLOSE_WOOD_DOOR, SOUND_GENERAL_CLOSE_IRON_DOOR };
 
 void door_animation_and_reset(s32 animIndex) {
-    cur_obj_init_animation_with_sound(animIndex);
+    cur_obj_init_animation_x1_with_sound(animIndex);
     if (cur_obj_check_if_near_animation_end()) {
         o->oAction = DOOR_ACT_CLOSED;
     }
@@ -64,7 +64,7 @@ void bhv_door_loop(void) {
 
     switch (o->oAction) {
         case DOOR_ACT_CLOSED:
-            cur_obj_init_animation_with_sound(DOOR_ANIM_CLOSED);
+            cur_obj_init_animation_x1_with_sound(DOOR_ANIM_CLOSED);
             load_object_collision_model();
             break;
         case DOOR_ACT_PULLED:

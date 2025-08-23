@@ -724,7 +724,7 @@ void z64_draw(void) {
 }
 
 void fps_testing(void) {
-    print_text_fmt_int(160, 32, "%d", vBlankTimer);
+    // print_text_fmt_int(160, 32, "%d", (gMarioState->peakHeight - gMarioState->pos[1]) > FALL_DAMAGE_HEIGHT_SMALL);
     /*
     print_text_fmt_int(160, 32, "%d", delta(4, 1, gDeltaTime * 1));
     print_text_fmt_int(160, 16, "%d", deltalite(4, gDeltaTime * 1));
@@ -732,15 +732,19 @@ void fps_testing(void) {
 
     /*
     char test[32];
-    sprintf(test, "%2.1f", gMarioState->floor->normal.y);
+    sprintf(test, "%2.1f", (gMarioState->peakHeight - gMarioState->pos[1]));
     print_small_text_light(160, 16, test, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     */
 }
 
 void testing(void) {
+    print_text_fmt_int(160, 32, "%d", gMarioState->fallVel);
+    print_text_fmt_int(160, 16, "%x", gMarioState->healthAdjust);
+    /*
     char debug[64];
     sprintf(debug, "%2.1f", gMarioState->forwardVel);
     print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    */
     /*
     struct Surface *floor = gMarioState->floor;
     f32 steepness = sqrtf(floor->normal.x * floor->normal.x + floor->normal.z * floor->normal.z);

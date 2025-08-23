@@ -1,0 +1,73 @@
+{
+    "date": "1995-06-07",
+    "sample_bank": "instruments",
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope4": [
+            [1, 32767],
+            [32767, 32767],
+            [32767, 32767],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 128,
+            "normal_range_hi": 62,
+            "envelope": "envelope0",
+            "sound": "02",
+            "sound_hi": "4F"
+        },
+        "inst1": {
+            "release_rate": 208,
+            "envelope": "envelope1",
+            "sound": "2E_accordion"
+        },
+        "inst2": {
+            "release_rate": 208,
+            "envelope": "envelope2",
+            "sound": "05_acoustic_bass"
+        },
+        "inst3": {
+            "release_rate": 208,
+            "envelope": "envelope3",
+            "sound": "16_french_horns"
+        },
+        "inst4": {
+            "release_rate": 208,
+            "envelope": "envelope4",
+            "sound": "4E_woodblock"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        null,
+        "inst2",
+        "inst3",
+        "inst4"
+    ]
+}

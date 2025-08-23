@@ -38,5 +38,6 @@
 	"23_custom_desert": ["0F"],
     "24_custom_z64": ["11"],
     "25_custom_athletic": ["26"],
-    "26_bowser_castle": ["0E"]
+    "26_bowser_castle": ["0E"],
+    "27_tutorial": ["27"]
 }

@@ -50,6 +50,7 @@ enum SeqId {
     SEQ_CUSTOM_Z64,                   // 0x24
     SEQ_CUSTOM_ATHLETIC,              // 0x25
     SEQ_BOWSER_CASTLE,                // 0x26
+    SEQ_TUTORIAL,                     // 0x27
     SEQ_COUNT
 };
 

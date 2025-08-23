@@ -1566,20 +1566,20 @@ void config_options_scroll(void) {
     if (gHighlightToggle)
         return;
 
-    if ((gPlayer1Controller->buttonDown == L_JPAD || gPlayer1Controller->rawStickX <= -16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
+    if (gPlayer1Controller->buttonPressed == L_JPAD || (gPlayer1Controller->rawStickX <= -16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         gConfigScroll--;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if ((gPlayer1Controller->buttonDown == R_JPAD || gPlayer1Controller->rawStickX >= 16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
+    if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         gConfigScroll++;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if ((gPlayer1Controller->buttonDown == U_JPAD || gPlayer1Controller->rawStickY >= 16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
+    if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         if (gConfigScroll == (CFG_START + 1)) gConfigScroll = (CFG_END - 2);
         else gConfigScroll -= 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     }
-    if ((gPlayer1Controller->buttonDown == D_JPAD || gPlayer1Controller->rawStickY <= -16.0f) && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0) {
+    if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
         if (gConfigScroll == (CFG_END - 1)) gConfigScroll = (CFG_START + 2);
         else gConfigScroll += 2;
         play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);

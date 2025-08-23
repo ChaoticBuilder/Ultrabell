@@ -8,6 +8,11 @@
 
 extern u8 fadeWarpTarget;
 
+enum dustArray {
+    SMOVE,
+    JUMP
+};
+
 s32 is_anim_at_end(struct MarioState *m);
 s32 is_anim_past_end(struct MarioState *m);
 s16 set_mario_animation(struct MarioState *m, s32 targetAnimID);
@@ -28,6 +33,7 @@ void play_mario_heavy_landing_sound(struct MarioState *m, u32 soundBits);
 void play_mario_heavy_landing_sound_once(struct MarioState *m, u32 soundBits);
 void play_mario_sound(struct MarioState *m, s32 primarySoundBits, s32 scondarySoundBits);
 void m_spawn_dust(u16 type, u16 timer, u8 mod);
+void m_sd_preset(u16 type, u8 preset);
 void mario_set_forward_vel(struct MarioState *m, f32 speed);
 s32 mario_get_floor_class(struct MarioState *m);
 u32 mario_get_terrain_sound_addend(struct MarioState *m);

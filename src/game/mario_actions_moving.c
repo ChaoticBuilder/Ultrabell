@@ -223,29 +223,31 @@ s32 update_sliding(struct MarioState *m, f32 stopSpeed) {
     if (forward < 0.0f && m->forwardVel >= 0.0f) {
         forward *= 0.5f + 0.5f * m->forwardVel / 100.0f;
     }
+    forward *= 0.03125f;
 
     switch (mario_get_floor_class(m)) {
         case SURFACE_CLASS_VERY_SLIPPERY:
             accel = 10.0f;
-            lossFactor = m->intendedMag / 32.0f;
-            // lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.98f;
+            // lossFactor = m->intendedMag / 32.0f * forward + 1.0f;
+            lossFactor = m->intendedMag / 32.0f * forward + 0.984375f;
             break;
 
         case SURFACE_CLASS_SLIPPERY:
             accel = 8.0f;
-            lossFactor = m->intendedMag / 32.0f;
-            // lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.96f;
+            // lossFactor = m->intendedMag / 32.0f * forward + 1.0f;
+            lossFactor = m->intendedMag / 32.0f * forward + 0.96875f;
             break;
 
         default:
             accel = 7.0f;
-            lossFactor = m->intendedMag / 32.0f;
-            // lossFactor = m->intendedMag / 32.0f * forward * 0.02f + 0.92f;
+            // lossFactor = m->intendedMag / 32.0f * forward + 1.0f;
+            lossFactor = m->intendedMag / 32.0f * forward + 0.9375f;
             break;
 
         case SURFACE_CLASS_NOT_SLIPPERY:
             accel = 5.0f;
-            lossFactor = m->intendedMag / 32.0f;
+            // lossFactor = m->intendedMag / 32.0f * forward + 1.0f;
+            lossFactor = m->intendedMag / 32.0f * forward + 0.9375f;
             break;
     }
 
@@ -967,7 +969,7 @@ s32 act_turning_around(struct MarioState *m) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED && !gRealToggle && !gABCToggle) {
+    if (m->input & INPUT_A_PRESSED && !gABCToggle) {
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 
@@ -990,12 +992,6 @@ s32 act_turning_around(struct MarioState *m) {
     switch (perform_ground_step(m)) {
         case GROUND_STEP_LEFT_GROUND:
             set_mario_action(m, ACT_FREEFALL, 0);
-            break;
-
-        case GROUND_STEP_NONE:
-            if (gGlobalTimer % 3 == 0) {
-                m->particleFlags |= PARTICLE_DUST;
-            }
             break;
     }
 
@@ -1021,7 +1017,7 @@ s32 act_finish_turning_around(struct MarioState *m) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED && !gRealToggle && !gABCToggle) {
+    if (m->input & INPUT_A_PRESSED && !gABCToggle) {
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 
@@ -1077,12 +1073,6 @@ s32 act_braking(struct MarioState *m) {
             set_mario_action(m, ACT_FREEFALL, 0);
             break;
 
-        case GROUND_STEP_NONE:
-            if (gGlobalTimer % 3 == 0) {
-                m->particleFlags |= PARTICLE_DUST;
-            }
-            break;
-
         case GROUND_STEP_HIT_WALL:
             slide_bonk(m, ACT_BACKWARD_GROUND_KB, ACT_BRAKING_STOP);
             break;
@@ -1111,7 +1101,6 @@ s32 act_decelerating(struct MarioState *m) {
         }
 
         if (m->input & INPUT_NONZERO_ANALOG) {
-            if (gTurnToggle) m->faceAngle[1] = (s16) m->intendedYaw;
             return set_mario_action(m, ACT_WALKING, 0);
         }
 

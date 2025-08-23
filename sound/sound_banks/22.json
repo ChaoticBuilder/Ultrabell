@@ -47,22 +47,22 @@
     },
     "instruments": {
         "inst0": {
-            "release_rate": 255,
+            "release_rate": 208,
             "envelope": "envelope0",
             "sound": "19_brass"
         },
         "inst1": {
-            "release_rate": 255,
+            "release_rate": 208,
             "envelope": "envelope1",
             "sound": "1A_slap_bass"
         },
         "inst2": {
-            "release_rate": 255,
+            "release_rate": 208,
             "envelope": "envelope2",
             "sound": "1B_organ_2"
         },
         "inst3": {
-            "release_rate": 255,
+            "release_rate": 208,
             "envelope": "envelope3",
             "sound": "1C"
         },

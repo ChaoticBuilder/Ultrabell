@@ -527,17 +527,17 @@ s32 act_debug_free_move(struct MarioState *m) {
     }
 
     f32 speed = (gPlayer1Controller->buttonDown & B_BUTTON) ? 4.0f : 1.0f;
-    if (gPlayer1Controller->buttonDown & Z_TRIG) speed = 0.01f;
+    if (gPlayer1Controller->buttonDown & Z_TRIG) speed /= 16.0f;
     if (m->area->camera->mode != CAMERA_MODE_8_DIRECTIONS) set_camera_mode(m->area->camera, CAMERA_MODE_8_DIRECTIONS, 1);
 
     set_mario_animation(m, MARIO_ANIM_A_POSE);
     vec3f_copy(pos, m->pos);
 
     if (gPlayer1Controller->buttonDown & U_JPAD) {
-        pos[1] += 16.0f * speed;
+        pos[1] += 16.0f * speed / gDeltaTime;
     }
     if (gPlayer1Controller->buttonDown & D_JPAD) {
-        pos[1] -= 16.0f * speed;
+        pos[1] -= 16.0f * speed / gDeltaTime;
     }
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
         vec3_zero(m->vel);
@@ -556,8 +556,8 @@ s32 act_debug_free_move(struct MarioState *m) {
 
     if (m->intendedMag > 0) {
         speed *= m->intendedMag * 2.0f;
-        pos[0] += speed * sins(m->intendedYaw);
-        pos[2] += speed * coss(m->intendedYaw);
+        pos[0] += speed * sins(m->intendedYaw) / gDeltaTime;
+        pos[2] += speed * coss(m->intendedYaw) / gDeltaTime;
     }
 
     // TODO: Add ability to ignore collision

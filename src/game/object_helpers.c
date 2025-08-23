@@ -474,7 +474,7 @@ void obj_set_gfx_pos_from_pos(struct Object *obj) {
 
 void obj_init_animation(struct Object *obj, s32 animIndex) {
     struct Animation **anims = obj->oAnimations;
-    geo_obj_init_animation(&obj->header.gfx, &anims[animIndex]);
+    geo_obj_init_animation_accel(&obj->header.gfx, &anims[animIndex], 0x10000);
 }
 
 void obj_apply_scale_to_transform(struct Object *obj) {
@@ -503,7 +503,7 @@ void cur_obj_scale(f32 scale) {
 
 void cur_obj_init_animation(s32 animIndex) {
     struct Animation **anims = o->oAnimations;
-    geo_obj_init_animation(&o->header.gfx, &anims[animIndex]);
+    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], 0x10000);
 }
 
 void cur_obj_init_animation_with_sound(s32 animIndex) {
@@ -519,10 +519,15 @@ void cur_obj_init_animation_with_accel_and_sound(s32 animIndex, f32 accel) {
     o->oSoundStateID = animIndex;
 }
 
+void cur_obj_init_animation_x1_with_sound(s32 animIndex) {
+    struct Animation **anims = o->oAnimations;
+    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], 0x10000);
+}
+
 void obj_init_animation_with_sound(struct Object *obj, const struct Animation * const* animations, s32 animIndex) {
     struct Animation **anims = (struct Animation **)animations;
     obj->oAnimations = (struct Animation **)animations;
-    geo_obj_init_animation(&obj->header.gfx, &anims[animIndex]);
+    geo_obj_init_animation_accel(&obj->header.gfx, &anims[animIndex], 0x10000);
     obj->oSoundStateID = animIndex;
 }
 
@@ -725,7 +730,10 @@ void cur_obj_extend_animation_if_at_end(void) {
     s32 animFrame = o->header.gfx.animInfo.animFrame;
     s32 nearLoopEnd = o->header.gfx.animInfo.curAnim->loopEnd - 2;
 
-    if (animFrame == nearLoopEnd) o->header.gfx.animInfo.animFrame--;
+    if (animFrame >= nearLoopEnd) {
+        print_text(160, 64, "TRUE");
+        o->header.gfx.animInfo.animFrame--;
+    }
 }
 
 s32 cur_obj_check_if_near_animation_end(void) {

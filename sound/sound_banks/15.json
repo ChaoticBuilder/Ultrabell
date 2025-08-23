@@ -3,9 +3,9 @@
     "sample_bank": "instruments",
     "envelopes": {
         "envelope0": [
-            [2, 32700],
-            [1, 32700],
-            [32700, 29430],
+            [2, 32767],
+            [1, 32767],
+            [300, 0],
             "hang"
         ],
         "envelope1": [
@@ -65,9 +65,9 @@
     },
     "instruments": {
         "inst0": {
-            "release_rate": 24,
+            "release_rate": 34,
             "envelope": "envelope0",
-            "sound": "1D"
+            "sound": "35_gospel_organ"
         },
         "inst1": {
             "release_rate": 208,
@@ -84,9 +84,9 @@
             "sound": "26_crystal_rhodes"
         },
         "inst3": {
-            "release_rate": 16,
+            "release_rate": 255,
             "envelope": "envelope3",
-            "sound": "3C_acoustic_guitar"
+            "sound": "1A_slap_bass"
         },
         "inst4": {
             "release_rate": 114,
@@ -96,7 +96,7 @@
         "inst5": {
             "release_rate": 48,
             "envelope": "envelope5",
-            "sound": "3C_acoustic_guitar"
+            "sound": "26_crystal_rhodes"
         },
         "inst6": {
             "release_rate": 208,

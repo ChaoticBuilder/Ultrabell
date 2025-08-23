@@ -6,6 +6,8 @@
 
 // Bowser's Tail
 
+#include "game/print.h"
+
 /**
  * Checks whenever the Bowser and his tail should be intangible or not
  * By default it starts tangible
@@ -175,7 +177,7 @@ void bowser_bounce_effects(s32 *timer) {
  * Returns TRUE if the animation is almost over
  */
 s32 bowser_set_anim_look_up_and_walk(void) {
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_LOOK_UP_START_WALK);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_LOOK_UP_START_WALK);
     if (cur_obj_check_anim_frame(21)) {
         o->oForwardVel = 3.0f;
     }
@@ -188,7 +190,7 @@ s32 bowser_set_anim_look_up_and_walk(void) {
  */
 s32 bowser_set_anim_slow_gait(void) {
     o->oForwardVel = 3.0f;
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_SLOW_GAIT);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_SLOW_GAIT);
     return cur_obj_check_if_near_animation_end();
 }
 
@@ -197,7 +199,7 @@ s32 bowser_set_anim_slow_gait(void) {
  * Returns TRUE if the animation is almost over
  */
 s32 bowser_set_anim_look_down_stop_walk(void) {
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_LOOK_DOWN_STOP_WALK);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_LOOK_DOWN_STOP_WALK);
     if (cur_obj_check_anim_frame(20)) {
         o->oForwardVel = 0.0f;
     }
@@ -227,7 +229,7 @@ void bowser_init_camera_actions(void) {
  */
 void bowser_act_wait(void) {
     o->oForwardVel = 0.0f;
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_IDLE);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_IDLE);
     bowser_init_camera_actions();
 }
 
@@ -439,7 +441,7 @@ void bowser_act_default(void) {
     // Set eye state
     o->oBowserEyesShut = FALSE;
     // Set idle animation
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_IDLE);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_IDLE);
     // Stop him still
     o->oAngleVelYaw = 0;
     o->oForwardVel = 0.0f;
@@ -577,7 +579,7 @@ void bowser_act_teleport(void) {
 void bowser_act_spit_fire_into_sky(void) {
     s32 animFrame;
     // Play animation
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_BREATH_UP);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_BREATH_UP);
     // Set frames
     animFrame = o->header.gfx.animInfo.animFrame;
     // Spawn flames in the middle of the animation
@@ -610,7 +612,7 @@ void bowser_act_hit_mine(void) {
     }
     // Play flip animation
     if (o->oSubAction == BOWSER_SUB_ACT_HIT_MINE_START) {
-        cur_obj_init_animation_with_sound(BOWSER_ANIM_FLIP);
+        cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_FLIP);
         o->oSubAction++;
         o->oBowserTimer = 0;
     // Play flip animation again, extend it and play bounce effects
@@ -620,7 +622,7 @@ void bowser_act_hit_mine(void) {
         bowser_bounce_effects(&o->oBowserTimer);
         // Reset vel and stand up
         if (o->oBowserTimer > 2) {
-            cur_obj_init_animation_with_sound(BOWSER_ANIM_STAND_UP_FROM_FLIP);
+            cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_STAND_UP_FROM_FLIP);
             o->oVelY = 0.0f;
             o->oForwardVel = 0.0f;
             o->oSubAction++;
@@ -644,7 +646,7 @@ void bowser_act_hit_mine(void) {
  * Returns TRUE on the middle of the jump
  */
 s32 bowser_set_anim_jump(void) {
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_JUMP_START);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_JUMP_START);
     return cur_obj_check_anim_frame(11);
 }
 
@@ -761,18 +763,15 @@ void bowser_act_hit_edge(void) {
     switch (o->oSubAction) {
         case 0:
             // Move on the edge
-            cur_obj_init_animation_with_sound(BOWSER_ANIM_EDGE_MOVE);
+            cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_EDGE_MOVE);
             if (cur_obj_check_if_near_animation_end()) {
-                o->oBowserTimer++;
-            }
-            if (o->oBowserTimer > 0) {
                 o->oSubAction++;
             }
             break;
 
         case 1:
             // Stop moving on the edge
-            cur_obj_init_animation_with_sound(BOWSER_ANIM_EDGE_STOP);
+            cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_EDGE_STOP);
             // Turn around once the animation ends
             if (cur_obj_check_if_near_animation_end()) {
                 o->oAction = BOWSER_ACT_TURN_FROM_EDGE;
@@ -793,7 +792,7 @@ void bowser_act_spit_fire_onto_floor(void) {
     }
 
     // Play animation and split fire at a specific frame
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_BREATH_QUICK);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_BREATH_QUICK);
     if (cur_obj_check_anim_frame(5)) {
         obj_spit_fire(0, 200, 180, 7.0f, MODEL_RED_FLAME, 30.0f, 10.0f, 0x1000);
     }
@@ -821,7 +820,7 @@ s32 bowser_turn_on_timer(s32 time, s16 yaw) {
             o->oSubAction++;
         }
     } else {
-        cur_obj_init_animation_with_sound(BOWSER_ANIM_IDLE);
+        cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_IDLE);
     }
 
     o->oForwardVel = 0.0f;
@@ -940,7 +939,7 @@ void bowser_act_thrown(void) {
     }
     if (o->oSubAction == 0) {
         // Play shake animations and do bounce effects
-        cur_obj_init_animation_with_sound(BOWSER_ANIM_SHAKING);
+        cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_SHAKING);
         bowser_bounce_effects(&o->oBowserTimer);
         // Reset speed when he moves on ground
         if (o->oMoveFlags & OBJ_MOVE_ON_GROUND) {
@@ -1003,7 +1002,7 @@ void bowser_act_jump_onto_stage(void) {
 
         // Start jump animation and make him visible after an animation frame
         case BOWSER_SUB_ACT_JUMP_ON_STAGE_START:
-            cur_obj_init_animation_with_sound(BOWSER_ANIM_JUMP_START);
+            cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_JUMP_START);
             if (cur_obj_check_anim_frame(11)) {
                 o->oMoveAngleYaw = o->oBowserAngleToCenter;
                 o->oVelY = 150.0f;
@@ -1102,7 +1101,7 @@ void bowser_spawn_collectable(void) {
  * Makes Bowser fly back on stage defeated
  */
 void bowser_fly_back_dead(void) {
-    cur_obj_init_animation_with_sound(BOWSER_ANIM_FLIP_DOWN);
+    cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_FLIP_DOWN);
     // More knockback in BitS
     if (o->oBehParams2ndByte == BOWSER_BP_BITS) {
         o->oForwardVel = -200.0f;
@@ -1309,17 +1308,17 @@ struct BowserTiltPlatformInfo {
  * Data for the BitFS tilt Platform
  */
 struct BowserTiltPlatformInfo sBowsertiltPlatformData[] = {
-    {  1,   10,  40 },
-    {  0,    0,  74 },
-    { -1,  -10, 114 },
-    {  1,  -20, 134 },
-    { -1,   20, 154 },
-    {  1,   40, 164 },
-    { -1,  -40, 174 },
-    {  1,  -80, 179 },
-    { -1,   80, 184 },
-    {  1,  160, 186 },
-    { -1, -160, 186 },
+    {  1,   10,  34 },
+    {  0,    0,  68 },
+    { -1,  -10, 102 },
+    {  1,  -20, 119 },
+    { -1,   20, 136 },
+    {  1,   40, 144 },
+    { -1,  -40, 152 },
+    {  1,  -80, 156 },
+    { -1,   80, 160 },
+    {  1,  160, 162 },
+    { -1, -160, 164 },
     {  1,    0,   0 },
 };
 
@@ -1517,7 +1516,7 @@ void bowser_held_update(void) {
         // After the grabbed animation ends, play shaking animation in a loop
         case BOWSER_GRAB_STATUS_GRABBED:
             if (cur_obj_check_if_near_animation_end()) {
-                cur_obj_init_animation_with_sound(BOWSER_ANIM_SHAKING);
+                cur_obj_init_animation_x1_with_sound(BOWSER_ANIM_SHAKING);
                 o->oBowserGrabbedStatus++;
             }
             break;

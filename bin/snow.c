@@ -5,7 +5,7 @@
 
 // 0x09000000
 ALIGNED8 const Texture snow_09000000[] = {
-#include "textures/snow/ccm_textures.00000.custom.rgba16.inc.c"
+#include "textures/snow/ccm_textures.00000.rgba16.inc.c"
 };
 
 // 0x09000800

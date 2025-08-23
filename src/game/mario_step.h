@@ -5,7 +5,7 @@
 
 #include "types.h"
 
-extern s16 sTerminalVelocity;
+extern u16 mTerminalVel;
 
 struct BullyCollisionData {
   /*0x00*/ f32 conversionRatio;

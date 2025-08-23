@@ -735,7 +735,15 @@ void geo_obj_init_spawninfo(struct GraphNodeObject *graphNode, struct SpawnInfo 
  * Initialize the animation of an object node
  */
 void geo_obj_init_animation(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr) {
-    return geo_obj_init_animation_accel(graphNode, animPtrAddr, 0x10000);
+    struct Animation **animSegmented = segmented_to_virtual(animPtrAddr);
+    struct Animation *anim = segmented_to_virtual(*animSegmented);
+
+    if (graphNode->animInfo.curAnim != anim) {
+        graphNode->animInfo.curAnim = anim;
+        graphNode->animInfo.animFrame = anim->startFrame + ((anim->flags & ANIM_FLAG_FORWARD) ? 1 : -1);
+        graphNode->animInfo.animAccel = 0;
+        graphNode->animInfo.animYTrans = 0;
+    }
 }
 
 /**
