@@ -712,8 +712,11 @@ void rotate_mario_head(struct MarioState *m) {
     s16 cameraYaw = gCamera->yaw - m->faceAngle[1];
     if (lookTimer <= -lookCD) {
         if (ABS(cameraYaw) > 0x3000 && (lookChance < 0xFFFF)) lookChance /= 2;
-        if (random_u16() > lookChance) return; /* Random chance */ 
-        lookTimer = 1920;
+        if (random_u16() > lookChance) { /* Random chance */ 
+            cameraLook = FALSE;
+            return;
+        }
+        lookTimer = 120;
     }
     print_text_fmt_int(160, 32, "%d", lookTimer);
 
@@ -722,7 +725,8 @@ void rotate_mario_head(struct MarioState *m) {
     if (lookTimer >= 0) { /* Look at camera */
         if (ABS(cameraYaw) > 0x3000) {
             cameraPitch = 0;
-            cameraYaw = CLAMP(0x8000 - cameraYaw, -(0x3000), 0x3000);
+            cameraYaw = 0x8000 - cameraYaw;
+            cameraYaw = CLAMP(cameraYaw, -0x3000, 0x3000);
         }
 
         b->headAngle[0] = approach_s16_symmetric(b->headAngle[0], cameraPitch, ABS(cameraPitch - b->headAngle[0]) / 5 + 1);
