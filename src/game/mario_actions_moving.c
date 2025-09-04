@@ -373,12 +373,12 @@ void update_shell_speed(struct MarioState *m) {
         if (g95Toggle) m->forwardVel += 0.5f;
         if (gRealToggle) m->forwardVel += 0.5f;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.125f;
+        m->forwardVel -= 0.125f / gDeltaTime;
     }
-
+    
     //! No backward speed cap (shell hyperspeed)
-    if (m->forwardVel > 64.0f) {
-        m->forwardVel = 64.0f;
+    if (m->forwardVel > 32.0f) {
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel / 32.0f), 0, 4.0f) / gDeltaTime);
     }
 
     m->faceAngle[1] =
@@ -459,8 +459,8 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel -= 0.125f / gDeltaTime;
     }
 
-    if (m->forwardVel > 64.0f) {
-        m->forwardVel = 64.0f;
+    if (m->forwardVel > 32.0f) {
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 32.0f, 0, 8.0f) / gDeltaTime);
     }
 
 #ifdef VELOCITY_BASED_TURN_SPEED
@@ -817,13 +817,6 @@ s32 act_walking(struct MarioState *m) {
 
         case GROUND_STEP_NONE:
             anim_and_audio_for_walk(m);
-            /*
-            if (m->intendedMag - m->forwardVel > 16.0f) {
-                if (gGlobalTimer % 4 == 0) {
-                    m->particleFlags |= PARTICLE_DUST;
-                }
-            }
-            */
             break;
 
         case GROUND_STEP_HIT_WALL:
@@ -832,6 +825,10 @@ s32 act_walking(struct MarioState *m) {
             break;
     }
 
+    if ((vBlanks >> 1) % 512 == 0) {
+        cameraLook = TRUE;
+        lookChance = 0x4000;
+    }
     check_ledge_climb_down(m);
     tilt_body_walking(m, startYaw);
     return FALSE;

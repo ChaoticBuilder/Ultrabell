@@ -698,6 +698,48 @@ void update_mario_sound_and_camera(struct MarioState *m) {
     }
 }
 
+u8 cameraLook = FALSE;
+s16 lookTimer = 0;
+u16 lookChance = 0xFFFF;
+
+void rotate_mario_head(struct MarioState *m) {
+    struct MarioBodyState *b = m->marioBodyState;
+    u8 lookCD = 60;
+    lookTimer = approach_s16_symmetric(lookTimer, -lookCD, vBlankTimer);
+    u8 rotated = ((b->headAngle[0] != 0 && b->headAngle[1] != 0) ? TRUE : FALSE);
+    if (!cameraLook && !rotated) return;
+
+    s16 cameraYaw = gCamera->yaw - m->faceAngle[1];
+    if (lookTimer <= -lookCD) {
+        if (ABS(cameraYaw) > 0x3000 && (lookChance < 0xFFFF)) lookChance /= 2;
+        if (random_u16() > lookChance) return; /* Random chance */ 
+        lookTimer = 1920;
+    }
+    print_text_fmt_int(160, 32, "%d", lookTimer);
+
+    s16 cameraPitch;
+    vec3f_get_pitch(gLakituState.pos, gLakituState.focus, &cameraPitch);
+    if (lookTimer >= 0) { /* Look at camera */
+        if (ABS(cameraYaw) > 0x3000) {
+            cameraPitch = 0;
+            cameraYaw = CLAMP(0x8000 - cameraYaw, -(0x3000), 0x3000);
+        }
+
+        b->headAngle[0] = approach_s16_symmetric(b->headAngle[0], cameraPitch, ABS(cameraPitch - b->headAngle[0]) / 5 + 1);
+        b->headAngle[1] = approach_s16_symmetric(b->headAngle[1], cameraYaw, ABS(cameraYaw - b->headAngle[1]) / 5 + 1);
+    } else {
+        b->headAngle[0] = approach_s16_symmetric(b->headAngle[0], 0, ABS(b->headAngle[0]) / 5 + 1);
+        b->headAngle[1] = approach_s16_symmetric(b->headAngle[1], 0, ABS(b->headAngle[1]) / 5 + 1);
+        if (!rotated) cameraLook = FALSE; /* Only disable cameraLook if done rotating the head */
+    }
+    print_text_fmt_int(160, 16, "%x", cameraYaw);
+}
+
+/*
+if (ABS(cameraRot) >= DEGREES(67.5f) && ABS(cameraRot) < DEGREES(112.5f)) cameraRot = 0;
+else if (ABS(cameraRot) >= DEGREES(112.5f)) cameraRot += 0x8000;
+*/
+
 /**
  * Transitions Mario to a steep jump action.
  */
@@ -1793,7 +1835,7 @@ s32 execute_mario_action(UNUSED struct Object *obj) {
         if (!gMusicToggle) {
             if (
                 (gMarioState->controller->buttonDown & D_JPAD) &&
-                !(gMarioState->controller->buttonDown & L_TRIG)
+                !(gMarioState->controller->buttonDown & Z_TRIG)
             ) {
                 set_camera_mode(gMarioState->area->camera, CAMERA_MODE_8_DIRECTIONS, 1);
                 set_mario_action(gMarioState, ACT_DEBUG_FREE_MOVE, 0);
@@ -1852,6 +1894,7 @@ s32 execute_mario_action(UNUSED struct Object *obj) {
 #endif
         update_mario_info_for_cam(gMarioState);
         mario_update_hitbox_and_cap_model(gMarioState);
+        rotate_mario_head(gMarioState);
 
         // Both of the wind handling portions play wind audio only in
         // non-Japanese releases.

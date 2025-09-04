@@ -1605,9 +1605,12 @@ void config_options(void) {
         if (gConfigScroll == CFG_STATS) {
             gDebugToggle ^= 1;
             gShowDebugText ^= 1;
+            /*
             (gShowDebugText)
             ? (gDebugInfoFlags = DEBUG_INFO_FLAG_DPRINT)
             : (gDebugInfoFlags = DEBUG_INFO_NOFLAGS);
+            */
+            // not sure if I really need this tbh, and it's kinda annoying to accidentally change the page when using freemove sof
         }
         if (gConfigScroll == CFG_LUIGI) {
             gLuigiToggle ^= 1;
@@ -1655,10 +1658,10 @@ void fov_slider(void) {
     s16 minFOV = -15;
     s16 maxFOV = 45;
     if (gPlayer1Controller->rawStickX >= 32.0f) {
-        sFovSlider += 0.1f;
+        sFovSlider += 0.0625f;
     }
     if (gPlayer1Controller->rawStickX <= -32.0f) {
-        sFovSlider -= 0.1f;
+        sFovSlider -= 0.0625f;
     }
     if (gGlobalTimer % 2 == 0) {
         if (gPlayer1Controller->buttonDown == R_JPAD) {
@@ -1750,8 +1753,8 @@ void config_options_box(void) {
     }
     if (gConfigScroll != CFG_FOV) print_set_envcolour(127, 127, 127, 255);
 
-    (sFovSlider > 0) ? sprintf(currOption, "FOV: +%2.1f", sFovSlider) : sprintf(currOption, "FOV: %2.1f", sFovSlider);
-    
+    (sFovSlider > 0) ? sprintf(currOption, "FOV: +%2.4f", sFovSlider) : sprintf(currOption, "FOV: %2.4f", sFovSlider);
+
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);

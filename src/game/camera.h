@@ -473,8 +473,6 @@ struct CameraFOVStatus {
 
     /// The amount to change the current fov by in the fov shake effect.
     /*0x08*/ f32 fovOffset;
-    /// A bool set in fov_default() but unused otherwise
-    /*0x0C*/ u32 unusedIsSleeping;
     /// The range in degrees to shake fov
     /*0x10*/ f32 shakeAmplitude;
     /// Used to calculate fovOffset, the phase through the shake's period.
@@ -607,9 +605,7 @@ struct Camera {
     /// For example, this is what makes the camera rotate around the hill in BoB
     /*0x2C*/ f32 areaCenZ;
     /*0x30*/ u8 cutscene;
-    /*0x31*/ u8 filler1[8];
     /*0x3A*/ s16 nextYaw;
-    /*0x3C*/ u8 filler2[40];
     /*0x64*/ u8 doorStatus;
     /// The y coordinate of the "center" of the area. Unlike areaCenX and areaCenZ, this is only used
     /// when paused. See zoom_out_if_paused_and_outside
@@ -644,14 +640,10 @@ struct LakituState {
      */
     /*0x24*/ Vec3f goalPos;
 
-    /*0x30*/ u8 filler1[12]; // extra unused Vec3f?
-
     /// Copy of the active camera mode
     /*0x3C*/ u8 mode;
     /// Copy of the default camera mode
     /*0x3D*/ u8 defMode;
-
-    /*0x3E*/ u8 filler2[10];
 
     /*0x48*/ f32 focusDistance; // unused
     /*0x4C*/ s16 oldPitch; // unused
@@ -670,7 +662,6 @@ struct LakituState {
 
     /*0x60*/ Vec3f unusedVec1;
     /*0x6C*/ Vec3s unusedVec2;
-    /*0x72*/ u8 filler3[8];
 
     /// Used to rotate the screen when rendering.
     /*0x7A*/ s16 roll;
@@ -706,7 +697,6 @@ struct LakituState {
     /*0xB4*/ s16 keyDanceRoll;
     /// Mario's action from the previous frame. Only used to determine if Mario just finished a dive.
     /*0xB8*/ u32 lastFrameAction;
-    /*0xBC*/ s16 unused;
 };
 
 // BSS

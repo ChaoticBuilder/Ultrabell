@@ -527,7 +527,7 @@ s32 act_debug_free_move(struct MarioState *m) {
     }
 
     f32 speed = (gPlayer1Controller->buttonDown & B_BUTTON) ? 4.0f : 1.0f;
-    if (gPlayer1Controller->buttonDown & Z_TRIG) speed /= 16.0f;
+    if (gPlayer1Controller->buttonDown & Z_TRIG) speed /= 8.0f;
     if (m->area->camera->mode != CAMERA_MODE_8_DIRECTIONS) set_camera_mode(m->area->camera, CAMERA_MODE_8_DIRECTIONS, 1);
 
     set_mario_animation(m, MARIO_ANIM_A_POSE);
@@ -539,9 +539,15 @@ s32 act_debug_free_move(struct MarioState *m) {
     if (gPlayer1Controller->buttonDown & D_JPAD) {
         pos[1] -= 16.0f * speed / gDeltaTime;
     }
+
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
-        vec3_zero(m->vel);
-        m->forwardVel = 0;
+        if (!gPlayer1Controller->stickMag) m->forwardVel = 0;
+        else m->forwardVel = ABS(m->forwardVel);
+        if (!(gPlayer1Controller->buttonDown & U_JPAD) && !(gPlayer1Controller->buttonDown & D_JPAD)) m->vel[1] = 0;
+        else {
+            m->vel[1] = ABS(m->vel[1] * 1.5f);
+            if (gPlayer1Controller->buttonDown & D_JPAD) m->vel[1] = -m->vel[1];
+        }
 
         m->input &= ~INPUT_A_PRESSED;
         if (m->pos[1] <= m->waterLevel - 64) {

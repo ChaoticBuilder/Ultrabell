@@ -1,7 +1,7 @@
 #ifndef TEXT_STRINGS_H
 #define TEXT_STRINGS_H
 
-#include "text_menu_strings.h.in"
+#include "text_menu_strings.h"
 
 #if defined(PUPPYCAM)
 #define NC_CAMX_EN              _("Camera Sensitivity")

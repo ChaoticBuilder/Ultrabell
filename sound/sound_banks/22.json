@@ -6,28 +6,28 @@
             [2, 32700],
             [1, 32700],
             [32700, 29430],
-            "hang"
+            "stop"
         ],
         "envelope1": [
             [2, 32700],
             [1, 32700],
             [32700, 29430],
-            "hang"
+            "stop"
         ],
         "envelope2": [
             [2, 32700],
             [1, 32700],
             [32700, 29430],
-            "hang"
+            "stop"
         ],
         "envelope3": [
             [2, 32700],
             [1, 32700],
             [32700, 29430],
-            "hang"
+            "stop"
         ],
         "envelope4": [
-            [2, 32700],
+            [1, 32700],
             [1, 32700],
             [32700, 29430],
             "hang"
@@ -36,33 +36,33 @@
             [2, 32700],
             [1, 32700],
             [32700, 29430],
-            "hang"
+            "stop"
         ],
         "envelope6": [
             [2, 32700],
             [1, 32700],
             [32700, 29430],
-            "hang"
+            "stop"
         ]
     },
     "instruments": {
         "inst0": {
-            "release_rate": 208,
+            "release_rate": 255,
             "envelope": "envelope0",
             "sound": "19_brass"
         },
         "inst1": {
-            "release_rate": 208,
+            "release_rate": 255,
             "envelope": "envelope1",
             "sound": "1A_slap_bass"
         },
         "inst2": {
-            "release_rate": 208,
+            "release_rate": 255,
             "envelope": "envelope2",
             "sound": "1B_organ_2"
         },
         "inst3": {
-            "release_rate": 208,
+            "release_rate": 255,
             "envelope": "envelope3",
             "sound": "1C"
         },
@@ -140,7 +140,7 @@
             "sound": "0F_hihat_open"
         },
         "inst5": {
-            "release_rate": 10,
+            "release_rate": 3,
             "normal_range_lo": 28,
             "normal_range_hi": 28,
             "envelope": "envelope6",

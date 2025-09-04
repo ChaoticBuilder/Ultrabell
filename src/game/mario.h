@@ -6,12 +6,15 @@
 #include "macros.h"
 #include "types.h"
 
-extern u8 fadeWarpTarget;
-
 enum dustArray {
     SMOVE,
     JUMP
 };
+
+extern u8  fadeWarpTarget;
+extern u8  cameraLook;
+extern s16 lookTimer;
+extern u16 lookChance;
 
 s32 is_anim_at_end(struct MarioState *m);
 s32 is_anim_past_end(struct MarioState *m);
@@ -61,5 +64,6 @@ s32 set_water_plunge_action(struct MarioState *m);
 s32 execute_mario_action(UNUSED struct Object *obj);
 void init_mario(void);
 void init_mario_from_save_file(void);
+void rotate_mario_head(struct MarioState *m);
 
 #endif // MARIO_H

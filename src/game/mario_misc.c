@@ -26,6 +26,7 @@
 #include "sound_init.h"
 #include "puppycam2.h"
 #include "ingame_menu.h"
+#include "mario.h"
 
 #include "config.h"
 
@@ -417,7 +418,7 @@ Gfx *geo_mario_head_rotation(s32 callContext, struct GraphNode *node, UNUSED Mat
         if (camera->mode == CAMERA_MODE_C_UP) {
             rotNode->rotation[0] = gPlayerCameraState->headRotation[1];
             rotNode->rotation[2] = gPlayerCameraState->headRotation[0];
-        } else if (action & ACT_FLAG_WATER_OR_TEXT) {
+        } else if (action & ACT_FLAG_WATER_OR_TEXT || cameraLook) {
             rotNode->rotation[0] = bodyState->headAngle[1];
             rotNode->rotation[1] = bodyState->headAngle[2];
             rotNode->rotation[2] = bodyState->headAngle[0];

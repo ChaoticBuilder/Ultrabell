@@ -2812,7 +2812,7 @@ void update_camera(struct Camera *c) {
         && gCurrentArea->camera->mode != CAMERA_MODE_INSIDE_CANNON) {
         // Only process R_TRIG if 'fixed' is not selected in the menu
 
-        if (gPlayer1Controller->buttonPressed & L_TRIG) {
+        if (gPlayer1Controller->buttonPressed & L_TRIG && gMarioState->action != ACT_DEBUG_FREE_MOVE) {
             if (c->mode == CAMERA_MODE_C_UP) {
                 play_sound_button_change_blocked();
             } else {
@@ -2826,7 +2826,7 @@ void update_camera(struct Camera *c) {
             }
         }
         if (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) {
-            if (gPlayer1Controller->buttonPressed & R_TRIG && !gMusicToggle) {
+            if (gPlayer1Controller->buttonPressed & R_TRIG && !gMusicToggle && gMarioState->action != ACT_DEBUG_FREE_MOVE) {
                 if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {
                     set_cam_angle(CAM_ANGLE_MARIO);
                 } else {
@@ -3114,7 +3114,6 @@ void reset_camera(struct Camera *c) {
     set_fov_function(CAM_FOV_DEFAULT);
     sFOVState.fov = 45.f;
     sFOVState.fovOffset = 0.f;
-    sFOVState.unusedIsSleeping = 0;
     sFOVState.shakeAmplitude = 0.f;
     sFOVState.shakePhase = 0;
     sObjectCutscene = CUTSCENE_NONE;
@@ -3140,7 +3139,6 @@ void init_camera(struct Camera *c) {
     gLakituState.focVSpeed = 0.375f;
     gLakituState.roll = 0;
     gLakituState.keyDanceRoll = 0;
-    gLakituState.unused = 0;
     sStatusFlags &= ~CAM_FLAG_SMOOTH_MOVEMENT;
     vec3_zero(sCastleEntranceOffset);
     vec3_zero(sPlayer2FocusOffset);
@@ -10808,19 +10806,13 @@ void zoom_fov_30(UNUSED struct MarioState *m) {
 void fov_default(struct MarioState *m) {
     sStatusFlags &= ~CAM_FLAG_SLEEPING;
 
-    // Apparently Mario's idle was a sleeping state?
-    if ((m->action == ACT_IDLE) || (m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
-        if (m->sleepTimer < (400 * gDeltaTime)) { // really jank but so is the beta so this is chaotic approved
-            m->sleepTimer++; // Increase the timer
-            camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 45.f);
-        } else { // Gradually set the FOV to 30 if the threshold is reached
-            camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (30.f - sFOVState.fov) / 30.f);
-            sStatusFlags |= CAM_FLAG_SLEEPING;
-        }
+    /* Reverted sleeping zoom back to vanilla behavior because of camera look */
+    /* Will I keep it this way? idk, I just know that I'm too lazy to figure out how to fix rn -w- */
+    if ((m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
+        camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (30.f - sFOVState.fov) / 30.f);
+        sStatusFlags |= CAM_FLAG_SLEEPING;
     } else {
-        m->sleepTimer = 0; // Reset the timer and set the FOV back to 45 when Mario isn't sleeping
         camera_approach_f32_symmetric_bool(&sFOVState.fov, 45.f, (45.f - sFOVState.fov) / 45.f);
-        sFOVState.unusedIsSleeping = 0;				   
     }
     if (m->area->camera->cutscene == CUTSCENE_0F_UNUSED) {
         sFOVState.fov = 45.f;

@@ -122,6 +122,16 @@ s32 act_idle(struct MarioState *m) {
         return TRUE;
     }
 
+    if (lookTimer > 0) m->actionState = ACT_STATE_IDLE_CAMERA_LOOK;
+    if (m->actionState == ACT_STATE_IDLE_CAMERA_LOOK) {
+        if (lookTimer > 0) {
+            set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+
+            stationary_ground_step(m);
+            return FALSE;
+        } else m->actionState = ACT_STATE_IDLE_HEAD_LEFT;
+    }
+
     if (m->actionState == ACT_STATE_IDLE_RESET_OR_SLEEP) {
 #ifndef NO_SLEEP
         if ((m->area->terrainType & TERRAIN_MASK) == TERRAIN_SNOW) {
@@ -161,6 +171,8 @@ s32 act_idle(struct MarioState *m) {
             // 10 cycles before sleeping.
             // actionTimer is used to track how many cycles have passed.
             if (++m->actionState == ACT_STATE_IDLE_RESET_OR_SLEEP) {
+                cameraLook = TRUE;
+                lookChance = 0x1800;
 #ifdef NO_SLEEP
                 m->actionState = ACT_STATE_IDLE_HEAD_LEFT;
 #else
@@ -170,7 +182,7 @@ s32 act_idle(struct MarioState *m) {
                 } else {
                     // If Mario hasn't turned his head 10 times yet, stay idle instead of going to sleep.
                     m->actionTimer++;
-                    if (m->actionTimer < 4) {
+                    if (m->actionTimer < 32) {
                         m->actionState = ACT_STATE_IDLE_HEAD_LEFT;
                     }
                 }

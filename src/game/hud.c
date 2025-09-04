@@ -833,7 +833,7 @@ void render_hud(void) {
             }
 #endif
             // fps_testing();
-            testing();
+            // testing();
         }
     }
 }
