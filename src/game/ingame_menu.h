@@ -15,8 +15,8 @@ extern u8 gConfigOpen;
     extern u8 gRealToggle;
     extern u8 gTimerToggle;
     extern u8 gKickToggle;
-    extern int gTimerTime;
-    extern int gKickTimer;
+    extern u16 gTimerTime;
+    extern u16 gKickTimer;
     extern u8 gDiveToggle;
     extern u8 gTurnToggle;
     extern u8 gABCToggle;
@@ -25,6 +25,9 @@ extern u8 gConfigOpen;
     extern u8 gMusicToggle;
     extern u8 gLevelTroll;
     extern u8 gFPSCap;
+    extern u8 dynSteps;
+    extern u8 spdToggle;
+    extern u8 spdSpd;
 
 enum ConfigMenuIDs {
     CFG_START,
@@ -32,7 +35,9 @@ enum ConfigMenuIDs {
     CFG_FOV,
     CFG_HUD,
     CFG_STATS,
+    /* Gameplay */
     CFG_LUIGI,
+    CFG_STEPS,
     CFG_TIMER,
     CFG_SSK,
     CFG_REAL,
@@ -44,6 +49,7 @@ enum ConfigMenuIDs {
     CFG_LVL,
     CFG_FLY,
     CFG_FPS,
+    CFG_DBG,
     CFG_END,
 };
 

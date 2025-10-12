@@ -486,6 +486,32 @@ void update_walking_speed(struct MarioState *m) {
     apply_slope_accel(m);
 }
 
+void update_debug_speed(struct MarioState *m) {
+    if (m->forwardVel < spdSpd || spdSpd == 0) m->forwardVel += m->intendedMag / 32.0f / gDeltaTime;
+
+#ifdef VELOCITY_BASED_TURN_SPEED
+    if ((m->heldObj == NULL) && !(m->action & ACT_FLAG_SHORT_HITBOX)) {
+        if (m->forwardVel >= 16.0f) {
+            s16 turnRange = abs_angle_diff(m->faceAngle[1], m->intendedYaw);
+            f32 fac = (m->forwardVel + m->intendedMag);
+            turnRange *= (1.0f - (CLAMP(fac, 0.0f, 32.0f) / 32.0f));
+            turnRange = MAX(turnRange, 0x800);
+
+            approach_angle_bool(&m->faceAngle[1], m->intendedYaw, turnRange);
+        } else {
+            m->faceAngle[1] = m->intendedYaw;
+        }
+    } else {
+        m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+    }
+#else
+    // Vanilla
+    m->faceAngle[1] =
+        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800 / gDeltaTime, 0x800 / gDeltaTime);
+#endif
+    apply_slope_accel(m);
+}
+
 s32 should_begin_sliding(struct MarioState *m) {
     if (m->input & INPUT_ABOVE_SLIDE) {
         s32 slideLevel = (m->area->terrainType & TERRAIN_MASK) == TERRAIN_SLIDE;
@@ -687,7 +713,7 @@ void push_or_sidle_wall(struct MarioState *m, Vec3f startPos) {
         m->flags |= MARIO_PUSHING;
         set_mario_animation(m, MARIO_ANIM_PUSHING);
         play_step_sound(m, 6, 18);
-        if (m->forwardVel > 6.0f) {
+        if (m->forwardVel > 6.0f && !spdToggle) {
             mario_set_forward_vel(m, 6.0f);
         }
     } else {
@@ -704,7 +730,7 @@ void push_or_sidle_wall(struct MarioState *m, Vec3f startPos) {
             }
         }
 
-        if (m->forwardVel > 6.0f) {
+        if (m->forwardVel > 6.0f && !spdToggle) {
             mario_set_forward_vel(m, 6.0f);
         }
 
@@ -802,7 +828,7 @@ s32 act_walking(struct MarioState *m) {
     }
 
     vec3f_copy(startPos, m->pos);
-    update_walking_speed(m);
+    (!spdToggle) ? update_walking_speed(m) : update_debug_speed(m);
 
     if (m->actionState != ACT_STATE_WALKING_NO_WALL && (m->forwardVel < m->intendedMag)) {
         m->forwardVel = m->intendedMag / 1.125f;
@@ -901,9 +927,9 @@ s32 act_hold_walking(struct MarioState *m) {
         return set_mario_action(m, ACT_HOLD_DECELERATING, 0);
     }
 
-    m->intendedMag *= 0.4f;
+    m->intendedMag *= 0.5f;
 
-    update_walking_speed(m);
+    (!spdToggle) ? update_walking_speed(m) : update_debug_speed(m);
 
     switch (perform_ground_step(m)) {
         case GROUND_STEP_LEFT_GROUND:
@@ -941,9 +967,9 @@ s32 act_hold_heavy_walking(struct MarioState *m) {
         return set_mario_action(m, ACT_HOLD_HEAVY_IDLE, 0);
     }
 
-    m->intendedMag *= 0.1f;
+    m->intendedMag *= 0.125f;
 
-    update_walking_speed(m);
+    (!spdToggle) ? update_walking_speed(m) : update_debug_speed(m);
 
     switch (perform_ground_step(m)) {
         case GROUND_STEP_LEFT_GROUND:
@@ -1285,9 +1311,9 @@ s32 act_crawling(struct MarioState *m) {
         return set_mario_action(m, ACT_STOP_CRAWLING, 0);
     }
 
-    m->intendedMag *= 0.1f;
+    m->intendedMag *= 0.125f;
 
-    update_walking_speed(m);
+    (!spdToggle) ? update_walking_speed(m) : update_debug_speed(m);
 
     switch (perform_ground_step(m)) {
         case GROUND_STEP_LEFT_GROUND:

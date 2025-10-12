@@ -2291,7 +2291,6 @@ s32 cur_obj_check_grabbed_mario(void) {
     return FALSE;
 }
 
-s32 sPlayerGrabReleaseState;
 u8 grabPTS = 0;
 
 s32 player_performed_grab_escape_action(void) {

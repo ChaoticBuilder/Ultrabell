@@ -684,9 +684,8 @@ void debug_stats(void) {
     if (gIsConsole) {
         sprintf(debug, "E3 KIOSK", gEmulator); // noway someone's playing my hack on everdrive!!!
     } else {
-        (gEmulator != EMU_MUPEN64PLUS_NEXT)
-        ? sprintf(debug, "EMU: 0x0%x", gEmulator) // 0x0xxx
-        : sprintf(debug, "EMU: 0x00%x", gEmulator); // 0x00xx (for some reason, Mupen64Next needs an extra 0)
+        (gEmulator < 0x10) ? sprintf(debug, "EMU: 0x000%x", gEmulator) : sprintf(debug, "EMU: 0x00%x", gEmulator);
+        sprintf(debug, "EMU: 0x00%x", gEmulator);
     }
 
     print_small_text_light(16, 210, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
