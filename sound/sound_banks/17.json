@@ -61,11 +61,11 @@
         "inst0": {
             "release_rate": 19,
             "normal_range_lo": 29,
-            "normal_range_hi": 63,
+            "normal_range_hi": 68,
             "envelope": "envelope0",
             "sound_lo": "3B_banjo_2",
-            "sound": "3C_acoustic_guitar",
-            "sound_hi": "3D"
+            "sound": "50_harp",
+            "sound_hi": "51_harp_2"
         },
         "inst1": {
             "release_rate": 208,
@@ -75,7 +75,7 @@
         "inst2": {
             "release_rate": 15,
             "envelope": "envelope2",
-            "sound": "02"
+            "sound": "34_alto_flute"
         },
         "inst3": {
             "release_rate": 15,
