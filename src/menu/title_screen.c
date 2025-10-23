@@ -197,6 +197,9 @@ s32 intro_regular(void) {
         gDebugLevelSelect = TRUE;
         gLVLToggle = TRUE;
     }
+    if (gPlayer1Controller->buttonPressed & R_TRIG) {
+        level = LEVEL_TUTORIAL;
+    }
 #endif
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
         play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);

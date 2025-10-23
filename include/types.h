@@ -464,4 +464,22 @@ struct MarioState {
     // -- HackerSM64 MarioState fields end --
 };
 
+struct FamiMarioState {
+    u16 input;
+    u32 action;
+    u32 prevAction;
+    u16 actionState;
+    u16 actionTimer;
+    u16 invincTimer;
+    u16 powerTimer;
+    u8 wallKickTimer;
+    u8 powerState;
+    u8 health;
+    u8 numCoins;
+    u8 numLives;
+    Vec3s pos;
+    Vec3f vel;
+    u8 angle;
+};
+
 #endif // TYPES_H

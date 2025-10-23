@@ -31,6 +31,7 @@
 
 #include "levels/menu/header.h"
 #include "levels/intro/header.h"
+#include "levels/tutorial/header.h"
 
 #include "level_headers.h"
 

@@ -67,6 +67,7 @@ extern u8 _buffersSegmentBssEnd[];
 DECLARE_LEVEL_SEGMENT(menu)
 DECLARE_LEVEL_SEGMENT(intro)
 DECLARE_LEVEL_SEGMENT(ending)
+DECLARE_LEVEL_SEGMENT(tutorial)
 
 #define STUB_LEVEL(_0, _1, _2, _3, _4, _5, _6, _7, _8)
 #define DEFINE_LEVEL(_0, _1, _2, folder, _4, _5, _6, _7, _8, _9, _10) DECLARE_LEVEL_SEGMENT(folder)

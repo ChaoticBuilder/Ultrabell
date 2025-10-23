@@ -30,6 +30,7 @@
 #include "s2d_engine/init.h"
 #endif
 #include "main.h"
+#include "smb_engine.h"
 
 struct SpawnInfo gPlayerSpawnInfos[1];
 struct GraphNode *gGraphNodePointers[MODEL_ID_COUNT];

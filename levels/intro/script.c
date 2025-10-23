@@ -12,6 +12,7 @@
 
 #include "levels/scripts.h"
 #include "levels/menu/header.h"
+#include "levels/tutorial/header.h"
 
 #include "actors/common0.h"
 #include "actors/common1.h"
@@ -124,6 +125,7 @@ const LevelScript level_intro_mario_head_regular[] = {
     BLACKOUT(/*active*/ FALSE),
 #endif
     CALL_LOOP(/*arg*/ LVL_INTRO_REGULAR, /*func*/ lvl_intro_update),
+    JUMP_IF(/*op*/ OP_EQ, /*arg*/ LEVEL_TUTORIAL,  script_smb),
     JUMP_IF(/*op*/ OP_EQ, /*arg*/ LEVEL_FILE_SELECT,  script_intro_file_select),
     JUMP_IF(/*op*/ OP_EQ, /*arg*/ LEVEL_LEVEL_SELECT, script_intro_level_select),
     JUMP(script_intro_main_level_entry),
@@ -218,6 +220,16 @@ const LevelScript script_intro_level_select[] = {
     CLEAR_LEVEL(),
     SLEEP(/*frames*/ 2),
     EXIT_AND_EXECUTE_WITH_CODE(/*seg*/ SEGMENT_MENU_INTRO, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_level_select, _introSegmentBssStart, _introSegmentBssEnd),
+};
+
+const LevelScript script_smb[] = {
+    STOP_MUSIC(/*fadeOutTime*/ 0x00BE),
+    TRANSITION(/*transType*/ WARP_TRANSITION_FADE_INTO_COLOR, /*time*/ 16, /*color*/ 0x00, 0x00, 0x00),
+    SLEEP(/*frames*/ 16),
+    CLEAR_LEVEL(),
+    SLEEP(/*frames*/ 2),
+    SET_REG(/*value*/ LEVEL_TUTORIAL),
+    EXIT_AND_EXECUTE(/*seg*/ SEGMENT_GLOBAL_LEVEL_SCRIPT, _scriptsSegmentRomStart, _scriptsSegmentRomEnd, level_tutorial_entry),
 };
 
 const LevelScript script_intro_main_level_entry_stop_music[] = {
