@@ -613,12 +613,10 @@ void music_menu_scroll(void) {
     if (debugScroll > 4) {
         debugScroll = 1;
     }
-    struct SequencePlayer *seqPlayer = &gSequencePlayers[0];
     if (gPlayer1Controller->buttonPressed & R_TRIG) {
-        if (debugScroll == 1) {
+        if (debugScroll == 1 || debugScroll == 2) {
             if (musicID == 0) stop_background_music(musicID);
             set_background_music(0, musicID, 0);
-            if (musicBank != 0xFF) seqPlayer->defaultBank[0] = musicBank;
         }
         if (debugScroll == 3) {
             musicID = gAreas[gCurrAreaIndex].musicParam2;
@@ -820,7 +818,7 @@ void render_hud(void) {
             }
             attack_timer();
             timer_troll();
-            visualizer_display();
+            // visualizer_display();
             music_menu();
             debug_stats();
             demo_mode();

@@ -1731,7 +1731,7 @@ s32 act_slide_kick(struct MarioState *m) {
         case 2:
         case 0:
             if (m->actionTimer == 0) {
-                SKspeed = m->forwardVel * 1.5f;
+                SKspeed = m->forwardVel * 1.25f;
                 m->forwardVel = 0;
             }
             inc = SKspeed / (m->actionTimer + 5);
@@ -1864,12 +1864,10 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             lava_boost_on_wall(m);
             break;
     }
-    if (m->actionTimer == 0) {
+    if ((vBlanks & 4) == 0) {
         m->particleFlags |= PARTICLE_FIRE;
-        m->actionTimer++;
     }
 
-    if (m->vel[1] < 8.0f) m->actionTimer = 0;
     if (m->flags & MARIO_WING_CAP) m->actionArg = 1;
     switch (m->actionArg) {
         case 1:

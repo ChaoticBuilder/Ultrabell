@@ -134,11 +134,13 @@ s32 act_idle(struct MarioState *m) {
 
     if (m->actionState == ACT_STATE_IDLE_RESET_OR_SLEEP) {
 #ifndef NO_SLEEP
+/*
         if ((m->area->terrainType & TERRAIN_MASK) == TERRAIN_SNOW) {
             return set_mario_action(m, ACT_SHIVERING, 0);
         } else {
+*/
             return set_mario_action(m, ACT_START_SLEEPING, 0);
-        }
+//        }
 #endif
     }
 
@@ -182,7 +184,7 @@ s32 act_idle(struct MarioState *m) {
                 } else {
                     // If Mario hasn't turned his head 10 times yet, stay idle instead of going to sleep.
                     m->actionTimer++;
-                    if (m->actionTimer < 32) {
+                    if (m->actionTimer < 4) {
                         m->actionState = ACT_STATE_IDLE_HEAD_LEFT;
                     }
                 }
@@ -309,7 +311,6 @@ s32 act_waking_up(struct MarioState *m) {
     stop_sound(SOUND_MARIO_SNORING1, m->marioObj->header.gfx.cameraToObject);
     stop_sound(SOUND_MARIO_SNORING2, m->marioObj->header.gfx.cameraToObject);
     stop_sound(SOUND_MARIO_SNORING3, m->marioObj->header.gfx.cameraToObject);
-    raise_background_noise(2);
     stop_secondary_music(50);
 
     if (m->input & INPUT_STOMPED) {

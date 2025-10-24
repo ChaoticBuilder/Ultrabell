@@ -8,6 +8,8 @@
 #include "load.h"
 #include "seqplayer.h"
 #include "game/puppyprint.h"
+#include "game/hud.h"
+#include "game/area.h"
 
 struct SharedDma {
     /*0x0*/ u8 *buffer;       // target, points to pre-allocated buffer
@@ -631,6 +633,8 @@ struct AudioBank *load_banks_immediate(s32 seqId, u8 *outDefaultBank) {
     for (i = gAlBankSets[offset - 1]; i != 0; i--) {
         offset++;
         bankId = gAlBankSets[offset - 1];
+        if (levelSnow && seqId == 11) bankId = 31;
+        if (musicBank != 0xFF) bankId = musicBank;
 #endif
 
         if (IS_BANK_LOAD_COMPLETE(bankId)) {

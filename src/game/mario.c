@@ -902,7 +902,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 m->vel[1] /= 2.0f;
                 m->vel[1] += 28.0f;
 
-                s16 spdcap = (gFlightToggle || m->flags & MARIO_METAL_CAP) ? 96 : 60;
+                s16 spdcap = (gFlightToggle || m->flags & MARIO_METAL_CAP) ? 96 : 56;
                 if (m->forwardVel >= 0.0f && m->forwardVel < spdcap) m->forwardVel = approach_f32(m->forwardVel, spdcap, 16.0f, 16.0f);
             } else {
                 if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;

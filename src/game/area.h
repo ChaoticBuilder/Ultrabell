@@ -159,6 +159,8 @@ enum MenuOption {
     MENU_OPT_CONTINUE_DONT_SAVE = MENU_OPT_3
 };
 
+#define levelSnow ((gCurrLevelNum == LEVEL_CCM) | (gCurrLevelNum == LEVEL_SL))
+
 extern struct GraphNode **gLoadedGraphNodes;
 extern struct SpawnInfo gPlayerSpawnInfos[];
 extern struct GraphNode *gGraphNodePointers[MODEL_ID_COUNT];

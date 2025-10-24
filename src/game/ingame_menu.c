@@ -2292,6 +2292,7 @@ s32 gCourseDoneMenuTimer = 0;
 s32 gCourseCompleteCoins = 0;
 
 s32 render_pause_courses_and_castle(void) {
+    stop_secondary_music(50); // really shitty fix for secondary music issues
     s16 index;
 
     if (gPlayer1Controller->buttonPressed & R_TRIG) gConfigOpen ^= 1;

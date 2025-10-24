@@ -17,6 +17,7 @@
 extern s16 gHudShakeX, gHudShakeY;
 extern u8 pitchInvert;
 extern u8 sleepTimer;
+extern u8 musicBank;
 
 enum PowerMeterAnimation {
     POWER_METER_HIDDEN,

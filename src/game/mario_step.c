@@ -674,11 +674,16 @@ void apply_gravity(struct MarioState *m) {
         if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK)
             m->vel[1] += baseVel / 4 / gDeltaTime;
     }
-    if (!gLuigiToggle || gRealToggle || m->marioBodyState->wingFlutter) return;
+
+    if (gABCToggle || gRealToggle) return;
+    if (m->input & INPUT_A_DOWN && m->vel[1] < 8.0f && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL || m->action == ACT_JUMP_KICK)) {
+        if (gLuigiToggle) m->vel[1] += 2.0f / gDeltaTime;
+        else m->vel[1] += 0.5f / gDeltaTime;
+    }
+
+    if (!gLuigiToggle || m->marioBodyState->wingFlutter) return;
     if (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN && m->action != ACT_TWIRLING) {
-        if (!gABCToggle) m->vel[1] += 1.0f / gDeltaTime;
-        if (m->vel[1] < 8.0f && m->input & INPUT_A_DOWN && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL))
-            m->vel[1] += 2.0f / gDeltaTime;
+        m->vel[1] += 1.0f / gDeltaTime;
     }
 }
 
