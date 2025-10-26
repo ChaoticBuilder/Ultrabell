@@ -585,13 +585,9 @@ u16 musicType(u32 seqId, u32 bankId) {
     switch (gCurrLevelNum) {
         case LEVEL_CCM:
         case LEVEL_SL:
-            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR || seqId == SEQ_LEVEL_UNDERGROUND) return 11;
+            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR || seqId == SEQ_LEVEL_UNDERGROUND || SEQ_LEVEL_INSIDE_CASTLE) return 11;
             if (seqId == SEQ_EVENT_PIRANHA_PLANT) return 31;
-            if (seqId == SEQ_LEVEL_SLIDE || seqId == SEQ_EVENT_POWERUP) return 40;
-            /* these are unused for now
-            if (seqId == SEQ_LEVEL_INSIDE_CASTLE) return 11; // MAYBE???
-            if (seqId == SEQ_LEVEL_GRASS || SEQ_EVENT_BOSS) return 40;
-            */
+            if (seqId == SEQ_LEVEL_SLIDE || seqId == SEQ_EVENT_POWERUP || SEQ_LEVEL_GRASS || SEQ_EVENT_BOSS) return 40;
             FALL_THROUGH;
         default:
             return bankId;
