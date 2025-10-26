@@ -735,8 +735,7 @@ void fps_testing(void) {
 }
 
 void testing(void) {
-    print_text_fmt_int(160, 32, "%d", gMarioState->fallVel);
-    print_text_fmt_int(160, 16, "%x", gMarioState->healthAdjust);
+    print_text_fmt_int(160, 16, "%d", gMarioState->actionArg);
     /*
     char debug[64];
     sprintf(debug, "%2.1f", gMarioState->forwardVel);
@@ -830,7 +829,7 @@ void render_hud(void) {
             }
 #endif
             // fps_testing();
-            // testing();
+            testing();
         }
     }
 }

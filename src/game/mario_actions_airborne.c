@@ -354,7 +354,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
 
         case AIR_STEP_LANDED:
             if (!check_fall_damage_or_get_stuck(m, ACT_HARD_BACKWARD_GROUND_KB)) {
-                set_mario_action(m, landAction, 1);
+                set_mario_action(m, landAction, m->actionArg);
             }
             break;
 
@@ -429,9 +429,9 @@ s32 act_jump(struct MarioState *m) {
         set_mario_action(m, m->prevAction, 0);
         return FALSE;
     }
-    s32 animation = (m->actionArg == 0)
-    ? MARIO_ANIM_SINGLE_JUMP
-    : MARIO_ANIM_SLIDEJUMP;
+    s32 animation = MARIO_ANIM_SINGLE_JUMP;
+    if (m->actionArg == 1) animation = MARIO_ANIM_SLIDEJUMP;
+    if (m->actionArg == 2) animation = MARIO_ANIM_CROUCHING;
 
     if (auto_dive(m)) return TRUE;
 
@@ -447,6 +447,7 @@ s32 act_jump(struct MarioState *m) {
 }
 
 s32 act_double_jump(struct MarioState *m) {
+    if (m->actionArg == 2) return set_mario_action(m, ACT_JUMP, 2);
     if (gABCToggle) {
         set_mario_action(m, m->prevAction, 0);
         return FALSE;

@@ -276,7 +276,7 @@ void set_mario_initial_cap_powerup(struct MarioState *m) {
 
         case COURSE_VCUTM - COURSE_CAP_COURSES:
             m->flags |= MARIO_VANISH_CAP | MARIO_CAP_ON_HEAD;
-            m->capTimer = 750;
+            m->capTimer = 1050;
             break;
     }
 }

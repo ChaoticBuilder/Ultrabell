@@ -10,6 +10,8 @@
 #include "game/puppyprint.h"
 #include "game/hud.h"
 #include "game/area.h"
+#include "game/level_update.h"
+#include "seq_ids.h"
 
 struct SharedDma {
     /*0x0*/ u8 *buffer;       // target, points to pre-allocated buffer
@@ -578,6 +580,25 @@ void *sequence_dma_async(s32 seqId, s32 arg1, struct SequencePlayer *seqPlayer) 
     return ptr;
 }
 
+u16 musicType(u32 seqId, u32 bankId) {
+    if (gMarioState->flags & MARIO_VANISH_CAP && seqId == SEQ_EVENT_METAL_CAP) return 40;
+    switch (gCurrLevelNum) {
+        case LEVEL_CCM:
+        case LEVEL_SL:
+            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR || seqId == SEQ_LEVEL_UNDERGROUND) return 11;
+            if (seqId == SEQ_EVENT_PIRANHA_PLANT) return 31;
+            if (seqId == SEQ_LEVEL_SLIDE || seqId == SEQ_EVENT_POWERUP) return 40;
+            /* these are unused for now
+            if (seqId == SEQ_LEVEL_INSIDE_CASTLE) return 11; // MAYBE???
+            if (seqId == SEQ_LEVEL_GRASS || SEQ_EVENT_BOSS) return 40;
+            */
+            FALL_THROUGH;
+        default:
+            return bankId;
+            break;
+    }
+}
+
 u32 get_missing_bank(u32 seqId, s32 *nonNullCount, s32 *nullCount) {
     void *temp;
     u32 bankId;
@@ -587,23 +608,12 @@ u32 get_missing_bank(u32 seqId, s32 *nonNullCount, s32 *nullCount) {
 
     *nullCount = 0;
     *nonNullCount = 0;
-#if defined(VERSION_EU)
     offset = ((u16 *) gAlBankSets)[seqId];
     for (i = gAlBankSets[offset++], ret = 0; i != 0; i--) {
-        bankId = gAlBankSets[offset++];
-#else
-    offset = ((u16 *) gAlBankSets)[seqId] + 1;
-    for (i = gAlBankSets[offset - 1], ret = 0; i != 0; i--) {
-        offset++;
-        bankId = gAlBankSets[offset - 1];
-#endif
+        bankId = musicType(seqId, gAlBankSets[offset++]);
 
         if (IS_BANK_LOAD_COMPLETE(bankId)) {
-#if defined(VERSION_EU)
             temp = get_bank_or_seq(&gBankLoadedPool, 2, bankId);
-#else
-            temp = get_bank_or_seq(&gBankLoadedPool, 2, gAlBankSets[offset - 1]);
-#endif
         } else {
             temp = NULL;
         }
@@ -625,24 +635,12 @@ struct AudioBank *load_banks_immediate(s32 seqId, u8 *outDefaultBank) {
     u8 i;
 
     u16 offset = ((u16 *) gAlBankSets)[seqId];
-#ifdef VERSION_EU
     for (i = gAlBankSets[offset++]; i != 0; i--) {
-        bankId = gAlBankSets[offset++];
-#else
-    offset++;
-    for (i = gAlBankSets[offset - 1]; i != 0; i--) {
-        offset++;
-        bankId = gAlBankSets[offset - 1];
-        if (levelSnow && seqId == 11) bankId = 31;
+        bankId = musicType(seqId, gAlBankSets[offset++]);
         if (musicBank != 0xFF) bankId = musicBank;
-#endif
 
         if (IS_BANK_LOAD_COMPLETE(bankId)) {
-#ifdef VERSION_EU
             ret = get_bank_or_seq(&gBankLoadedPool, 2, bankId);
-#else
-            ret = get_bank_or_seq(&gBankLoadedPool, 2, gAlBankSets[offset - 1]);
-#endif
         } else {
             ret = NULL;
         }

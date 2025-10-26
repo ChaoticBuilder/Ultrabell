@@ -930,7 +930,7 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
     s16 warpDoorId = (obj->oBehParams >> 24);
 // #endif
 
-    if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
+    if (m->action == ACT_WALKING || m->action == ACT_DECELERATING || m->action == ACT_PUNCHING) {
 // #ifndef UNLOCK_ALL
         if (warpDoorId == 1 && !(saveFlags & SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR) && !gDebugLevelSelect) {
             if (!(saveFlags & SAVE_FLAG_HAVE_KEY_2)) {
@@ -962,7 +962,7 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
         }
 // #endif
 
-        if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
+        if (m->action == ACT_WALKING || m->action == ACT_DECELERATING || m->action == ACT_PUNCHING) {
             u32 actionArg = should_push_or_pull_door(m, obj) + WARP_FLAG_DOOR_IS_WARP;
 
             if (doorAction == 0) {
@@ -1009,7 +1009,7 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
 // #ifndef UNLOCK_ALL
     s16 numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
 // #endif
-    if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
+    if (m->action == ACT_WALKING || m->action == ACT_DECELERATING || m->action == ACT_PUNCHING) {
 // #ifndef UNLOCK_ALL
         if (numStars >= requiredNumStars || obj->oInteractionSubtype != INT_SUBTYPE_STAR_DOOR || gDebugLevelSelect) {
             // forgot star doors and normal doors share the same code .w.
@@ -1588,7 +1588,7 @@ u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o
         m->flags |= MARIO_CAP_ON_HEAD;
 
         switch (capFlag) {
-            case MARIO_VANISH_CAP: capTime =  750; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
+            case MARIO_VANISH_CAP: capTime = 1050; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
             case MARIO_METAL_CAP:  capTime = 1050; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
             case MARIO_WING_CAP:   capTime = 1800; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
         }
