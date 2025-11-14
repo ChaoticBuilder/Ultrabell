@@ -4,30 +4,32 @@
 #include <PR/ultratypes.h>
 
 extern u8 gConfigOpen;
-    extern u8 gConfigScroll;
-    extern u8 gHighlightToggle;
-    extern f32 sFovSlider;
-    extern u8 gLuigiToggle;
-    extern u8 gHudToggle;
-    extern u8 gVisToggle;
-    extern u8 gDebugToggle;
-    extern u8 g95Toggle;
-    extern u8 gRealToggle;
-    extern u8 gTimerToggle;
-    extern u8 gKickToggle;
-    extern u16 gTimerTime;
-    extern u16 gKickTimer;
-    extern u8 gDiveToggle;
-    extern u8 gTurnToggle;
-    extern u8 gABCToggle;
-    extern u8 gLVLToggle;
-    extern u8 gFlightToggle;
-    extern u8 gMusicToggle;
-    extern u8 gLevelTroll;
-    extern u8 gFPSCap;
-    extern u8 dynSteps;
-    extern u8 spdToggle;
-    extern u8 spdSpd;
+
+extern u8 gConfigScroll;
+extern u8 gHighlightToggle;
+extern f32 sFovSlider;
+extern u8 gLuigiToggle;
+extern u8 gHudToggle;
+extern u8 gVisToggle;
+extern u8 gDebugToggle;
+extern u8 g95Toggle;
+extern u8 gRealToggle;
+extern u8 gTimerToggle;
+extern u8 gKickToggle;
+extern u16 gTimerTime;
+extern u8 gKickTimer;
+extern u8 gDiveToggle;
+extern u8 gTurnToggle;
+extern u8 gABCToggle;
+extern u8 gLVLToggle;
+extern u8 gFlightToggle;
+extern u8 gMusicToggle;
+extern u8 gLevelTroll;
+extern u8 gFPSCap;
+extern u8 dynSteps;
+extern u8 spdToggle;
+extern u8 spdSpd;
+extern u8 gMovesetToggle;
 
 enum ConfigMenuIDs {
     CFG_START,
@@ -35,20 +37,21 @@ enum ConfigMenuIDs {
     CFG_FOV,
     CFG_HUD,
     CFG_STATS,
+    CFG_FPS,
     /* Gameplay */
     CFG_LUIGI,
+    CFG_MOVESET,
     CFG_STEPS,
     CFG_TIMER,
     CFG_SSK,
     CFG_REAL,
-    CFG_DIVE,
+    // CFG_DIVE,
     CFG_VKICK,
     CFG_CTURN,
     CFG_ABC,
-    CFG_HARD,
+    // CFG_HARD,
     CFG_LVL,
     CFG_FLY,
-    CFG_FPS,
     CFG_DBG,
     CFG_END,
 };

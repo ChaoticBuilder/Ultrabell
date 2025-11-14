@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ingame_menu.h"
 #include "main.h"
+#include "hud.h"
 
 u8  sDelayInvincTimer;
 s16 sInvulnerable;
@@ -734,6 +735,7 @@ void reset_mario_pitch(struct MarioState *m) {
 }
 
 u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
+    cTimer = 60;
     if ((m->numCoins + obj->oDamageOrCoinValue) > m->numCoins) m->numCoins += obj->oDamageOrCoinValue;
     m->healCounter += 4 * obj->oDamageOrCoinValue;
 #ifdef BREATH_METER
@@ -782,6 +784,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
     u32 grandStar = (obj->oInteractionSubtype & INT_SUBTYPE_GRAND_STAR) != 0;
 
     if (m->health >= 0x100) {
+        cTimer = 120;
         mario_stop_riding_and_holding(m);
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
@@ -1588,8 +1591,8 @@ u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o
         m->flags |= MARIO_CAP_ON_HEAD;
 
         switch (capFlag) {
-            case MARIO_VANISH_CAP: capTime = 1050; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
-            case MARIO_METAL_CAP:  capTime = 1050; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
+            case MARIO_VANISH_CAP: capTime = 900; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
+            case MARIO_METAL_CAP:  capTime = 900; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
             case MARIO_WING_CAP:   capTime = 1800; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
         }
         if (gLVLToggle) capTime *= 2;

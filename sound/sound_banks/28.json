@@ -9,49 +9,47 @@
             "hang"
         ],
         "envelope1": [
-            [2, 32700],
-            [1, 32700],
-            [32700, 29430],
+            [2, 32767],
+            [1, 32767],
+            [2047, 24575],
             "hang"
         ],
         "envelope2": [
-            [2, 32700],
-            [1, 32700],
-            [32700, 29430],
+            [2, 32767],
+            [1, 32767],
+            [32767, 28671],
             "hang"
         ],
         "envelope3": [
-            [6, 32767],
             [1, 32767],
-            [255, 12287],
+            [1, 32767],
+            [255, 8191],
             "hang"
         ],
 		"envelope4": [
+            [2, 32767],
+            [1, 32767],
+            [32767, 28671],
+            "hang"
+        ],
+        "envelope5": [
             [2, 32700],
             [1, 32700],
             [32700, 29430],
             "hang"
         ],
-        "envelope5": [
-            [1, 32767],
-            [255, 0],
-            [1, 0],
-            "hang"
-        ],
         "envelope6": [
+            [2, 32767],
             [1, 32767],
-            [255, 0],
-            [1, 0],
+            [511, 19455],
             "hang"
         ]
     },
     "instruments": {
         "inst0": {
-            "release_rate": 19,
-            "normal_range_lo": 29,
+            "release_rate": 23,
             "normal_range_hi": 68,
             "envelope": "envelope1",
-            "sound_lo": "3B_banjo_2",
             "sound": "50_harp",
             "sound_hi": "51_harp_2"
         },
@@ -70,7 +68,7 @@
             "sound": "2E_accordion"
         },
         "inst3": {
-            "release_rate": 63,
+            "release_rate": 95,
             "normal_range_lo": 27,
             "normal_range_hi": 46,
             "envelope": "envelope3",
@@ -150,14 +148,18 @@
             {"release_rate": 10, "pan": 128, "envelope": "envelope0", "sound": "0D_clave"}
         ],
         "inst5": {
-            "release_rate": 208,
+            "release_rate": 19,
             "envelope": "envelope5",
-            "sound": "26_crystal_rhodes"
+            "sound": "43_harmonica"
         },
         "inst6": {
-            "release_rate": 208,
+            "release_rate": 63,
+            "normal_range_lo": 27,
+            "normal_range_hi": 46,
             "envelope": "envelope6",
-            "sound": "27_harpsichord"
+            "sound_lo": "23_strings_1",
+            "sound": "24_strings_2",
+            "sound_hi": "25_strings_3"
         },
         "inst7": {
             "release_rate": 10,
@@ -190,6 +192,13 @@
             "sound_lo": "1E_closed_triangle",
             "sound": "1F_open_triangle",
             "sound_hi": "20_cabasa"
+        },
+        "inst11": {
+            "release_rate": 10,
+            "normal_range_lo": 18,
+            "envelope": "envelope0",
+            "sound_lo": "12_snare_drum_1",
+            "sound": "13_snare_drum_2"
         }
     },
     "instrument_list": [
@@ -205,6 +214,7 @@
         "inst7",
         "inst8",
         "inst9",
-        "inst10"
+        "inst10",
+        "inst11"
     ]
 }

@@ -30,7 +30,7 @@
 #define PERSISTENT_BANK_MEM 0xDC00
 #define TEMPORARY_SEQ_MEM 0xE800
 #define TEMPORARY_BANK_MEM 0x5500
-#define MAX_NUM_SOUNDBANKS 0x30
+#define MAX_NUM_SOUNDBANKS 0x40
 #define EXT_AUDIO_INIT_POOL_SIZE 0x2000
 #else
 #define VOL_RAMPING_EXPONENT 7
@@ -39,7 +39,7 @@
 #define PERSISTENT_BANK_MEM 0x6E00
 #define TEMPORARY_SEQ_MEM 0x7400
 #define TEMPORARY_BANK_MEM 0x2A80
-#define MAX_NUM_SOUNDBANKS 0x30 // change this when adding new soundbanks
+#define MAX_NUM_SOUNDBANKS 0x40 // change this when adding new soundbanks
 #define EXT_AUDIO_INIT_POOL_SIZE 0x0
 #endif
 

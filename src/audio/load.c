@@ -580,19 +580,18 @@ void *sequence_dma_async(s32 seqId, s32 arg1, struct SequencePlayer *seqPlayer) 
     return ptr;
 }
 
-u16 musicType(u32 seqId, u32 bankId) {
+u16 musicType(u16 seqId, u16 bankId) {
     if (gMarioState->flags & MARIO_VANISH_CAP && seqId == SEQ_EVENT_METAL_CAP) return 40;
     switch (gCurrLevelNum) {
         case LEVEL_CCM:
         case LEVEL_SL:
-            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR || seqId == SEQ_LEVEL_UNDERGROUND || SEQ_LEVEL_INSIDE_CASTLE) return 11;
+            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR || seqId == SEQ_LEVEL_INSIDE_CASTLE) return 11;
             if (seqId == SEQ_EVENT_PIRANHA_PLANT) return 31;
-            if (seqId == SEQ_LEVEL_SLIDE || seqId == SEQ_EVENT_POWERUP || SEQ_LEVEL_GRASS || SEQ_EVENT_BOSS) return 40;
-            FALL_THROUGH;
-        default:
-            return bankId;
+            if (seqId == SEQ_LEVEL_GRASS || seqId == SEQ_LEVEL_SLIDE || seqId == SEQ_LEVEL_UNDERGROUND || seqId == SEQ_EVENT_POWERUP || seqId == SEQ_EVENT_BOSS)
+                return 40;
             break;
     }
+    return bankId;
 }
 
 u32 get_missing_bank(u32 seqId, s32 *nonNullCount, s32 *nullCount) {

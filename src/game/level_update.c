@@ -33,6 +33,7 @@
 #include "level_commands.h"
 #include "debug.h"
 #include "print.h"
+#include "hud.h"
 
 #include "config.h"
 
@@ -966,6 +967,7 @@ void update_hud_values(void) {
 
 #if defined(ENABLE_LIVES) && !defined(X_COIN_STAR)
         if (gHudDisplay.coins >= 100) {
+            mTimer = 0;
             gMarioState->numLives++;
             play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
             gMarioState->numCoins -= 100;

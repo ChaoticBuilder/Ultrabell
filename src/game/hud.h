@@ -11,6 +11,7 @@
 #define HUD_POWER_METER_EMPHASIZED_Y (HUD_TOP_Y - 42)
 #define HUD_POWER_METER_Y            (HUD_TOP_Y - 9)
 #define HUD_POWER_METER_HIDDEN_Y     (HUD_TOP_Y + 55)
+#define HUD_Y_SEPARATION             17
 
 #define HUD_STATS_X 32
 
@@ -18,6 +19,8 @@ extern s16 gHudShakeX, gHudShakeY;
 extern u8 pitchInvert;
 extern u8 sleepTimer;
 extern u8 musicBank;
+extern u8 mTimer;
+extern u8 cTimer;
 
 enum PowerMeterAnimation {
     POWER_METER_HIDDEN,

@@ -26,7 +26,6 @@
 #include "rendering_graph_node.h"
 #include "spawn_object.h"
 #include "spawn_sound.h"
-#include "print.h"
 #include "main.h"
 
 u32 gUnimportantCounter;
@@ -731,7 +730,6 @@ void cur_obj_extend_animation_if_at_end(void) {
     s32 nearLoopEnd = o->header.gfx.animInfo.curAnim->loopEnd - 2;
 
     if (animFrame >= nearLoopEnd) {
-        print_text(160, 64, "TRUE");
         o->header.gfx.animInfo.animFrame--;
     }
 }

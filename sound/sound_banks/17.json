@@ -89,7 +89,7 @@
         "inst4": {
             "release_rate": 10,
             "envelope": "envelope4",
-            "sound": "42_vibraphone"
+            "sound": "44_grand_piano"
         },
         "percussion": [
             {"release_rate": 10, "pan": 62, "envelope": "envelope3", "sound": {"sample": "06_kick_drum_1", "tuning": 0.890899}},

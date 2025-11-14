@@ -3,9 +3,9 @@
     "sample_bank": "instruments",
     "envelopes": {
         "envelope0": [
-            [6, 32700],
-            [298, 32700],
-            [32700, 29430],
+            [1, 16383],
+            [1, 16383],
+            [255, 8191],
             "hang"
         ],
         "envelope1": [
@@ -31,41 +31,47 @@
             [298, 32700],
             [32700, 29430],
             "hang"
+        ],
+        "envelope5": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
         ]
     },
     "instruments": {
         "inst0": {
             "release_rate": 255,
             "normal_range_hi": 62,
-            "envelope": "envelope0",
+            "envelope": "envelope1",
             "sound": "4C_musbox_1",
             "sound_hi": "4D_musbox_2"
         },
         "inst1": {
             "release_rate": 255,
             "normal_range_hi": 62,
-            "envelope": "envelope1",
+            "envelope": "envelope2",
             "sound": "4C_musbox_1",
             "sound_hi": "4D_musbox_2"
         },
         "inst2": {
             "release_rate": 255,
             "normal_range_hi": 62,
-            "envelope": "envelope2",
+            "envelope": "envelope3",
             "sound": "4C_musbox_1",
             "sound_hi": "4D_musbox_2"
         },
         "inst3": {
             "release_rate": 255,
             "normal_range_hi": 62,
-            "envelope": "envelope3",
+            "envelope": "envelope4",
             "sound": "4C_musbox_1",
             "sound_hi": "4D_musbox_2"
         },
         "inst4": {
             "release_rate": 255,
             "normal_range_hi": 62,
-            "envelope": "envelope4",
+            "envelope": "envelope5",
             "sound": "4C_musbox_1",
             "sound_hi": "4D_musbox_2"
         }

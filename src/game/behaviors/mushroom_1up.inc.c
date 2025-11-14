@@ -3,6 +3,7 @@
 #include "src/game/main.h"
 #include "src/game/ingame_menu.h"
 #include "src/game/print.h"
+#include "src/game/hud.h"
 
 void bhv_1up_interact(void) {
     // removed the random death thing, it was kinda pointless honestly
@@ -15,7 +16,10 @@ void bhv_1up_interact(void) {
 #endif
 #endif
 #ifdef ENABLE_LIVES
-    if (!gRealToggle) gMarioState->numLives++;
+    if (!gRealToggle) {
+        mTimer = 30;
+        gMarioState->numLives++;
+    }
 #endif
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
 #if ENABLE_RUMBLE

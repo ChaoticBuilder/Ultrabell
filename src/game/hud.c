@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-u8 gLuigiToggle = 0;
+u8 gLuigiToggle = FALSE;
 s32 gSecondsToggle = TRUE;
 u8 gHudToggle;
 u8 pitchInvert = 1;
@@ -86,7 +86,7 @@ void fps_calc(void) {
 void print_fps(s32 x, s32 y) {
     char text[14];
 
-    sprintf(text, "FPS %2.2f", gDeltaTime);
+    sprintf(text, "FPS %2.3f", gDeltaTime);
 #ifdef PUPPYPRINT
     print_small_text(x, y, text, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
 #else
@@ -115,7 +115,7 @@ static struct PowerMeterHUD sPowerMeterHUD = {
 // Power Meter timer that keeps counting when it's visible.
 // Gets reset when the health is filled and stops counting
 // when the power meter is hidden.
-s32 sPowerMeterVisibleTimer = 0;
+u8 sPowerMeterVisibleTimer = 0;
 
 #ifdef BREATH_METER
 static s16 sBreathMeterStoredValue;
@@ -411,9 +411,15 @@ void render_hud_breath_meter(void) {
 #endif
 
 u8 statX = 0;
-u16 hudStatsX;
+u16 hudStatsX = 0;
 u8 addOffset = 0;
 u8 hurtShake = FALSE;
+
+u8 mTimer = 60;
+u8 cTimer = 60;
+u8 mTimerArg = 0;
+u8 cTimerArg = 0;
+
 void handle_stats(void) {
     u8 goal = (sPowerMeterHUD.animation == POWER_METER_DEEMPHASIZING ||
                sPowerMeterHUD.animation == POWER_METER_VISIBLE) ? 56 : 0;
@@ -422,15 +428,56 @@ void handle_stats(void) {
     u8 addGoal = 0;
     if (ABS(gHudDisplay.stars) >= 100 || ABS(gHudDisplay.coins) >= 100) addGoal = 26;
     else if (ABS(gHudDisplay.stars) >= 10 || ABS(gHudDisplay.coins) >= 10) addGoal = 13;
-    if (vBlankTimer && addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 4);
+    if (vBlankTimer && addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 3);
 
     /* Power Meter offset calculation */
-    u8 div = (goal > 0) ? 6 : 4;
-    if (vBlankTimer) statX = approach_s16_symmetric(statX, goal, (div / 3 + ABS((goal - statX) + 1) / div));
+    if (cTimerArg >= 2) statX = goal;
+    else if (statX != goal) {
+        cTimer = 1;
+        u8 div = (goal > 0) ? 6 : 4;
+        if (vBlankTimer) statX = approach_s16_symmetric(statX, goal, (div / 3 + ABS((goal - statX) + 1) / div));
+    }
     hudStatsX = ABS(HUD_STATS_X) + statX + addOffset;
 
-    if (gMarioState->hurtCounter) hurtShake = TRUE;
-    else if (sPowerMeterHUD.animation > POWER_METER_EMPHASIZED) hurtShake = FALSE;
+    if (gMarioState->hurtCounter) {
+        hurtShake = TRUE;
+    } else if (sPowerMeterHUD.animation > POWER_METER_EMPHASIZED) hurtShake = FALSE;
+    if (hurtShake) mTimer = 1;
+}
+
+s16 mPosY = HUD_TOP_Y;
+s16 cPosY = HUD_TOP_Y;
+
+void ms_invis(void) {
+    s16 speed = 1 + (ABS(mPosY - HUD_TOP_Y) / 3);
+    if (mTimer > 0) mTimerArg = 0;
+    switch (mTimerArg) {
+        case 0:
+            approach_s16_symmetric_bool(&mPosY, HUD_TOP_Y, speed);
+            if (mTimer == 0) mTimerArg++;
+            else mTimer--;
+            break;
+        case 1:
+            if (mPosY < (SCREEN_HEIGHT + HUD_Y_SEPARATION)) approach_s16_symmetric_bool(&mPosY, (SCREEN_HEIGHT + HUD_Y_SEPARATION), speed);
+            else mTimerArg++;
+            break;
+    }
+}
+
+void cs_invis(void) {
+    s16 speed = 1 + (ABS(cPosY - HUD_TOP_Y) / 3);
+    if (cTimer > 0) cTimerArg = 0;
+    switch (cTimerArg) {
+        case 0:
+            approach_s16_symmetric_bool(&cPosY, HUD_TOP_Y, speed);
+            if (cTimer == 0) cTimerArg++;
+            else cTimer--;
+            break;
+        case 1:
+            if (cPosY < (SCREEN_HEIGHT + HUD_Y_SEPARATION)) approach_s16_symmetric_bool(&cPosY, (SCREEN_HEIGHT + HUD_Y_SEPARATION), speed);
+            else cTimerArg++;
+            break;
+    }
 }
 
 /**
@@ -438,11 +485,11 @@ void handle_stats(void) {
  */
 void render_hud_mario_lives(void) {
     if (!hurtShake) {
-        if (!gLuigiToggle)  print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ","); // 'Mario' glyph
-        else                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, ";"); // 'Luigi' glyph
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(32) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(48) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.lives);
-    } else print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "ROLA!");
+        if (!gLuigiToggle)  print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, ","); // 'Mario' glyph
+        else                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, ";"); // 'Luigi' glyph
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(32) + gHudShakeX, mPosY + gHudShakeY, "*"); // 'X' glyph
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(48) + gHudShakeX, mPosY + gHudShakeY, "%d", gHudDisplay.lives);
+    } else print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, "ROLA!");
 }
 
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
@@ -461,14 +508,13 @@ void render_debug_mode(void) {
  * Renders the amount of coins collected.
  */
 void render_hud_coins(void) {
-    if (hurtShake && gGlobalTimer % 3 == 0) return;
     if (gMarioState->numLives == MAX_NUM_LIVES) {
         // Thank you-a so much for-a playing my game!
         print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "1996");
     } else {
-        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "$"); // 'Coin' glyph
-        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 16) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "*"); // 'X' glyph
-        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "%d", gHudDisplay.coins);
+        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, (cPosY - HUD_Y_SEPARATION) + gHudShakeY, "$"); // 'Coin' glyph
+        print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 16) + gHudShakeX, (cPosY - HUD_Y_SEPARATION) + gHudShakeY, "*"); // 'X' glyph
+        print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX) + gHudShakeX, (cPosY - HUD_Y_SEPARATION) + gHudShakeY, "%d", gHudDisplay.coins);
     }
 }
 
@@ -477,10 +523,9 @@ void render_hud_coins(void) {
  * Disables "X" glyph when Mario has 100 stars or more.
  */
 void render_hud_stars(void) {
-    if (hurtShake && gGlobalTimer % 3 == 0) return;
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "^"); // 'Star' glyph
-    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 16) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "*"); // 'X' glyph
-    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX) + gHudShakeX, HUD_TOP_Y + gHudShakeY, "%d", gHudDisplay.stars);
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 32) + gHudShakeX, cPosY + gHudShakeY, "^"); // 'Star' glyph
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX + 16) + gHudShakeX, cPosY + gHudShakeY, "*"); // 'X' glyph
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX) + gHudShakeX, cPosY + gHudShakeY, "%d", gHudDisplay.stars);
     // print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(hudStatsX) + gHudShakeX, (HUD_TOP_Y - 33) + gHudShakeY, "100");
 }
 
@@ -492,7 +537,7 @@ void render_hud_keys(void) {
     s16 i;
 
     for (i = 0; i < gHudDisplay.keys; i++) {
-        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE((i * 17) + 16) + gHudShakeX, (HUD_TOP_Y - 17) + gHudShakeY, "|"); // unused glyph - beta key
+        print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE((i * 17) + 16) + gHudShakeX, (mPosY - HUD_Y_SEPARATION) + gHudShakeY, "|"); // unused glyph - beta key
     }
 }
 
@@ -677,7 +722,6 @@ void music_menu(void) {
 }
 
 void debug_stats(void) {
-    if (!gDebugToggle) return;
     char debug[32];
     if (gIsConsole) {
         sprintf(debug, "E3 KIOSK", gEmulator); // noway someone's playing my hack on everdrive!!!
@@ -690,7 +734,7 @@ void debug_stats(void) {
 }
 
 void demo_mode(void) {
-    if (!gDebugLevelSelect || gLVLToggle) return;
+     return;
     char textBytes[32];
     sprintf(textBytes, "DEMO", gEmulator);
     print_small_text_light((SCREEN_CENTER_X - 16), 220, textBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
@@ -735,7 +779,7 @@ void fps_testing(void) {
 }
 
 void testing(void) {
-    print_text_fmt_int(160, 16, "%d", gMarioState->actionArg);
+    print_text_fmt_int(160, 64, "%d", gMarioState->actionTimer);
     /*
     char debug[64];
     sprintf(debug, "%2.1f", gMarioState->forwardVel);
@@ -758,78 +802,79 @@ void testing(void) {
 void render_hud(void) {
     fps_calc();
     s16 hudDisplayFlags = gHudDisplay.flags;
-    if (!gHudToggle) {
-        if (hudDisplayFlags == HUD_DISPLAY_NONE) {
-            sPowerMeterHUD.animation = POWER_METER_HIDDEN;
-            sPowerMeterStoredHealth = 8;
-            sPowerMeterVisibleTimer = 0;
+    if (hudDisplayFlags == HUD_DISPLAY_NONE) {
+        sPowerMeterHUD.animation = POWER_METER_HIDDEN;
+        sPowerMeterStoredHealth = 8;
+        sPowerMeterVisibleTimer = 0;
 #ifdef BREATH_METER
-            sBreathMeterHUD.animation = BREATH_METER_HIDDEN;
-            sBreathMeterStoredValue = 8;
-            sBreathMeterVisibleTimer = 0;
+        sBreathMeterHUD.animation = BREATH_METER_HIDDEN;
+        sBreathMeterStoredValue = 8;
+        sBreathMeterVisibleTimer = 0;
 #endif
-        } else {
+    } else {
 #ifdef VERSION_EU
-            // basically create_dl_ortho_matrix but guOrtho screen width is different
-            Mtx *mtx = alloc_display_list(sizeof(*mtx));
+        // basically create_dl_ortho_matrix but guOrtho screen width is different
+        Mtx *mtx = alloc_display_list(sizeof(*mtx));
 
-            if (mtx == NULL) {
-                return;
-            }
+        if (mtx == NULL) {
+            return;
+        }
 
-            create_dl_identity_matrix();
-            guOrtho(mtx, -16.0f, SCREEN_WIDTH + 16, 0, SCREEN_HEIGHT, -10.0f, 10.0f, 1.0f);
-            gSPPerspNormalize(gDisplayListHead++, 0xFFFF);
-            gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx),
-                    G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
+        create_dl_identity_matrix();
+        guOrtho(mtx, -16.0f, SCREEN_WIDTH + 16, 0, SCREEN_HEIGHT, -10.0f, 10.0f, 1.0f);
+        gSPPerspNormalize(gDisplayListHead++, 0xFFFF);
+        gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx),
+                G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 #else
-            create_dl_ortho_matrix();
+        create_dl_ortho_matrix();
 #endif
 
+        handle_stats();
+        if (gHudToggle) { mTimer = 1; cTimer = 1; }
 #ifdef ENABLE_LIVES
-            if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES) {
-                render_hud_mario_lives();
-            }
+        if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES) {
+            ms_invis();
+            if (mTimerArg < 2) render_hud_mario_lives();
+        }
 #endif
-            handle_stats();
-            if (hudDisplayFlags & HUD_DISPLAY_FLAG_COIN_COUNT) {
-                render_hud_coins();
-            }
+        if (hudDisplayFlags & HUD_DISPLAY_FLAG_COIN_COUNT) {
+            cs_invis();
+            if ((!hurtShake || gGlobalTimer % 3 != 0) && cTimerArg < 2) render_hud_coins();
+        }
 
-            if (hudDisplayFlags & HUD_DISPLAY_FLAG_STAR_COUNT) {
-                render_hud_stars();
-            }
+        if (hudDisplayFlags & HUD_DISPLAY_FLAG_STAR_COUNT) {
+            if ((!hurtShake || gGlobalTimer % 3 != 0) && cTimerArg < 2) render_hud_stars();
+        }
 
-            if (hudDisplayFlags & HUD_DISPLAY_FLAG_KEYS) {
-                render_hud_keys();
-            }
+        if (hudDisplayFlags & HUD_DISPLAY_FLAG_KEYS) {
+            render_hud_keys();
+        }
 
 #ifdef BREATH_METER
-            if (hudDisplayFlags & HUD_DISPLAY_FLAG_BREATH_METER) render_hud_breath_meter();
+        if (hudDisplayFlags & HUD_DISPLAY_FLAG_BREATH_METER) render_hud_breath_meter();
 #endif
 
-            if (hudDisplayFlags & HUD_DISPLAY_FLAG_CAMERA_AND_POWER) {
-                render_hud_power_meter();
-            }
-
-            if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
-                render_hud_timer();
-            }
-            attack_timer();
-            timer_troll();
-            // visualizer_display();
-            music_menu();
-            debug_stats();
-            demo_mode();
-            z64_draw();
-            sleep_draw();
-#ifdef VANILLA_STYLE_CUSTOM_DEBUG
-            if (gCustomDebugMode) {
-                render_debug_mode();
-            }
-#endif
-            // fps_testing();
-            testing();
+        if (hudDisplayFlags & HUD_DISPLAY_FLAG_CAMERA_AND_POWER) {
+            render_hud_power_meter();
         }
+
+        if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER) {
+            render_hud_timer();
+        }
+
+        attack_timer();
+        music_menu();
+        if (gDebugToggle) debug_stats();
+        sleep_draw();
+        // fps_testing();
+        // testing();
+        if (!gHudToggle) return;
+        timer_troll();
+        if (gDebugLevelSelect && !gLVLToggle) demo_mode();
+#ifdef VANILLA_STYLE_CUSTOM_DEBUG
+        if (gCustomDebugMode) {
+            render_debug_mode();
+        }
+#endif
     }
 }

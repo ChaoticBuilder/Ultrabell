@@ -106,6 +106,10 @@ s32 check_common_hold_idle_cancels(struct MarioState *m) {
 
 //! TODO: actionArg names
 s32 act_idle(struct MarioState *m) {
+    if (m->actionTimer > 0) {
+        mTimer = 1;
+        cTimer = 1;
+    }
     if (m->quicksandDepth > 30.0f) {
         return set_mario_action(m, ACT_IN_QUICKSAND, 0);
     }
@@ -205,6 +209,8 @@ void play_anim_sound(struct MarioState *m, u32 actionState, s32 animFrame, u32 s
 }
 
 s32 act_start_sleeping(struct MarioState *m) {
+    mTimer = 1;
+    cTimer = 1;
     if (check_common_idle_cancels(m)) {
         return TRUE;
     }
@@ -250,6 +256,8 @@ s32 act_start_sleeping(struct MarioState *m) {
 
 s32 act_sleeping(struct MarioState *m) {
     s32 animFrame;
+    mTimer = 1;
+    cTimer = 1;
     if (m->input
         & (INPUT_NONZERO_ANALOG | INPUT_A_PRESSED | INPUT_OFF_FLOOR | INPUT_ABOVE_SLIDE
            | INPUT_FIRST_PERSON | INPUT_STOMPED | INPUT_B_PRESSED | INPUT_Z_PRESSED)) {

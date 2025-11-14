@@ -355,7 +355,7 @@ s32 perform_ground_step(struct MarioState *m) {
     /* dividing by 2.0f can be replaced by subtracting 0x800000, which is more efficient since this code runs every frame, thanks Kaze!
      * for the number you want, just use windows calc and multiply the number by 4194304 (0x400000) */
     u8 numSteps = (dynSteps) ? CLAMP(MAX((f32)((ABS((s32)(m->forwardVel)) - 0x4000000)), /* This is a division by 16 */ 0), 1, ((dynSteps < 2) ? stepCap : 4)) : 4;
-    print_text_fmt_int(160, 64, "%d", numSteps);
+    // print_text_fmt_int(160, 64, "%d", numSteps);
 
     set_mario_wall(m, NULL);
 
@@ -619,6 +619,22 @@ u32 should_strengthen_gravity_for_jump_ascent(struct MarioState *m) {
 
 u16 mTerminalVel;
 
+u16 gravity_applier(struct MarioState *m, f32 baseVel, u16 terminalVel) {
+    if (gLuigiToggle && gMovesetToggle && aGravToggle) {
+        baseVel /= 1.5f;
+        terminalVel /= 1.5f;
+    }
+    if (gMovesetToggle && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
+        (gLuigiToggle) ? (baseVel /= 1.25f) : (baseVel /= 1.125f);
+    }
+
+    m->vel[1] -= baseVel / gDeltaTime;
+    if (m->vel[1] < -terminalVel) m->vel[1] /= baseVel / gDeltaTime / 96 + 1;
+    // print_text_fmt_int(128, 32, "t %2d", terminalVel);
+    // print_text_fmt_int(128, 16, "b %2d", baseVel);
+    return terminalVel;
+}
+
 void apply_gravity(struct MarioState *m) {
     f32 baseVel;
     // did a thing where the terminal velocity isn't a hard cap, it's instead a multiplier (aka more resistance the more velocity you have)
@@ -658,23 +674,18 @@ void apply_gravity(struct MarioState *m) {
         if (m->vel[1] < -24.0f) m->vel[1] = -24.0f;
     } else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
-        mTerminalVel = 32;
-        baseVel = ((!gRealToggle) ? 2.0f : 2.5f);
-        m->vel[1] -= baseVel / gDeltaTime;
-        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.046875f / gDeltaTime + 1;
+        aGravToggle = FALSE;
+        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 32);
     } else {
-        mTerminalVel = 64;
-        baseVel = ((!gRealToggle) ? 4.0f : 5.0f);
-        m->vel[1] -= baseVel / gDeltaTime;
-        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.046875f / gDeltaTime + 1;
+        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 4.0f : 5.0f), 64);
     }
     if (m->flags & MARIO_METAL_CAP && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
         baseVel = ((!gRealToggle) ? 2.0f : 8.0f);
-        m->vel[1] -= baseVel / gDeltaTime;
-        if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK)
-            m->vel[1] += baseVel / 4 / gDeltaTime;
+        if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) baseVel /= 2;
+        mTerminalVel = gravity_applier(m, baseVel, 32);
     }
 
+    /*
     if (gABCToggle || gRealToggle) return;
     if (m->input & INPUT_A_DOWN && m->vel[1] < 8.0f && (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL || m->action == ACT_JUMP_KICK)) {
         if (gLuigiToggle) m->vel[1] += 2.0f / gDeltaTime;
@@ -685,6 +696,7 @@ void apply_gravity(struct MarioState *m) {
     if (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN && m->action != ACT_TWIRLING) {
         m->vel[1] += 1.0f / gDeltaTime;
     }
+    */
 }
 
 /*
@@ -722,7 +734,7 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
     s32 i;
     s32 quarterStepResult;
     s32 stepResult = AIR_STEP_NONE;
-    print_text_fmt_int(160, 64, "%d", numSteps);
+    // print_text_fmt_int(160, 64, "%d", numSteps);
 
     set_mario_wall(m, NULL);
 

@@ -377,8 +377,8 @@ void update_shell_speed(struct MarioState *m) {
     }
     
     //! No backward speed cap (shell hyperspeed)
-    if (m->forwardVel > 32.0f) {
-        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel / 32.0f), 0, 4.0f) / gDeltaTime);
+    if (m->forwardVel > 64.0f) {
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 64.0f, CLAMP((m->forwardVel / 64.0f), 0, 4.0f) / gDeltaTime);
     }
 
     m->faceAngle[1] =
@@ -1539,21 +1539,18 @@ s32 act_crouch_slide(struct MarioState *m) {
     }
 
     if (m->input & INPUT_B_PRESSED) {
-        if (!g95Toggle && m->forwardVel >= 12.0f) {
+        if (m->forwardVel >= 16.0f && !g95Toggle) {
             return set_mario_action(m, ACT_SLIDE_KICK, 0);
         } else if (gABCToggle < 2) {
-            return set_jumping_action(m, ACT_JUMP, 2);
+            return set_jumping_action(m, ACT_DIVE, 0);
         }
     }
 
     if (m->input & INPUT_A_PRESSED) {
-        if (m->forwardVel > 10.0f && !g95Toggle) {
+        if (m->forwardVel >= 16.0f && !g95Toggle) {
             return set_jumping_action(m, ACT_LONG_JUMP, 0);
         }
-        if (gABCToggle < 2) {
-            return set_jumping_action(m, ACT_JUMP, 2);
-        }
-        return set_jumping_action(m, ACT_JUMP, 0);
+        return set_jumping_action(m, ACT_JUMP, 2);
     }
 
     if (m->input & INPUT_FIRST_PERSON) {

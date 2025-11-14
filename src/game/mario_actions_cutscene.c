@@ -29,6 +29,7 @@
 #include "rumble_init.h"
 #include "print.h"
 #include "main.h"
+#include "hud.h"
 
 static struct Object *sIntroWarpPipeObj;
 static struct Object *sEndPeachObj;
@@ -1004,7 +1005,9 @@ s32 act_going_through_door(struct MarioState *m) {
         if (m->actionArg & WARP_FLAG_DOOR_FLIP_MARIO) {
             m->faceAngle[1] += 0x8000;
         }
+        m->actionTimer = 0;
         set_mario_action(m, ACT_IDLE, 0);
+        return FALSE;
     }
 
     m->actionTimer++;

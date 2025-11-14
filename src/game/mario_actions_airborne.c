@@ -63,7 +63,7 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     f32 fallHeight = m->peakHeight - m->pos[1];
     f32 damageHeight = FALL_DAMAGE_HEIGHT_SMALL;
 
-    if (gLuigiToggle && !gRealToggle) damageHeight += 384.0f;
+    if (gLuigiToggle && gMovesetToggle) damageHeight *= 1.5f;
     if (fallHeight > damageHeight) {
 #if ENABLE_RUMBLE
         queue_rumble_data(5, 80);
@@ -341,8 +341,7 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
-            if (gLuigiToggle && !gRealToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 8.0f &&
-            (m->action == ACT_JUMP || m->action == ACT_DOUBLE_JUMP || m->action == ACT_FREEFALL)) {
+            if (gMovesetToggle && gLuigiToggle && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
                 set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0xC0000);
             } else {
                 if (m->action != ACT_LONG_JUMP) {
@@ -497,14 +496,10 @@ s32 act_backflip(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
-    if (m->actionTimer++ < 4) m->vel[1] *= ((m->actionTimer + 12) * 0.0625f);
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAH_WAH_HOO);
-    if (!gLuigiToggle) {
-        common_air_action_step(m, ACT_BACKFLIP_LAND, MARIO_ANIM_BACKFLIP, 0);
-    } else {
-        common_air_action_step(m, ACT_TRIPLE_JUMP_LAND, MARIO_ANIM_TRIPLE_JUMP, 0);
-    }
+    if (!gLuigiToggle) common_air_action_step(m, ACT_BACKFLIP_LAND, MARIO_ANIM_BACKFLIP, 0);
+    else common_air_action_step(m, ACT_TRIPLE_JUMP_LAND, MARIO_ANIM_TRIPLE_JUMP, 0);
 #if ENABLE_RUMBLE
     if (m->action == ACT_BACKFLIP_LAND) {
         queue_rumble_data(5, 40);
@@ -1732,7 +1727,7 @@ s32 act_slide_kick(struct MarioState *m) {
         case 2:
         case 0:
             if (m->actionTimer == 0) {
-                SKspeed = m->forwardVel * 1.25f;
+                SKspeed = m->forwardVel * 1.5f;
                 m->forwardVel = 0;
             }
             inc = SKspeed / (m->actionTimer + 5);

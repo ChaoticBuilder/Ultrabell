@@ -6,7 +6,7 @@
 #define TEXRECT_MIN_X 8
 #define TEXRECT_MAX_X 312
 #define TEXRECT_MIN_Y 6
-#define TEXRECT_MAX_Y 234
+#define TEXRECT_MAX_Y 234 // 234
 
 enum PrintfGlyphs {
     GLYPH_SPACE           = -1,

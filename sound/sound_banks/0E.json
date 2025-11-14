@@ -3,27 +3,27 @@
     "sample_bank": "instruments",
     "envelopes": {
         "envelope0": [
-            [6, 32700],
-            [1, 32700],
-            [32700, 29430],
+            [6, 32767],
+            [1, 32767],
+            [2047, 24575],
             "hang"
         ],
         "envelope1": [
-            [6, 32700],
-            [1, 32700],
-            [32700, 29430],
+            [6, 32767],
+            [1, 32767],
+            [2047, 24575],
             "hang"
         ],
         "envelope2": [
-            [6, 32700],
-            [1, 32700],
-            [32700, 29430],
+            [6, 32767],
+            [1, 32767],
+            [2047, 24575],
             "hang"
         ],
         "envelope3": [
-            [2, 32700],
-            [136, 0],
-            [32700, 0],
+            [2, 32767],
+            [135, 0],
+            [2047, 0],
             "hang"
         ],
         "envelope4": [
@@ -47,7 +47,7 @@
     },
     "instruments": {
         "inst0": {
-            "release_rate": 16,
+            "release_rate": 15,
             "normal_range_lo": 27,
             "normal_range_hi": 46,
             "envelope": "envelope0",
@@ -56,7 +56,7 @@
             "sound_hi": "25_strings_3"
         },
         "inst1": {
-            "release_rate": 16,
+            "release_rate": 15,
             "normal_range_lo": 27,
             "normal_range_hi": 46,
             "envelope": "envelope1",
@@ -65,7 +65,7 @@
             "sound_hi": "25_strings_3"
         },
         "inst2": {
-            "release_rate": 16,
+            "release_rate": 15,
             "normal_range_lo": 27,
             "normal_range_hi": 46,
             "envelope": "envelope2",
@@ -74,19 +74,19 @@
             "sound_hi": "25_strings_3"
         },
         "inst3": {
-            "release_rate": 20,
+            "release_rate": 19,
             "normal_range_hi": 47,
             "envelope": "envelope3",
             "sound": "46_pizzicato_strings_1",
             "sound_hi": "47_pizzicato_strings_2"
         },
         "inst4": {
-            "release_rate": 32,
+            "release_rate": 31,
             "envelope": "envelope4",
             "sound": "44_grand_piano"
         },
         "inst5": {
-            "release_rate": 24,
+            "release_rate": 23,
             "envelope": "envelope5",
             "sound": "3C_acoustic_guitar"
         },

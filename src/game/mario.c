@@ -779,6 +779,8 @@ void set_mario_y_vel_based_on_fspeed(struct MarioState *m, f32 initialVelY, f32 
     }
 }
 
+u8 aGravToggle = FALSE;
+
 /**
  * Transitions for a variety of airborne actions.
  */
@@ -787,9 +789,11 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         (action == ACT_DOUBLE_JUMP || action == ACT_TWIRLING)) {
         action = ACT_JUMP;
     }
+    aGravToggle = FALSE;
 
     switch (action) {
         case ACT_DOUBLE_JUMP:
+            aGravToggle = TRUE;
             m_sd_preset(PARTICLE_DUST, JUMP);
             set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.25f);
             if (g95Toggle) set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f);
@@ -798,10 +802,11 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_BACKFLIP:
+            aGravToggle = TRUE;
             m_sd_preset(PARTICLE_DUST, SMOVE);
+            set_mario_y_vel_based_on_fspeed(m, 76.0f, 0.0f);
             m->marioObj->header.gfx.animInfo.animID = -1;
             m->forwardVel = -16.0f;
-            m->vel[1] = 112.0f;
             break;
 
         case ACT_TRIPLE_JUMP:
@@ -821,6 +826,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_WATER_JUMP:
         case ACT_HOLD_WATER_JUMP:
+            aGravToggle = TRUE;
             if (actionArg == 0) {
                 (!gRealToggle)
                 ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
@@ -829,6 +835,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_BURNING_JUMP:
+            aGravToggle = TRUE;
             m_sd_preset(PARTICLE_DUST, JUMP);
             (!gRealToggle)
             ? (m->vel[1] = 42.0f)
@@ -837,6 +844,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_RIDING_SHELL_JUMP:
+            aGravToggle = TRUE;
             m_sd_preset(PARTICLE_DUST, JUMP);
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.0f)
@@ -845,6 +853,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_JUMP:
         case ACT_HOLD_JUMP:
+            aGravToggle = TRUE;
             m_sd_preset(PARTICLE_DUST, JUMP);
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle)
@@ -863,6 +872,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
                 m->forwardVel = 24.0f;
             break;
         case ACT_WALL_KICK_AIR:
+            aGravToggle = TRUE;
             m_sd_preset(PARTICLE_DUST, SMOVE);
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f)

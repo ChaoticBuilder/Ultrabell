@@ -421,6 +421,21 @@ void render_textrect(s32 x, s32 y, s32 pos) {
 }
 
 /**
+ * Renders the glyph that's set at the given position.
+ */
+void render_scis_textrect(s32 x, s32 y, s32 pos) {
+    s32 rectBaseX = x + pos * 12;
+    s32 rectBaseY = 224 - y;
+    s32 rectX;
+    s32 rectY;
+
+    rectX = rectBaseX;
+    rectY = rectBaseY;
+    gSPScisTextureRectangle(gDisplayListHead++, rectX << 2, rectY << 2, (rectX + 15) << 2,
+                        (rectY + 15) << 2, G_TX_RENDERTILE, 0, 0, 4 << 10, 1 << 10);
+}
+
+/**
  * Renders the text in sTextLabels on screen at the proper locations by iterating
  * a for loop.
  */
@@ -456,17 +471,17 @@ void render_text_labels(void) {
                 // This produces a colorful Ü.
                 if (glyphIndex == GLYPH_BETA_KEY) {
                     add_glyph_texture(GLYPH_U);
-                    render_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
+                    render_scis_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
 
                     add_glyph_texture(GLYPH_UMLAUT);
-                    render_textrect(sTextLabels[i]->x, sTextLabels[i]->y + 3, j);
+                    render_scis_textrect(sTextLabels[i]->x, sTextLabels[i]->y + 3, j);
                 } else {
                     add_glyph_texture(glyphIndex);
-                    render_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
+                    render_scis_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
                 }
 #else
                 add_glyph_texture(glyphIndex);
-                render_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
+                render_scis_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
 #endif
             }
         }

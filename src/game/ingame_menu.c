@@ -44,19 +44,20 @@ s8 gRedCoinsCollected;
 u8 gConfigOpen = FALSE;
 u8 gConfigScroll = 1;
 u8 gHighlightToggle = FALSE;
+u8 g95Toggle = FALSE;
+u8 gABCToggle = 0;
 u8 gDebugToggle = FALSE;
 u8 gDiveToggle = 0;
-u8 gTimerToggle = FALSE;
-u8 gKickToggle = FALSE;
-u16 gKickTimer = 0;
-u8 gTurnToggle = FALSE;
 u8 gFlightToggle = FALSE;
-u8 g95Toggle = FALSE;
-u8 gRealToggle = FALSE;
-u8 gABCToggle = 0;
+u8 gKickToggle = FALSE;
+u8 gKickTimer = 0;
+u8 gLevelTroll = 0;
+u8 gMovesetToggle = TRUE;
 u8 gLVLToggle = FALSE;
 u8 gMusicToggle = FALSE;
-u8 gLevelTroll = 0;
+u8 gTurnToggle = FALSE;
+u8 gTimerToggle = FALSE;
+u8 gRealToggle = FALSE;
 u8 dynSteps = 0;
 u8 textConfigOpen[] = { TEXT_CONFIG_OPEN };
 u8 textConfigClose[] = { TEXT_CONFIG_CLOSE };
@@ -1615,31 +1616,38 @@ void config_options(void) {
         }
         if (gConfigScroll == CFG_LUIGI) {
             gLuigiToggle ^= 1;
-            gKickToggle = gLuigiToggle;
-            (!gLuigiToggle)
-            ? (gKickTimer = 0)
-            : (gKickTimer = 5);
+            if (gMovesetToggle) {
+                gKickToggle = TRUE;
+                (!gLuigiToggle)
+                ? (gKickTimer = 0)
+                : (gKickTimer = 5);
+            }
         }
+        if (gConfigScroll == CFG_MOVESET && !gABCToggle && !gRealToggle) gMovesetToggle ^= 1;
         if (gConfigScroll == CFG_STEPS) dynSteps = (dynSteps + 1) % 3;
         if (gConfigScroll == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) gTimerToggle ^= 1;
         if (gConfigScroll == CFG_SSK && !gRealToggle) g95Toggle ^= 1;
         if (gConfigScroll == CFG_REAL) {
             gRealToggle ^= 1;
-            g95Toggle = gRealToggle;
-            gKickToggle = gRealToggle;
+            g95Toggle = TRUE;
+            gKickToggle = TRUE;
+            gMovesetToggle = FALSE;
             (!gRealToggle)
             ? (gKickTimer = 0)
             : (gKickTimer = 5);
         }
-        if (gConfigScroll == CFG_DIVE) gDiveToggle = (gDiveToggle + 1) % 3;
-        if (gConfigScroll == CFG_VKICK && !gLuigiToggle && !gRealToggle) {
+        // if (gConfigScroll == CFG_DIVE) gDiveToggle = (gDiveToggle + 1) % 3;
+        if (gConfigScroll == CFG_VKICK && (!gLuigiToggle || !gMovesetToggle) && !gRealToggle) {
             gKickToggle ^= 1;
             (!gKickToggle)
             ? (gKickTimer = 0)
             : (gKickTimer = 5);
         }
         if (gConfigScroll == CFG_CTURN) gTurnToggle ^= 1;
-        if (gConfigScroll == CFG_ABC) gABCToggle = (gABCToggle + 1) % 3;
+        if (gConfigScroll == CFG_ABC) {
+            gABCToggle = (gABCToggle + 1) % 3;
+            gMovesetToggle = FALSE;
+        }
         if (gConfigScroll == CFG_LVL) gLVLToggle ^= 1;
         // if (gHudDisplay.stars >= 100)
         if (gConfigScroll == CFG_FLY) gFlightToggle ^= 1;
@@ -1754,16 +1762,16 @@ void config_options_box(void) {
     }
     if (gConfigScroll != CFG_FOV) print_set_envcolour(127, 127, 127, 255);
 
-    (sFovSlider > 0) ? sprintf(currOption, "FOV: +%2.4f", sFovSlider) : sprintf(currOption, "FOV: %2.4f", sFovSlider);
+    (sFovSlider > 0) ? sprintf(currOption, "FOV: +%2.3f", sFovSlider) : sprintf(currOption, "FOV: %2.3f", sFovSlider);
 
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gConfigScroll == CFG_HUD)
-        print_small_text_light(160, 204, "Good for taking screenshots, or to challenge yourself.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        print_small_text_light(160, 204, "Toggle the HUD Automatically hiding.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    (!gHudToggle) ? sprintf(currOption, "Hud: On") : sprintf(currOption, "Hud: Off");
+    (!gHudToggle) ? sprintf(currOption, "Hud Hide: On") : sprintf(currOption, "Hud Hide: Off");
 
     config_option_render(xPos, yPos, currOption, CFG_HUD);
     if (xPos >= 160) yPos += 12;
@@ -1772,6 +1780,20 @@ void config_options_box(void) {
     (!gDebugToggle) ? sprintf(currOption, "debugstats: Off") : sprintf(currOption, "debugstats: On");
     
     config_option_render(xPos, yPos, currOption, CFG_STATS);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
+    if (gConfigScroll == CFG_FPS) print_small_text_light(160, 204, "FPS Cap (WARNING: UNSTABLE)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    switch (gFPSCap) {
+        case FPS_15: sprintf(currOption, "FPS: 15"); break;
+        case FPS_20: sprintf(currOption, "FPS: 20"); break;
+        case FPS_45: sprintf(currOption, "FPS: 45"); break;
+        case FPS_60: sprintf(currOption, "FPS: 60"); break;
+            default: sprintf(currOption, "FPS: 30"); break;
+    }
+
+    config_option_render(xPos, yPos, currOption, CFG_FPS);
     if (xPos >= 160) xPos -= 160;
     yPos += 32;
 
@@ -1782,17 +1804,20 @@ void config_options_box(void) {
     if (gLuigiToggle) print_set_envcolour(95, 255, 95, 255);
     if (gConfigScroll == CFG_LUIGI) print_small_text_light(160, 204, "Choose your Player!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gLuigiToggle) {
-        sprintf(currOption, "Brother: Mario");
-        print_set_envcolour(255, 95, 95, 255);
-    } else {
-        sprintf(currOption, "Brother: Luigi");
-        print_set_envcolour(95, 255, 95, 255);
-    }
+    if (!gLuigiToggle) { sprintf(currOption, "Brother: Mario"); print_set_envcolour(255, 95, 95, 255); }
+                  else { sprintf(currOption, "Brother: Luigi"); print_set_envcolour(95, 255, 95, 255); }
 
     if (gConfigScroll != CFG_LUIGI) print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+
+    if (gConfigScroll == CFG_MOVESET) print_small_text_light(160, 204, "Enable Luigi's special moves!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+
+    if (!gMovesetToggle) sprintf(currOption, "Luigi's Moveset: Off"); else sprintf(currOption, "Luigi's Moveset: On");
+
+    config_option_render(xPos, yPos, currOption, CFG_MOVESET);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
@@ -1845,6 +1870,7 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
+    /*
     if (gConfigScroll == CFG_DIVE)
         print_small_text_light(160, 204, "What behavior to use when pressing B in the air.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
@@ -1855,6 +1881,7 @@ void config_options_box(void) {
     config_option_render(xPos, yPos, currOption, CFG_DIVE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    */
 
     if (gConfigScroll == CFG_VKICK) {
         (!gKickToggle)
@@ -1899,6 +1926,7 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
+    /*
     if (gConfigScroll == CFG_HARD) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     sprintf(currOption, "TEMP");
@@ -1906,6 +1934,7 @@ void config_options_box(void) {
     config_option_render(xPos, yPos, currOption, CFG_HARD);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    */
 
     if (gDebugLevelSelect) {
         if (gConfigScroll == CFG_LVL) print_small_text_light(160, 204, "Programmer Mode.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
@@ -1950,20 +1979,6 @@ void config_options_box(void) {
     }
 
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
-
-    if (gConfigScroll == CFG_FPS) print_small_text_light(160, 204, "FPS Cap", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-
-    switch (gFPSCap) {
-        case FPS_15: sprintf(currOption, "FPS: 15"); break;
-        case FPS_20: sprintf(currOption, "FPS: 20"); break;
-        case FPS_45: sprintf(currOption, "FPS: 45"); break;
-        case FPS_60: sprintf(currOption, "FPS: 60"); break;
-        default: sprintf(currOption, "FPS: 30"); break;
-    }
-
-    config_option_render(xPos, yPos, currOption, CFG_FPS);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
     
