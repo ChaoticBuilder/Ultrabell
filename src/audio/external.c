@@ -2106,11 +2106,11 @@ void sound_banks_disable(UNUSED u8 player, u16 bankMask) {
 /**
  * Called from threads: thread5_game_loop
  */
-UNUSED static void disable_all_sequence_players(void) {
+static void disable_all_sequence_players(void) {
     u8 i;
 
     for (i = 0; i < SEQUENCE_PLAYERS; i++) {
-        sequence_player_disable(&gSequencePlayers[i]);
+        if (i != SEQ_PLAYER_SFX) sequence_player_disable(&gSequencePlayers[i]);
     }
 }
 
@@ -2514,7 +2514,16 @@ void play_toads_jingle(void) {
 void sound_reset(void) {
     u8 i;
 
+    disable_all_sequence_players();
     sound_init();
+    /* TODO: figure out how to clear the audio pools without breaking sounds in transitions
+    #if defined(VERSION_JP) || defined(VERSION_US)
+        audio_reset_session(0);
+    #else
+        audio_reset_session_eu(0);
+    #endif
+        seq_player_play_sequence(SEQ_PLAYER_SFX, SEQ_SOUND_PLAYER, 0);
+    */
     for (i = 0; i < SEQUENCE_PLAYERS; i++) {
         gSequencePlayers[i].muted = FALSE;
     }

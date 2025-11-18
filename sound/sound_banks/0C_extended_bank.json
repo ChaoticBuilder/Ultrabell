@@ -273,8 +273,10 @@
         },
         "Ele Piano": {
             "release_rate": 10,
+            "normal_range_hi": 60,
             "envelope": "envelope3",
-            "sound": "26_crystal_rhodes"
+            "sound": "26_crystal_rhodes",
+            "sound_hi": "52_crystal_rhodes_2"
         },
         "Grand Piano": {
             "release_rate": 34,

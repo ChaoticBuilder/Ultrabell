@@ -1874,7 +1874,6 @@ static void intro_cutscene_lower_pipe(struct MarioState *m) {
 static void intro_cutscene_set_mario_to_idle(struct MarioState *m) {
     if (gCamera->cutscene == CUTSCENE_NONE) {
         gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
-        sound_reset();
         set_mario_action(m, ACT_IDLE, 0);
     }
 

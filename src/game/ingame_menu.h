@@ -31,6 +31,8 @@ extern u8 spdToggle;
 extern u8 spdSpd;
 extern u8 gMovesetToggle;
 
+#define LUIGI_MOVESET (gMovesetToggle & gLuigiToggle)
+
 enum ConfigMenuIDs {
     CFG_START,
     CFG_WIDE,

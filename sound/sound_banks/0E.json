@@ -86,14 +86,18 @@
             "sound": "44_grand_piano"
         },
         "inst5": {
-            "release_rate": 23,
+            "release_rate": 10,
+            "normal_range_hi": 60,
             "envelope": "envelope5",
-            "sound": "3C_acoustic_guitar"
+            "sound": "26_crystal_rhodes",
+            "sound_hi": "52_crystal_rhodes_2"
         },
         "inst6": {
             "release_rate": 10,
+            "normal_range_hi": 60,
             "envelope": "envelope6",
-            "sound": "26_crystal_rhodes"
+            "sound": "26_crystal_rhodes",
+            "sound_hi": "52_crystal_rhodes_2"
         }
     },
     "instrument_list": [

@@ -9,5 +9,8 @@ float cosf(float);
 double cos(double);
 
 float sqrtf(float);
+#ifndef sqrtf
+#define sqrtf(v) __builtin_sqrtf(v)
+#endif
 
 #endif

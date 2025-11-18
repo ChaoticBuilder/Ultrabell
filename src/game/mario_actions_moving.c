@@ -20,6 +20,7 @@
 #include "ingame_menu.h"
 #include "hud.h"
 #include "puppyprint.h"
+#include "save_file.h"
 
 #include "config.h"
 
@@ -132,7 +133,8 @@ s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 a
     if (m->flags & MARIO_WING_CAP) {
         return set_mario_action(m, ACT_FLYING_TRIPLE_JUMP, 0);
     } else if (m->forwardVel > 16.0f && !gRealToggle) {
-        return set_mario_action(m, ACT_TRIPLE_JUMP, 0);
+        if (!gSpecialTripleJump) return set_mario_action(m, ACT_TWIRLING, 0);
+                            else return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
     } else {
         return set_mario_action(m, ACT_JUMP, 0);
     }
@@ -369,9 +371,11 @@ void update_shell_speed(struct MarioState *m) {
     if (m->forwardVel <= 0.0f) {
         m->forwardVel += 1.0f;
     } else if (m->forwardVel <= targetSpeed) {
-        if (!g95Toggle) m->forwardVel += 0.75f;
-        if (g95Toggle) m->forwardVel += 0.5f;
-        if (gRealToggle) m->forwardVel += 0.5f;
+        f32 vel = 0.75f;
+        if (g95Toggle) vel = 0.5f;
+        if (gRealToggle) vel = 1.0f;
+        if (LUIGI_MOVESET || m->flags & MARIO_METAL_CAP) vel = 0.5f;
+        m->forwardVel += vel / gDeltaTime;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.125f / gDeltaTime;
     }
@@ -405,8 +409,8 @@ s32 apply_slope_decel(struct MarioState *m, f32 decelCoef) {
             decel = decelCoef * 3.0f;
             break;
     }
-    if (gLuigiToggle == TRUE) {
-        decel /= 4.0f;
+    if (LUIGI_MOVESET) {
+        decel /= 2.0f;
     }
 
     if ((m->forwardVel = approach_f32(m->forwardVel, 0.0f, decel, decel)) == 0.0f) {
@@ -452,9 +456,11 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel += 1.0f / gDeltaTime;
     } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
-        m->forwardVel += 0.5f / gDeltaTime;
-        if (!g95Toggle) m->forwardVel += 0.25f / gDeltaTime;
-        if (gRealToggle) m->forwardVel += 0.5f / gDeltaTime;
+        f32 vel = 0.75f;
+        if (g95Toggle) vel = 0.5f;
+        if (gRealToggle) vel = 1.0f;
+        if (LUIGI_MOVESET || m->flags & MARIO_METAL_CAP) vel = 0.5f; // god I wish there was a better way to do this
+        m->forwardVel += vel / gDeltaTime;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.125f / gDeltaTime;
     }
@@ -551,7 +557,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if (m->forwardVel > 20.0f || (gLuigiToggle && !(m->flags & MARIO_METAL_CAP))) {
+    if (m->forwardVel > 20.0f || (LUIGI_MOVESET && !(m->flags & MARIO_METAL_CAP))) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -753,11 +759,8 @@ void tilt_body_walking(struct MarioState *m, UNUSED s16 startYaw) {
         // Pitch is reversed, a higher multiplier makes Mario tilt backwards farther instead of forwards.
         // s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
-        if (gLuigiToggle == TRUE) {
-            nextBodyPitch = -(s16)((m->forwardVel - 12) * 96);
-        } else {
-            nextBodyPitch = -(s16)((m->forwardVel - 12) * 48);
-        }
+        if (!gLuigiToggle) nextBodyPitch = -(s16)((m->forwardVel - 12) * 48);
+        else               nextBodyPitch = -(s16)((m->forwardVel - 12) * 96);
 
         nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(45), 0);
 

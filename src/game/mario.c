@@ -224,7 +224,7 @@ void play_sound_if_no_flag(struct MarioState *m, u32 soundBits, u32 flags) {
  */
 void play_mario_jump_sound(struct MarioState *m) {
     if (!(m->flags & MARIO_MARIO_SOUND_PLAYED) && m->flags != MARIO_METAL_CAP) {
-        if (m->action == ACT_TRIPLE_JUMP) {
+        if (m->action == ACT_TWIRLING) {
             play_sound(SOUND_MARIO_YAHOO_WAHA_YIPPEE + ((gAudioRandom % 5) << 16),
                        m->marioObj->header.gfx.cameraToObject);
         } else {
@@ -809,11 +809,11 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->forwardVel = -16.0f;
             break;
 
-        case ACT_TRIPLE_JUMP:
+        case ACT_TWIRLING:
             m_sd_preset(PARTICLE_DUST, JUMP);
             (g95Toggle)
             ? set_mario_y_vel_based_on_fspeed(m, 72.0f, 0.0f)
-            : set_mario_y_vel_based_on_fspeed(m, 64.0f, 0.0f);
+            : set_mario_y_vel_based_on_fspeed(m, 66.0f, 0.0f);
             m->forwardVel *= 0.875f;
             break;
 
@@ -1112,7 +1112,8 @@ s32 set_jump_from_landing(struct MarioState *m) {
                     if (m->flags & MARIO_WING_CAP) {
                         set_mario_action(m, ACT_FLYING_TRIPLE_JUMP, 0);
                     } else if (m->forwardVel > 16.0f && !gRealToggle) {
-                        set_mario_action(m, ACT_TRIPLE_JUMP, 0);
+                        if (!gSpecialTripleJump) return set_mario_action(m, ACT_TWIRLING, 0);
+                                            else return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
                     } else {
                         set_mario_action(m, ACT_JUMP, 0);
                     }

@@ -34,8 +34,10 @@
         },
         "inst2": {
             "release_rate": 10,
+            "normal_range_hi": 60,
             "envelope": "envelope2",
-            "sound": "26_crystal_rhodes"
+            "sound": "26_crystal_rhodes",
+            "sound_hi": "52_crystal_rhodes_2"
         }
     },
     "instrument_list": [

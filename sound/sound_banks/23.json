@@ -69,13 +69,17 @@
         },
         "inst3": {
             "release_rate": 10,
+            "normal_range_hi": 60,
             "envelope": "envelope3",
-            "sound": "26_crystal_rhodes"
+            "sound": "26_crystal_rhodes",
+            "sound_hi": "52_crystal_rhodes_2"
         },
         "inst4": {
             "release_rate": 10,
+            "normal_range_hi": 60,
             "envelope": "envelope4",
-            "sound": "26_crystal_rhodes"
+            "sound": "26_crystal_rhodes",
+            "sound_hi": "52_crystal_rhodes_2"
         },
         "inst5": {
             "release_rate": 255,

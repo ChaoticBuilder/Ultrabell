@@ -778,8 +778,11 @@ void fps_testing(void) {
     */
 }
 
+#include "src/audio/load.h"
+#include "src/audio/heap.h"
+
 void testing(void) {
-    print_text_fmt_int(160, 64, "%d", gMarioState->actionTimer);
+    print_text_fmt_int(160, 64, "%d", gMaxSimultaneousNotes);
     /*
     char debug[64];
     sprintf(debug, "%2.1f", gMarioState->forwardVel);
@@ -868,6 +871,7 @@ void render_hud(void) {
         sleep_draw();
         // fps_testing();
         // testing();
+        // float_test(); /* my testing concludes that sm64 uses ieee 754 floating point :3 
         if (!gHudToggle) return;
         timer_troll();
         if (gDebugLevelSelect && !gLVLToggle) demo_mode();

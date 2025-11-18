@@ -478,7 +478,7 @@ s32 adsr_update(struct Note *note) {
             }
 
 #if defined(VERSION_SH)
-            if (adsr->current < 0.00001f) {
+            if (adsr->current < (f32)(0x800000)) {
                 adsr->current = 0.0f;
                 adsr->state = ADSR_STATE_DISABLED;
             }

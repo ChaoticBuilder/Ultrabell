@@ -467,22 +467,6 @@ s32 act_double_jump(struct MarioState *m) {
     return FALSE;
 }
 
-s32 act_triple_jump(struct MarioState *m) {
-    if (gSpecialTripleJump) {
-        return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
-    }
-
-    play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_WAHA);
-    
-#if ENABLE_RUMBLE
-    if (m->action == ACT_TRIPLE_JUMP_LAND) {
-        queue_rumble_data(5, 40);
-    }
-#endif
-    set_mario_action(m, ACT_TWIRLING, 0);
-    return FALSE;
-}
-
 s32 act_backflip(struct MarioState *m) {
     if (gABCToggle) {
         set_mario_action(m, m->prevAction, 0);
@@ -725,6 +709,8 @@ s32 act_twirling(struct MarioState *m) {
 
     m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
     m->twirlYaw += (m->angleVel[1] / gDeltaTime);
+
+    play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_WAHA);
 
     switch (m->actionArg) {
         case 0:
@@ -1384,11 +1370,6 @@ s32 act_wall_slide (struct MarioState *m) {
         }
         return FALSE;
     }
-}
-
-s32 act_grapple_hooked (UNUSED struct MarioState *m) {
-    // I gave up on adding this, sry!
-    return FALSE;
 }
 
 s32 act_getting_blown(struct MarioState *m) {
@@ -2239,7 +2220,6 @@ s32 mario_execute_airborne_action(struct MarioState *m) {
         case ACT_STEEP_JUMP:           cancel = act_steep_jump(m);           break;
         case ACT_BURNING_JUMP:         cancel = act_burning_jump(m);         break;
         case ACT_BURNING_FALL:         cancel = act_burning_fall(m);         break;
-        case ACT_TRIPLE_JUMP:          cancel = act_triple_jump(m);          break;
         case ACT_BACKFLIP:             cancel = act_backflip(m);             break;
         case ACT_LONG_JUMP:            cancel = act_long_jump(m);            break;
         case ACT_RIDING_SHELL_JUMP:
@@ -2252,7 +2232,6 @@ s32 mario_execute_airborne_action(struct MarioState *m) {
         case ACT_HARD_BACKWARD_AIR_KB: cancel = act_hard_backward_air_kb(m); break;
         case ACT_SOFT_BONK:            cancel = act_soft_bonk(m);            break;
         case ACT_WALL_SLIDE:           cancel = act_wall_slide(m);           break;
-        case ACT_GRAPPLE_HOOKED:       cancel = act_grapple_hooked(m);       break;
         case ACT_AIR_HIT_WALL:         cancel = act_air_hit_wall(m);         break;
         case ACT_FORWARD_ROLLOUT:      cancel = act_forward_rollout(m);      break;
         case ACT_SHOT_FROM_CANNON:     cancel = act_shot_from_cannon(m);     break;

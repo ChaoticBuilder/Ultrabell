@@ -26,21 +26,21 @@
 // Total memory usage is calculated by 24*(2^VOL_RAMPING_EXPONENT) bytes. This is not technically on the heap, but it's memory nonetheless.
 #define VOL_RAMPING_EXPONENT 9
 
-#define PERSISTENT_SEQ_MEM 0x8200
-#define PERSISTENT_BANK_MEM 0xDC00
-#define TEMPORARY_SEQ_MEM 0xE800
-#define TEMPORARY_BANK_MEM 0x5500
-#define MAX_NUM_SOUNDBANKS 0x40
-#define EXT_AUDIO_INIT_POOL_SIZE 0x2000
+#define PERSISTENT_SEQ_MEM 0x9400
+#define PERSISTENT_BANK_MEM 0xE400
+#define TEMPORARY_SEQ_MEM 0x8000
+#define TEMPORARY_BANK_MEM 0x4800
+#define MAX_NUM_SOUNDBANKS 0x80
+#define EXT_AUDIO_INIT_POOL_SIZE 0x800
 #else
 #define VOL_RAMPING_EXPONENT 7
 
-#define PERSISTENT_SEQ_MEM 0x4100
-#define PERSISTENT_BANK_MEM 0x6E00
-#define TEMPORARY_SEQ_MEM 0x7400
-#define TEMPORARY_BANK_MEM 0x2A80
-#define MAX_NUM_SOUNDBANKS 0x40 // change this when adding new soundbanks
-#define EXT_AUDIO_INIT_POOL_SIZE 0x0
+#define PERSISTENT_SEQ_MEM 0x4A00
+#define PERSISTENT_BANK_MEM 0x7200
+#define TEMPORARY_SEQ_MEM 0x4000
+#define TEMPORARY_BANK_MEM 0x2400
+#define MAX_NUM_SOUNDBANKS 0x30
+#define EXT_AUDIO_INIT_POOL_SIZE 0x400 // extra space just incase, change max_num_soundbanks first
 #endif
 
 #define SEQ_BANK_MEM (PERSISTENT_SEQ_MEM + PERSISTENT_BANK_MEM + TEMPORARY_SEQ_MEM + TEMPORARY_BANK_MEM)
@@ -199,9 +199,9 @@ extern OSMesgQueue *D_SH_80350FA8;
 #endif
 
 #if defined(VERSION_EU) || defined(VERSION_SH)
-#define AUDIO_INIT_POOL_SIZE (0x2B00 + (MAX_NUM_SOUNDBANKS * sizeof(s32)) + EXT_AUDIO_INIT_POOL_SIZE)
+#define AUDIO_INIT_POOL_SIZE (EXT_AUDIO_INIT_POOL_SIZE + (MAX_NUM_SOUNDBANKS * 0x30 * sizeof(s32)))
 #else
-#define AUDIO_INIT_POOL_SIZE (0x2400 + (MAX_NUM_SOUNDBANKS * sizeof(s32)) + EXT_AUDIO_INIT_POOL_SIZE)
+#define AUDIO_INIT_POOL_SIZE (EXT_AUDIO_INIT_POOL_SIZE + (MAX_NUM_SOUNDBANKS * 0x30 * sizeof(s32)))
 #endif
 
 // TODO: needs validation once EU can compile. EU is very likely incorrect!
