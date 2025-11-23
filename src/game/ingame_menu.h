@@ -47,7 +47,7 @@ enum ConfigMenuIDs {
     CFG_TIMER,
     CFG_SSK,
     CFG_REAL,
-    // CFG_DIVE,
+    CFG_DIVE,
     CFG_VKICK,
     CFG_CTURN,
     CFG_ABC,

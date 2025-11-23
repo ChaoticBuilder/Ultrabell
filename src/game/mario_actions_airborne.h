@@ -4,6 +4,7 @@
 #include <PR/ultratypes.h>
 
 #include "types.h"
+extern f32 spdtest;
 
 enum ActionStatesGroundPound { // act_ground_pound
     ACT_STATE_GROUND_POUND_SPIN,

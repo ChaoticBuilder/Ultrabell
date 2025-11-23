@@ -203,7 +203,7 @@ const LevelScript level_lll_entry[] = {
         JUMP_LINK(script_func_local_7),
         TERRAIN(/*terrainData*/ lll_seg7_area_2_collision),
         MACRO_OBJECTS(/*objList*/ lll_seg7_area_2_macro_objs),
-        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0004, /*seq*/ SEQ_LEVEL_HOT),
+        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0004, /*seq*/ SEQ_LEVEL_UNDERGROUND),
         TERRAIN_TYPE(/*terrainType*/ TERRAIN_STONE),
     END_AREA(),
 

@@ -1617,10 +1617,13 @@ void config_options(void) {
         if (gConfigScroll == CFG_LUIGI) {
             gLuigiToggle ^= 1;
             if (gMovesetToggle) {
-                gKickToggle = TRUE;
-                (!gLuigiToggle)
-                ? (gKickTimer = 0)
-                : (gKickTimer = 5);
+                if (!gLuigiToggle) {
+                    gKickTimer = 0;
+                    gKickToggle = FALSE;
+                } else {
+                    gKickTimer = 5;
+                    gKickToggle = TRUE;
+                }
             }
         }
         if (gConfigScroll == CFG_MOVESET && !gABCToggle && !gRealToggle) gMovesetToggle ^= 1;
@@ -1636,7 +1639,7 @@ void config_options(void) {
             ? (gKickTimer = 0)
             : (gKickTimer = 5);
         }
-        // if (gConfigScroll == CFG_DIVE) gDiveToggle = (gDiveToggle + 1) % 3;
+        if (gConfigScroll == CFG_DIVE) gDiveToggle = (gDiveToggle + 1) % 3;
         if (gConfigScroll == CFG_VKICK && (!gLuigiToggle || !gMovesetToggle) && !gRealToggle) {
             gKickToggle ^= 1;
             (!gKickToggle)
@@ -1870,7 +1873,6 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
-    /*
     if (gConfigScroll == CFG_DIVE)
         print_small_text_light(160, 204, "What behavior to use when pressing B in the air.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
@@ -1881,7 +1883,6 @@ void config_options_box(void) {
     config_option_render(xPos, yPos, currOption, CFG_DIVE);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
-    */
 
     if (gConfigScroll == CFG_VKICK) {
         (!gKickToggle)

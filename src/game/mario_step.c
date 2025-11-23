@@ -576,7 +576,31 @@ s32 perform_air_quarter_step(struct MarioState *m, Vec3f intendedPos, u32 stepAr
     return (lowerWall.numWalls > 0) ? bonk_or_hit_lava_wall(m, &lowerWall) : AIR_STEP_NONE;
 }
 
+f32 twirlMulti = 1.0f;
+f32 tTerminalVel = 0.0f;
+
 void apply_twirl_gravity(struct MarioState *m) {
+    f32 twirlGrav = (!g95Toggle || gRealToggle) ? 1.625f : 1.0f;
+    f32 twirlTarget = (!(m->input & INPUT_A_DOWN)) ? 1.0f : 1.5f;
+    if (m->input & INPUT_Z_DOWN) twirlTarget = 0.375f;
+    twirlMulti = approach_f32_symmetric(twirlMulti, twirlTarget, 0.125f);
+    m->vel[1] -= 1.0f * twirlGrav / twirlMulti / gDeltaTime;
+
+    tTerminalVel = -16.0f * twirlGrav / twirlMulti;
+    if (m->vel[1] < tTerminalVel) m->vel[1] = tTerminalVel;
+/*
+    f32 grav = twirlGrav;
+// #ifdef Z_TWIRL
+    if (!(m->input & INPUT_Z_DOWN)) grav = twirlGrav;
+    else (!g95Toggle || gRealToggle) ? (grav = 10.0f) : (grav = 7.5f);
+// #endif
+    f32 weight = MIN(1024.0f / m->angleVel[1], 1.0f);
+    m->vel[1] -= 4.0f * weight * grav / gDeltaTime;
+
+    f32 terminalVel = -75.0f * weight * grav;
+    if (m->vel[1] < terminalVel) m->vel[1] = terminalVel;
+*/
+/*    
 #ifdef Z_TWIRL
     f32 Zmodifier;
     if (!g95Toggle) Zmodifier = m->input & INPUT_Z_DOWN ? 10.0f : 1.625f;
@@ -599,6 +623,7 @@ void apply_twirl_gravity(struct MarioState *m) {
     if (m->vel[1] < terminalVelocity) {
         m->vel[1] = terminalVelocity;
     }
+*/
 }
 
 u32 should_strengthen_gravity_for_jump_ascent(struct MarioState *m) {
@@ -618,14 +643,21 @@ u32 should_strengthen_gravity_for_jump_ascent(struct MarioState *m) {
 }
 
 u16 mTerminalVel;
+f32 gDiv;
+u8 gDivTimer = 0;
 
 u16 gravity_applier(struct MarioState *m, f32 baseVel, u16 terminalVel) {
-    if (gLuigiToggle && gMovesetToggle && aGravToggle) {
-        baseVel /= 1.5f;
-        terminalVel /= 1.5f;
+    if (LUIGI_MOVESET && aGravToggle) {
+        baseVel /= 1.25f;
+        terminalVel /= 1.25f;
     }
     if (gMovesetToggle && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
-        (gLuigiToggle) ? (baseVel /= 1.25f) : (baseVel /= 1.125f);
+        if (!gDivTimer) {
+            gDiv = ((gLuigiToggle) ? 5.0f : 1.125f);
+            gDivTimer++;
+        }
+        if (gDiv > 1.25f) gDiv = approach_f32_symmetric(gDiv, 1.25f, 2.0f / gDiv);
+        baseVel /= gDiv;
     }
 
     m->vel[1] -= baseVel / gDeltaTime;
@@ -637,8 +669,6 @@ u16 gravity_applier(struct MarioState *m, f32 baseVel, u16 terminalVel) {
 
 void apply_gravity(struct MarioState *m) {
     f32 baseVel;
-    // did a thing where the terminal velocity isn't a hard cap, it's instead a multiplier (aka more resistance the more velocity you have)
-    // it's not uncapped though, since eventually you reach a point where the velocity gain is so small it's basically 0
 
     if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) {
         mTerminalVel = 0;
@@ -649,18 +679,9 @@ void apply_gravity(struct MarioState *m) {
         m->vel[1] -= baseVel / gDeltaTime;
         if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.015625f / gDeltaTime + 1;
     } else if (m->action == ACT_LONG_JUMP || m->action == ACT_BBH_ENTER_SPIN) {
-        mTerminalVel = 64;
-        baseVel = ((!gRealToggle) ? 2.0f : 2.5f);
-        m->vel[1] -= baseVel / gDeltaTime;
-        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.0234375f / gDeltaTime + 1;
+        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 64);
     } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_SLIDE_KICK || m->action == ACT_FALL_AFTER_STAR_GRAB) {
-        m->vel[1] -= 3.5f / gDeltaTime;
-        if (m->vel[1] < -64.0f) {
-            if (!gRealToggle) {
-                m->vel[1] += 1.75f / gDeltaTime;
-                m->vel[1] -= (m->vel[1] / 40) / gDeltaTime;
-            }
-        }
+        mTerminalVel = gravity_applier(m, 3.5f, 64);
     } else if (m->action == ACT_GETTING_BLOWN) {
         mTerminalVel = 64;
         m->vel[1] -= m->windGravity / gDeltaTime;
@@ -761,6 +782,7 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
         if (quarterStepResult == AIR_STEP_LANDED || quarterStepResult == AIR_STEP_GRABBED_LEDGE
             || quarterStepResult == AIR_STEP_GRABBED_CEILING
             || quarterStepResult == AIR_STEP_HIT_LAVA_WALL) {
+            gDivTimer = 0;
             break;
         }
     }

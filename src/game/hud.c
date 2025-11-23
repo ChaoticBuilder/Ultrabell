@@ -26,6 +26,7 @@
 #include "audio/heap.h"
 #include "audio/seqplayer.h"
 #include "emutest.h"
+#include "mario_step.h"
 
 #include "config.h"
 
@@ -104,7 +105,7 @@ struct PowerMeterHUD {
 
 // Stores health segmented value defined by numHealthWedges
 // When the HUD is rendered this value is 8, full health.
-static s16 sPowerMeterStoredHealth;
+s16 sPowerMeterStoredHealth;
 
 static struct PowerMeterHUD sPowerMeterHUD = {
     POWER_METER_HIDDEN,
@@ -778,16 +779,13 @@ void fps_testing(void) {
     */
 }
 
-#include "src/audio/load.h"
-#include "src/audio/heap.h"
+#include "mario_actions_airborne.h"
 
 void testing(void) {
-    print_text_fmt_int(160, 64, "%d", gMaxSimultaneousNotes);
-    /*
+    // print_text_fmt_int(160, 64, "%d", gMaxSimultaneousNotes);
     char debug[64];
-    sprintf(debug, "%2.1f", gMarioState->forwardVel);
+    sprintf(debug, "%2.4f", spdtest);
     print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    */
     /*
     struct Surface *floor = gMarioState->floor;
     f32 steepness = sqrtf(floor->normal.x * floor->normal.x + floor->normal.z * floor->normal.z);
@@ -831,6 +829,8 @@ void render_hud(void) {
 #else
         create_dl_ortho_matrix();
 #endif
+        // fps_testing();
+        // testing();
 
         handle_stats();
         if (gHudToggle) { mTimer = 1; cTimer = 1; }
@@ -869,8 +869,6 @@ void render_hud(void) {
         music_menu();
         if (gDebugToggle) debug_stats();
         sleep_draw();
-        // fps_testing();
-        // testing();
         // float_test(); /* my testing concludes that sm64 uses ieee 754 floating point :3 
         if (!gHudToggle) return;
         timer_troll();

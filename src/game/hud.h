@@ -15,6 +15,7 @@
 
 #define HUD_STATS_X 32
 
+extern s16 sPowerMeterStoredHealth;
 extern s16 gHudShakeX, gHudShakeY;
 extern u8 pitchInvert;
 extern u8 sleepTimer;

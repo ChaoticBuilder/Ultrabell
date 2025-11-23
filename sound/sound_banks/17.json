@@ -11,7 +11,7 @@
         "envelope1": [
             [2, 32700],
             [1, 32700],
-            [32700, 29430],
+            [2047, 24575],
             "hang"
         ],
         "envelope2": [
@@ -68,9 +68,9 @@
             "sound_hi": "51_harp_2"
         },
         "inst1": {
-            "release_rate": 208,
+            "release_rate": 255,
             "envelope": "envelope1",
-            "sound": "05_acoustic_bass"
+            "sound": "1A_slap_bass"
         },
         "inst2": {
             "release_rate": 15,

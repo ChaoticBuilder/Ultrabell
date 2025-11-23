@@ -590,6 +590,10 @@ u16 musicType(u16 seqId, u16 bankId) {
             if (seqId == SEQ_LEVEL_GRASS || seqId == SEQ_LEVEL_SLIDE || seqId == SEQ_LEVEL_UNDERGROUND || seqId == SEQ_EVENT_POWERUP || seqId == SEQ_EVENT_BOSS)
                 return 40;
             break;
+        case LEVEL_LLL:
+        case LEVEL_SSL:
+            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR || seqId == SEQ_LEVEL_UNDERGROUND) return 15;
+            break;
     }
     return bankId;
 }

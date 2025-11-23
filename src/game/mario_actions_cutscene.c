@@ -1232,6 +1232,7 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
 }
 
 s32 act_death_exit(struct MarioState *m) {
+    if (sPowerMeterStoredHealth < 8) mTimer = 30;
     if (15 < m->actionTimer++
         && launch_mario_until_land(m, ACT_DEATH_EXIT_LAND, MARIO_ANIM_GENERAL_FALL, -32.0f)) {
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
@@ -1253,6 +1254,7 @@ s32 act_death_exit(struct MarioState *m) {
 }
 
 s32 act_unused_death_exit(struct MarioState *m) {
+    if (sPowerMeterStoredHealth < 8) mTimer = 30;
     if (launch_mario_until_land(m, ACT_FREEFALL_LAND_STOP, MARIO_ANIM_GENERAL_FALL, 0.0f)) {
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #ifdef ENABLE_LIVES
@@ -1270,6 +1272,7 @@ s32 act_unused_death_exit(struct MarioState *m) {
 }
 
 s32 act_falling_death_exit(struct MarioState *m) {
+    if (sPowerMeterStoredHealth < 8) mTimer = 30;
     if (launch_mario_until_land(m, ACT_DEATH_EXIT_LAND, MARIO_ANIM_GENERAL_FALL, 0.0f)) {
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #if ENABLE_RUMBLE
@@ -1320,6 +1323,7 @@ s32 act_special_exit_airborne(struct MarioState *m) {
 
 s32 act_special_death_exit(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
+    if (sPowerMeterStoredHealth < 8) mTimer = 30;
 
     if (m->actionTimer++ < 11) {
         marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;

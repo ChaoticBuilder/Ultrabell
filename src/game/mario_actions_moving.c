@@ -190,6 +190,11 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
 
     //! Speed is capped a frame late (butt slide HSG)
     m->forwardVel = sqrtf(sqr(m->slideVelX) + sqr(m->slideVelZ));
+    // temp
+    if (m->forwardVel > 100.0f) {
+        m->slideVelX = m->slideVelX * 100.0f / m->forwardVel;
+        m->slideVelZ = m->slideVelZ * 100.0f / m->forwardVel;
+    }
     /*
     if (m->forwardVel > sqr(steepness + 2.0f)) {
         m->slideVelX /= (steepness / 12.0f) + 1.0f;
@@ -410,7 +415,7 @@ s32 apply_slope_decel(struct MarioState *m, f32 decelCoef) {
             break;
     }
     if (LUIGI_MOVESET) {
-        decel /= 2.0f;
+        decel /= 3.0f;
     }
 
     if ((m->forwardVel = approach_f32(m->forwardVel, 0.0f, decel, decel)) == 0.0f) {
@@ -466,9 +471,10 @@ void update_walking_speed(struct MarioState *m) {
     }
 
     if (m->forwardVel > 32.0f) {
-        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 32.0f, 0, 8.0f) / gDeltaTime);
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 64.0f, 0, 8.0f) / gDeltaTime);
     }
 
+    u32 turnSpd = (!LUIGI_MOVESET) ? (ABS(m->forwardVel + 64.0f) * 20.0f) : (ABS(m->forwardVel + 64.0f) * 16.0f);
 #ifdef VELOCITY_BASED_TURN_SPEED
     if ((m->heldObj == NULL) && !(m->action & ACT_FLAG_SHORT_HITBOX)) {
         if (m->forwardVel >= 16.0f) {
@@ -482,12 +488,12 @@ void update_walking_speed(struct MarioState *m) {
             m->faceAngle[1] = m->intendedYaw;
         }
     } else {
-        m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+        m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, turnSpd / gDeltaTime, turnSpd / gDeltaTime);
     }
 #else
     // Vanilla
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800 / gDeltaTime, 0x800 / gDeltaTime);
+        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, turnSpd / gDeltaTime, turnSpd / gDeltaTime);
 #endif
     apply_slope_accel(m);
 }
@@ -536,7 +542,7 @@ s32 should_begin_sliding(struct MarioState *m) {
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
-        if (m->forwardVel > 24.0f) {
+        if (m->forwardVel > 20.0f) {
             if (g95Toggle || gABCToggle) {
                 (!gRealToggle) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f);
             }
@@ -633,6 +639,7 @@ void anim_and_audio_for_walk(struct MarioState *m) {
                     break;
             }
         }
+        if (m->flags & MARIO_METAL_CAP) animSpeed /= 2;
     }
 
     marioObj->oMarioWalkingPitch = approach_s32_symmetric(marioObj->oMarioWalkingPitch, targetPitch, 0x800);
