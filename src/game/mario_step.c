@@ -583,7 +583,7 @@ void apply_twirl_gravity(struct MarioState *m) {
     f32 twirlGrav = (!g95Toggle || gRealToggle) ? 1.625f : 1.0f;
     f32 twirlTarget = (!(m->input & INPUT_A_DOWN)) ? 1.0f : 1.5f;
     if (m->input & INPUT_Z_DOWN) twirlTarget = 0.375f;
-    twirlMulti = approach_f32_symmetric(twirlMulti, twirlTarget, 0.125f);
+    twirlMulti = approach_f32_symmetric(twirlMulti, twirlTarget, 0.25f);
     m->vel[1] -= 1.0f * twirlGrav / twirlMulti / gDeltaTime;
 
     tTerminalVel = -16.0f * twirlGrav / twirlMulti;

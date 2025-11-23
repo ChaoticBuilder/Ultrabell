@@ -229,7 +229,7 @@ void update_lava_boost_or_twirling(struct MarioState *m) {
             spdtest = 0.25f - (twirlMulti * intendedMag);
             m->forwardVel += spdtest;
 #else
-            m->forwardVel -= 1.0f * intendedMag;
+            m->forwardVel -= 0.921875f * intendedMag;
 #endif
         }
     }
@@ -700,7 +700,8 @@ s32 act_riding_shell_air(struct MarioState *m) {
 
 s32 act_twirling(struct MarioState *m) {
     s16 startTwirlYaw = m->twirlYaw;
-    // s16 yawVelTarget = twirlMulti * ((!g95Toggle || gRealToggle) ? 0x1400 : 0x1800);
+    s16 yawVelTarget =
+    ((twirlMulti >= 1.0f) ? twirlMulti : (1.0f / twirlMulti)) * ((!g95Toggle || gRealToggle) ? 0x1400 : 0x1800);
 
     if (auto_dive(m)) return TRUE;
 
@@ -712,8 +713,8 @@ s32 act_twirling(struct MarioState *m) {
     if (m->input & INPUT_Z_DOWN && gGlobalTimer % 2 == 0) m->particleFlags |= PARTICLE_DUST;
 #endif
 
-    // m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
-    // m->twirlYaw += (m->angleVel[1] / gDeltaTime);
+    m->angleVel[1] = approach_s32_symmetric(m->angleVel[1], yawVelTarget, 0x200);
+    m->twirlYaw += (m->angleVel[1] / gDeltaTime);
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_WAHA);
 
