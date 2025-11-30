@@ -1078,3 +1078,25 @@ OPTIMIZE_OS void mtxf_to_mtx_fast(s16* dst, float* src) {
     //  to set the top half.
     dst[15] = 1;
 }
+
+/**
+ * Originally from Camera.c
+ * Input a s16 direction, and the amount of directions you want to snap to (ex. 4 = up, right, down, left)
+ */
+s16 snap_to_angle(s16 angle, u16 snap) {
+    if (snap >= 360) return angle; // no point in doing anything if there's nothing to snap to
+    snap = 360 / MAX(snap, 4);
+    
+    if (angle % DEGREES(snap)) {
+        s16 d1 = ABS(angle) % DEGREES(snap);
+        s16 d2 = DEGREES(snap) - d1;
+        if (angle > 0) {
+            if (d1 < d2) return angle - d1;
+            else return angle + d2;
+        } else {
+            if (d1 < d2) return angle + d1;
+            else return angle - d2;
+        }
+    }
+    return angle;
+}

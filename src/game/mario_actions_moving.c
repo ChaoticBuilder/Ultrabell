@@ -40,7 +40,7 @@ struct LandingAction     sFreefallLandAction = {         4,               5,    
 struct LandingAction     sSideFlipLandAction = {         4,               5,      ACT_FREEFALL,     ACT_SIDE_FLIP_LAND_STOP,   ACT_DOUBLE_JUMP,      ACT_FREEFALL,      ACT_BEGIN_SLIDING, };
 struct LandingAction     sHoldJumpLandAction = {         4,               5, ACT_HOLD_FREEFALL,     ACT_HOLD_JUMP_LAND_STOP,     ACT_HOLD_JUMP, ACT_HOLD_FREEFALL, ACT_HOLD_BEGIN_SLIDING, };
 struct LandingAction sHoldFreefallLandAction = {         4,               5, ACT_HOLD_FREEFALL, ACT_HOLD_FREEFALL_LAND_STOP,     ACT_HOLD_JUMP, ACT_HOLD_FREEFALL, ACT_HOLD_BEGIN_SLIDING, };
-struct LandingAction     sLongJumpLandAction = {         6,               5,      ACT_FREEFALL,     ACT_LONG_JUMP_LAND_STOP,     ACT_LONG_JUMP,      ACT_FREEFALL,      ACT_BEGIN_SLIDING, };
+struct LandingAction     sLongJumpLandAction = {         8,               5,      ACT_FREEFALL,     ACT_LONG_JUMP_LAND_STOP,     ACT_LONG_JUMP,      ACT_FREEFALL,      ACT_BEGIN_SLIDING, };
 struct LandingAction   sDoubleJumpLandAction = {         4,               5,      ACT_FREEFALL,   ACT_DOUBLE_JUMP_LAND_STOP,          ACT_JUMP,      ACT_FREEFALL,      ACT_BEGIN_SLIDING, };
 struct LandingAction   sTripleJumpLandAction = {         4,               0,      ACT_FREEFALL,   ACT_TRIPLE_JUMP_LAND_STOP, ACT_UNINITIALIZED,      ACT_FREEFALL,      ACT_BEGIN_SLIDING, };
 struct LandingAction     sBackflipLandAction = {         4,               0,      ACT_FREEFALL,      ACT_BACKFLIP_LAND_STOP,      ACT_BACKFLIP,      ACT_FREEFALL,      ACT_BEGIN_SLIDING, };
@@ -387,11 +387,11 @@ void update_shell_speed(struct MarioState *m) {
     
     //! No backward speed cap (shell hyperspeed)
     if (m->forwardVel > 64.0f) {
-        m->forwardVel = approach_f32_symmetric(m->forwardVel, 64.0f, CLAMP((m->forwardVel / 64.0f), 0, 4.0f) / gDeltaTime);
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 64.0f) / 128.0f, 0, 8.0f) / gDeltaTime);
     }
 
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+        m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * 48.0f / gDeltaTime);
 
     apply_slope_accel(m);
 }
@@ -464,17 +464,18 @@ void update_walking_speed(struct MarioState *m) {
         f32 vel = 0.75f;
         if (g95Toggle) vel = 0.5f;
         if (gRealToggle) vel = 1.0f;
-        if (LUIGI_MOVESET || m->flags & MARIO_METAL_CAP) vel = 0.5f; // god I wish there was a better way to do this
+        if (m->flags & MARIO_METAL_CAP) vel = 0.5f; // god I wish there was a better way to do this
+        if (LUIGI_MOVESET) vel *= 0.75f;
         m->forwardVel += vel / gDeltaTime;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.125f / gDeltaTime;
     }
 
     if (m->forwardVel > 32.0f) {
-        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 64.0f, 0, 8.0f) / gDeltaTime);
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 128.0f, 0, 8.0f) / gDeltaTime);
     }
 
-    u32 turnSpd = (!LUIGI_MOVESET) ? (ABS(m->forwardVel + 64.0f) * 20.0f) : (ABS(m->forwardVel + 64.0f) * 16.0f);
+    u32 turnSpd = (!LUIGI_MOVESET) ? 24.0f : 18.0f;
 #ifdef VELOCITY_BASED_TURN_SPEED
     if ((m->heldObj == NULL) && !(m->action & ACT_FLAG_SHORT_HITBOX)) {
         if (m->forwardVel >= 16.0f) {
@@ -488,12 +489,12 @@ void update_walking_speed(struct MarioState *m) {
             m->faceAngle[1] = m->intendedYaw;
         }
     } else {
-        m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, turnSpd / gDeltaTime, turnSpd / gDeltaTime);
+        m->faceAngle[1] = m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * turnSpd / gDeltaTime);
     }
 #else
     // Vanilla
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, turnSpd / gDeltaTime, turnSpd / gDeltaTime);
+        m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * turnSpd / gDeltaTime);
 #endif
     apply_slope_accel(m);
 }
@@ -537,7 +538,7 @@ s32 should_begin_sliding(struct MarioState *m) {
     return FALSE;
 }
 
-#define analog_stick_held_back(m) (abs_angle_diff((m)->intendedYaw, (m)->faceAngle[1]) > 0x4000)
+#define analog_stick_held_back(m) (abs_angle_diff((m)->intendedYaw, (m)->faceAngle[1]) >= 0x5000)
 
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {

@@ -1046,18 +1046,7 @@ void mode_radial_camera(struct Camera *c) {
 }
 
 s32 snap_to_45_degrees(s16 angle) {
-    if (angle % DEGREES(45)) {
-        s16 d1 = ABS(angle) % DEGREES(45);
-        s16 d2 = DEGREES(45) - d1;
-        if (angle > 0) {
-            if (d1 < d2) return angle - d1;
-            else return angle + d2;
-        } else {
-            if (d1 < d2) return angle + d1;
-            else return angle - d2;
-        }
-    }
-    return angle;
+    snap_to_angle(angle, 8);
 }
 
 /**

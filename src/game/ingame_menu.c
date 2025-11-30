@@ -1564,6 +1564,24 @@ void render_pause_red_coins(void) {
     }
 }
 
+#define SNAPDEF 1
+
+const u16 snapPreset[] = {
+    0,      /* List start */
+    360,
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    0xFFFF, /* List Terminator */
+};
+
+u8 snapSwitch = TRUE;
+u16 snapValue = snapPreset[SNAPDEF];
+u8 snapListValue = SNAPDEF;
+
 void config_options_scroll(void) {
     if (gHighlightToggle)
         return;
@@ -1658,12 +1676,13 @@ void config_options(void) {
             gFPSCap = (gFPSCap + 1) % FPS_USER_END;
             gFPSSignal = TRUE;
         }
-        if (gConfigScroll == CFG_DBG) spdToggle ^= 1; 
+        if (gConfigScroll == CFG_DBG) spdToggle ^= 1;
+        if (gConfigScroll == CFG_SNAP) snapSwitch ^= 1;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
     if (gPlayer1Controller->buttonPressed & B_BUTTON) {
         if (gConfigScroll == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum)) && gTimerToggle) gHighlightToggle ^= 1;
-        if (gConfigScroll == CFG_VKICK || gConfigScroll == CFG_DBG) gHighlightToggle ^= 1;
+        if (gConfigScroll == CFG_VKICK || gConfigScroll == CFG_DBG || gConfigScroll == CFG_SNAP) gHighlightToggle ^= 1;
         play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
     }
 }
@@ -1704,11 +1723,11 @@ u16 gTimerTime = 60;
 u8 spdToggle = FALSE;
 u8 spdSpd = 0;
 
-u32 value_slider(u32 var, u32 def, u8 scroll) {
+u32 value_slider(u32 var, u32 def, u8 scroll, u8 rate) {
     print_set_envcolour(255, 255, 255, 255);
     if (gHighlightToggle && gConfigScroll == scroll) {
         print_set_envcolour(255, 255, 95, 255);
-        if (gGlobalTimer % 2 == 0) {
+        if (gGlobalTimer % rate == 0) {
             if (gPlayer1Controller->buttonDown & L_JPAD) var--;
             if (gPlayer1Controller->buttonDown & R_JPAD) var++;
             if (gPlayer1Controller->buttonPressed & D_JPAD) {
@@ -1823,6 +1842,29 @@ void config_options_box(void) {
     config_option_render(xPos, yPos, currOption, CFG_MOVESET);
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    
+    if (gConfigScroll == CFG_SNAP) {
+        // print_small_text_light(160, 192, "Max amount of steps is FPS-dependant.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        // print_small_text_light(160, 204, "Change amount of Physics Steps based on Mario's speed.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    }
+
+    if (gHighlightToggle && gConfigScroll == CFG_SNAP) {
+        if (snapSwitch) {
+            snapListValue = value_slider(snapListValue, SNAPDEF, CFG_SNAP, 4);
+            if (snapListValue < 1) snapListValue = 1;
+            if (snapPreset[snapListValue] == 0xFFFF) snapListValue--;
+            snapValue = snapPreset[snapListValue];
+        } else snapValue = value_slider(snapValue, 8, CFG_SNAP, 2);
+    }
+    if (gConfigScroll != CFG_SNAP) print_set_envcolour(127, 127, 127, 255);
+
+    if (snapSwitch) {
+        (snapValue == 360) ? sprintf(currOption, "Snap Preset: None", snapValue) : sprintf(currOption, "Snap Preset: %d", snapValue);
+    } else sprintf(currOption, "Snap Value: %d", snapValue);
+
+    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (xPos >= 160) yPos += 12;
+    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
 
     if (gConfigScroll == CFG_STEPS) {
         if (dynSteps == 1) print_small_text_light(160, 192, "Max amount of steps is FPS-dependant.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
@@ -1841,7 +1883,7 @@ void config_options_box(void) {
     if (gConfigScroll == CFG_TIMER)
         print_small_text_light(160, 204, "Spaghetti Time. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    gTimerTime = value_slider(gTimerTime, 60, CFG_TIMER); // this is temp, every level will have their own custom amount of time soon
+    gTimerTime = value_slider(gTimerTime, 60, CFG_TIMER, 2); // this is temp, every level will have their own custom amount of time soon
     if (gConfigScroll != CFG_TIMER) print_set_envcolour(127, 127, 127, 255);
 
     if (!gTimerToggle) sprintf(currOption, "Time Attack: Off");
@@ -1891,7 +1933,7 @@ void config_options_box(void) {
         print_small_text_light(160, 204, "Vanilla Wall Kicks. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
     }
 
-    gKickTimer = value_slider(gKickTimer, (!gKickToggle) ? 0 : 5, CFG_VKICK);
+    gKickTimer = value_slider(gKickTimer, (!gKickToggle) ? 0 : 5, CFG_VKICK, 3);
     if (gKickTimer > 0 && gKickTimer < 5) print_set_envcolour(255, 95, 95, 255);
     if (gKickTimer >= 10) print_set_envcolour(127, 255, 175, 255);
     if (gConfigScroll != CFG_VKICK) print_set_envcolour(127, 127, 127, 255);
@@ -1983,7 +2025,7 @@ void config_options_box(void) {
     if (xPos >= 160) yPos += 12;
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
     
-    spdSpd = value_slider(spdSpd, 0, CFG_DBG);
+    spdSpd = value_slider(spdSpd, 0, CFG_DBG, 2);
     if (gConfigScroll != CFG_DBG) print_set_envcolour(127, 127, 127, 255);
 
     if (!spdToggle) sprintf(currOption, "DEBUG SPEED: Off");

@@ -21,8 +21,11 @@ const LevelScript level_testing_entry[] = {
 	INIT_LEVEL(),
 	LOAD_YAY0(0x7, _testing_segment_7SegmentRomStart, _testing_segment_7SegmentRomEnd), 
 	LOAD_YAY0(0xa, _water_skybox_yay0SegmentRomStart, _water_skybox_yay0SegmentRomEnd), 
+	LOAD_YAY0(0x08, _common0_yay0SegmentRomStart, _common0_yay0SegmentRomEnd), 
+	LOAD_RAW(0x0F, _common0_geoSegmentRomStart, _common0_geoSegmentRomEnd), 
 	ALLOC_LEVEL_POOL(),
 	MARIO(MODEL_MARIO, 0x00000001, bhvMario), 
+	JUMP_LINK(script_func_global_1), 
 	/* Fast64 begin persistent block [level commands] */
 	/* Fast64 end persistent block [level commands] */
 
@@ -30,7 +33,11 @@ const LevelScript level_testing_entry[] = {
 		WARP_NODE(0xF0, LEVEL_CASTLE, 0x01, 0x32, WARP_NO_CHECKPOINT),
 		WARP_NODE(0xF1, LEVEL_CASTLE, 0x01, 0x64, WARP_NO_CHECKPOINT),
 		WARP_NODE(0x0A, LEVEL_BOB, 0x01, 0x0A, WARP_NO_CHECKPOINT),
-		MARIO_POS(0x01, 0, 0, 0, 0),
+		OBJECT(MODEL_HEART, -3200, 100, -4800, 0, 0, 0, 0x00000000, bhvRecoveryHeart),
+		OBJECT(MODEL_HEART, 3200, 100, -4800, 0, 0, 0, 0x00000000, bhvRecoveryHeart),
+		OBJECT(MODEL_HEART, 3200, 100, 4800, 0, 0, 0, 0x00000000, bhvRecoveryHeart),
+		OBJECT(MODEL_HEART, -3200, 100, 4800, 0, 0, 0, 0x00000000, bhvRecoveryHeart),
+		MARIO_POS(0x01, 0, 0, 0, 4800),
 		OBJECT(MODEL_NONE, 0, 0, 0, 0, 0, 0, 0x000A0000, bhvSpinAirborneWarp),
 		TERRAIN(testing_area_1_collision),
 		MACRO_OBJECTS(testing_area_1_macro_objs),
@@ -40,7 +47,7 @@ const LevelScript level_testing_entry[] = {
 		/* Fast64 end persistent block [area commands] */
 	END_AREA(),
 	FREE_LEVEL_POOL(),
-	MARIO_POS(0x01, 0, 0, 0, 0),
+	MARIO_POS(0x01, 0, 0, 0, 4800),
 	CALL(0, lvl_init_or_update),
 	CALL_LOOP(1, lvl_init_or_update),
 	CLEAR_LEVEL(),

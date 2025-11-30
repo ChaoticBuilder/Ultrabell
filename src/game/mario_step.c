@@ -700,8 +700,8 @@ void apply_gravity(struct MarioState *m) {
     } else {
         mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 4.0f : 5.0f), 64);
     }
-    if (m->flags & MARIO_METAL_CAP && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
-        baseVel = ((!gRealToggle) ? 2.0f : 8.0f);
+    if (m->flags & MARIO_METAL_CAP && !gRealToggle && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
+        baseVel = 2.0f;
         if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) baseVel /= 2;
         mTerminalVel = gravity_applier(m, baseVel, 32);
     }

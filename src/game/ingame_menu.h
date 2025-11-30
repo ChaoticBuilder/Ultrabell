@@ -30,6 +30,7 @@ extern u8 dynSteps;
 extern u8 spdToggle;
 extern u8 spdSpd;
 extern u8 gMovesetToggle;
+extern u16 snapValue;
 
 #define LUIGI_MOVESET (gMovesetToggle & gLuigiToggle)
 
@@ -43,6 +44,7 @@ enum ConfigMenuIDs {
     /* Gameplay */
     CFG_LUIGI,
     CFG_MOVESET,
+    CFG_SNAP,
     CFG_STEPS,
     CFG_TIMER,
     CFG_SSK,

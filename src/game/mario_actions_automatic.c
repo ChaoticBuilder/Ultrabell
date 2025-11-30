@@ -18,6 +18,7 @@
 #include "rumble_init.h"
 #include "game_init.h"
 #include "ingame_menu.h"
+#include "main.h"
 
 #include "config.h"
 
@@ -585,7 +586,7 @@ s32 act_ledge_grab(struct MarioState *m) {
     s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
     s32 hasSpaceForMario = (m->ceilHeight - m->floorHeight >= 160.0f);
 
-    if (m->actionTimer < 10 * gDeltaTime) {
+    if (vBlankTimer && m->actionTimer < 10) {
         m->actionTimer++;
     }
     if (m->floor->normal.y < COS25) {

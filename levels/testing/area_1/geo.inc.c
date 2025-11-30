@@ -4,9 +4,10 @@ const GeoLayout testing_area_1_geo[] = {
 	GEO_NODE_START(),
 	GEO_OPEN_NODE(),
 		GEO_DISPLAY_LIST(LAYER_OPAQUE, testing_dl_Plane_mesh_layer_1),
-		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -1600, 206, -1600, 15, 0, 0, testing_dl_Plane_001_mesh_layer_1),
-		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -2400, 400, -1525, 30, 0, 0, testing_dl_Plane_002_mesh_layer_1),
-		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -3200, 569, -1394, 45, 0, 0, testing_dl_Plane_003_mesh_layer_1),
+		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -800, 206, 1600, 15, 0, 0, testing_dl_Plane_001_mesh_layer_1),
+		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -1600, 400, 1675, 30, 0, 0, testing_dl_Plane_002_mesh_layer_1),
+		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -2400, 569, 1806, 45, 0, 0, testing_dl_Plane_003_mesh_layer_1),
+		GEO_TRANSLATE_NODE_WITH_DL(LAYER_OPAQUE, 0, 800, -1400, testing_dl_Plane_004_mesh_layer_1),
 	GEO_CLOSE_NODE(),
 	GEO_RETURN(),
 };

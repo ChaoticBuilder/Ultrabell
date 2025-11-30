@@ -1111,12 +1111,22 @@ void note_set_vel_pan_reverb(struct Note *note, f32 velocity, f32 pan, u8 reverb
 
 void note_set_frequency(struct Note *note, f32 frequency) {
     if (gLuigiToggle && (note->bankId == 8 || note->bankId == 10)) frequency *= 1.0594631f;
-    if (pitchInvert == 1) {
-        note->frequency = frequency;
-    } else {
-        (pitchInvert == 2)
-        ? (note->frequency = 0.5f / frequency)
-        : (note->frequency = 1.0f / frequency);
+    switch (pitchInvert) {
+        case 1:
+            note->frequency = frequency;
+            break;
+        case 2:
+            note->frequency = 0.5f / frequency;
+            break;
+        case 3:
+            note->frequency = 1.0f / frequency;
+            break;
+        case 4:
+            note->frequency = -frequency;
+            break;
+        case 5:
+            note->frequency = frequency * (((random_float() - 0.5f) / 2.0f) + 1.0f);
+            break;
     }
 }
 

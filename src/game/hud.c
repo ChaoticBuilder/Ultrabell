@@ -649,8 +649,7 @@ void music_menu_scroll(void) {
         }
     }
     
-    if (pitchInvert < 1) pitchInvert = 3;
-    if (pitchInvert > 3) pitchInvert = 1;
+    if (pitchInvert < 1 || pitchInvert > 5) pitchInvert = 1;
     if (musicID == 0xFFFF) musicID = 0;
     if (musicBank == 0xFE) musicBank = 0xFF;
     if (debugScroll < 1) {
@@ -712,6 +711,8 @@ void music_menu(void) {
     if (pitchInvert == 1) sprintf(currOption, "Invert Pitch: OFF", pitchInvert);
     if (pitchInvert == 2) sprintf(currOption, "Invert Pitch: Half", pitchInvert);
     if (pitchInvert == 3) sprintf(currOption, "Invert Pitch: Full", pitchInvert);
+    if (pitchInvert == 4) sprintf(currOption, "Invert Pitch: Whatever tf this is", pitchInvert);
+    if (pitchInvert == 5) sprintf(currOption, "Invert Pitch: OH GOD HELP", pitchInvert);
     
     print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     yPos += 116;
@@ -761,10 +762,6 @@ void sleep_draw(void) {
     }
 }
 
-void z64_draw(void) {
-    if (gZ64Toggle) print_small_text_light(16, 28, "LIVES", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-}
-
 void fps_testing(void) {
     // print_text_fmt_int(160, 32, "%d", (gMarioState->peakHeight - gMarioState->pos[1]) > FALL_DAMAGE_HEIGHT_SMALL);
     /*
@@ -782,10 +779,11 @@ void fps_testing(void) {
 #include "mario_actions_airborne.h"
 
 void testing(void) {
-    // print_text_fmt_int(160, 64, "%d", gMaxSimultaneousNotes);
     char debug[64];
-    sprintf(debug, "%2.4f", spdtest);
+    print_set_envcolour(255, 255, 255, 255);
+    sprintf(debug, "%2.5f", gMarioState->intendedYaw);
     print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+
     /*
     struct Surface *floor = gMarioState->floor;
     f32 steepness = sqrtf(floor->normal.x * floor->normal.x + floor->normal.z * floor->normal.z);
@@ -794,6 +792,7 @@ void testing(void) {
     sprintf(debug, "%2.4f", (steepness / 12.0f) + 1.0f);
     print_small_text_light(120, 224, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     */
+    // print_text_fmt_int(160, 64, "%d", gMaxSimultaneousNotes);
 }
 
 /**
@@ -829,7 +828,6 @@ void render_hud(void) {
 #else
         create_dl_ortho_matrix();
 #endif
-        // fps_testing();
         // testing();
 
         handle_stats();
@@ -871,7 +869,7 @@ void render_hud(void) {
         sleep_draw();
         // float_test(); /* my testing concludes that sm64 uses ieee 754 floating point :3 
         if (!gHudToggle) return;
-        timer_troll();
+        // timer_troll();
         if (gDebugLevelSelect && !gLVLToggle) demo_mode();
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

@@ -920,16 +920,14 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->marioObj->header.gfx.animInfo.animID = -1;
             set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
             // m->marioObj->oMarioLongJumpIsSlow = m->forwardVel > 16.0f ? FALSE : TRUE;
-
-            //! (BLJ's) This properly handles long jumps from getting forward speed with
-            //  too much velocity, but misses backwards longs allowing high negative speeds.
-            if ((m->forwardVel *= 1.5f) > 56.0f) m->forwardVel = 56.0f;
+            f32 min = (m->forwardVel > 0) ? 1.0625f : 1.109375f;
+            m->forwardVel *= MAX(2.5f - ABS(m->forwardVel / 32.0f), min);
             break;
 
         case ACT_SLIDE_KICK:
             m_sd_preset(PARTICLE_DUST, SMOVE);
             if (!LUIGI_MOVESET) m->forwardVel += 2.0f;
-            else { m->vel[1] = 12.0f; m->forwardVel *= 2.0f; }
+            else { m->vel[1] = 12.0f; m->forwardVel *= 1.5f; }
             break;
 
         case ACT_JUMP_KICK:
@@ -1343,6 +1341,8 @@ void update_mario_button_inputs(struct MarioState *m) {
     }
 }
 
+s16 stickAngle = 0;
+
 /**
  * Updates the joystick intended magnitude.
  */
@@ -1353,10 +1353,11 @@ void update_mario_joystick_inputs(struct MarioState *m) {
     m->intendedMag = mag / ((!(m->flags & MARIO_METAL_CAP)) ? 2.0f : 1.25f);
 
     if (m->intendedMag > 0.0f) {
-        m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;
+        stickAngle = snap_to_angle(atan2s(-controller->stickY, controller->stickX), snapValue);
+        m->intendedYaw = stickAngle + m->area->camera->yaw;
         m->input |= INPUT_NONZERO_ANALOG;
     } else {
-        m->intendedYaw = m->faceAngle[1];
+        m->intendedYaw = snap_to_angle(m->faceAngle[1], snapValue);
     }
 }
 
