@@ -22,6 +22,8 @@ extern u8 sleepTimer;
 extern u8 musicBank;
 extern u8 mTimer;
 extern u8 cTimer;
+extern u8 dynMode;
+extern u16 musicID;
 
 enum PowerMeterAnimation {
     POWER_METER_HIDDEN,

@@ -13,23 +13,29 @@
             [1, 32767],
             [2047, 24575],
             "hang"
+        ],
+        "envelope2": [
+            [1, 32767],
+            [1, 32767],
+            [255, 8191],
+            "hang"
         ]
     },
     "instruments": {
         "inst0": {
             "release_rate": 127,
             "envelope": "envelope1",
-            "sound": "1A_slap_bass"
+            "sound": "28_sitar_1"
         },
         "inst1": {
             "release_rate": 34,
             "envelope": "envelope1",
-            "sound": "35_gospel_organ"
+            "sound": "28_sitar_1"
         },
         "inst2": {
-            "release_rate": 47,
-            "envelope": "envelope1",
-            "sound": "26_crystal_rhodes"
+            "release_rate": 127,
+            "envelope": "envelope2",
+            "sound": "19_brass"
         },
         "inst3": {
             "release_rate": 10,
@@ -39,7 +45,7 @@
         "inst4": {
             "release_rate": 114,
             "envelope": "envelope1",
-            "sound": "3C_acoustic_guitar"
+            "sound": "31_rarefaction-convolution"
         },
         "percussion": [
             {"release_rate": 10, "pan": 62, "envelope": "envelope0", "sound": {"sample": "06_kick_drum_1", "tuning": 0.890899}},

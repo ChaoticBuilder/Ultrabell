@@ -1915,11 +1915,6 @@ s32 act_long_jump_land(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 #endif
-    if (m->input & INPUT_Z_DOWN) {
-        if ((m->input & INPUT_A_PRESSED))
-            return set_mario_action(m, ACT_LONG_JUMP, 0);
-    }
-
     if (common_landing_cancels(m, &sLongJumpLandAction, set_jumping_action)) {
         return TRUE;
     }
@@ -1959,10 +1954,6 @@ s32 act_triple_jump_land(struct MarioState *m) {
 }
 
 s32 act_backflip_land(struct MarioState *m) {
-    if ((m->input & INPUT_Z_DOWN) && (m->input & INPUT_A_DOWN)) {
-        return set_mario_action(m, ACT_BACKFLIP, 0);
-    }
-
     if (common_landing_cancels(m, &sBackflipLandAction, set_jumping_action)) {
         return TRUE;
     }

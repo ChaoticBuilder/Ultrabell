@@ -592,7 +592,8 @@ u16 musicType(u16 seqId, u16 bankId) {
             break;
         case LEVEL_LLL:
         case LEVEL_SSL:
-            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR || seqId == SEQ_LEVEL_UNDERGROUND) return 15;
+            if (seqId == SEQ_EVENT_CUTSCENE_COLLECT_STAR) return 15;
+            if (seqId == SEQ_LEVEL_UNDERGROUND) return 43;
             break;
     }
     return bankId;

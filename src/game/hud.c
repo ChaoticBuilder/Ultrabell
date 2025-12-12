@@ -623,6 +623,7 @@ void timer_troll(void) {
 u8 debugScroll = 1;
 u16 musicID = 0;
 u8 musicBank = 0xFF;
+u8 dynMode = 0xFF;
 
 void music_menu_scroll(void) {
     if (!gMusicToggle || gConfigOpen) return;
@@ -636,26 +637,25 @@ void music_menu_scroll(void) {
             play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
         }
         if (gPlayer1Controller->buttonDown & L_JPAD) {
-            if (debugScroll == 1) musicID--;
-            if (debugScroll == 2) musicBank--;
-            if (debugScroll == 4) pitchInvert--;
-            if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+            if (debugScroll == 1) musicID--;        // SEQ
+            if (debugScroll == 2) musicBank--;      // INST
+            if (debugScroll == 3) dynMode--;        // VARIATION
+            if (debugScroll == 5) pitchInvert--;    // PITCH
+            if (debugScroll != 4) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
         if (gPlayer1Controller->buttonDown & R_JPAD) {
             if (debugScroll == 1) musicID++;
             if (debugScroll == 2) musicBank++;
-            if (debugScroll == 4) pitchInvert++;
-            if (debugScroll != 3) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+            if (debugScroll == 3) dynMode++;
+            if (debugScroll == 5) pitchInvert++;
+            if (debugScroll != 4) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
     }
     
-    if (pitchInvert < 1 || pitchInvert > 5) pitchInvert = 1;
-    if (musicID == 0xFFFF) musicID = 0;
-    if (musicBank == 0xFE) musicBank = 0xFF;
     if (debugScroll < 1) {
-        debugScroll = 4;
+        debugScroll = 5;
     }
-    if (debugScroll > 4) {
+    if (debugScroll > 5) {
         debugScroll = 1;
     }
     if (gPlayer1Controller->buttonPressed & R_TRIG) {
@@ -663,7 +663,7 @@ void music_menu_scroll(void) {
             if (musicID == 0) stop_background_music(musicID);
             set_background_music(0, musicID, 0);
         }
-        if (debugScroll == 3) {
+        if (debugScroll == 4) {
             musicID = gAreas[gCurrAreaIndex].musicParam2;
             play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
@@ -702,24 +702,27 @@ void music_menu(void) {
 
     print_set_envcolour(255, 132, 0, 255);
     if (debugScroll != 3) print_set_envcolour(189, 49, 115, 255);
+    (dynMode != 0xFF)
+    ? sprintf(currOption, "Dynamic Music: %d", dynMode)
+    : sprintf(currOption, "Dynamic Music: Auto");
+    
+    print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    yPos += 12;
+
+    print_set_envcolour(255, 132, 0, 255);
+    if (debugScroll != 4) print_set_envcolour(189, 49, 115, 255);
     
     print_small_text_light(16, yPos, "Reset Sequence", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     yPos += 12;
 
     print_set_envcolour(255, 132, 0, 255);
-    if (debugScroll != 4) print_set_envcolour(189, 49, 115, 255);
+    if (debugScroll != 5) print_set_envcolour(189, 49, 115, 255);
     if (pitchInvert == 1) sprintf(currOption, "Invert Pitch: OFF", pitchInvert);
     if (pitchInvert == 2) sprintf(currOption, "Invert Pitch: Half", pitchInvert);
     if (pitchInvert == 3) sprintf(currOption, "Invert Pitch: Full", pitchInvert);
     if (pitchInvert == 4) sprintf(currOption, "Invert Pitch: Whatever tf this is", pitchInvert);
     if (pitchInvert == 5) sprintf(currOption, "Invert Pitch: OH GOD HELP", pitchInvert);
     
-    print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    yPos += 116;
-
-    print_set_envcolour(206, 156, 255, 255);
-    sprintf(currOption, "Scroll: %2d", debugScroll);
-
     print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
 
@@ -781,7 +784,7 @@ void fps_testing(void) {
 void testing(void) {
     char debug[64];
     print_set_envcolour(255, 255, 255, 255);
-    sprintf(debug, "%2.5f", gMarioState->intendedYaw);
+    // sprintf(debug, "%2.5f", wallkickVel);
     print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
     /*

@@ -1567,20 +1567,22 @@ void render_pause_red_coins(void) {
 #define SNAPDEF 1
 
 const u16 snapPreset[] = {
-    0,      /* List start */
-    360,
-    4,
-    8,
-    12,
-    16,
-    24,
-    32,
-    0xFFFF, /* List Terminator */
+    0,
+    0xFFFF, /* Increase values by 1 to get actual value (because of u16) */
+    3,
+    7,
+    11,
+    15,
+    23,
+    31,
+    47,
+    63,
+    1,
 };
 
 u8 snapSwitch = TRUE;
 u16 snapValue = snapPreset[SNAPDEF];
-u8 snapListValue = SNAPDEF;
+u8 snapListID = SNAPDEF;
 
 void config_options_scroll(void) {
     if (gHighlightToggle)
@@ -1844,23 +1846,22 @@ void config_options_box(void) {
     (xPos < 160) ? (xPos += 160) : (xPos -= 160);
     
     if (gConfigScroll == CFG_SNAP) {
-        // print_small_text_light(160, 192, "Max amount of steps is FPS-dependant.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
-        // print_small_text_light(160, 204, "Change amount of Physics Steps based on Mario's speed.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        print_small_text_light(160, 204, "Snap Mario's direction!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
     }
 
     if (gHighlightToggle && gConfigScroll == CFG_SNAP) {
         if (snapSwitch) {
-            snapListValue = value_slider(snapListValue, SNAPDEF, CFG_SNAP, 4);
-            if (snapListValue < 1) snapListValue = 1;
-            if (snapPreset[snapListValue] == 0xFFFF) snapListValue--;
-            snapValue = snapPreset[snapListValue];
+            snapListID = value_slider(snapListID, SNAPDEF, CFG_SNAP, 4);
+                        if (snapListID == 0) snapListID++;
+            if (snapPreset[snapListID] == 1) snapListID--;
+            snapValue = snapPreset[snapListID];
         } else snapValue = value_slider(snapValue, 8, CFG_SNAP, 2);
     }
     if (gConfigScroll != CFG_SNAP) print_set_envcolour(127, 127, 127, 255);
 
     if (snapSwitch) {
-        (snapValue == 360) ? sprintf(currOption, "Snap Preset: None", snapValue) : sprintf(currOption, "Snap Preset: %d", snapValue);
-    } else sprintf(currOption, "Snap Value: %d", snapValue);
+        (snapValue == 0xFFFF) ? sprintf(currOption, "Snap Preset: None", snapValue) : sprintf(currOption, "Snap Preset: %d", snapValue + 1);
+    } else sprintf(currOption, "Snap Value: %d", snapValue + 1);
 
     print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (xPos >= 160) yPos += 12;

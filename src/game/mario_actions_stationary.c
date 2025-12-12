@@ -913,10 +913,6 @@ s32 act_triple_jump_land_stop(struct MarioState *m) {
 }
 
 s32 act_backflip_land_stop(struct MarioState *m) {
-    if (!(m->input & INPUT_Z_DOWN) || m->marioObj->header.gfx.animInfo.animFrame >= 6) {
-        m->input &= ~INPUT_A_PRESSED;
-    }
-
     if (check_common_landing_cancels(m, ACT_BACKFLIP)) {
         return TRUE;
     }

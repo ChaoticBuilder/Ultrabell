@@ -103,25 +103,20 @@ void exclamation_box_act_scaling(void) {
     }
 }
 
-void exclamation_box_spawn_contents(struct ExclamationBoxContents *contentsList, u8 boxType) {
-    struct Object *contentsObj = NULL;
+void exclamation_box_spawn_contents(u8 boxType) {
+    struct Object *contentsObj = spawn_object(o, sExclamationBoxContents[boxType].model, sExclamationBoxContents[boxType].behavior);
+    /* Thanks Kaze! */
 
-    if (boxType < ARRAY_COUNT(sExclamationBoxContents)) {
-        struct ExclamationBoxContents *contents = &contentsList[boxType];
-
-        contentsObj = spawn_object(o, contents->model, contents->behavior);
-        contentsObj->oVelY = 20.0f;
-        contentsObj->oForwardVel = 3.0f;
-        contentsObj->oMoveAngleYaw = gMarioObject->oMoveAngleYaw;
-        OR_BPARAM1(o->oBehParams, contents->behParam);
-        if (contents->model == MODEL_STAR) {
-            o->oFlags |= OBJ_FLAG_PERSISTENT_RESPAWN;
-        }
+    contentsObj->oVelY = 20.0f; contentsObj->oForwardVel = 3.0f;
+    contentsObj->oMoveAngleYaw = gMarioObject->oMoveAngleYaw;
+    OR_BPARAM1(o->oBehParams, sExclamationBoxContents[boxType].behParam);
+    if (sExclamationBoxContents[boxType].model == MODEL_STAR) {
+        o->oFlags |= OBJ_FLAG_PERSISTENT_RESPAWN;
     }
 }
 
 void exclamation_box_act_explode(void) {
-    exclamation_box_spawn_contents(sExclamationBoxContents, o->oBehParams2ndByte);
+    exclamation_box_spawn_contents(o->oBehParams2ndByte);
     spawn_mist_particles_variable(0, 0, 46.0f);
     spawn_triangle_break_particles(20, MODEL_CARTOON_STAR, 0.3f, o->oAnimState);
     create_sound_spawner(SOUND_GENERAL_BREAK_BOX);

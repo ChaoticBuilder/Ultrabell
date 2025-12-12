@@ -78,9 +78,9 @@
             "normal_range_lo": 14,
             "normal_range_hi": 15,
             "envelope": "envelope3",
-            "sound_lo": {"sample": "32_metal_rimshot", "tuning": 2.244924},
+            "sound_lo": {"sample": "32_metal_rimshot", "tuning": 2.5198432},
             "sound": "33_kick_drum_2",
-            "sound_hi": {"sample": "32_metal_rimshot", "tuning": 2.828428}
+            "sound_hi": {"sample": "32_metal_rimshot", "tuning": 3.3635864}
         },
         "inst4": {
             "release_rate": 10,

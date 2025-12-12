@@ -773,8 +773,7 @@ s32 act_quicksand_death(struct MarioState *m) {
 s32 act_eaten_by_bubba(struct MarioState *m) {
     play_sound_if_no_flag(m, SOUND_MARIO_DYING, MARIO_ACTION_SOUND_PLAYED);
     set_mario_animation(m, MARIO_ANIM_A_POSE);
-    // m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
-    // fake "beta weirdness" :3
+    m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
 #ifdef BREATH_METER
     m->breath = 0xFF;
 #endif

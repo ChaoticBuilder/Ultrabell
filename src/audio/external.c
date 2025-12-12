@@ -16,6 +16,7 @@
 #include "seq_ids.h"
 #include "dialog_ids.h"
 #include "game/game_init.h"
+#include "game/hud.h"
 
 #include "config/config_audio.h"
 
@@ -152,6 +153,8 @@ enum MusicDynConditionTypes {
     MARIO_IS_IN_ROOM,
 };
 
+#include "game/hud.h"
+
 #define DYN1(cond1, val1, res) (s16)(1 << (15 - cond1) | res), val1
 #define DYN2(cond1, val1, cond2, val2, res)                                                            \
     (s16)(1 << (15 - cond1) | 1 << (15 - cond2) | res), val1, val2
@@ -193,6 +196,10 @@ s16 sDynUnk38[] = {
     DYN1(MARIO_IS_IN_AREA, 3, 7),
     0,
 };
+s16 sDynST[] = {
+    0,
+    0,
+};
 s16 sDynNone[] = { SEQ_SOUND_PLAYER, 0 };
 
 u8 sCurrentMusicDynamic = 0xff;
@@ -223,9 +230,9 @@ struct MusicDynamic sMusicDynamics[8] = {
     { 0x0000, 127, 100, 0x0e43, 0, 100 }, // SEQ_LEVEL_WATER
     { 0x0003, 127, 100, 0x0e40, 0, 100 }, // SEQ_LEVEL_WATER
     { 0x0e43, 127, 200, 0x0000, 0, 200 }, // SEQ_LEVEL_WATER
-    { 0x02ff, 127, 100, 0x0100, 0, 100 }, // SEQ_LEVEL_UNDERGROUND
-    { 0x03f7, 127, 100, 0x0008, 0, 100 }, // SEQ_LEVEL_UNDERGROUND
-    { 0x0070, 127, 10, 0x0000, 0, 100 },  // SEQ_LEVEL_SPOOKY
+    { 0x02ff, 127, 100, 0x0020, 0, 100 }, // SEQ_LEVEL_UNDERGROUND
+    { 0x03f7, 127, 100, 0x0043, 0, 100 }, // SEQ_LEVEL_UNDERGROUND
+    { 0x0070, 127,  10, 0x0000, 0, 100 },  // SEQ_LEVEL_SPOOKY
     { 0x0000, 127, 100, 0x0070, 0, 10 },  // SEQ_LEVEL_SPOOKY
     { 0xffff, 127, 100, 0x0000, 0, 100 }, // any (unused)
 };
@@ -1692,6 +1699,11 @@ void process_level_music_dynamics(void) {
         sMusicDynamicDelay--;
     } else {
         sBackgroundMusicForDynamics = sCurrentBackgroundMusicSeqId;
+    }
+
+    if (dynMode != 0xFF) {
+        sDynST[0] = musicID; sDynST[1] = dynMode;
+        sLevelDynamics[gCurrLevelNum] = sDynST;
     }
 
     if (sBackgroundMusicForDynamics != sLevelDynamics[gCurrLevelNum][0]) {

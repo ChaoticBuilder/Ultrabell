@@ -1046,7 +1046,7 @@ void mode_radial_camera(struct Camera *c) {
 }
 
 s32 snap_to_45_degrees(s16 angle) {
-    snap_to_angle(angle, 8);
+    return snap_to_angle(angle, 8);
 }
 
 /**
@@ -2801,7 +2801,6 @@ void update_camera(struct Camera *c) {
         && gCurrentArea->camera->mode != CAMERA_MODE_INSIDE_CANNON) {
         // Only process R_TRIG if 'fixed' is not selected in the menu
 
-        /*
         if (gPlayer1Controller->buttonPressed & L_TRIG && gMarioState->action != ACT_DEBUG_FREE_MOVE) {
             if (c->mode == CAMERA_MODE_C_UP) {
                 play_sound_button_change_blocked();
@@ -2815,7 +2814,6 @@ void update_camera(struct Camera *c) {
                 play_sound_rbutton_changed();
             }
         }
-        */
         /*
         if (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) {
             if (gPlayer1Controller->buttonPressed & R_TRIG && !gMusicToggle && gMarioState->action != ACT_DEBUG_FREE_MOVE) {
