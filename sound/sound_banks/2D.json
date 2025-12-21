@@ -1,5 +1,5 @@
 {
-    "date": "1995-12-04",
+    "date": "1996-03-19",
     "sample_bank": "instruments",
     "envelopes": {
         "envelope0": [
@@ -7,13 +7,77 @@
             [1, 32767],
             [1, 32767],
             "hang"
+        ],
+        "envelope1": [
+            [1, 32767],
+            [1, 32767],
+            [1920, 24575],
+            "hang"
+        ],
+        "envelope2": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope4": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope5": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope6": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope7": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
         ]
     },
     "instruments": {
         "inst0": {
-            "release_rate": 34,
-            "envelope": "envelope0",
+            "release_rate": 207,
+            "envelope": "envelope1",
+            "sound": "2E_accordion"
+        },
+        "inst1": {
+            "release_rate": 255,
+            "envelope": "envelope1",
+            "sound": "1A_slap_bass"
+        },
+        "inst2": {
+            "release_rate": 12,
+            "envelope": "envelope1",
+            "sound": "48_steel_drum"
+        },
+        "inst3": {
+            "release_rate": 63,
+            "normal_range_lo": 29,
+            "envelope": "envelope1",
+            "sound_lo": "3B_banjo_2",
             "sound": "3C_acoustic_guitar"
+        },
+        "inst4": {
+            "release_rate": 208,
+            "envelope": "envelope1",
+            "sound": "16_french_horns"
         },
         "percussion": [
             {"release_rate": 10, "pan": 47, "envelope": "envelope0", "sound": {"sample": "06_kick_drum_1", "tuning": 0.890899}},
@@ -78,12 +142,20 @@
             {"release_rate": 10, "pan": 82, "envelope": "envelope0", "sound": {"sample": "perc_grand_bell", "tuning": 1.0}},
             {"release_rate": 10, "pan": 82, "envelope": "envelope0", "sound": {"sample": "perc_grand_bell", "tuning": 2.0}},
             {"release_rate": 10, "pan": 82, "envelope": "envelope0", "sound": {"sample": "20_cabasa", "tuning": 2.0}},
-            {"release_rate": 10, "pan": 82, "envelope": "envelope0", "sound": {"sample": "2F_sleigh_bells", "tuning": 1.0}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope0", "sound": {"sample": "2F_sleigh_bells", "tuning": 1.12246136}},
             {"release_rate": 10, "pan": 82, "envelope": "envelope0", "sound": {"sample": "misc_silence", "tuning": 0.0}},
             {"release_rate": 10, "pan": 128, "envelope": "envelope0", "sound": "0D_clave"}
         ]
     },
     "instrument_list": [
-        "inst0"
+        "inst0",
+        "inst1",
+        "inst2",
+        "inst3",
+        "inst4",
+        null,
+        null,
+		null,
+		null
     ]
 }

@@ -8,7 +8,7 @@
     "05_level_water": ["13"],
     "06_level_hot": ["0F"],
     "07_level_boss_koopa": ["12"],
-    "08_level_snow": ["0B"],
+    "08_level_snow": ["2D"],
     "09_level_slide": ["0D"],
     "0A_level_spooky": ["10", "21"],
     "0B_event_piranha_plant": ["14_piranha_music_box"],
@@ -40,5 +40,6 @@
     "25_custom_athletic": ["26"],
     "26_bowser_castle": ["0E"],
     "27_tutorial": ["27"],
-    "28_perctest": ["2A"]
+    "28_perctest": ["2A"],
+    "29_temp_snow": ["2C"]
 }

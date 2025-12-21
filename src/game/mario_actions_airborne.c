@@ -515,7 +515,6 @@ s32 act_freefall(struct MarioState *m) {
     }
 
     switch (m->actionArg) {
-        case 5:
         case ACT_ARG_FREEFALL_GENERAL:
             animation = MARIO_ANIM_GENERAL_FALL;
             break;
@@ -1228,7 +1227,6 @@ f32 wallkickVel = 0.0f;
 s32 check_wall_kick(struct MarioState *m) {
     if ((m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED) && m->prevAction == ACT_AIR_HIT_WALL)) {
         m->forwardVel = wallkickVel;
-        if (!gKickToggle && m->vel[1] >= 0) m->forwardVel *= MAX((m->vel[1] / 32.0f), 1.0f);
         m->faceAngle[1] += 0x8000;
         if (gABCToggle) return set_mario_action(m, ACT_FREEFALL, 0);
         return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
@@ -1252,7 +1250,7 @@ u32 wall_kick_step(struct MarioState *m, u32 landAction, s32 animation) {
             break;
         case AIR_STEP_NONE:
             /* Enforce a minimum speed to guarantee landing on the ledge */
-            mario_set_forward_vel(m, MAX(wallkickVel, (m->vel[1] >= 0) ? m->vel[1] : (-m->vel[1] / 2.0f)));
+            mario_set_forward_vel(m, MAX(wallkickVel, m->vel[1]));
             set_mario_action(m, ACT_FREEFALL, 0);
             m->vel[1] = 0.0f;
             break;
@@ -1374,7 +1372,7 @@ s32 act_wall_slide (struct MarioState *m) {
         if (!gKickToggle) {
             play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
             if (gGlobalTimer % 2 == 0) m->particleFlags |= PARTICLE_DUST;
-            mario_set_forward_vel(m, 1.0f);
+            mario_set_forward_vel(m, 0.0f);
         } else if (gRealToggle && m->wallKickTimer == (gKickTimer * gDeltaTime)) m->vel[1] = 0;
 
         if (check_wall_kick(m)) {
@@ -1382,6 +1380,8 @@ s32 act_wall_slide (struct MarioState *m) {
         }
 
         if (!gKickToggle) {
+            m->pos[0] -= m->wall->normal.x * 4.f;
+            m->pos[2] -= m->wall->normal.z * 4.f;
             wall_kick_step(m, ACT_FREEFALL_LAND, MARIO_ANIM_START_WALLKICK);
             m->marioObj->header.gfx.angle[1] += 0x8000;
         } else {
@@ -1435,6 +1435,7 @@ s32 act_getting_blown(struct MarioState *m) {
 }
 
 s32 act_air_hit_wall(struct MarioState *m) {
+    if (m->prevAction == ACT_FREEFALL) return set_mario_action(m, ACT_FREEFALL, 0); /* band-aid fix for short platforms / small overhangs */
     if (m->heldObj != NULL) {
         mario_drop_held_object(m);
     }
@@ -1444,16 +1445,15 @@ s32 act_air_hit_wall(struct MarioState *m) {
         if (!gRealToggle) m->vel[1] = 24.0f;
         set_mario_action(m, ACT_WALL_SLIDE, 0);
     } else {
+        wallkickVel = m->forwardVel + MAX(m->vel[1] / 2.0f, 0);
+        if (m->vel[1] < 20.0f) m->vel[1] = 20.0f;
         m->vel[1] += (m->forwardVel / 8.0f);
-        if (m->vel[1] < 32.0f) m->vel[1] = 32.0f;
-        wallkickVel = m->forwardVel;
         set_mario_action(m, ACT_WALL_SLIDE, 0);
     }
 
     m->particleFlags |= PARTICLE_VERTICAL_STAR;
     set_mario_animation(m, MARIO_ANIM_START_WALLKICK);
     play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
-    m->particleFlags |= PARTICLE_DUST;
     return TRUE;
 }
 

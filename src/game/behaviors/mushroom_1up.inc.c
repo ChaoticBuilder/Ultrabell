@@ -17,8 +17,7 @@ void bhv_1up_interact(void) {
 #endif
 #ifdef ENABLE_LIVES
     if (!gRealToggle) {
-        mTimer = 30;
-        gMarioState->numLives++;
+        mTimer = 30; gMarioState->numLives++;
     }
 #endif
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;

@@ -73,6 +73,9 @@ void bhv_hidden_blue_coin_loop(void) {
     o->oInteractStatus = INT_STATUS_NONE;
 }
 
+#include "src/game/hud.h"
+u8 firstAttempt = TRUE;
+
 /**
  * Update function for bhvBlueCoinSwitch.
  */
@@ -148,6 +151,13 @@ void bhv_blue_coin_switch_loop(void) {
             }
 #ifdef BLUE_COIN_SWITCH_RETRY
             if (cur_obj_nearest_object_with_behavior(bhvHiddenBlueCoin) == NULL) {
+                if (firstAttempt) {
+                    play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
+                    mTimer = 30; gMarioState->numLives++;
+                } else {
+                    play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
+                }
+                firstAttempt = TRUE;
                 spawn_mist_particles_variable(0, 0, 46.0f);
                 obj_mark_for_deletion(o);
             // Set to BLUE_COIN_SWITCH_ACT_EXTENDING after the coins unload after the 240-frame timer expires.
@@ -164,6 +174,7 @@ void bhv_blue_coin_switch_loop(void) {
                 spawn_mist_particles_variable(0, 0, 46.0f);
                 obj_mark_for_deletion(o);
             } else if (o->oTimer > 3) {
+                firstAttempt = FALSE;
                 // Set to BLUE_COIN_SWITCH_ACT_IDLE
                 o->oAction = BLUE_COIN_SWITCH_ACT_IDLE;
             } else {
@@ -175,7 +186,9 @@ void bhv_blue_coin_switch_loop(void) {
 #else
             // Delete the switch (which stops the sound) after the last coin is collected,
             // or after the coins unload after the 240-frame timer expires.
-            if ((cur_obj_nearest_object_with_behavior(bhvHiddenBlueCoin) == NULL) || o->oTimer > 240) {
+            u8 allCoins = (cur_obj_nearest_object_with_behavior(bhvHiddenBlueCoin) == NULL) ? TRUE : FALSE;
+            if (allCoins || o->oTimer > 240) {
+                if (allCoins) play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
                 obj_mark_for_deletion(o);
             }
 #endif

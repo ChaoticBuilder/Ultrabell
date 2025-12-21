@@ -52,6 +52,7 @@ enum SeqId {
     SEQ_BOWSER_CASTLE,                // 0x26
     SEQ_TUTORIAL,                     // 0x27
     SEQ_PERCTEST,
+    SEQ_TEMP_SNOW,
     SEQ_COUNT
 };
 
