@@ -936,6 +936,9 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
         case ACT_GROUND_POUND:
             m_sd_preset(PARTICLE_DUST, JUMP);
+            (!g95Toggle)
+            ? (m->vel[1] = ABS(m->vel[1] / 1.5))
+            : (m->vel[1] = 0.0f);
             break;
     }
 

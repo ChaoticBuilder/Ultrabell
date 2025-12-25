@@ -543,10 +543,8 @@ s32 should_begin_sliding(struct MarioState *m) {
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
-        if (m->forwardVel > 20.0f) {
-            if (g95Toggle || gABCToggle) {
-                (!gRealToggle) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f);
-            }
+        if (m->forwardVel >= 16.0f) {
+            if (g95Toggle || gABCToggle) { (!gRealToggle) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f); }
             return set_mario_action(m, ACT_DIVE, 1);
         }
 
@@ -822,7 +820,7 @@ s32 act_walking(struct MarioState *m) {
         return set_jump_from_landing(m);
     }
 
-    if (check_ground_dive_or_punch(m)) {
+    if (m->input & INPUT_B_PRESSED && check_ground_dive_or_punch(m)) {
         return TRUE;
     }
 
@@ -1130,7 +1128,7 @@ s32 act_decelerating(struct MarioState *m) {
             return set_jump_from_landing(m);
         }
 
-        if (check_ground_dive_or_punch(m)) {
+        if (m->input & INPUT_B_PRESSED && check_ground_dive_or_punch(m)) {
             return TRUE;
         }
 
@@ -1310,7 +1308,7 @@ s32 act_crawling(struct MarioState *m) {
         return set_jumping_action(m, ACT_JUMP, 0);
     }
 
-    if (check_ground_dive_or_punch(m)) {
+    if (m->input & INPUT_B_PRESSED && check_ground_dive_or_punch(m)) {
         return TRUE;
     }
 
@@ -1553,7 +1551,7 @@ s32 act_crouch_slide(struct MarioState *m) {
         if (m->forwardVel >= 16.0f && !g95Toggle) {
             return set_mario_action(m, ACT_SLIDE_KICK, 0);
         } else if (gABCToggle < 2) {
-            return set_jumping_action(m, ACT_DIVE, 0);
+            if (check_ground_dive_or_punch(m)) return TRUE;
         }
     }
 
