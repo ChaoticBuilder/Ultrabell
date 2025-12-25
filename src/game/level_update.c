@@ -725,6 +725,8 @@ void initiate_painting_warp(void) {
  * Return the time left until the delayed warp is initiated.
  */
 s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
+    s32 fadeMusic = TRUE;
+
     if (sDelayedWarpOp == WARP_OP_NONE) {
         m->invincTimer = -1;
         sDelayedWarpArg = WARP_FLAGS_NONE;
@@ -736,12 +738,14 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 sDelayedWarpTimer = (0x14 * gDeltaTime);
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
                 gSavedCourseNum = COURSE_NONE;
+                fadeMusic = FALSE;
                 play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
 
             case WARP_OP_CREDITS_END:
                 sDelayedWarpTimer = (0x30 * gDeltaTime);
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
+                fadeMusic = FALSE;
                 gSavedCourseNum = COURSE_NONE;
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
@@ -750,7 +754,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 sDelayedWarpTimer = (0x28 * gDeltaTime);
                 sSourceWarpNodeId = WARP_NODE_DEFAULT;
                 gSavedCourseNum = COURSE_NONE;
-                play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0xFF, 0xFF, 0xC5);
+                play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
             case WARP_OP_DEATH:
@@ -761,7 +765,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
 #endif
                 sDelayedWarpTimer = (0x28 * gDeltaTime);
                 sSourceWarpNodeId = WARP_NODE_DEATH;
-                play_transition(WARP_TRANSITION_FADE_INTO_BOWSER, sDelayedWarpTimer, 0x42, 0x00, 0x08);
+                play_transition(WARP_TRANSITION_FADE_INTO_BOWSER, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 play_sound(SOUND_MENU_BOWSER_LAUGH, gGlobalSoundSource);
 #ifdef PREVENT_DEATH_LOOP
                 m->isDead = TRUE;
@@ -806,6 +810,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
             case WARP_OP_TELEPORT:
                 sDelayedWarpTimer = (0x10 * gDeltaTime);
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
+                fadeMusic = !music_unchanged_through_warp(sSourceWarpNodeId);
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
@@ -813,12 +818,14 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 sDelayedWarpTimer = (0x14 * gDeltaTime);
                 sDelayedWarpArg = m->actionArg;
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
+                fadeMusic = !music_unchanged_through_warp(sSourceWarpNodeId);
                 play_transition(WARP_TRANSITION_FADE_INTO_CIRCLE, sDelayedWarpTimer, 0xFF, 0xFF, 0xFF);
                 break;
 
             case WARP_OP_WARP_OBJECT:
                 sDelayedWarpTimer = (0x14 * gDeltaTime);
                 sSourceWarpNodeId = GET_BPARAM2(m->usedObj->oBehParams);
+                fadeMusic = !music_unchanged_through_warp(sSourceWarpNodeId);
                 play_transition(WARP_TRANSITION_FADE_INTO_STAR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 break;
 
@@ -835,19 +842,16 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                     sDelayedWarpTimer = (0x14 * gDeltaTime);
                     play_transition(WARP_TRANSITION_FADE_INTO_COLOR, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 }
+                fadeMusic = FALSE;
                 break;
         }
-        /*
         if (fadeMusic && gCurrDemoInput == NULL) {
             fadeout_music((sDelayedWarpTimer * 0xC));
         }
-        */
     }
 
     return sDelayedWarpTimer;
 }
-
-u8 gZ64Toggle = FALSE;
 
 /**
  * If a delayed warp is ready, initiate it.
