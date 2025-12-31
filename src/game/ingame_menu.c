@@ -492,7 +492,7 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
     if (hudLUT == HUD_LUT_JPMENU) {
         xStride = 16;
     } else { // HUD_LUT_GLOBAL
-        xStride = 12; //? Shindou uses this.
+        xStride = 14; //? Shindou uses this.
     }
 
     while (str[strPos] != GLOBAR_CHAR_TERMINATOR) {

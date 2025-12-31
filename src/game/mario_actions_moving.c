@@ -182,7 +182,7 @@ void update_sliding_angle(struct MarioState *m, f32 accel, f32 lossFactor) {
     m->faceAngle[1] = m->slideYaw + newFacingDYaw;
 
     m->vel[0] = m->slideVelX;
-    m->vel[1] = (m->forwardVel / 3);
+    m->vel[1] = ABS(m->forwardVel / 3);
     m->vel[2] = m->slideVelZ;
 
     mario_update_moving_sand(m);

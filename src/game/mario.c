@@ -803,7 +803,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
         case ACT_BACKFLIP:
             aGravToggle = TRUE;
             m_sd_preset(PARTICLE_DUST, SMOVE);
-            set_mario_y_vel_based_on_fspeed(m, 76.0f, 0.0f);
+            set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f);
             m->marioObj->header.gfx.animInfo.animID = -1;
             m->forwardVel = -16.0f;
             break;
@@ -1054,6 +1054,23 @@ u32 set_mario_action(struct MarioState *m, u32 action, u32 actionArg) {
     m->actionArg = actionArg;
     m->actionState = 0;
     m->actionTimer = 0;
+
+    return TRUE;
+}
+
+u32 reinit_mario_action(struct MarioState *m) {
+    switch (m->action & ACT_GROUP_MASK) {
+        case ACT_GROUP_MOVING:    m->action = set_mario_action_moving(   m, m->action, m->actionArg); break;
+        case ACT_GROUP_AIRBORNE:  m->action = set_mario_action_airborne( m, m->action, m->actionArg); break;
+        case ACT_GROUP_SUBMERGED: m->action = set_mario_action_submerged(m, m->action, m->actionArg); break;
+        case ACT_GROUP_CUTSCENE:  m->action = set_mario_action_cutscene( m, m->action, m->actionArg); break;
+    }
+
+    // Resets the sound played flags, meaning Mario can play those sound types again.
+    m->flags &= ~(MARIO_ACTION_SOUND_PLAYED | MARIO_MARIO_SOUND_PLAYED);
+
+    m->prevAction = m->action;
+    m->actionState = 0;
 
     return TRUE;
 }
@@ -1311,10 +1328,12 @@ void debug_print_speed_action_normal(struct MarioState *m) {
 void update_mario_button_inputs(struct MarioState *m) {
     if (m->controller->buttonPressed & A_BUTTON) m->input |= INPUT_A_PRESSED;
     if (m->controller->buttonDown    & A_BUTTON) m->input |= INPUT_A_DOWN;
+    /*
     if (m->controller->buttonPressed & R_TRIG) {
         gLuigiToggle ^= 1;
         play_sound(SOUND_GENERAL_CASTLE_TRAP_OPEN, gGlobalSoundSource);
     }
+    */
 
     if (!gLuigiToggle) m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_MARIO];
     else               m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LUIGI];

@@ -136,14 +136,6 @@ void print_intro_text(void) {
     }
 }
 
-u8 z64c = 0;
-
-void z64_text(void) {
-    z64c = (z64c + 1) % 60;
-    print_text_centered(160, 120, "ULTRABELL E3 DEMO");
-    if (z64c >= 30) print_text_centered(160, 100, "PRESS START");
-}
-
 u32 get_mario_spawn_type(struct Object *obj) {
     s32 i;
     const BehaviorScript *behavior = virtual_to_segmented(SEGMENT_BEHAVIOR_DATA, obj->behavior);

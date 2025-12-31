@@ -2814,7 +2814,6 @@ void update_camera(struct Camera *c) {
                 play_sound_rbutton_changed();
             }
         }
-        /*
         if (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) {
             if (gPlayer1Controller->buttonPressed & R_TRIG && !gMusicToggle && gMarioState->action != ACT_DEBUG_FREE_MOVE) {
                 if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {
@@ -2825,7 +2824,6 @@ void update_camera(struct Camera *c) {
             }
         }
         play_sound_if_cam_switched_to_lakitu_or_mario();
-        */
     }
 
     // Initialize the camera
@@ -2971,7 +2969,6 @@ void update_camera(struct Camera *c) {
 #ifdef PUPPYCAM
     if (!gPuppyCam.enabled || c->cutscene != 0 || gCurrentArea->camera->mode == CAMERA_MODE_INSIDE_CANNON) {
 #endif
-/*
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
     if (gCurrLevelNum != LEVEL_CASTLE) {
 #endif
@@ -3011,7 +3008,6 @@ void update_camera(struct Camera *c) {
         }
     }
 #endif
-*/
 
     update_lakitu(c);
 #ifdef PUPPYCAM

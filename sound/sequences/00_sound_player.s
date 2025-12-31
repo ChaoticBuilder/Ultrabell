@@ -2189,12 +2189,8 @@ layer_end
 .sound_mario_whoa:
 chan_setbank 8
 chan_setinstr 8
-chan_setlayer 0, .layer_CC0
+chan_setlayer 0, .layer_C3C
 chan_end
-
-.layer_CC0:
-layer_note1 37, 0x18, 110
-layer_end
 
 .sound_mario_eeuh:
 chan_setbank 8
@@ -2265,7 +2261,8 @@ chan_setlayer 0, .layer_D33
 chan_end
 
 .layer_D33:
-layer_note1_mario 40, 0xaa, 127
+layer_portamento_mario 0x85 39 
+layer_note1_mario 37, 0x106, 127
 layer_end
 
 .sound_mario_haha:
@@ -4099,6 +4096,7 @@ layer_end
 chan_setbank 9
 chan_setinstr 3
 # chan_setenvelope .envelope_3378 // Envelope for EU/SH not authentic to JP sound
+chan_setvolscale 95
 chan_setlayer 0, .layer_1907
 chan_setlayer 1, .layer_1902
 chan_setlayer 2, .layer_1909

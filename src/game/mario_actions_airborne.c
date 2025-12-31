@@ -174,7 +174,7 @@ void update_air(struct MarioState *m) {
     if (!check_horizontal_wind(m)) {
         // f32 sideVel = 0.0f;
         f32 dragThreshold = (m->flags & MARIO_METAL_CAP) ? 48.0f : 32.0f;
-        m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.375f / gDeltaTime, 0.375f / gDeltaTime);
+        m->forwardVel = approach_f32(m->forwardVel, 0.0f, 0.5f / gDeltaTime, 0.5f / gDeltaTime);
         if (m->input & INPUT_NONZERO_ANALOG) {
             f32 intendedDYaw = m->intendedYaw - m->faceAngle[1];
             f32 intendedMag = m->intendedMag / 32.0f;
@@ -182,7 +182,7 @@ void update_air(struct MarioState *m) {
             
             m->forwardVel += intendedMag * coss(intendedDYaw) * 1.5f / gDeltaTime;
             //       sideVel = intendedMag * sins(intendedDYaw) * 10.0f / gDeltaTime;
-            if (m->action == ACT_LONG_JUMP || m->action == ACT_WALL_KICK_AIR || m->action == ACT_BACKFLIP) turnSpd *= 0.5f;
+            if (m->action == ACT_LONG_JUMP || m->action == ACT_WALL_KICK_AIR || m->action == ACT_BACKFLIP) turnSpd *= 0.375f;
             m->faceAngle[1] += intendedMag * sins(intendedDYaw) * ABS(m->forwardVel + 48.0f) * turnSpd / gDeltaTime;
             /*
             m->faceAngle[1] = m->intendedYaw -
@@ -484,6 +484,11 @@ s32 act_backflip(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
+
+    if (m->input & INPUT_A_PRESSED && m->prevAction != ACT_BACKFLIP && m->actionTimer > 0) {
+        reinit_mario_action(m); /* Double Jump */
+    }
+    m->actionTimer = 1;
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAH_WAH_HOO);
     if (!gLuigiToggle) common_air_action_step(m, ACT_BACKFLIP_LAND, MARIO_ANIM_BACKFLIP, 0);
