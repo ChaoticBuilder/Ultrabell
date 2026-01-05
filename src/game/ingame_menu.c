@@ -40,7 +40,7 @@ s32 gDialogVariable;
 u16 gDialogTextAlpha;
 s16 gCutsceneMsgXOffset;
 s16 gCutsceneMsgYOffset;
-s8 gRedCoinsCollected;
+u8 gRedCoinsCollected;
 u8 gConfigOpen = FALSE;
 u8 gConfigScroll = 1;
 u8 gHighlightToggle = FALSE;
@@ -1498,14 +1498,12 @@ void shade_screen(void) {
 }
 
 void print_animated_red_coin(s16 x, s16 y) {
-    s32 globalTimer = gGlobalTimer;
-
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0);
-    create_dl_scale_matrix(MENU_MTX_NOPUSH, 0.2f, 0.2f, 1.0f);
+    create_dl_scale_matrix(MENU_MTX_NOPUSH, 0.25f, 0.25f, 1.0f);
     gDPSetRenderMode(gDisplayListHead++, G_RM_TEX_EDGE, G_RM_TEX_EDGE2);
 
 #ifdef IA8_30FPS_COINS
-    switch (globalTimer & 0x7) {
+    switch (gGlobalTimer & 0x7) {
         case 0: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_0     ); break;
         case 1: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_22_5  ); break;
         case 2: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_45    ); break;
@@ -1516,11 +1514,13 @@ void print_animated_red_coin(s16 x, s16 y) {
         case 7: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_22_5_r); break;
     }
 #else
-    switch (globalTimer & 0x6) {
-        case 0: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_front     ); break;
-        case 2: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_tilt_right); break;
-        case 4: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_side      ); break;
-        case 6: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_tilt_left ); break;
+    switch ((vBlanks >> 2) % 6) {
+        case 0: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_0  ); break;
+        case 1: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_1  ); break;
+        case 2: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_2  ); break;
+        case 3: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_3  ); break;
+        case 4: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_2_r); break;
+        case 5: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_1_r); break;
     }
 #endif
 
@@ -1529,39 +1529,23 @@ void print_animated_red_coin(s16 x, s16 y) {
 }
 
 void render_pause_red_coins(void) {
-    s8 x;
+    print_animated_red_coin(GFX_DIMENSIONS_FROM_RIGHT_EDGE(80), 16);
+    Mtx *mtx;
 
-    if (gRedCoinsCollected <= 9) {
-        for (x = 0; x < gRedCoinsCollected; x++) {
-            print_animated_red_coin(GFX_DIMENSIONS_FROM_RIGHT_EDGE(30) - x * 20, 16);
-        }
+    mtx = alloc_display_list(sizeof(*mtx));
+    if (mtx == NULL) {
+        return;
     }
-    else {
-        print_animated_red_coin(GFX_DIMENSIONS_FROM_RIGHT_EDGE(108), 16);
-        Mtx *mtx;
+    guOrtho(mtx, 0.0f, SCREEN_WIDTH, 0.0f, SCREEN_HEIGHT, -10.0f, 10.0f, 1.0f);
+    gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx), G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
 
-        mtx = alloc_display_list(sizeof(*mtx));
-        if (mtx == NULL) {
-            return;
-        }
-        guOrtho(mtx, 0.0f, SCREEN_WIDTH, 0.0f, SCREEN_HEIGHT, -10.0f, 10.0f, 1.0f);
-        gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx), G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
-        gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+    u8 redCoins[4];
+    int_to_str(gRedCoinsCollected, redCoins);
+    print_hud_lut_string(HUD_LUT_GLOBAL, GFX_DIMENSIONS_FROM_RIGHT_EDGE(64), 208, redCoins);
 
-        s8 redCoinCount = gRedCoinsCollected;
-        if (redCoinCount > 99) {
-            redCoinCount = 99;
-        }
-
-        add_glyph_texture(GLYPH_MULTIPLY);
-        render_textrect(GFX_DIMENSIONS_FROM_RIGHT_EDGE(100), 16, 0);
-        add_glyph_texture(char_to_glyph_index((char) (48 + (redCoinCount / 10))));
-        render_textrect(GFX_DIMENSIONS_FROM_RIGHT_EDGE(86), 16, 0);
-        add_glyph_texture(char_to_glyph_index((char) (48 + (redCoinCount % 10))));
-        render_textrect(GFX_DIMENSIONS_FROM_RIGHT_EDGE(86), 16, 1);
-
-        gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
-    }
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }
 
 #define SNAPDEF 1

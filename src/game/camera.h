@@ -12,6 +12,7 @@
 #include "level_table.h"
 
 extern u8 dirCheck;
+extern s32 test;
 
 // X position of the mirror
 #define CASTLE_MIRROR_X 4331.53f

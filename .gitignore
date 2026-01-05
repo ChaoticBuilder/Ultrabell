@@ -1049,6 +1049,7 @@ sound/samples/sfx_mario/03_mario_haha.aiff
 sound/samples/sfx_mario/04_mario_yahoo.aiff
 sound/samples/sfx_mario/06_mario_hrmm.aiff
 sound/samples/sfx_mario/07_mario_wah2.aiff
+sound/samples/sfx_mario/08_mario_whoa.aiff
 sound/samples/sfx_mario/0A_mario_attacked.aiff
 sound/samples/sfx_mario/0D_mario_yawning.aiff
 sound/samples/sfx_mario/0E_mario_snoring1.aiff
@@ -1063,6 +1064,7 @@ sound/samples/sfx_mario/17_mario_ima_tired.aiff
 sound/samples/sfx_mario/18_mario_waha.aiff
 sound/samples/sfx_mario/19_mario_yippee.aiff
 sound/samples/sfx_mario/1A_mario_lets_a_go.aiff
+sound/samples/sfx_mario_peach/00_mario_waaaooow.aiff
 sound/samples/sfx_mario_peach/01_mario_hoohoo.aiff
 sound/samples/sfx_mario_peach/02_mario_panting.aiff
 sound/samples/sfx_mario_peach/04_mario_on_fire.aiff
@@ -1589,8 +1591,6 @@ textures/segment2/segment2.04200.rgba16.png
 textures/segment2/segment2.04400.rgba16.png
 textures/segment2/segment2.04600.rgba16.png
 textures/segment2/segment2.04A00.rgba16.png
-textures/segment2/segment2.04C00.rgba16.png
-textures/segment2/segment2.04E00.rgba16.png
 textures/segment2/segment2.05000.rgba16.png
 textures/segment2/segment2.05200.rgba16.png
 textures/segment2/segment2.05400.rgba16.png

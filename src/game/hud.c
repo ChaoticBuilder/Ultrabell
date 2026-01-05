@@ -765,26 +765,13 @@ void sleep_draw(void) {
     }
 }
 
-void fps_testing(void) {
-    // print_text_fmt_int(160, 32, "%d", (gMarioState->peakHeight - gMarioState->pos[1]) > FALL_DAMAGE_HEIGHT_SMALL);
-    /*
-    print_text_fmt_int(160, 32, "%d", delta(4, 1, gDeltaTime * 1));
-    print_text_fmt_int(160, 16, "%d", deltalite(4, gDeltaTime * 1));
-    */
-
-    /*
-    char test[32];
-    sprintf(test, "%2.1f", (gMarioState->peakHeight - gMarioState->pos[1]));
-    print_small_text_light(160, 16, test, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    */
-}
-
-#include "mario_actions_airborne.h"
+#include "camera.h"
+#include "area.h"
 
 void testing(void) {
     char debug[64];
     print_set_envcolour(255, 255, 255, 255);
-    // sprintf(debug, "%2.5f", wallkickVel);
+    sprintf(debug, "%d", gCurrLevelNum);
     print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
     /*
@@ -870,9 +857,7 @@ void render_hud(void) {
         music_menu();
         if (gDebugToggle) debug_stats();
         sleep_draw();
-        // float_test(); /* my testing concludes that sm64 uses ieee 754 floating point :3 
         if (!gHudToggle) return;
-        // timer_troll();
         if (gDebugLevelSelect && !gLVLToggle) demo_mode();
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

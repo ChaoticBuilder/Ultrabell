@@ -391,179 +391,110 @@ const Gfx coin_seg3_dl_secret_22_5_r[] = {
 };
 
 #else
-#ifdef IA8_COINS
-// 0x030056C0
 static const Vtx coin_seg3_vertex_yellow[] = {
-    {{{   -32,      0,      0}, 0, {     0,   4032}, {0xe8, 0xb8, 0x00, 0xff}}},
-    {{{    32,      0,      0}, 0, {  4032,   4032}, {0xff, 0xe8, 0x00, 0xff}}},
-    {{{    32,     64,      0}, 0, {  4032,      0}, {0xff, 0xff, 0x40, 0xff}}},
-    {{{   -32,     64,      0}, 0, {     0,      0}, {0xff, 0xe8, 0x00, 0xff}}},
+    {{{   -32,      0,      0}, 0, {    -8,   2040}, {0xff, 0xff, 0xff, 0xff}}}, // bottom left + small diagonal stripe
+    {{{    32,      0,      0}, 0, {  2040,   2040}, {0xff, 0xff, 0xff, 0xff}}}, // bottom right
+    {{{    32,     64,      0}, 0, {  2040,     -8}, {0xff, 0xff, 0xff, 0xff}}}, // top right + big diagonal stripe
+    {{{   -32,     64,      0}, 0, {    -8,     -8}, {0xff, 0xff, 0xff, 0xff}}}, // top left
 };
 
-// 0x03005700
-static const Vtx coin_seg3_vertex_blue[] = {
-    {{{   -50,      0,      0}, 0, {     0,   4032}, {0x20, 0x20, 0xff, 0xff}}},
-    {{{    50,      0,      0}, 0, {  4032,   4032}, {0x18, 0x50, 0xff, 0xff}}},
-    {{{    50,    100,      0}, 0, {  4032,      0}, {0x00, 0x80, 0xff, 0xff}}},
-    {{{   -50,    100,      0}, 0, {     0,      0}, {0x18, 0x50, 0xff, 0xff}}},
+static const Vtx coin_seg3_vertex_yellow_r[] = {
+    {{{   -32,      0,      0}, 0, {  2040,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    32,      0,      0}, 0, {    -8,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    32,     64,      0}, 0, {    -8,     -8}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   -32,     64,      0}, 0, {  2040,     -8}, {0xff, 0xff, 0xff, 0xff}}},
 };
 
-// 0x03005740
 static const Vtx coin_seg3_vertex_red[] = {
-    {{{   -35,      0,      0}, 0, {     0,   4032}, {0xc8, 0x00, 0x20, 0xff}}},
-    {{{    35,      0,      0}, 0, {  4032,   4032}, {0xff, 0x00, 0x00, 0xff}}},
-    {{{    35,     70,      0}, 0, {  4032,      0}, {0xff, 0x58, 0x08, 0xff}}},
-    {{{   -35,     70,      0}, 0, {     0,      0}, {0xff, 0x00, 0x00, 0xff}}},
-};
-#else
-static const Vtx coin_seg3_vertex_yellow[] = {
-    {{{   -32,      0,      0}, 0, {     0,   1984}, {0xff, 0xff, 0xff, 0xff}}}, // bottom left + small diagonal stripe
-    {{{    32,      0,      0}, 0, {  1984,   1984}, {0xff, 0xff, 0xff, 0xff}}}, // bottom right
-    {{{    32,     64,      0}, 0, {  1984,      0}, {0xff, 0xff, 0xff, 0xff}}}, // top right + big diagonal stripe
-    {{{   -32,     64,      0}, 0, {     0,      0}, {0xff, 0xff, 0xff, 0xff}}}, // top left
+    {{{   -40,      0,      0}, 0, {    -8,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    40,      0,      0}, 0, {  2040,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    40,     80,      0}, 0, {  2040,     -8}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   -40,     80,      0}, 0, {    -8,     -8}, {0xff, 0xff, 0xff, 0xff}}},
 };
 
-// 0x03005700
+static const Vtx coin_seg3_vertex_red_r[] = {
+    {{{   -40,      0,      0}, 0, {  2040,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    40,      0,      0}, 0, {    -8,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    40,     80,      0}, 0, {    -8,     -8}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   -40,     80,      0}, 0, {  2040,     -8}, {0xff, 0xff, 0xff, 0xff}}},
+};
+
 static const Vtx coin_seg3_vertex_blue[] = {
-    {{{   -50,      0,      0}, 0, {     0,   1984}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{    50,      0,      0}, 0, {  1984,   1984}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{    50,    100,      0}, 0, {  1984,      0}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{   -50,    100,      0}, 0, {     0,      0}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   -48,      0,      0}, 0, {    -8,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    48,      0,      0}, 0, {  2040,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    48,     96,      0}, 0, {  2040,     -8}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   -48,     96,      0}, 0, {    -8,     -8}, {0xff, 0xff, 0xff, 0xff}}},
 };
 
-// 0x03005740
-static const Vtx coin_seg3_vertex_red[] = {
-    {{{   -35,      0,      0}, 0, {     0,   1984}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{    35,      0,      0}, 0, {  1984,   1984}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{    35,     70,      0}, 0, {  1984,      0}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{   -35,     70,      0}, 0, {     0,      0}, {0xff, 0xff, 0xff, 0xff}}},
-};
-/* GRAYSCALE COLORS
-static const Vtx coin_seg3_vertex_yellow[] = {
-    {{{   -32,      0,      0}, 0, {     0,   1984}, {0xff, 0xd6, 0x00, 0xff}}}, // bottom left + small diagonal stripe
-    {{{    32,      0,      0}, 0, {  1984,   1984}, {0xff, 0xd6, 0x00, 0xff}}}, // bottom right
-    {{{    32,     64,      0}, 0, {  1984,      0}, {0xff, 0xd6, 0x00, 0xff}}}, // top right + big diagonal stripe
-    {{{   -32,     64,      0}, 0, {     0,      0}, {0xff, 0xd6, 0x00, 0xff}}}, // top left
+static const Vtx coin_seg3_vertex_blue_r[] = {
+    {{{   -48,      0,      0}, 0, {  2040,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    48,      0,      0}, 0, {    -8,   2040}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{    48,     96,      0}, 0, {    -8,     -8}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   -48,     96,      0}, 0, {  2040,     -8}, {0xff, 0xff, 0xff, 0xff}}},
 };
 
-// 0x03005700
-static const Vtx coin_seg3_vertex_blue[] = {
-    {{{   -50,      0,      0}, 0, {     0,   1984}, {0x31, 0x63, 0xff, 0xff}}},
-    {{{    50,      0,      0}, 0, {  1984,   1984}, {0x31, 0x63, 0xff, 0xff}}},
-    {{{    50,    100,      0}, 0, {  1984,      0}, {0x31, 0x63, 0xff, 0xff}}},
-    {{{   -50,    100,      0}, 0, {     0,      0}, {0x31, 0x63, 0xff, 0xff}}},
-};
-
-// 0x03005740
-static const Vtx coin_seg3_vertex_red[] = {
-    {{{   -35,      0,      0}, 0, {     0,   1984}, {0xff, 0x00, 0x29, 0xff}}},
-    {{{    35,      0,      0}, 0, {  1984,   1984}, {0xff, 0x00, 0x29, 0xff}}},
-    {{{    35,     70,      0}, 0, {  1984,      0}, {0xff, 0x00, 0x29, 0xff}}},
-    {{{   -35,     70,      0}, 0, {     0,      0}, {0xff, 0x00, 0x29, 0xff}}},
-};
-*/
-#endif
-
-// 0x03005780
-#ifdef IA8_COINS
-ALIGNED8 static const Texture coin_seg3_texture_front[] = {
-#include "actors/coin/coin_front.ia8.inc.c"
-};
-
-// 0x03005F80
-ALIGNED8 static const Texture coin_seg3_texture_tilt_right[] = {
-#include "actors/coin/coin_tilt_right.ia8.inc.c"
-};
-
-// 0x03006780
-ALIGNED8 static const Texture coin_seg3_texture_side[] = {
-#include "actors/coin/coin_side.ia8.inc.c"
-};
-
-// 0x03006F80
-ALIGNED8 static const Texture coin_seg3_texture_tilt_left[] = {
-#include "actors/coin/coin_tilt_left.ia8.inc.c"
-};
-#else
 /* YELLOW */
-
-ALIGNED8 static const Texture coin_yellow_front[] = {
-#include "actors/coin/coinyellow_front.rgba16.inc.c"
+ALIGNED8 static const Texture coin_yellow_0[] = {
+#include "actors/coin/coin_0.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_yellow_tilt_right[] = {
-#include "actors/coin/coinyellow_tilt_right.rgba16.inc.c"
+ALIGNED8 static const Texture coin_yellow_1[] = {
+#include "actors/coin/coin_1.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_yellow_side[] = {
-#include "actors/coin/coinyellow_side.rgba16.inc.c"
+ALIGNED8 static const Texture coin_yellow_2[] = {
+#include "actors/coin/coin_2.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_yellow_tilt_left[] = {
-#include "actors/coin/coinyellow_tilt_left.rgba16.inc.c"
+ALIGNED8 static const Texture coin_yellow_3[] = {
+#include "actors/coin/coin_3.rgba16.inc.c"
 };
 
 /* RED */
-
-ALIGNED8 static const Texture coin_red_front[] = {
-#include "actors/coin/coinred_front.rgba16.inc.c"
+ALIGNED8 static const Texture coin_red_0[] = {
+#include "actors/coin/coin_red_0.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_red_tilt_right[] = {
-#include "actors/coin/coinred_tilt_right.rgba16.inc.c"
+ALIGNED8 static const Texture coin_red_1[] = {
+#include "actors/coin/coin_red_1.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_red_side[] = {
-#include "actors/coin/coinred_side.rgba16.inc.c"
+ALIGNED8 static const Texture coin_red_2[] = {
+#include "actors/coin/coin_red_2.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_red_tilt_left[] = {
-#include "actors/coin/coinred_tilt_left.rgba16.inc.c"
+ALIGNED8 static const Texture coin_red_3[] = {
+#include "actors/coin/coin_red_3.rgba16.inc.c"
 };
 
 /* BLUE */
-
-ALIGNED8 static const Texture coin_blue_front[] = {
-#include "actors/coin/coinblue_front.rgba16.inc.c"
+ALIGNED8 static const Texture coin_blue_0[] = {
+#include "actors/coin/coin_blue_0.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_blue_tilt_right[] = {
-#include "actors/coin/coinblue_tilt_right.rgba16.inc.c"
+ALIGNED8 static const Texture coin_blue_1[] = {
+#include "actors/coin/coin_blue_1.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_blue_side[] = {
-#include "actors/coin/coinblue_side.rgba16.inc.c"
+ALIGNED8 static const Texture coin_blue_2[] = {
+#include "actors/coin/coin_blue_2.rgba16.inc.c"
 };
 
-ALIGNED8 static const Texture coin_blue_tilt_left[] = {
-#include "actors/coin/coinblue_tilt_left.rgba16.inc.c"
+ALIGNED8 static const Texture coin_blue_3[] = {
+#include "actors/coin/coin_blue_3.rgba16.inc.c"
 };
-#endif
 
 // 0x03007780 - 0x030077D0
 const Gfx coin_seg3_sub_dl_begin[] = {
     gsDPPipeSync(),
     gsSPClearGeometryMode(G_LIGHTING),
-#ifdef IA8_COINS
-    gsDPSetCombineMode(G_CC_MODULATEIA, G_CC_MODULATEIA),
-#else
     gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
-    gsDPSetTextureFilter(G_TF_POINT),
-#endif
     gsSPTexture(0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON),
-#ifdef IA8_COINS
-    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_CLAMP, 6, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
-    gsDPLoadSync(),
-    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 64/2 * 64 - 1, CALC_DXT(64/2, G_IM_SIZ_16b_BYTES)),
-    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_8b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 6, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
-    gsDPSetTileSize(0, 0, 0, (64 - 1) << G_TEXTURE_IMAGE_FRAC, (64 - 1) << G_TEXTURE_IMAGE_FRAC),
-#else
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 5, G_TX_NOLOD),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 5, G_TX_NOLOD),
     gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
-#endif
     gsSPEndDisplayList(),
 };
 
@@ -574,227 +505,162 @@ const Gfx coin_seg3_sub_dl_end[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPSetGeometryMode(G_LIGHTING),
-    gsDPSetTextureFilter(G_TF_BILERP),
     gsSPEndDisplayList(),
 };
 
 // 0x03007800 - 0x03007828
-#ifdef IA8_COINS
-const Gfx coin_seg3_dl_yellow_front[] = {
+const Gfx coin_seg3_dl_yellow_0[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_front),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_0),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
     gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
 // 0x03007828 - 0x03007850
-const Gfx coin_seg3_dl_yellow_tilt_right[] = {
+const Gfx coin_seg3_dl_yellow_1[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_tilt_right),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_1),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
     gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
 // 0x03007850 - 0x03007878
-const Gfx coin_seg3_dl_yellow_side[] = {
+const Gfx coin_seg3_dl_yellow_2[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_side),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_2),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
     gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
 // 0x03007878 - 0x030078A0
-const Gfx coin_seg3_dl_yellow_tilt_left[] = {
+const Gfx coin_seg3_dl_yellow_3[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_tilt_left),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_3),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
     gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
-// 0x030078A0 - 0x030078C8
-const Gfx coin_seg3_dl_blue_front[] = {
+const Gfx coin_seg3_dl_yellow_2_r[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_front),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_2),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
+    gsSPVertex(coin_seg3_vertex_yellow_r, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
-// 0x030078C8 - 0x030078F0
-const Gfx coin_seg3_dl_blue_tilt_right[] = {
+const Gfx coin_seg3_dl_yellow_1_r[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_tilt_right),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_1),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
+    gsSPVertex(coin_seg3_vertex_yellow_r, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
-// 0x030078F0 - 0x03007918
-const Gfx coin_seg3_dl_blue_side[] = {
+// 0x03007800 - 0x03007828
+const Gfx coin_seg3_dl_red_0[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_side),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x03007918 - 0x03007940
-const Gfx coin_seg3_dl_blue_tilt_left[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_tilt_left),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x03007940 - 0x03007968
-const Gfx coin_seg3_dl_red_front[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_front),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_0),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
     gsSPVertex(coin_seg3_vertex_red, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x03007968 - 0x03007990
-const Gfx coin_seg3_dl_red_tilt_right[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_tilt_right),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_red, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x03007990 - 0x030079B8
-const Gfx coin_seg3_dl_red_side[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_side),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_red, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x030079B8 - 0x030079E0
-const Gfx coin_seg3_dl_red_tilt_left[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, coin_seg3_texture_tilt_left),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_red, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-#else
-
-const Gfx coin_seg3_dl_yellow_front[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_front),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
 // 0x03007828 - 0x03007850
-const Gfx coin_seg3_dl_yellow_tilt_right[] = {
+const Gfx coin_seg3_dl_red_1[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_tilt_right),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_1),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
+    gsSPVertex(coin_seg3_vertex_red, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
 // 0x03007850 - 0x03007878
-const Gfx coin_seg3_dl_yellow_side[] = {
+const Gfx coin_seg3_dl_red_2[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_side),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_2),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
+    gsSPVertex(coin_seg3_vertex_red, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
 // 0x03007878 - 0x030078A0
-const Gfx coin_seg3_dl_yellow_tilt_left[] = {
+const Gfx coin_seg3_dl_red_3[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_yellow_tilt_left),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_yellow, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x030078A0 - 0x030078C8
-const Gfx coin_seg3_dl_blue_front[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_front),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x030078C8 - 0x030078F0
-const Gfx coin_seg3_dl_blue_tilt_right[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_tilt_right),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x030078F0 - 0x03007918
-const Gfx coin_seg3_dl_blue_side[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_side),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x03007918 - 0x03007940
-const Gfx coin_seg3_dl_blue_tilt_left[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_tilt_left),
-    gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
-    gsSPBranchList(coin_seg3_sub_dl_end),
-};
-
-// 0x03007940 - 0x03007968
-const Gfx coin_seg3_dl_red_front[] = {
-    gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_front),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_3),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
     gsSPVertex(coin_seg3_vertex_red, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
-// 0x03007968 - 0x03007990
-const Gfx coin_seg3_dl_red_tilt_right[] = {
+const Gfx coin_seg3_dl_red_2_r[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_tilt_right),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_2),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_red, 4, 0),
+    gsSPVertex(coin_seg3_vertex_red_r, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
-// 0x03007990 - 0x030079B8
-const Gfx coin_seg3_dl_red_side[] = {
+const Gfx coin_seg3_dl_red_1_r[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_side),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_1),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_red, 4, 0),
+    gsSPVertex(coin_seg3_vertex_red_r, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
 
-// 0x030079B8 - 0x030079E0
-const Gfx coin_seg3_dl_red_tilt_left[] = {
+// 0x03007800 - 0x03007828
+const Gfx coin_seg3_dl_blue_0[] = {
     gsDPPipeSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_red_tilt_left),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_0),
     gsSPDisplayList(coin_seg3_sub_dl_begin),
-    gsSPVertex(coin_seg3_vertex_red, 4, 0),
+    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
     gsSPBranchList(coin_seg3_sub_dl_end),
 };
-#endif
 
+// 0x03007828 - 0x03007850
+const Gfx coin_seg3_dl_blue_1[] = {
+    gsDPPipeSync(),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_1),
+    gsSPDisplayList(coin_seg3_sub_dl_begin),
+    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
+    gsSPBranchList(coin_seg3_sub_dl_end),
+};
+
+// 0x03007850 - 0x03007878
+const Gfx coin_seg3_dl_blue_2[] = {
+    gsDPPipeSync(),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_2),
+    gsSPDisplayList(coin_seg3_sub_dl_begin),
+    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
+    gsSPBranchList(coin_seg3_sub_dl_end),
+};
+
+// 0x03007878 - 0x030078A0
+const Gfx coin_seg3_dl_blue_3[] = {
+    gsDPPipeSync(),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_3),
+    gsSPDisplayList(coin_seg3_sub_dl_begin),
+    gsSPVertex(coin_seg3_vertex_blue, 4, 0),
+    gsSPBranchList(coin_seg3_sub_dl_end),
+};
+
+const Gfx coin_seg3_dl_blue_2_r[] = {
+    gsDPPipeSync(),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_2),
+    gsSPDisplayList(coin_seg3_sub_dl_begin),
+    gsSPVertex(coin_seg3_vertex_blue_r, 4, 0),
+    gsSPBranchList(coin_seg3_sub_dl_end),
+};
+
+const Gfx coin_seg3_dl_blue_1_r[] = {
+    gsDPPipeSync(),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, coin_blue_1),
+    gsSPDisplayList(coin_seg3_sub_dl_begin),
+    gsSPVertex(coin_seg3_vertex_blue_r, 4, 0),
+    gsSPBranchList(coin_seg3_sub_dl_end),
+};
 #endif

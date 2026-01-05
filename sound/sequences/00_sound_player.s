@@ -2261,8 +2261,7 @@ chan_setlayer 0, .layer_D33
 chan_end
 
 .layer_D33:
-layer_portamento_mario 0x85 39 
-layer_note1_mario 37, 0x106, 127
+layer_note1_mario 38, 0x106, 127
 layer_end
 
 .sound_mario_haha:

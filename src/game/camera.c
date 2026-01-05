@@ -3349,6 +3349,7 @@ void update_graph_node_camera(struct GraphNodeCamera *gc) {
     gc->rollScreen = gLakituState.roll;
     vec3f_copy(gc->pos, gLakituState.pos);
     vec3f_copy(gc->focus, gLakituState.focus);
+    zoom_out_if_paused_and_outside(gc);
 }
 
 Gfx *geo_camera_main(s32 callContext, struct GraphNode *g, void *context) {
@@ -10249,26 +10250,23 @@ u8 sDanceCutsceneIndexTable[][4] = {
  * and if the result is non-zero, the camera will zoom out.
  */
 u8 sZoomOutAreaMasks[] = {
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // Unused         | Unused
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // Unused         | Unused
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // BBH            | CCM
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // CASTLE_INSIDE  | HMC
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // SSL            | BOB
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // SL             | WDW
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 1, 0, 0), // JRB            | THI
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // TTC            | RR
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // CASTLE_GROUNDS | BITDW
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // VCUTM          | BITFS
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // SA             | BITS
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 0, 0, 0, 0), // LLL            | DDD
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 0, 0, 0, 0), // WF             | ENDING
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // COURTYARD      | PSS
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // COTMC          | TOTWC
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // BOWSER_1       | WMOTR
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // Unused         | BOWSER_2
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 0, 0, 0, 0), // BOWSER_3       | Unused
-	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 0, 0, 0, 0), // TTM            | Unused
-	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // Unused         | Unused
+    ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // NONE     | NONE
+	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // GROUNDS  | COURTYARD
+	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // INSIDE   | BOB
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // WF       | JRB
+	ZOOMOUT_AREA_MASK(1, 1, 0, 0, 1, 0, 0, 0), // CCM      | BBH
+	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 1, 0, 0), // HMC      | LLL
+	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // SSL      | DDD
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // SL       | WDW
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 1, 0, 0), // TTM      | THI
+	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // TTC      | RR
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // BITDW    | BITFS
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // BITS     | TOTWC
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 0, 0, 0, 0), // VCUTM    | COTMC
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // PSS      | SA
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // WMOTR    | BOWSER 1
+	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // BOWSER 2 | BOWSER 3
+	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // ENDING   | TEST
 };
 
 STATIC_ASSERT(ARRAY_COUNT(sZoomOutAreaMasks) - 1 == LEVEL_MAX / 2, "Make sure you edit sZoomOutAreaMasks when adding / removing courses.");

@@ -10,7 +10,7 @@
  */
 void bhv_hidden_blue_coin_loop(void) {
     struct Object *blueCoinSwitch;
-    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
+    o->oAnimState = (vBlanks >> 2) % 6;
 
     switch (o->oAction) {
         case HIDDEN_BLUE_COIN_ACT_INACTIVE:
