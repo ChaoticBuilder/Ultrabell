@@ -64,7 +64,7 @@ const LevelScript level_vcutm_entry[] = {
         TERRAIN(/*terrainData*/ vcutm_seg7_collision),
         MACRO_OBJECTS(/*objList*/ vcutm_seg7_macro_objs),
         SHOW_DIALOG(/*index*/ 0x00, DIALOG_129),
-        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0000, /*seq*/ SEQ_LEVEL_SLIDE),
+        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0000, /*seq*/ SEQ_TEMP_SLIDE),
         TERRAIN_TYPE(/*terrainType*/ TERRAIN_STONE),
     END_AREA(),
 

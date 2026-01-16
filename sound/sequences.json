@@ -3,7 +3,7 @@
     "00_sound_player": ["00", "01_terrain", "02_water", "03", "04", "05", "06", "07", "08_mario", "09", "0A_mario_peach"],
     "01_cutscene_collect_star": ["22"],
     "02_menu_title_screen": ["11"],
-    "03_level_grass": ["22"],
+    "03_level_grass": ["2E"],
     "04_level_inside_castle": ["0E"],
     "05_level_water": ["13"],
     "06_level_hot": ["0F"],
@@ -41,5 +41,5 @@
     "26_bowser_castle": ["0E"],
     "27_tutorial": ["27"],
     "28_perctest": ["2A"],
-    "29_temp_snow": ["2C"]
+    "29_temp_slide": ["2C"]
 }

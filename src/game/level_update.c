@@ -427,8 +427,8 @@ void init_mario_after_warp(void) {
 
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
         if (gCurrLevelNum == LEVEL_BOB
-            && get_current_background_music() != SEQUENCE_ARGS(4, SEQ_LEVEL_SLIDE) && sTimerRunning) {
-            play_music(SEQ_PLAYER_LEVEL, SEQUENCE_ARGS(4, SEQ_LEVEL_SLIDE), 0);
+            && get_current_background_music() != SEQUENCE_ARGS(4, SEQ_TEMP_SLIDE) && sTimerRunning) {
+            play_music(SEQ_PLAYER_LEVEL, SEQUENCE_ARGS(4, SEQ_TEMP_SLIDE), 0);
         }
 
         if (sWarpDest.levelNum == LEVEL_CASTLE && sWarpDest.areaIdx == 1

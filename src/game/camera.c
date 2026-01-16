@@ -10254,7 +10254,7 @@ u8 sZoomOutAreaMasks[] = {
 	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // GROUNDS  | COURTYARD
 	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 0, 0, 0), // INSIDE   | BOB
 	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // WF       | JRB
-	ZOOMOUT_AREA_MASK(1, 1, 0, 0, 1, 0, 0, 0), // CCM      | BBH
+	ZOOMOUT_AREA_MASK(1, 1, 0, 0, 0, 0, 0, 0), // CCM      | BBH
 	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 1, 1, 0, 0), // HMC      | LLL
 	ZOOMOUT_AREA_MASK(0, 0, 0, 0, 0, 0, 0, 0), // SSL      | DDD
 	ZOOMOUT_AREA_MASK(1, 0, 0, 0, 1, 0, 0, 0), // SL       | WDW

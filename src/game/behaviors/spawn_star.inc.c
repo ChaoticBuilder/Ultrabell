@@ -49,10 +49,15 @@ void bhv_star_spawn_init(void) {
     cur_obj_become_intangible();
 }
 
+f32 animSPD = 0.0f;
+f32 animSPDInc = 0.0f;
+u8  animSPDTarget = 0;
+
 void bhv_star_spawn_loop(void) {
     switch (o->oAction) {
         case SPAWN_STAR_ARC_CUTSCENE_ACT_START:
-            o->oAnimState = (vBlanks >> 1) % 8;
+            animSPDTarget = 4;
+
             cur_obj_become_intangible();
             if (o->oTimer > 20) {
                 o->oAction = SPAWN_STAR_ARC_CUTSCENE_ACT_GO_TO_HOME;
@@ -63,10 +68,12 @@ void bhv_star_spawn_loop(void) {
             obj_move_xyz_using_fvel_and_yaw(o);
             o->oStarSpawnVelY += o->oVelY;
             o->oPosY = o->oStarSpawnVelY + sins((o->oTimer * 0x8000) / 30) * (400.0f / gDeltaTime);
-            o->oAnimState = (vBlanks >> 1) % 8;
+            animSPDTarget = 48;
+
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
             cur_obj_play_sound_1(SOUND_ENV_STAR);
             if (o->oTimer >= 29) {
+                animSPDTarget = 4;
                 o->oAction = SPAWN_STAR_ARC_CUTSCENE_ACT_BOUNCE;
                 o->oForwardVel = 0;
                 // Set to exact home coordinates
@@ -76,13 +83,12 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_BOUNCE:
-            if (o->oTimer < 20) {
-                o->oVelY = (20 - o->oTimer) / gDeltaTime;
-            } else {
+            if (o->oTimer < 20) o->oVelY = (20 - o->oTimer) / gDeltaTime;
+            else {
+                animSPDTarget = 8;
                 o->oVelY = -10.0f / gDeltaTime;
             }
 
-            o->oAnimState = (vBlanks >> 1) % 8;
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
             obj_move_xyz_using_fvel_and_yaw(o);
             cur_obj_play_sound_1(SOUND_ENV_STAR);
@@ -96,18 +102,16 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_END:
-            if (o->oTimer < 20) {
-                o->oAnimState = (vBlanks / 3) % 8;
-            } else {
-                o->oAnimState = (vBlanks >> 2) % 8;
-            }
-
             if (o->oInteractStatus & INT_STATUS_INTERACTED) {
                 obj_mark_for_deletion(o);
                 o->oInteractStatus = INT_STATUS_NONE;
             }
             break;
     }
+    f32 animSPDGoal = animSPDTarget / (gDeltaTime * 8.0f);
+    animSPD += (animSPDInc = approach_f32_symmetric(animSPDInc, animSPDGoal, ABS(animSPDGoal - animSPDInc) / 256.0f));
+    o->oAnimState = (u8)(animSPD) % 8;
+    print_text_fmt_int(16, 16, "%d", animSPDInc);
 }
 
 struct Object *spawn_star(struct Object *starObj, f32 x, f32 y, f32 z) {

@@ -103,7 +103,7 @@ void bhv_spawned_star_loop(void) {
     }
 
     cur_obj_move_using_fvel_and_gravity();
-    if (gGlobalTimer % 2 == 0) o->oAnimState++;
+    o->oAnimState = (vBlanks >> 1) % 8;
     o->oInteractStatus = INT_STATUS_NONE;
 }
 

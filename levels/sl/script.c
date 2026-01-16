@@ -82,7 +82,7 @@ const LevelScript level_sl_entry[] = {
         WARP_NODE(/*id*/ 0xF1, /*destLevel*/ LEVEL_CASTLE, /*destArea*/ 0x02, /*destNode*/ 0x68, /*flags*/ WARP_NO_CHECKPOINT),
         TERRAIN(/*terrainData*/ sl_seg7_area_1_collision),
         MACRO_OBJECTS(/*objList*/ sl_seg7_area_1_macro_objs),
-        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0000, /*seq*/ SEQ_TEMP_SNOW),
+        SET_BACKGROUND_MUSIC(/*settingsPreset*/ 0x0000, /*seq*/ SEQ_LEVEL_SNOW),
         TERRAIN_TYPE(/*terrainType*/ TERRAIN_SNOW),
     END_AREA(),
 
