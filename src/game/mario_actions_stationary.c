@@ -1024,7 +1024,7 @@ s32 act_twirl_land(struct MarioState *m) {
     }
 
     m->marioObj->header.gfx.angle[1] += m->twirlYaw;
-    if (is_anim_at_end(m) && m->angleVel[1] == 0) {
+    if (is_anim_at_end(m)) {
         m->faceAngle[1] += m->twirlYaw;
         set_mario_action(m, ACT_IDLE, 0);
     }

@@ -1001,7 +1001,6 @@
 "sound/sequences/us/05_level_water.m64": [4780,{"us":[8093328]}],
 "sound/sequences/us/07_level_boss_koopa.m64": [3418,{"us":[8100576]}],
 "sound/sequences/us/0A_level_spooky.m64": [5674,{"us":[8119584]}],
-"sound/sequences/us/0B_event_piranha_plant.m64": [1395,{"us":[8125264]}],
 "sound/sequences/us/0C_level_underground.m64": [4887,{"us":[8126672]}],
 "sound/sequences/us/0D_menu_star_select.m64": [134,{"us":[8131568]}],
 "sound/sequences/us/0E_event_powerup.m64": [3129,{"us":[8131712]}],

@@ -893,21 +893,16 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_DIVE:
             m_sd_preset(PARTICLE_DUST, SMOVE);
-            if (!(m->input & INPUT_Z_DOWN)) {
-                if (!g95Toggle && !gABCToggle) {
-                    if (m->vel[1] < 0) m->vel[1] = 0;
-                    m->vel[1] /= 2.0f;
-                    m->vel[1] += 24.0f;
+            if (!g95Toggle && !gABCToggle) {
+                if (m->vel[1] < 0) m->vel[1] = 0;
+                m->vel[1] /= 1.5f;
+                m->vel[1] += 24.0f;
 
-                    s16 spdcap = (gFlightToggle || m->flags & MARIO_METAL_CAP) ? 96 : 56;
-                    if (m->forwardVel >= 0 && m->forwardVel <= spdcap) m->forwardVel += 16.0f;
-                } else {
-                    if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
-                    if ((m->forwardVel += 15.0f) > 48.0f) m->forwardVel = 48.0f;
-                }
-            } else { 
-                m->forwardVel *= 1.3125f; m->vel[1] = (-m->forwardVel / 2.0f) + 24.0f;
-                if (m->forwardVel < 16.0f) m->forwardVel = 16.0f;
+                s16 spdcap = (gFlightToggle || m->flags & MARIO_METAL_CAP) ? 96 : 56;
+                if (m->forwardVel >= 0 && m->forwardVel <= spdcap) m->forwardVel += 16.0f;
+            } else {
+                if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
+                if ((m->forwardVel += 15.0f) > 48.0f) m->forwardVel = 48.0f;
             }
             break;
 

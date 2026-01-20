@@ -1713,7 +1713,7 @@ u32 value_slider(u32 var, u32 def, u8 scroll, u8 rate) {
     print_set_envcolour(255, 255, 255, 255);
     if (gHighlightToggle && gConfigScroll == scroll) {
         print_set_envcolour(255, 255, 95, 255);
-        if (gGlobalTimer % rate == 0) {
+        if (vBlanks % rate == 0) {
             if (gPlayer1Controller->buttonDown & L_JPAD) var--;
             if (gPlayer1Controller->buttonDown & R_JPAD) var++;
             if (gPlayer1Controller->buttonPressed & D_JPAD) {
@@ -1722,10 +1722,7 @@ u32 value_slider(u32 var, u32 def, u8 scroll, u8 rate) {
             }
         }
     }
-
-    (!gKickToggle)
-    ? (gKickTimer = CLAMP(gKickTimer, 0, 20))
-    : (gKickTimer = CLAMP(gKickTimer, 1, 15));
+    if (scroll == CFG_VKICK) var = CLAMP((s32)var, 0, 30);
     return var;
 }
 

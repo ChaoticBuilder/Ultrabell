@@ -538,7 +538,7 @@ s32 act_freefall(struct MarioState *m) {
     m->actionTimer++;
 
     m->marioBodyState->eyeState = MARIO_EYES_LOOK_DOWN;
-    common_air_action_step(m, ACT_FREEFALL_LAND, animation, AIR_STEP_CHECK_LEDGE_GRAB);
+    common_air_action_step(m, ACT_FREEFALL_LAND, animation, AIR_STEP_CHECK_LEDGE_GRAB | AIR_STEP_CHECK_HANG);
     return FALSE;
 }
 
@@ -703,7 +703,7 @@ s32 act_twirling(struct MarioState *m) {
     s16 yawVelTarget =
     ((twirlMulti >= 1.0f) ? twirlMulti : (1.0f / twirlMulti)) * ((!g95Toggle || gRealToggle) ? 0x1400 : 0x1800);
 
-    if (auto_dive(m)) return TRUE;
+    if (m->input & INPUT_B_PRESSED) return set_mario_action(m, ACT_DIVE, 0);
 
     if (m->actionArg < 2 && m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
@@ -749,7 +749,8 @@ s32 act_twirling(struct MarioState *m) {
 
     switch (perform_air_step(m, 0)) {
         case AIR_STEP_LANDED:
-            set_mario_action(m, ACT_TWIRL_LAND, 0);
+            m->angleVel[1] = 0;
+            set_mario_action(m, ACT_IDLE, 0);
             break;
 
         case AIR_STEP_HIT_WALL:
@@ -1372,7 +1373,7 @@ s32 act_wall_slide (struct MarioState *m) {
             play_sound((SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend), m->marioObj->header.gfx.cameraToObject);
             if (gGlobalTimer % 2 == 0) m->particleFlags |= PARTICLE_DUST;
             mario_set_forward_vel(m, 0.0f);
-        } else if (gRealToggle && m->wallKickTimer == (gKickTimer * gDeltaTime)) m->vel[1] = 0;
+        } else if (gRealToggle && m->wallKickTimer == gKickTimer) m->vel[1] = 0;
 
         if (check_wall_kick(m)) {
             return TRUE;
@@ -1439,7 +1440,7 @@ s32 act_air_hit_wall(struct MarioState *m) {
         mario_drop_held_object(m);
     }
 
-    m->wallKickTimer = (gKickTimer * gDeltaTime);
+    m->wallKickTimer = gKickTimer;
     if (gKickToggle) {
         if (!gRealToggle) m->vel[1] = 24.0f;
         set_mario_action(m, ACT_WALL_SLIDE, 0);
@@ -1778,7 +1779,7 @@ s32 act_slide_kick(struct MarioState *m) {
 s32 act_jump_kick(struct MarioState *m) {
     if (gDiveToggle == 1)
         return set_mario_action(m, ACT_DIVE, 0);
-    if ((m->input & INPUT_A_PRESSED || m->input & INPUT_Z_PRESSED) && m->actionTimer > 0) {
+    if ((m->input & INPUT_A_PRESSED) && m->actionTimer > 0) {
         set_mario_action(m, ACT_DIVE, 0);
     }
     m->actionTimer++;
