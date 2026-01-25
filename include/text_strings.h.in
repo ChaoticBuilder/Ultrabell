@@ -90,7 +90,7 @@
 #define TEXT_HUD_PRESS_L _("PRESS L TO SWITCH")
 #endif
 
-#define TEXT_CONFIG_OPEN _("PRESS R TO OPEN CONFIG")
+#define TEXT_CONFIG_OPEN _("OPEN CONFIG")
 #define TEXT_CONFIG_CLOSE _("PRESS R TO CLOSE CONFIG")
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -199,11 +199,11 @@
  */
 // Main Screens
 #define TEXT_MARIO _("MARIO") // View Score Menu
-#define TEXT_SELECT_FILE _("SELECT FILE")
-#define TEXT_CHECK_FILE _("CHECK FILE")
-#define TEXT_COPY_FILE _("COPY FILE")
-#define TEXT_ERASE_FILE _("ERASE FILE")
-#define TEXT_SOUND_SELECT _("SOUND SELECT")
+#define TEXT_SELECT_FILE _("SELECT YOUR FILE")
+#define TEXT_CHECK_FILE _("CHECK THE SCORES")
+#define TEXT_COPY_FILE _("COPY A FILE")
+#define TEXT_ERASE_FILE _("ERASE A FILE")
+#define TEXT_SOUND_SELECT _("CONFIG")
 #define TEXT_FILE_MARIO_A _("FILE A")
 #define TEXT_FILE_MARIO_B _("FILE B")
 #define TEXT_FILE_MARIO_C _("FILE C")
@@ -213,21 +213,19 @@
 #define TEXT_SCORE _("SCORE")
 #define TEXT_COPY _("COPY")
 #define TEXT_ERASE _("ERASE")
+#define TEXT_RETURN _("RETURN")
 
 // Sound Options
 #define TEXT_STEREO _("STEREO")
 #define TEXT_MONO _("MONO")
 #define TEXT_HEADSET _("HEADSET")
 
-// Misc Menu Text
-#define TEXT_SAVED_DATA_EXISTS _("SAVED DATA EXISTS") // Misspell
-#define TEXT_NO_SAVED_DATA_EXISTS _("NO SAVED DATA EXISTS")
+/* Todo: add file overwriting behavior */
 
-// Inside a Menu
-#define TEXT_RETURN _("RETURN")
-#define TEXT_CHECK_SCORE _("CHECK SCORE")
-#define TEXT_COPY_FILE_BUTTON _("COPY FILE")
-#define TEXT_ERASE_FILE_BUTTON _("ERASE FILE")
+// Misc Menu Text
+#define TEXT_SAVED_DATA_EXISTS _("THIS FILE IS OCCUPIED!")
+#define TEXT_NO_SAVED_DATA_EXISTS _("NO DATA HERE!")
+
 
 // Score Menu
 #define TEXT_HI_SCORE _("HI SCORE")
@@ -239,15 +237,15 @@
 #define TEXT_SCORE_MARIO_D _("☺D")
 
 // Copy Menu
-#define TEXT_COPY_IT_TO_WHERE _("COPYING TO")
-#define TEXT_COPYING_COMPLETED _("COPYING COMPLETED")
-#define TEXT_NO_FILE_TO_COPY_FROM _("FILE IS NOT EMPTY")
+#define TEXT_COPY_IT_TO_WHERE _("CHOOSE A SLOT!")
+#define TEXT_COPYING_COMPLETED _("COPYING COMPLETE!")
+#define TEXT_NO_FILE_TO_COPY_FROM _("ALL FILES ARE OCCUPIED!")
 
 // Erase Menu
-#define TEXT_SURE _("ARE YOU SURE?")
+#define TEXT_SURE _("ERASE THIS FILE?")
 #define TEXT_YES _("YES")
 #define TEXT_NO _("NO")
-#define TEXT_FILE_MARIO_A_JUST_ERASED _("MARIO A JUST ERASED")
+#define TEXT_DELETION_COMPLETED _("THEN IT WAS NEVER THERE.")
 
 /**
  * Menus Text (Pause, Course Completed)

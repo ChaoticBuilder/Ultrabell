@@ -4,9 +4,6 @@
 #include <PR/ultratypes.h>
 
 extern u8 gConfigOpen;
-
-extern u8 gConfigScroll;
-extern u8 gHighlightToggle;
 extern f32 sFovSlider;
 extern u8 gLuigiToggle;
 extern u8 gHudToggle;
@@ -41,6 +38,7 @@ enum ConfigMenuIDs {
     CFG_HUD,
     CFG_STATS,
     CFG_FPS,
+    CFG_CAM,
     /* Gameplay */
     CFG_LUIGI,
     CFG_MOVESET,

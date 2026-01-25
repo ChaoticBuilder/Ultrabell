@@ -1110,7 +1110,7 @@ void note_set_vel_pan_reverb(struct Note *note, f32 velocity, f32 pan, u8 reverb
 }
 
 void note_set_frequency(struct Note *note, f32 frequency) {
-    if (gLuigiToggle && (note->bankId == 8 || note->bankId == 10)) frequency *= 1.0594631f;
+    if (gLuigiToggle && (note->bankId == 8 || note->bankId == 10)) frequency *= 1.05946309f;
     switch (pitchInvert) {
         case 1:
             note->frequency = frequency;

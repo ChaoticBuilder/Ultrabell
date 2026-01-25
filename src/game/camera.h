@@ -11,9 +11,6 @@
 
 #include "level_table.h"
 
-extern u8 dirCheck;
-extern s32 test;
-
 // X position of the mirror
 #define CASTLE_MIRROR_X 4331.53f
 
@@ -321,7 +318,6 @@ enum CameraFov {
     CAM_FOV_NONE,
     CAM_FOV_SET_45,
     CAM_FOV_DEFAULT,
-    CAM_FOV_CASTLE,
     CAM_FOV_UNUSED_3,
     CAM_FOV_APP_45,
     CAM_FOV_SET_30,

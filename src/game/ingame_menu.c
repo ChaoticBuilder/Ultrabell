@@ -61,6 +61,7 @@ u8 gRealToggle = FALSE;
 u8 dynSteps = 0;
 u8 textConfigOpen[] = { TEXT_CONFIG_OPEN };
 u8 textConfigClose[] = { TEXT_CONFIG_CLOSE };
+f32 sFovSlider = 0.0f;
 
 #if MULTILANG
 #define seg2_course_name_table course_name_table_eu_en
@@ -1572,23 +1573,21 @@ void config_options_scroll(void) {
     if (gHighlightToggle)
         return;
 
-    if (gPlayer1Controller->buttonPressed == L_JPAD || (gPlayer1Controller->rawStickX <= -16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
-        gConfigScroll--;
-        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed == R_JPAD || (gPlayer1Controller->rawStickX >= 16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
-        gConfigScroll++;
-        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed == U_JPAD || (gPlayer1Controller->rawStickY >= 16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
-        if (gConfigScroll == (CFG_START + 1)) gConfigScroll = (CFG_END - 2);
-        else gConfigScroll -= 2;
-        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed == D_JPAD || (gPlayer1Controller->rawStickY <= -16.0f && gGlobalTimer % (u8)(gDeltaTime * 5.0f + 0.5f) == 0)) {
-        if (gConfigScroll == (CFG_END - 1)) gConfigScroll = (CFG_START + 2);
-        else gConfigScroll += 2;
-        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+    if (gGlobalTimer % 4 == 0) {
+        if (gPlayer1Controller->buttonDown & L_JPAD || gPlayer1Controller->rawStickX <= -16.0f) {
+            gConfigScroll--; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+        }
+        if (gPlayer1Controller->buttonDown & R_JPAD || gPlayer1Controller->rawStickX >=  16.0f) {
+            gConfigScroll++; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+        }
+        if (gPlayer1Controller->buttonDown & U_JPAD || gPlayer1Controller->rawStickY >=  16.0f) {
+            if (gConfigScroll == (CFG_START + 1)) gConfigScroll = (CFG_END - 2); else
+            { gConfigScroll -= 2; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+        }
+        if (gPlayer1Controller->buttonDown & D_JPAD || gPlayer1Controller->rawStickY <= -16.0f) {
+            if (gConfigScroll == (CFG_END - 1)) gConfigScroll = (CFG_START + 2); else
+            { gConfigScroll += 2; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+        }
     }
 
     if (gConfigScroll == CFG_START) gConfigScroll = (CFG_END - 1);
@@ -1600,23 +1599,18 @@ u8 gFPSSignal = FALSE;
 void config_options(void) {
     gFPSSignal = FALSE;
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
-        if (gConfigScroll == CFG_WIDE) {
 #ifdef WIDE
+        if (gConfigScroll == CFG_WIDE) {
             gConfig.widescreen ^= 1;
             save_file_set_widescreen_mode(gConfig.widescreen);
-#endif
         }
+#endif
         if (gConfigScroll == CFG_FOV) gHighlightToggle ^= 1;
         if (gConfigScroll == CFG_HUD) gHudToggle ^= 1;
-        if (gConfigScroll == CFG_STATS) {
-            gDebugToggle ^= 1;
-            gShowDebugText ^= 1;
-            /*
-            (gShowDebugText)
-            ? (gDebugInfoFlags = DEBUG_INFO_FLAG_DPRINT)
-            : (gDebugInfoFlags = DEBUG_INFO_NOFLAGS);
-            */
-            // not sure if I really need this tbh, and it's kinda annoying to accidentally change the page when using freemove sof
+        if (gConfigScroll == CFG_STATS) { gDebugToggle ^= 1; gShowDebugText ^= 1; }
+        if (gConfigScroll == CFG_CAM) {
+            (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO)
+            ? cam_select_alt_mode(CAM_SELECTION_FIXED) : cam_select_alt_mode(CAM_SELECTION_MARIO);
         }
         if (gConfigScroll == CFG_LUIGI) {
             gLuigiToggle ^= 1;
@@ -1674,35 +1668,23 @@ void config_options(void) {
 }
 
 void fov_slider(void) {
-    s16 minFOV = -15;
-    s16 maxFOV = 45;
-    if (gPlayer1Controller->rawStickX >= 32.0f) {
-        sFovSlider += 0.0625f;
-    }
-    if (gPlayer1Controller->rawStickX <= -32.0f) {
-        sFovSlider -= 0.0625f;
-    }
+    s16 minFov = -15; s16 maxFov = 45;
+    if (gPlayer1Controller->rawStickX <= -16.0f) { sFovSlider -= 0.03125f; }
+    if (gPlayer1Controller->rawStickX >= 16.0f) { sFovSlider += 0.03125f; }
+
     if (gGlobalTimer % 2 == 0) {
-        if (gPlayer1Controller->buttonDown & R_JPAD) {
-            sFovSlider++;
-            if (sFovSlider < maxFOV) {
-                play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-            }
-        } else if (gPlayer1Controller->buttonDown & L_JPAD) {
-            sFovSlider--;
-            if (sFovSlider > minFOV) {
-                play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-            }
-        }
+        if (gPlayer1Controller->buttonDown & L_JPAD) { sFovSlider--;
+            if (sFovSlider >= minFov) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource); }
+        if (gPlayer1Controller->buttonDown & R_JPAD) { sFovSlider++;
+            if (sFovSlider <= maxFov) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource); }
     }
-    if ((gPlayer1Controller->buttonPressed & L_JPAD && sFovSlider <= minFOV) || (gPlayer1Controller->buttonPressed & R_JPAD && sFovSlider >= maxFOV)) {
-        play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed == D_JPAD) {
-        sFovSlider = 0;
-        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-    }
-    sFovSlider = CLAMP(sFovSlider, minFOV, maxFOV);
+    if ((gPlayer1Controller->buttonPressed & L_JPAD && sFovSlider <= minFov) ||
+        (gPlayer1Controller->buttonPressed & R_JPAD && sFovSlider >= minFov)) play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
+
+    if (gPlayer1Controller->buttonPressed & D_JPAD) {
+        sFovSlider = 0; play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource); }
+
+    sFovSlider = CLAMP(sFovSlider, minFov, maxFov);
 }
 
 u16 gTimerTime = 60;
@@ -1741,90 +1723,89 @@ void config_option_render(u8 x, u8 y, const char *str, u8 scroll) {
 }
 
 void config_options_box(void) {
-    char currOption[80];
+    char config[64];
     config_options_scroll();
     config_options();
-    u8 xPos = 32;
-    u8 yPos = 28;
+    u8 x = 32;
+    u8 y = 28;
 
     print_set_envcolour(127, 175, 255, 255);
     print_small_text_light(142, 12, "Visual", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
 #ifdef WIDE
-    (!gConfig.widescreen) ? sprintf(currOption, "Ratio: 4:3") : sprintf(currOption, "Ratio: 16:9");
+    (!gConfig.widescreen) ? sprintf(config, "Ratio: 4:3") : sprintf(config, "Ratio: 16:9");
 #else
-    sprintf(currOption, "Widescreen Disabled");
+    sprintf(config, "Widescreen Disabled");
 #endif
+    (gConfigScroll == CFG_WIDE) ? print_set_envcolour(255, 255, 255, 255) : print_set_envcolour(127, 127, 127, 255);
 
-    config_option_render(xPos, yPos, currOption, CFG_WIDE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
-    print_set_envcolour(255, 255, 255, 255);
-    if (gHighlightToggle && gConfigScroll == CFG_FOV) {
-        fov_slider();
-        print_set_envcolour(255, 255, 95, 255);
-    }
-    if (gConfigScroll != CFG_FOV) print_set_envcolour(127, 127, 127, 255);
+    sprintf(config, "FOV: %2.4f", sFovSlider + 45.0f);
+    if (gConfigScroll == CFG_FOV) {
+        if (!gHighlightToggle) print_set_envcolour(255, 255, 255, 255);
+        else { fov_slider(); print_set_envcolour(255, 255, 95, 255); }
+    } else print_set_envcolour(127, 127, 127, 255);
 
-    (sFovSlider > 0) ? sprintf(currOption, "FOV: +%2.3f", sFovSlider) : sprintf(currOption, "FOV: %2.3f", sFovSlider);
-
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_HUD)
         print_small_text_light(160, 204, "Toggle the HUD Automatically hiding.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    (!gHudToggle) ? sprintf(currOption, "Hud Hide: On") : sprintf(currOption, "Hud Hide: Off");
+    (!gHudToggle) ? sprintf(config, "Hud Hide: On") : sprintf(config, "Hud Hide: Off");
 
-    config_option_render(xPos, yPos, currOption, CFG_HUD);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_HUD);
+    if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
-    (!gDebugToggle) ? sprintf(currOption, "debugstats: Off") : sprintf(currOption, "debugstats: On");
+    (!gDebugToggle) ? sprintf(config, "debugstats: Off") : sprintf(config, "debugstats: On");
     
-    config_option_render(xPos, yPos, currOption, CFG_STATS);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_STATS);
+    if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_FPS) print_small_text_light(160, 204, "FPS Cap (WARNING: UNSTABLE)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     switch (gFPSCap) {
-        case FPS_15: sprintf(currOption, "FPS: 15"); break;
-        case FPS_20: sprintf(currOption, "FPS: 20"); break;
-        case FPS_45: sprintf(currOption, "FPS: 45"); break;
-        case FPS_60: sprintf(currOption, "FPS: 60"); break;
-            default: sprintf(currOption, "FPS: 30"); break;
+        case FPS_15: sprintf(config, "FPS: 15"); break;
+        case FPS_20: sprintf(config, "FPS: 20"); break;
+        case FPS_45: sprintf(config, "FPS: 45"); break;
+        case FPS_60: sprintf(config, "FPS: 60"); break;
+            default: sprintf(config, "FPS: 30"); break;
     }
 
-    config_option_render(xPos, yPos, currOption, CFG_FPS);
-    if (xPos >= 160) xPos -= 160;
-    yPos += 32;
+    config_option_render(x, y, config, CFG_FPS);
+    if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
+
+    (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) ? sprintf(config, "Camera Angle: Mario") : sprintf(config, "Camera Angle: Fixed");
+    (gConfigScroll == CFG_CAM) ? print_set_envcolour(255, 255, 255, 255) : print_set_envcolour(127, 127, 127, 255);
+
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) { x -= 160; } y += 32;
 
     print_set_envcolour(255, 175, 127, 255);
-    print_small_text_light(136, (yPos - 16), "Gameplay", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    print_small_text_light(136, (y - 16), "Gameplay", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 
     if (!gLuigiToggle) print_set_envcolour(255, 95, 95, 255);
     if (gLuigiToggle) print_set_envcolour(95, 255, 95, 255);
     if (gConfigScroll == CFG_LUIGI) print_small_text_light(160, 204, "Choose your Player!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gLuigiToggle) { sprintf(currOption, "Brother: Mario"); print_set_envcolour(255, 95, 95, 255); }
-                  else { sprintf(currOption, "Brother: Luigi"); print_set_envcolour(95, 255, 95, 255); }
+    if (!gLuigiToggle) { sprintf(config, "Brother: Mario"); print_set_envcolour(255, 95, 95, 255); }
+                  else { sprintf(config, "Brother: Luigi"); print_set_envcolour(95, 255, 95, 255); }
 
     if (gConfigScroll != CFG_LUIGI) print_set_envcolour(127, 127, 127, 255);
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_MOVESET) print_small_text_light(160, 204, "Enable Luigi's special moves!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gMovesetToggle) sprintf(currOption, "Luigi's Moveset: Off"); else sprintf(currOption, "Luigi's Moveset: On");
+    if (!gMovesetToggle) sprintf(config, "Luigi's Moveset: Off"); else sprintf(config, "Luigi's Moveset: On");
 
-    config_option_render(xPos, yPos, currOption, CFG_MOVESET);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_MOVESET);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
     
     if (gConfigScroll == CFG_SNAP) {
         print_small_text_light(160, 204, "Snap Mario's direction!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
@@ -1841,12 +1822,12 @@ void config_options_box(void) {
     if (gConfigScroll != CFG_SNAP) print_set_envcolour(127, 127, 127, 255);
 
     if (snapSwitch) {
-        (snapValue == 0xFFFF) ? sprintf(currOption, "Snap Preset: None", snapValue) : sprintf(currOption, "Snap Preset: %d", snapValue + 1);
-    } else sprintf(currOption, "Snap Value: %d", snapValue + 1);
+        (snapValue == 0xFFFF) ? sprintf(config, "Snap Preset: None", snapValue) : sprintf(config, "Snap Preset: %d", snapValue + 1);
+    } else sprintf(config, "Snap Value: %d", snapValue + 1);
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_STEPS) {
         if (dynSteps == 1) print_small_text_light(160, 192, "Max amount of steps is FPS-dependant.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
@@ -1854,13 +1835,13 @@ void config_options_box(void) {
         print_small_text_light(160, 204, "Change amount of Physics Steps based on Mario's speed.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
     }
 
-    if (!dynSteps) sprintf(currOption, "Dynamic Steps: Off");
-    if (dynSteps == 1) sprintf(currOption, "Dynamic Steps: Mode 1");
-    if (dynSteps == 2) sprintf(currOption, "Dynamic Steps: Mode 2");
+    if (!dynSteps) sprintf(config, "Dynamic Steps: Off");
+    if (dynSteps == 1) sprintf(config, "Dynamic Steps: Mode 1");
+    if (dynSteps == 2) sprintf(config, "Dynamic Steps: Mode 2");
 
-    config_option_render(xPos, yPos, currOption, CFG_STEPS);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_STEPS);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_TIMER)
         print_small_text_light(160, 204, "Spaghetti Time. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
@@ -1868,45 +1849,45 @@ void config_options_box(void) {
     gTimerTime = value_slider(gTimerTime, 60, CFG_TIMER, 2); // this is temp, every level will have their own custom amount of time soon
     if (gConfigScroll != CFG_TIMER) print_set_envcolour(127, 127, 127, 255);
 
-    if (!gTimerToggle) sprintf(currOption, "Time Attack: Off");
+    if (!gTimerToggle) sprintf(config, "Time Attack: Off");
     if (gTimerToggle) {
         (!(COURSE_IS_MAIN_COURSE(gCurrCourseNum)))
-        ? sprintf(currOption, "Time Attack: %02d Seconds", gTimerTime)
-        : sprintf(currOption, "Lock in, Mario!");
+        ? sprintf(config, "Time Attack: %02d Seconds", gTimerTime)
+        : sprintf(config, "Lock in, Mario!");
     }
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_SSK) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!g95Toggle) sprintf(currOption, "Shoshinkai: Off");
-    if (g95Toggle) sprintf(currOption, "Shoshinkai: On");
+    if (!g95Toggle) sprintf(config, "Shoshinkai: Off");
+    if (g95Toggle) sprintf(config, "Shoshinkai: On");
 
-    config_option_render(xPos, yPos, currOption, CFG_SSK);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_SSK);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_REAL) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gRealToggle) sprintf(currOption, "Realistic Mode: Off");
-    if (gRealToggle) sprintf(currOption, "Realistic Mode: On");
+    if (!gRealToggle) sprintf(config, "Realistic Mode: Off");
+    if (gRealToggle) sprintf(config, "Realistic Mode: On");
 
-    config_option_render(xPos, yPos, currOption, CFG_REAL);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_REAL);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_DIVE)
         print_small_text_light(160, 204, "What behavior to use when pressing B in the air.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gDiveToggle)     sprintf(currOption, "Always Dive: Off");
-    if (gDiveToggle == 1) sprintf(currOption, "Always Dive: Dive");
-    if (gDiveToggle == 2) sprintf(currOption, "Always Dive: Auto");
+    if (!gDiveToggle)     sprintf(config, "Always Dive: Off");
+    if (gDiveToggle == 1) sprintf(config, "Always Dive: Dive");
+    if (gDiveToggle == 2) sprintf(config, "Always Dive: Auto");
 
-    config_option_render(xPos, yPos, currOption, CFG_DIVE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_DIVE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_VKICK) {
         (!gKickToggle)
@@ -1920,52 +1901,52 @@ void config_options_box(void) {
     if (gKickTimer >= 10) print_set_envcolour(127, 255, 175, 255);
     if (gConfigScroll != CFG_VKICK) print_set_envcolour(127, 127, 127, 255);
 
-    sprintf(currOption, "V-Kicks:%2d Frames", gKickTimer);
-    if (gKickTimer == 0) sprintf(currOption, "V-Kicks: Off");
-    if (gKickTimer == 1) sprintf(currOption, "V-Kicks: 1 Frame");
-    if (gKickTimer == 5) sprintf(currOption, "V-Kicks: Vanilla");
-    if (gKickTimer >= 10) sprintf(currOption, "V-Kicks: %2d Frames", gKickTimer);
+    sprintf(config, "V-Kicks:%2d Frames", gKickTimer);
+    if (gKickTimer == 0) sprintf(config, "V-Kicks: Off");
+    if (gKickTimer == 1) sprintf(config, "V-Kicks: 1 Frame");
+    if (gKickTimer == 5) sprintf(config, "V-Kicks: Vanilla");
+    if (gKickTimer >= 10) sprintf(config, "V-Kicks: %2d Frames", gKickTimer);
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_CTURN)
         print_small_text_light(160, 204, "Toggles Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gTurnToggle) sprintf(currOption, "Circle Turn: On");
-    if (gTurnToggle) sprintf(currOption, "Circle Turn: Off");
+    if (!gTurnToggle) sprintf(config, "Circle Turn: On");
+    if (gTurnToggle) sprintf(config, "Circle Turn: Off");
 
-    config_option_render(xPos, yPos, currOption, CFG_CTURN);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_CTURN);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gConfigScroll == CFG_ABC)
         print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gABCToggle) sprintf(currOption, "AB Challenge: Off");
-    if (gABCToggle == 1) sprintf(currOption, "AB Challenge: Easy");
-    if (gABCToggle == 2) sprintf(currOption, "AB Challenge: Hard");
+    if (!gABCToggle) sprintf(config, "AB Challenge: Off");
+    if (gABCToggle == 1) sprintf(config, "AB Challenge: Easy");
+    if (gABCToggle == 2) sprintf(config, "AB Challenge: Hard");
 
-    config_option_render(xPos, yPos, currOption, CFG_ABC);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_ABC);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     /*
     if (gConfigScroll == CFG_HARD) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    sprintf(currOption, "TEMP");
+    sprintf(config, "TEMP");
 
-    config_option_render(xPos, yPos, currOption, CFG_HARD);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    config_option_render(x, y, config, CFG_HARD);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
     */
 
     if (gDebugLevelSelect) {
         if (gConfigScroll == CFG_LVL) print_small_text_light(160, 204, "Programmer Mode.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-        if (!gLVLToggle) sprintf(currOption, "LVLSELECT Mode: Off");
-        if (gLVLToggle) sprintf(currOption, "LVLSELECT Mode: On");
+        if (!gLVLToggle) sprintf(config, "LVLSELECT Mode: Off");
+        if (gLVLToggle) sprintf(config, "LVLSELECT Mode: On");
 
         print_set_envcolour(255, 255, 255, 255);
         if (gConfigScroll != CFG_LVL) print_set_envcolour(127, 127, 127, 255);
@@ -1975,21 +1956,21 @@ void config_options_box(void) {
         print_set_envcolour(143, 143, 143, 255);
         if (gConfigScroll == CFG_LVL) print_small_text_light(160, 204, "Locked, available in Level Select.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-        sprintf(currOption, "Locked!");
+        sprintf(config, "Locked!");
 
         print_set_envcolour(143, 143, 143, 255);
         if (gConfigScroll != CFG_LVL) print_set_envcolour(79, 79, 79, 255);
     }
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
 
     if (gHudDisplay.stars >= 100) {
         if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-        if (!gFlightToggle) sprintf(currOption, "Infinite Flight: Off");
-        if (gFlightToggle) sprintf(currOption, "Infinite Flight: On");
+        if (!gFlightToggle) sprintf(config, "Infinite Flight: Off");
+        if (gFlightToggle) sprintf(config, "Infinite Flight: On");
 
         print_set_envcolour(255, 255, 255, 255);
         if (gConfigScroll != CFG_FLY) print_set_envcolour(127, 127, 127, 255);
@@ -1997,32 +1978,32 @@ void config_options_box(void) {
         print_set_envcolour(143, 143, 143, 255);
         if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Locked, collect 100 Stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-        sprintf(currOption, "Locked!");
+        sprintf(config, "Locked!");
 
         print_set_envcolour(143, 143, 143, 255);
         if (gConfigScroll != CFG_FLY) print_set_envcolour(79, 79, 79, 255);
     }
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
     
     spdSpd = value_slider(spdSpd, 0, CFG_DBG, 2);
     if (gConfigScroll != CFG_DBG) print_set_envcolour(127, 127, 127, 255);
 
-    if (!spdToggle) sprintf(currOption, "DEBUG SPEED: Off");
-    if (spdToggle && spdSpd != 0) sprintf(currOption, "DEBUG SPEED: %2d", spdSpd);
-    else if (spdToggle) sprintf(currOption, "DEBUG SPEED: MAX", spdSpd);
+    if (!spdToggle) sprintf(config, "DEBUG SPEED: Off");
+    if (spdToggle && spdSpd != 0) sprintf(config, "DEBUG SPEED: %2d", spdSpd);
+    else if (spdToggle) sprintf(config, "DEBUG SPEED: MAX", spdSpd);
 
-    print_small_text_light(xPos, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    if (xPos >= 160) yPos += 12;
-    (xPos < 160) ? (xPos += 160) : (xPos -= 160);
+    print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    if (x >= 160) y += 12;
+    (x < 160) ? (x += 160) : (x -= 160);
     /*
-    if (xPos >= 160) xPos -= 160;
-    yPos += 32;
+    if (x >= 160) x -= 160;
+    y += 32;
 
     print_set_envcolour(255, 127, 255, 255);
-    print_small_text_light(140, (yPos - 16), "Events", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
+    print_small_text_light(140, (y - 16), "Events", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     */
 }
 
@@ -2068,8 +2049,8 @@ void render_pause_my_score_coins(void) {
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
     if (courseIndex <= COURSE_NUM_TO_INDEX(COURSE_STAGES_MAX)) {
-        print_hud_my_score_coins(1, gCurrSaveFileNum - 1, courseIndex, 178, 103);
-        print_hud_my_score_stars(gCurrSaveFileNum - 1, courseIndex, 118, 103);
+        print_hud_my_score_coins(1, gCurrSaveFileNum - 1, courseIndex, 178, 123);
+        print_hud_my_score_stars(gCurrSaveFileNum - 1, courseIndex, 118, 123);
     }
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
@@ -2079,28 +2060,28 @@ void render_pause_my_score_coins(void) {
 
     if (courseIndex <= COURSE_NUM_TO_INDEX(COURSE_STAGES_MAX)
         && (save_file_get_course_star_count(gCurrSaveFileNum - 1, courseIndex) != 0)) {
-        print_generic_string(MYSCORE_X, 121, LANGUAGE_ARRAY(textMyScore));
+        print_generic_string(MYSCORE_X, 141, LANGUAGE_ARRAY(textMyScore));
     }
 
     u8 *courseName = segmented_to_virtual(courseNameTbl[courseIndex]);
 
     if (courseIndex <= COURSE_NUM_TO_INDEX(COURSE_STAGES_MAX)) {
-        print_generic_string(TXT_COURSE_X, 157, LANGUAGE_ARRAY(textCourse));
+        print_generic_string(TXT_COURSE_X, 177, LANGUAGE_ARRAY(textCourse));
         int_to_str(gCurrCourseNum, strCourseNum);
-        print_generic_string(CRS_NUM_X1, 157, strCourseNum);
+        print_generic_string(CRS_NUM_X1, 177, strCourseNum);
 
         u8 *actName = segmented_to_virtual(actNameTbl[COURSE_NUM_TO_INDEX(gCurrCourseNum) * 6 + gDialogCourseActNum - 1]);
 
         if (starFlags & (1 << (gDialogCourseActNum - 1))) {
-            print_generic_string(TXT_STAR_X, 140, textStar);
+            print_generic_string(TXT_STAR_X, 160, textStar);
         } else {
-            print_generic_string(TXT_STAR_X, 140, textUnfilledStar);
+            print_generic_string(TXT_STAR_X, 160, textUnfilledStar);
         }
 
-        print_generic_string(ACT_NAME_X, 140, actName);
-        print_generic_string(LVL_NAME_X, 157, courseName);
+        print_generic_string(ACT_NAME_X, 160, actName);
+        print_generic_string(LVL_NAME_X, 177, courseName);
     } else {
-        print_generic_string(SECRET_LVL_NAME_X, 157, courseName);
+        print_generic_string(SECRET_LVL_NAME_X, 177, courseName);
     }
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
@@ -2142,55 +2123,34 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
     }
 }
 
-#define X_VAL8 4
-#define Y_VAL8 2
-
 void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
     u8 textContinue[] = { TEXT_CONTINUE };
     u8 textExitCourse[] = { TEXT_EXIT_COURSE };
-    u8 textCameraAngleR[] = { TEXT_CAMERA_ANGLE_R };
 
     handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
-    print_generic_string(x + 10, y - 2, LANGUAGE_ARRAY(textContinue));
-    print_generic_string(x + 10, y - 17, LANGUAGE_ARRAY(textExitCourse));
+    print_generic_string(x, y + yIndex, LANGUAGE_ARRAY(textContinue));
+    print_generic_string(x, y, LANGUAGE_ARRAY(textExitCourse));
+    print_generic_string(x, y - yIndex, textConfigOpen);
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
-    if (*index != MENU_OPT_CAMERA_ANGLE_R) {
-        print_generic_string(x + 10, y - 33, LANGUAGE_ARRAY(textCameraAngleR));
-        gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+    create_dl_translation_matrix(MENU_MTX_PUSH, x - 16, y - ((*index - 2) * yIndex), 0);
 
-        create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((*index - 1) * yIndex)) - Y_VAL8, 0);
-
-        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-        gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
-        gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-    }
-
-    if (*index == MENU_OPT_CAMERA_ANGLE_R) {
-        render_pause_camera_options(x - 42, y - 42, &gDialogCameraAngleIndex, 110);
-    }
-}
-
-void render_pause_castle_menu_box(s16 x, s16 y) {
-    create_dl_translation_matrix(MENU_MTX_PUSH, x - 78, y - 32, 0);
-    create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.2f, 0.8f, 1.0f);
-    gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 127);
-    gSPDisplayList(gDisplayListHead++, dl_draw_text_bg_box);
-    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-
-    create_dl_translation_matrix(MENU_MTX_PUSH, x + 6, y - 28, 0);
-    create_dl_rotation_matrix(MENU_MTX_NOPUSH, DEFAULT_DIALOG_BOX_ANGLE, 0, 0, 1.0f);
-    gDPPipeSync(gDisplayListHead++);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
     gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+}
 
-    create_dl_translation_matrix(MENU_MTX_PUSH, x - 9, y - 101, 0);
-    create_dl_rotation_matrix(MENU_MTX_NOPUSH, 270.0f, 0, 0, 1.0f);
-    gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
+void render_pause_castle_menu_box(u16 x, u16 y, u16 yOffset) {
+    prepare_blank_box();
+    render_blank_box(SCREEN_CENTER_X - x, SCREEN_CENTER_Y - y + yOffset, SCREEN_CENTER_X + x, SCREEN_CENTER_Y + y + yOffset, 0, 0, 0, 127);
+    finish_blank_box();
+
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
 }
 
@@ -2335,7 +2295,8 @@ s32 render_pause_courses_and_castle(void) {
     stop_secondary_music(50); // really shitty fix for secondary music issues
     s16 index;
 
-    if (gPlayer1Controller->buttonPressed & R_TRIG) gConfigOpen ^= 1;
+    if ((gPlayer1Controller->buttonPressed & A_BUTTON && gDialogLineNum == MENU_OPT_CONFIG) ||
+         gPlayer1Controller->buttonPressed & R_TRIG) { gPlayer1Controller->buttonPressed &= ~A_BUTTON; gConfigOpen ^= 1; gDialogLineNum = MENU_OPT_DEFAULT; }
     if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
     
     if (!gConfigOpen) {
@@ -2358,10 +2319,12 @@ s32 render_pause_courses_and_castle(void) {
 
             case DIALOG_STATE_VERTICAL:
                 shade_screen();
+                // 31 20
+                render_pause_castle_menu_box(95, 84, 0);
                 render_pause_my_score_coins();
                 render_pause_red_coins();
 #ifndef DISABLE_EXIT_COURSE
-                render_pause_course_options(99, 93, &gDialogLineNum, 15);
+                render_pause_course_options(129, 112, &gDialogLineNum, 16);
 #endif
 
                 if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
@@ -2383,7 +2346,7 @@ s32 render_pause_courses_and_castle(void) {
             case DIALOG_STATE_HORIZONTAL:
                 shade_screen();
                 print_hud_pause_colorful_str();
-                render_pause_castle_menu_box(160, 143);
+                render_pause_castle_menu_box(80, 40, 32);
                 render_pause_castle_main_strings(104, 60);
 
                 if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
@@ -2396,13 +2359,6 @@ s32 render_pause_courses_and_castle(void) {
                 }
                 break;
         }
-            gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-            print_generic_string(94, 8, textConfigOpen);
-            gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
-        if (gDialogTextAlpha < 250) {
-            gDialogTextAlpha += 25;
-        }
     } else {
         prepare_blank_box();
         render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 191);
@@ -2413,6 +2369,9 @@ s32 render_pause_courses_and_castle(void) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         print_generic_string(93, 8, textConfigClose);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+    }
+    if (gDialogTextAlpha < 255) {
+        gDialogTextAlpha += 17;
     }
 
     return MENU_OPT_NONE;

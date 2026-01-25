@@ -117,12 +117,6 @@ s8 sScoreFileCoinScoreMode = 0;
 
 unsigned char textReturn[] = { TEXT_RETURN };
 
-unsigned char textViewScore[] = { TEXT_CHECK_SCORE };
-
-unsigned char textCopyFileButton[] = { TEXT_COPY_FILE_BUTTON };
-
-unsigned char textEraseFileButton[] = { TEXT_ERASE_FILE_BUTTON };
-
 #ifdef ENABLE_STEREO_HEADSET_EFFECTS
 unsigned char textSoundModes[][8] = { { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET } };
 #else
@@ -1460,8 +1454,8 @@ void print_score_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
     print_generic_string(RETURN_X, 35, LANGUAGE_ARRAY(textReturn));
-    print_generic_string(COPYFILE_X1, 35, LANGUAGE_ARRAY(textCopyFileButton));
-    print_generic_string(ERASEFILE_X1, 35, LANGUAGE_ARRAY(textEraseFileButton));
+    print_generic_string(COPYFILE_X1, 35, LANGUAGE_ARRAY(textCopy));
+    print_generic_string(ERASEFILE_X1, 35, LANGUAGE_ARRAY(textErase));
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
     // Print file names
@@ -1578,8 +1572,8 @@ void print_copy_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
     print_generic_string(RETURN_X, 35, LANGUAGE_ARRAY(textReturn));
-    print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textViewScore));
-    print_generic_string(ERASEFILE_X2, 35, LANGUAGE_ARRAY(textEraseFileButton));
+    print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textScore));
+    print_generic_string(ERASEFILE_X2, 35, LANGUAGE_ARRAY(textErase));
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     // Print file names
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
@@ -1668,13 +1662,8 @@ void print_erase_menu_prompt(s16 x, s16 y) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
-// MARIO_ERASED_VAR is the value there the letter "A" is, it works like this:
-//   US and EU   ---    JP
-// M a r i o   A --- マ リ オ Ａ
-// 0 1 2 3 4 5 6 --- 0 1 2 3
 #define ERASE_FILE_X      98
 #define NOSAVE_DATA_X3   100
-#define MARIO_ERASED_VAR   6
 #define MARIO_ERASED_X   100
 #define SAVE_EXISTS_X2   100
 
@@ -1685,7 +1674,7 @@ void erase_menu_display_message(s8 messageID) {
     unsigned char textEraseFile[] = { TEXT_ERASE_FILE };
     unsigned char textSure[] = { TEXT_SURE };
     unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS };
-    unsigned char textMarioAJustErased[] = { TEXT_FILE_MARIO_A_JUST_ERASED };
+    unsigned char textDeleteCompleted[] = { TEXT_DELETION_COMPLETED };
     unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS };
 
     switch (messageID) {
@@ -1700,8 +1689,7 @@ void erase_menu_display_message(s8 messageID) {
             print_generic_string_fade(NOSAVE_DATA_X3, 190, LANGUAGE_ARRAY(textNoSavedDataExists));
             break;
         case ERASE_MSG_MARIO_ERASED:
-            LANGUAGE_ARRAY(textMarioAJustErased)[MARIO_ERASED_VAR] = sSelectedFileIndex + 10;
-            print_generic_string_fade(MARIO_ERASED_X, 190, LANGUAGE_ARRAY(textMarioAJustErased));
+            print_generic_string_fade(MARIO_ERASED_X, 190, LANGUAGE_ARRAY(textDeleteCompleted));
             break;
         case ERASE_MSG_SAVE_EXISTS: // unused
             print_generic_string_fade(SAVE_EXISTS_X2, 190, LANGUAGE_ARRAY(textSavedDataExists));
@@ -1779,8 +1767,8 @@ void print_erase_menu_strings(void) {
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
 
     print_generic_string(RETURN_X, 35, textReturn);
-    print_generic_string(VIEWSCORE_X2, 35, textViewScore);
-    print_generic_string(COPYFILE_X2, 35, textCopyFileButton);
+    print_generic_string(VIEWSCORE_X2, 35, textScore);
+    print_generic_string(COPYFILE_X2, 35, textCopy);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
     // Print file names

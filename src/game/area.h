@@ -151,7 +151,7 @@ enum MenuOption {
     // Course Pause Menu
     MENU_OPT_CONTINUE = MENU_OPT_1,
     MENU_OPT_EXIT_COURSE = MENU_OPT_2,
-    MENU_OPT_CAMERA_ANGLE_R = MENU_OPT_3,
+    MENU_OPT_CONFIG = MENU_OPT_3,
 
     // Save Menu
     MENU_OPT_SAVE_AND_CONTINUE = MENU_OPT_1,

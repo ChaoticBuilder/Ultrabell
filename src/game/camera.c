@@ -412,8 +412,6 @@ u8 sCutsceneDialogResponse = DIALOG_RESPONSE_NONE;
 struct PlayerCameraState *sMarioCamState = &gPlayerCameraState[0];
 Vec3f sFixedModeBasePosition    = { 646.0f, 143.0f, -1513.0f };
 
-f32 sFovSlider;
-
 s32 update_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos);
 s32 update_outward_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos);
 s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos);
@@ -1568,10 +1566,8 @@ void mode_parallel_tracking_camera(struct Camera *c) {
  */
 void mode_fixed_camera(UNUSED struct Camera *c) {
 #ifdef ENABLE_VANILLA_LEVEL_SPECIFIC_CHECKS
-    if (gCurrLevelNum == LEVEL_BBH) {
+    if (gCurrLevelNum == LEVEL_BBH || gCurrLevelNum == LEVEL_CASTLE) {
         set_fov_function(CAM_FOV_BBH);
-    } else if (gCurrLevelNum == LEVEL_CASTLE) {
-        set_fov_function(CAM_FOV_CASTLE);
     } else {
         set_fov_function(CAM_FOV_APP_45);
     }
@@ -2014,13 +2010,6 @@ s16 update_default_camera(struct Camera *c) {
     } else {
         if (gMarioStates[0].forwardVel == 0.f) {
             if (sStatusFlags & CAM_FLAG_COLLIDED_WITH_WALL) {
-                /*
-                if ((yawGoal - yaw) / 0x100 >= 0) {
-                    yawDir = -1;
-                } else {
-                    yawDir = 1;
-                }
-                */
                 if ((sAvoidYawVel > 0 && yawDir > 0) || (sAvoidYawVel < 0 && yawDir < 0)) {
                     yawVel = nextYawVel;
                 }
@@ -2042,7 +2031,6 @@ s16 update_default_camera(struct Camera *c) {
         if ((closeToMario & 1) && avoidStatus != AVOID_STATUS_NONE) {
             yawVel = 0;
         }
-        // this code was useless so I removed it
     }
 
     // Only zoom out if not obstructed by walls and Lakitu hasn't collided with any
@@ -7882,7 +7870,7 @@ void cutscene_red_coin_star_warp(struct Camera *c) {
  * Zoom out while looking at the star.
  */
 void cutscene_red_coin_star_set_fov(UNUSED struct Camera *c) {
-    sFOVState.fov = 90.f;
+    sFOVState.fov = 60.f;
 }
 
 void cutscene_red_coin_star(struct Camera *c) {
@@ -10750,19 +10738,6 @@ void shake_camera_fov(struct GraphNodePerspective *perspective) {
     }
 }
 
-void fov_changer(struct GraphNodePerspective *perspective) {
-    perspective->fov += sFovSlider;
-}
-
-void visualizer_display(void) {
-    char fovBytes[3];
-    f32 fovTxt = sFOVState.fov + sFovSlider;
-    
-    sprintf(fovBytes, "FOV: %2.1f", fovTxt);
-    print_set_envcolour(0, 189, 255, 255);
-    print_small_text_light(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, (HUD_TOP_Y + 9) + gHudShakeY, fovBytes, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-}
-
 static UNUSED void unused_deactivate_sleeping_camera(UNUSED struct MarioState *m) {
     sStatusFlags &= ~CAM_FLAG_SLEEPING;
 }
@@ -10880,9 +10855,6 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
             case CAM_FOV_BBH:
                 set_fov_bbh(marioState);
                 break;
-            case CAM_FOV_CASTLE:
-                set_fov_bbh(marioState);
-                break;
             case CAM_FOV_APP_45:
                 approach_fov_45(marioState);
                 break;
@@ -10914,8 +10886,8 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
     }
 
     perspective->fov = sFOVState.fov;
+    perspective->fov += sFovSlider;
     shake_camera_fov(perspective);
-    fov_changer(perspective);
     return NULL;
 }
 
