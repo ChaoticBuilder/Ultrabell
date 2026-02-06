@@ -79,6 +79,7 @@ extern u8 gDemoInputs[];
 
 extern u16 sRenderingFramebuffer;
 extern u32 gGlobalTimer;
+extern u8  vBlankTimer;
 extern f32 gDeltaTime;
 
 void setup_game_memory(void);

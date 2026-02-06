@@ -267,7 +267,7 @@ void set_mario_initial_cap_powerup(struct MarioState *m) {
     switch (capCourseIndex) {
         case COURSE_COTMC - COURSE_CAP_COURSES:
             m->flags |= MARIO_METAL_CAP | MARIO_CAP_ON_HEAD;
-            m->capTimer = 1050;
+            m->capTimer = 900;
             break;
 
         case COURSE_TOTWC - COURSE_CAP_COURSES:
@@ -277,7 +277,7 @@ void set_mario_initial_cap_powerup(struct MarioState *m) {
 
         case COURSE_VCUTM - COURSE_CAP_COURSES:
             m->flags |= MARIO_VANISH_CAP | MARIO_CAP_ON_HEAD;
-            m->capTimer = 1050;
+            m->capTimer = 900;
             break;
     }
 }
@@ -965,7 +965,7 @@ void update_hud_values(void) {
             }
         }
 
-#if defined(ENABLE_LIVES) && !defined(X_COIN_STAR)
+#if defined(ENABLE_LIVES)
         if (gHudDisplay.coins >= 100) {
             mTimer = 0;
             gMarioState->numLives++;
@@ -1250,8 +1250,6 @@ s32 init_level(void) {
     sDelayedWarpOp = WARP_OP_NONE;
     sTransitionTimer = 0;
     sSpecialWarpDest = WARP_SPECIAL_NONE;
-
-    // g100CoinStarSpawned = FALSE;
 
     // NOTE: gStarModelLastCollected reset here as a safety to prevent possible UB if assigned a model used
     // in a non-global group. This checked can be removed as needed.

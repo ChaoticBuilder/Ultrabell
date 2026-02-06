@@ -90,7 +90,6 @@ extern struct VblankHandler *gVblankHandler2;
 extern struct SPTask *gActiveSPTask;
 extern s8 gAudioEnabled;
 extern u32 vBlanks;
-extern u8 vBlankTimer;
 extern s8 gResetTimer;
 extern s8 gNmiResetBarsTimer;
 extern s8 gDebugLevelSelect;

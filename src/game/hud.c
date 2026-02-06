@@ -604,10 +604,11 @@ void attack_timer(void) {
     PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 }
 
+/*
 u8 troll = FALSE;
 void timer_troll(void) {
     f32 rand = random_float();
-    if (((gGlobalTimer % 18000 == 0) && rand < 0.5f) /* || (gPlayer1Controller->buttonPressed == L_JPAD && !gConfigOpen) */) {
+    if (((gGlobalTimer % 18000 == 0) && rand < 0.5f)) {
         troll = TRUE;
     }
     if (troll == TRUE) {
@@ -619,6 +620,9 @@ void timer_troll(void) {
         return print_text(112, 120, "MARIO 64");
     }
 }
+*/
+
+#include "seq_ids.h"
 
 u8 debugScroll = 1;
 u16 musicID = 0;
@@ -626,8 +630,7 @@ u8 musicBank = 0xFF;
 u8 dynMode = 0xFF;
 
 void music_menu_scroll(void) {
-    if (!gMusicToggle || gConfigOpen) return;
-    if (gGlobalTimer % 4 == 0) {
+    if ((vBlanks & 7) == 0) {
         if (gPlayer1Controller->buttonDown & U_JPAD) {
             debugScroll--;
             play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
@@ -660,7 +663,7 @@ void music_menu_scroll(void) {
     }
     if (gPlayer1Controller->buttonPressed & R_TRIG) {
         if (debugScroll == 1 || debugScroll == 2) {
-            if (musicID == 0) stop_background_music(musicID);
+            if (musicID == 0 || musicID >= SEQ_COUNT) stop_background_music(musicID);
             set_background_music(0, musicID, 0);
         }
         if (debugScroll == 4) {
@@ -671,7 +674,7 @@ void music_menu_scroll(void) {
 }
 
 void music_menu(void) {
-    if (!gMusicToggle || gConfigOpen) return;
+    if (!gMusicToggle || gConfigVar & (1 << 7)) return;
     char currOption[64];
     music_menu_scroll();
     u8 yPos = 30;
@@ -717,11 +720,11 @@ void music_menu(void) {
 
     print_set_envcolour(255, 132, 0, 255);
     if (debugScroll != 5) print_set_envcolour(189, 49, 115, 255);
-    if (pitchInvert == 1) sprintf(currOption, "Invert Pitch: OFF", pitchInvert);
-    if (pitchInvert == 2) sprintf(currOption, "Invert Pitch: Half", pitchInvert);
-    if (pitchInvert == 3) sprintf(currOption, "Invert Pitch: Full", pitchInvert);
-    if (pitchInvert == 4) sprintf(currOption, "Invert Pitch: Whatever tf this is", pitchInvert);
-    if (pitchInvert == 5) sprintf(currOption, "Invert Pitch: OH GOD HELP", pitchInvert);
+    switch (pitchInvert) {
+        case 1: sprintf(currOption, "Invert Pitch: OFF", pitchInvert); break;
+        case 2: sprintf(currOption, "Invert Pitch: ON", pitchInvert); break;
+        case 3: sprintf(currOption, "Invert Pitch: -1 Octave", pitchInvert); break;
+        case 4: sprintf(currOption, "Invert Pitch: What", pitchInvert); break; }
     
     print_small_text_light(16, yPos, currOption, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
 }
@@ -731,8 +734,7 @@ void debug_stats(void) {
     if (gIsConsole) {
         sprintf(debug, "E3 KIOSK", gEmulator); // noway someone's playing my hack on everdrive!!!
     } else {
-        (gEmulator < 0x10) ? sprintf(debug, "EMU: 0x000%x", gEmulator) : sprintf(debug, "EMU: 0x00%x", gEmulator);
-        sprintf(debug, "EMU: 0x00%x", gEmulator);
+        sprintf(debug, "EMU: 0x%0X", gEmulator);
     }
 
     print_small_text_light(16, 210, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
@@ -752,12 +754,12 @@ void sleep_draw(void) {
     if (gMarioState->prevAction == ACT_SLEEPING) sleepTimer = 0;
     if (sleepInc > 0) {
         prepare_blank_box();
-        render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x10, 0x10, 0x21, (sleepInc * 8 - 1));
+        render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x10, 0x10, 0x21, (sleepInc << 3) - 1);
         finish_blank_box();
     }
     if (sleepTimer == sleepInc) return;
-    if (sleepTimer > sleepInc && gGlobalTimer % 8 == 0) sleepInc++;
-    if (sleepTimer < sleepInc) {
+    if (sleepTimer > sleepInc && (vBlanks & 7) == 0) sleepInc++;
+    if (sleepTimer < sleepInc && vBlankTimer) {
         (sleepInc > 0 && (sleepInc - 1) > sleepTimer) 
         ? sleepInc--
         : (sleepInc = sleepTimer); // subtracting would either overflow, or be less than sleepTimer. 

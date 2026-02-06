@@ -63,6 +63,8 @@ void bully_check_mario_collision(void) {
     }
 }
 
+#include "game/print.h"
+
 void bully_act_chase_mario(void) {
     f32 homeX = o->oHomeX;
     f32 posY = o->oPosY;
@@ -70,19 +72,14 @@ void bully_act_chase_mario(void) {
     s16 objDYaw = o->oMoveAngleYaw - obj_angle_to_object(o, gMarioObject);
 
     if (o->oSubAction == 0) {
-        o->oForwardVel = 2.0f;
-        o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, obj_angle_to_object(o, gMarioObject), 0x500);
-        if (ABS(objDYaw) < DEGREES(11.25)) { // 0x03E8-yard stare intensifies...
-            if (o->oBehParams2ndByte == BULLY_BP_SIZE_BIG) o->oSubAction++;
+        if (o->oTimer == 0) o->oForwardVel = 0.0f;
+        o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, obj_angle_to_object(o, gMarioObject), objDYaw / 8.0f);
+        if (ABS(objDYaw) < 0x400) {
             o->oSubAction++;
-            o->oTimer = 0;
         }
-    } else {
-        (o->oSubAction == 1)
-        ? (o->oForwardVel = 16.0f)
-        : (o->oForwardVel = 24.0f);
-        if (ABS(objDYaw) >= DEGREES(90)) o->oSubAction = 0;
-    }
+    } else if (ABS(objDYaw) >= DEGREES(90)) { o->oSubAction = 0; o->oTimer = 0; }
+    o->oForwardVel += 0.5f;
+    print_text_fmt_int(16, 16, "%d", o->oForwardVel);
 
     if (!is_point_within_radius_of_mario(homeX, posY, homeZ, 1000)) {
         o->oAction = BULLY_ACT_PATROL;

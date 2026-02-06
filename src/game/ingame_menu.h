@@ -3,18 +3,22 @@
 
 #include <PR/ultratypes.h>
 
-extern u8 gConfigOpen;
+#define    SNAP_START 1
+#define CLASSIC_TIMER 5
+#define  MODERN_TIMER 0
+
+extern u8 gConfigVar;
 extern f32 sFovSlider;
 extern u8 gLuigiToggle;
 extern u8 gHudToggle;
 extern u8 gVisToggle;
 extern u8 gDebugToggle;
+extern u8 gMovesetVar;
 extern u8 g95Toggle;
 extern u8 gRealToggle;
 extern u8 gTimerToggle;
-extern u8 gKickToggle;
+extern u8 gKickVar;
 extern u16 gTimerTime;
-extern u8 gKickTimer;
 extern u8 gDiveToggle;
 extern u8 gTurnToggle;
 extern u8 gABCToggle;

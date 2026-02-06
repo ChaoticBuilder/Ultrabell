@@ -69,7 +69,6 @@ struct SPTask        *sNextAudioSPTask      = NULL;
 struct SPTask        *sNextDisplaySPTask    = NULL;
 s8  gAudioEnabled      = TRUE;
 u32 vBlanks            = 0;
-u8  vBlankTimer        = 0;
 s8  gResetTimer        = 0;
 s8  gNmiResetBarsTimer = 0;
 s8  gDebugLevelSelect  = FALSE;

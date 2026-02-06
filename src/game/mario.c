@@ -335,32 +335,20 @@ void play_mario_sound(struct MarioState *m, s32 actionSound, s32 marioSound) {
     }
 }
 
-u16 dustType = PARTICLE_NONE;
-u16 dustTimer = 0;
-u8  dustMod = 1;
+u16 dustTimer;
+u32 dustType;
 
-void m_spawn_dust(u16 type, u16 timer, u8 mod) {
-    dustTimer = timer;
-     dustType = type;
-      dustMod = mod;
-}
-
-void m_sd_preset(u16 type, u8 preset) {
+void m_spawn_dust(u32 type, u8 preset) {
+    dustType = type;
     switch (preset) {
-        case SMOVE:
-            m_spawn_dust(type, 3, 3);
-            break;
-        case JUMP:
-            m_spawn_dust(type, 3, 2);
-            break;
-    }
+        /* Modulo, Timer */
+        case SMOVE: dustTimer = (3 << 8) + 3; break;
+        case  JUMP: dustTimer = (2 << 8) + 3; break; }
 }
 
 void spawn_mario_particles(struct MarioState *m) {
-    if (dustTimer > 0 && gGlobalTimer % dustMod == 0) {
-        m->particleFlags |= dustType;
-        dustTimer--;
-    }
+    if ((dustTimer & 0xFF) > 0 && gGlobalTimer % (dustTimer >> 8) == 0) {
+        m->particleFlags |= dustType; dustTimer--; }
 }
 
 /**************************************************
@@ -793,30 +781,31 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
     switch (action) {
         case ACT_DOUBLE_JUMP:
+            m_spawn_dust(PARTICLE_DUST, JUMP);
+            m->faceAngle[1] = (s16) m->intendedYaw;
             aGravToggle = TRUE;
-            m_sd_preset(PARTICLE_DUST, JUMP);
-            if (!g95Toggle) set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.25f);
+            if (!g95Toggle) set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.25f);
             if ((g95Toggle || LUIGI_MOVESET) && !gRealToggle) set_mario_y_vel_based_on_fspeed(m, 52.0f, 0.25f);
             if (gRealToggle) set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             break;
 
         case ACT_BACKFLIP:
-            aGravToggle = TRUE;
-            m_sd_preset(PARTICLE_DUST, SMOVE);
-            set_mario_y_vel_based_on_fspeed(m, 56.0f, 0.0f);
-            m->marioObj->header.gfx.animInfo.animID = -1;
+            m_spawn_dust(PARTICLE_DUST, SMOVE);
+            m->vel[1] = 56.0f;
             m->forwardVel = -16.0f;
+            m->marioObj->header.gfx.animInfo.animID = -1;
+            aGravToggle = TRUE;
             break;
 
         case ACT_TWIRLING:
-            m_sd_preset(PARTICLE_DUST, JUMP);
-            (g95Toggle)
-            ? set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.25f)
-            : set_mario_y_vel_based_on_fspeed(m, 52.0f, 0.25f);
+            m_spawn_dust(PARTICLE_DUST, JUMP);
+            m->faceAngle[1] = (s16) m->intendedYaw;
+            (g95Toggle) ? set_mario_y_vel_based_on_fspeed(m, 60.0f, 0.25f) : set_mario_y_vel_based_on_fspeed(m, 52.0f, 0.25f);
             break;
 
         case ACT_FLYING_TRIPLE_JUMP:
-            m_sd_preset(PARTICLE_DUST, SMOVE);
+            m_spawn_dust(PARTICLE_DUST, SMOVE);
+            m->faceAngle[1] = (s16) m->intendedYaw;
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 64.0f, 0.25f)
             : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
@@ -829,14 +818,15 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_BURNING_JUMP:
-            m_sd_preset(PARTICLE_DUST, JUMP);
+            m_spawn_dust(PARTICLE_DUST, JUMP);
             (!gRealToggle) ? (m->vel[1] = 42.0f) : (m->vel[1] = 32.0f);
             if (m->forwardVel < 32.0f) m->forwardVel = 32.0f;
             break;
 
         case ACT_RIDING_SHELL_JUMP:
+            m_spawn_dust(PARTICLE_DUST, JUMP);
+            m->faceAngle[1] = (s16) m->intendedYaw;
             aGravToggle = TRUE;
-            m_sd_preset(PARTICLE_DUST, JUMP);
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.25f)
             : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
@@ -844,16 +834,17 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
 
         case ACT_JUMP:
         case ACT_HOLD_JUMP:
-            aGravToggle = TRUE;
-            m_sd_preset(PARTICLE_DUST, JUMP);
+            m_spawn_dust(PARTICLE_DUST, JUMP);
+            m->faceAngle[1] = (s16) m->intendedYaw;
             m->marioObj->header.gfx.animInfo.animID = -1;
+            aGravToggle = TRUE;
             (!gRealToggle)
             ? set_mario_y_vel_based_on_fspeed(m, 42.0f, 0.25f)
             : set_mario_y_vel_based_on_fspeed(m, 32.0f, 0.0f);
             break;
 
         case ACT_TOP_OF_POLE_JUMP:
-            m_sd_preset(PARTICLE_DUST, JUMP);
+            m_spawn_dust(PARTICLE_DUST, JUMP);
             (!gRealToggle) ? (m->vel[1] = 48.0f) : (m->vel[1] = 36.0f);
             if (gABCToggle) m->vel[1] = 0;
             m->wallKickTimer = 0;
@@ -862,7 +853,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
         case ACT_WALL_KICK_AIR:
             aGravToggle = TRUE;
-            m_sd_preset(PARTICLE_DUST, SMOVE);
+            m_spawn_dust(PARTICLE_DUST, SMOVE);
             (!gRealToggle) ? (m->vel[1] = 56.0f) : (m->vel[1] = 44.0f);
             m->wallKickTimer = 0;
 
@@ -872,7 +863,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_SIDE_FLIP:
-            m_sd_preset(PARTICLE_DUST, JUMP);
+            m_spawn_dust(PARTICLE_DUST, JUMP);
             (!g95Toggle)
             ? set_mario_y_vel_based_on_fspeed(m, 45.0f, 0.1875f)
             : set_mario_y_vel_based_on_fspeed(m, 40.0f, 0.1875f);
@@ -881,7 +872,7 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             break;
 
         case ACT_STEEP_JUMP:
-            m_sd_preset(PARTICLE_DUST, JUMP);
+            m_spawn_dust(PARTICLE_DUST, JUMP);
             m->marioObj->header.gfx.animInfo.animID = -1;
             (!gRealToggle) ? (m->vel[1] = 42.0f) : (m->vel[1] = 32.0f);
             m->faceAngle[0] = -0x2000;
@@ -891,49 +882,45 @@ u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actionArg) {
             m->vel[1] = 80.0f;
             break;
 
-        case ACT_DIVE:
-            m_sd_preset(PARTICLE_DUST, SMOVE);
-            if (!g95Toggle && !gABCToggle) {
-                if (m->vel[1] < 0) m->vel[1] = 0;
-                m->vel[1] /= 1.5f;
-                m->vel[1] += 24.0f;
-
-                s16 spdcap = (gFlightToggle || m->flags & MARIO_METAL_CAP) ? 96 : 56;
-                if (m->forwardVel >= 0 && m->forwardVel <= spdcap) m->forwardVel += 16.0f;
-            } else {
-                if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
-                if ((m->forwardVel += 15.0f) > 48.0f) m->forwardVel = 48.0f;
-            }
-            break;
-
         case ACT_LONG_JUMP:
-            m_sd_preset(PARTICLE_DUST, SMOVE);
-            m->marioObj->header.gfx.animInfo.animID = -1;
+            m_spawn_dust(PARTICLE_DUST, SMOVE);
             set_mario_y_vel_based_on_fspeed(m, 30.0f, 0.0f);
+            m->marioObj->header.gfx.animInfo.animID = -1;
             // m->marioObj->oMarioLongJumpIsSlow = m->forwardVel > 16.0f ? FALSE : TRUE;
             f32 min = (m->forwardVel > 0) ? 1.0625f : 1.109375f;
             m->forwardVel *= MAX(2.5f - ABS(m->forwardVel / 32.0f), min);
             break;
 
         case ACT_SLIDE_KICK:
-            m_sd_preset(PARTICLE_DUST, SMOVE);
+            m_spawn_dust(PARTICLE_DUST, SMOVE);
             if (!LUIGI_MOVESET) m->forwardVel += 2.0f;
             else { m->vel[1] = 12.0f; m->forwardVel *= 1.5f; }
             break;
 
+        case ACT_GROUND_POUND:
+            m_spawn_dust(PARTICLE_DUST, JUMP);
+            m->vel[1] = CLAMP(m->vel[1], 0.0f, 20.0f);
+            break;
+
         case ACT_JUMP_KICK:
-            m->particleFlags |= PARTICLE_DUST;
+            m_spawn_dust(PARTICLE_DUST, JUMP);
+            m->faceAngle[1] = (s16) m->intendedYaw;
             if (!g95Toggle && !gABCToggle) {
-                if (m->vel[1] < 0) m->vel[1] = 0;
-                m->vel[1] /= 2.0f;
-                m->vel[1] += 24.0f;
+                if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
+                m->vel[1] = (m->vel[1] * 0.75f) + 24.0f;
             } else if (gDiveToggle != 1) { (!gRealToggle) ? (m->vel[1] = 32.0f) : (m->vel[1] = 20.0f); }
             break;
-        case ACT_GROUND_POUND:
-            m_sd_preset(PARTICLE_DUST, JUMP);
-            (!g95Toggle)
-            ? (m->vel[1] = ABS(m->vel[1] / 1.5))
-            : (m->vel[1] = 0.0f);
+
+        case ACT_DIVE:
+            m_spawn_dust(PARTICLE_DUST, SMOVE);
+            m->faceAngle[1] = (s16) m->intendedYaw;
+            if (m->vel[1] < 0.0f) m->vel[1] = 0.0f;
+            if (!g95Toggle && !gABCToggle) {
+                m->vel[1] = (m->vel[1] * 0.75f) + 24.0f;
+
+                s16 spdcap = (gFlightToggle || m->flags & MARIO_METAL_CAP) ? 96 : 56;
+                if (m->forwardVel >= 0 && m->forwardVel <= spdcap) m->forwardVel += 16.0f;
+            } else if ((m->forwardVel += 15.0f) > 48.0f) m->forwardVel = 48.0f;
             break;
     }
 
@@ -953,7 +940,7 @@ u32 set_mario_action_moving(struct MarioState *m, u32 action, UNUSED u32 actionA
 
     switch (action) {
         case ACT_WALKING:
-            m_sd_preset(PARTICLE_DUST, SMOVE);
+            m_spawn_dust(PARTICLE_DUST, SMOVE);
             if (gTurnToggle) m->faceAngle[1] = (s16) m->intendedYaw;
             if (floorClass != SURFACE_CLASS_VERY_SLIPPERY) {
                 if (0.0f <= forwardVel && forwardVel < mag) {
@@ -1074,7 +1061,7 @@ u32 reinit_mario_action(struct MarioState *m) {
  * Puts Mario into a specific jumping action from a landing action.
  */
 s32 set_jump_from_landing(struct MarioState *m) {
-    m_sd_preset(PARTICLE_DUST, JUMP);
+    m_spawn_dust(PARTICLE_DUST, JUMP);
     if (m->quicksandDepth >= 11.0f) {
         if (m->heldObj == NULL) {
             return set_mario_action(m, ACT_QUICKSAND_JUMP_LAND, 0);
@@ -1132,7 +1119,7 @@ s32 set_jump_from_landing(struct MarioState *m) {
  * either a quicksand or steep jump.
  */
 s32 set_jumping_action(struct MarioState *m, u32 action, u32 actionArg) {
-    m_sd_preset(PARTICLE_DUST, JUMP);
+    m_spawn_dust(PARTICLE_DUST, JUMP);
     if (m->quicksandDepth >= 11.0f) {
         // Checks whether Mario is holding an object or not.
         if (m->heldObj == NULL) {
@@ -1323,12 +1310,6 @@ void debug_print_speed_action_normal(struct MarioState *m) {
 void update_mario_button_inputs(struct MarioState *m) {
     if (m->controller->buttonPressed & A_BUTTON) m->input |= INPUT_A_PRESSED;
     if (m->controller->buttonDown    & A_BUTTON) m->input |= INPUT_A_DOWN;
-    /*
-    if (m->controller->buttonPressed & R_TRIG) {
-        gLuigiToggle ^= 1;
-        play_sound(SOUND_GENERAL_CASTLE_TRAP_OPEN, gGlobalSoundSource);
-    }
-    */
 
     if (!gLuigiToggle) m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_MARIO];
     else               m->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LUIGI];

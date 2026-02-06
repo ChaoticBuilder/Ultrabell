@@ -67,6 +67,7 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
             }
 
             if (is_anim_at_end(m)) {
+                if (m->input & INPUT_B_DOWN) m->actionArg = ACT_ARG_SOUND2;
                 set_mario_action(m, endAction, 0);
             }
             break;

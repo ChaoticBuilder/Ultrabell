@@ -781,6 +781,7 @@ void setup_game_memory(void) {
 }
 
 u32 vBlanksPrev = 0;
+u8  vBlankTimer = 0;
 
 /**
  * Main game loop thread. Runs forever as long as the game continues.
@@ -816,9 +817,8 @@ void thread5_game_loop(UNUSED void *arg) {
 
     while (TRUE) {
         vBlankTimer = 0;
-        while (vBlanksPrev < vBlanks) {
-            vBlanksPrev++;
-            if (vBlanksPrev % 2 == 0) vBlankTimer++;
+        while (vBlanksPrev++ < vBlanks) {
+            vBlankTimer++;
         }
 
         profiler_frame_setup();

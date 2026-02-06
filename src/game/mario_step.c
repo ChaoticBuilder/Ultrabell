@@ -643,45 +643,33 @@ u32 should_strengthen_gravity_for_jump_ascent(struct MarioState *m) {
 }
 
 u16 mTerminalVel;
-f32 gDiv;
-u8 gDivTimer = 0;
+u16 gGravTimer = 0;
 
-u16 gravity_applier(struct MarioState *m, f32 baseVel, u16 terminalVel) {
-    if (LUIGI_MOVESET && aGravToggle) {
-        baseVel /= 1.25f;
-        terminalVel /= 1.25f;
-    }
-    if (gMovesetToggle && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
-        if (!gDivTimer) {
-            gDiv = ((gLuigiToggle) ? 5.0f : 1.125f);
-            gDivTimer++;
-        }
-        if (gDiv > 1.25f) gDiv = approach_f32_symmetric(gDiv, 1.25f, 2.0f / gDiv);
-        baseVel /= gDiv;
-    }
+u16 gravity_applier(struct MarioState *m, f32 baseVel, f32 terminalVel, u8 exp) {
+    f32 dec;
+    if (!exp) {
+        if (LUIGI_MOVESET && aGravToggle) { baseVel *= 0.75f; terminalVel *= 0.75f; }
+        if (gMovesetToggle && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
+            if (!gLuigiToggle) baseVel *= 0.8125f; else { dec = MIN(gGravTimer * 0.046875f, 0.75f);
+            baseVel *= dec; if (dec < 0.75f) gGravTimer++; }}
 
-    m->vel[1] -= baseVel / gDeltaTime;
-    if (m->vel[1] < -terminalVel) m->vel[1] /= baseVel / gDeltaTime / 96 + 1;
-    // print_text_fmt_int(128, 32, "t %2d", terminalVel);
-    // print_text_fmt_int(128, 16, "b %2d", baseVel);
+        m->vel[1] -= baseVel / gDeltaTime;
+        if (m->vel[1] < -terminalVel) m->vel[1] *= 1.0f - (baseVel / (gDeltaTime * 96.0f)); }
+    else { dec = MIN(gGravTimer * baseVel, terminalVel); m->vel[1] -= dec / gDeltaTime;
+        if (m->vel[1] < -mTerminalVel) m->vel[1] *= 1.0f - (terminalVel / (gDeltaTime * 96.0f));
+        if (dec < terminalVel) gGravTimer++; }
     return terminalVel;
 }
 
 void apply_gravity(struct MarioState *m) {
     f32 baseVel;
 
-    if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) {
-        mTerminalVel = 0;
-        apply_twirl_gravity(m);
-    } else if (m->action == ACT_SHOT_FROM_CANNON) {
-        mTerminalVel = 64;
-        baseVel = ((!gRealToggle) ? 1.0f : 1.25f);
-        m->vel[1] -= baseVel / gDeltaTime;
-        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.015625f / gDeltaTime + 1;
-    } else if (m->action == ACT_LONG_JUMP || m->action == ACT_BBH_ENTER_SPIN) {
-        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 64);
+    if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) { mTerminalVel = 0; apply_twirl_gravity(m); }
+    else if (m->action == ACT_SHOT_FROM_CANNON) mTerminalVel = gravity_applier(m, (!gRealToggle) ? 1.0f : 1.25f, 64, FALSE);
+    else if (m->action == ACT_LONG_JUMP || m->action == ACT_BBH_ENTER_SPIN) {
+        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 64, FALSE);
     } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_SLIDE_KICK || m->action == ACT_FALL_AFTER_STAR_GRAB) {
-        mTerminalVel = gravity_applier(m, 3.5f, 64);
+        mTerminalVel = gravity_applier(m, 3.5f, 64, FALSE);
     } else if (m->action == ACT_GETTING_BLOWN) {
         mTerminalVel = 64;
         m->vel[1] -= m->windGravity / gDeltaTime;
@@ -696,14 +684,15 @@ void apply_gravity(struct MarioState *m) {
     } else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
         aGravToggle = FALSE;
-        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 32);
-    } else {
-        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 4.0f : 5.0f), 64);
+        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 32, FALSE);
+    } else if (m->action == ACT_GROUND_POUND) { mTerminalVel = 64; gravity_applier(m, 0.25f, 5.0f, TRUE); }
+    else {
+        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 4.0f : 5.0f), 64, FALSE);
     }
     if (m->flags & MARIO_METAL_CAP && !gRealToggle && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
         baseVel = 2.0f;
         if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) baseVel /= 2;
-        mTerminalVel = gravity_applier(m, baseVel, 32);
+        mTerminalVel = gravity_applier(m, baseVel, 32, FALSE);
     }
 
     /*
@@ -782,7 +771,7 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
         if (quarterStepResult == AIR_STEP_LANDED || quarterStepResult == AIR_STEP_GRABBED_LEDGE
             || quarterStepResult == AIR_STEP_GRABBED_CEILING
             || quarterStepResult == AIR_STEP_HIT_LAVA_WALL) {
-            gDivTimer = 0;
+            gGravTimer = 0;
             break;
         }
     }

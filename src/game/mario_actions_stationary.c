@@ -51,12 +51,12 @@ s32 check_common_idle_cancels(struct MarioState *m) {
         return set_mario_action(m, ACT_WALKING, 0);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
-        return set_mario_action(m, ACT_PUNCHING, 0);
-    }
-
     if (m->input & INPUT_Z_DOWN) {
         return set_mario_action(m, ACT_START_CROUCHING, 0);
+    }
+
+    if (m->input & INPUT_B_DOWN) {
+        return set_mario_action(m, ACT_PUNCHING, 0);
     }
 
     return FALSE;
@@ -93,12 +93,12 @@ s32 check_common_hold_idle_cancels(struct MarioState *m) {
         return set_mario_action(m, ACT_HOLD_WALKING, 0);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
-        return set_mario_action(m, ACT_THROWING, 0);
-    }
-
     if (m->input & INPUT_Z_DOWN) {
         return drop_and_set_mario_action(m, ACT_START_CROUCHING, 0);
+    }
+
+    if (m->input & INPUT_B_DOWN) {
+        return set_mario_action(m, ACT_THROWING, 0);
     }
 
     return FALSE;
@@ -463,7 +463,7 @@ s32 act_hold_heavy_idle(struct MarioState *m) {
         return set_mario_action(m, ACT_HOLD_HEAVY_WALKING, 0);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_DOWN) {
         return set_mario_action(m, ACT_HEAVY_THROW, 0);
     }
 
@@ -519,6 +519,14 @@ s32 act_crouching(struct MarioState *m) {
         return set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }
 
+    if (m->input & INPUT_B_PRESSED) {
+        if (!g95Toggle) {
+            return set_mario_action(m, ACT_PUNCHING, 9);
+        } else {
+            return set_mario_action(m, ACT_PUNCHING, 0);
+        }
+    }
+
     if (m->input & INPUT_A_PRESSED) {
         if (g95Toggle || gABCToggle == 1) {
             return set_jumping_action(m, ACT_JUMP, 2);
@@ -544,14 +552,6 @@ s32 act_crouching(struct MarioState *m) {
 
     if (m->input & INPUT_NONZERO_ANALOG) {
         return set_mario_action(m, ACT_START_CRAWLING, 0);
-    }
-    
-    if (m->input & INPUT_B_PRESSED) {
-        if (!g95Toggle) {
-            return set_mario_action(m, ACT_PUNCHING, 9);
-        } else {
-            return set_mario_action(m, ACT_PUNCHING, 0);
-        }
     }
 
     stationary_ground_step(m);
@@ -623,7 +623,7 @@ s32 act_braking_stop(struct MarioState *m) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_DOWN) {
         return set_mario_action(m, ACT_PUNCHING, 0);
     }
 
@@ -666,7 +666,7 @@ s32 act_hold_butt_slide_stop(struct MarioState *m) {
         return check_common_hold_action_exits(m);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_DOWN) {
         return set_mario_action(m, ACT_THROWING, 0);
     }
 
@@ -857,7 +857,7 @@ s32 check_common_landing_cancels(struct MarioState *m, u32 action) {
         return check_common_action_exits(m);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_DOWN) {
         return set_mario_action(m, ACT_PUNCHING, 0);
     }
 
@@ -933,14 +933,11 @@ s32 act_lava_boost_land(struct MarioState *m) {
 }
 
 s32 act_long_jump_land_stop(struct MarioState *m) {
-    m->input &= ~INPUT_B_PRESSED;
-    if (check_common_landing_cancels(m, ACT_JUMP)) {
+    if (check_common_landing_cancels(m, ACT_LONG_JUMP)) {
         return TRUE;
     }
 
-    landing_step(m, !m->marioObj->oMarioLongJumpIsSlow ? MARIO_ANIM_CROUCH_FROM_FAST_LONGJUMP
-                                                       : MARIO_ANIM_CROUCH_FROM_SLOW_LONGJUMP,
-                 ACT_CROUCHING);
+    landing_step(m, MARIO_ANIM_CROUCH_FROM_SLOW_LONGJUMP, ACT_CROUCHING);
     return FALSE;
 }
 
@@ -957,7 +954,7 @@ s32 act_hold_jump_land_stop(struct MarioState *m) {
         return check_common_hold_action_exits(m);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_DOWN) {
         return set_mario_action(m, ACT_THROWING, 0);
     }
 
@@ -978,7 +975,7 @@ s32 act_hold_freefall_land_stop(struct MarioState *m) {
         return check_common_hold_action_exits(m);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->input & INPUT_B_DOWN) {
         return set_mario_action(m, ACT_THROWING, 0);
     }
     landing_step(m, MARIO_ANIM_FALL_LAND_WITH_LIGHT_OBJ, ACT_HOLD_IDLE);

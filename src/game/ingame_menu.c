@@ -41,16 +41,11 @@ u16 gDialogTextAlpha;
 s16 gCutsceneMsgXOffset;
 s16 gCutsceneMsgYOffset;
 u8 gRedCoinsCollected;
-u8 gConfigOpen = FALSE;
-u8 gConfigScroll = 1;
-u8 gHighlightToggle = FALSE;
 u8 g95Toggle = FALSE;
 u8 gABCToggle = 0;
 u8 gDebugToggle = FALSE;
 u8 gDiveToggle = 0;
 u8 gFlightToggle = FALSE;
-u8 gKickToggle = FALSE;
-u8 gKickTimer = 0;
 u8 gLevelTroll = 0;
 u8 gMovesetToggle = TRUE;
 u8 gLVLToggle = FALSE;
@@ -1515,13 +1510,13 @@ void print_animated_red_coin(s16 x, s16 y) {
         case 7: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_22_5_r); break;
     }
 #else
-    switch ((vBlanks >> 2) % 6) {
-        case 0: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_0  ); break;
-        case 1: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_1  ); break;
-        case 2: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_2  ); break;
-        case 3: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_3  ); break;
-        case 4: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_2_r); break;
-        case 5: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_1_r); break;
+    switch ((vBlanks >> 2) & 0x7) {
+case 0: case 1: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_0  ); break;
+        case 2: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_1  ); break;
+        case 3: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_2  ); break;
+        case 4: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_3  ); break;
+        case 5: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_2_r); break;
+case 6: case 7: gSPDisplayList(gDisplayListHead++, coin_seg3_dl_red_1_r); break;
     }
 #endif
 
@@ -1549,8 +1544,6 @@ void render_pause_red_coins(void) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }
 
-#define SNAPDEF 1
-
 const u16 snapPreset[] = {
     0,
     0xFFFF, /* Increase values by 1 to get actual value (because of u16) */
@@ -1566,125 +1559,108 @@ const u16 snapPreset[] = {
 };
 
 u8 snapSwitch = TRUE;
-u16 snapValue = snapPreset[SNAPDEF];
-u8 snapListID = SNAPDEF;
+u16 snapValue = snapPreset[SNAP_START];
+u8 snapListID = SNAP_START;
+u8 gConfigVar = 0b00000001;
+
+#define INPUT_LEFT    (gPlayer1Controller->buttonPressed & L_JPAD || gPlayer1Controller->buttonDown & L_JPAD || gPlayer1Controller->rawStickX <= -16.0f)
+#define INPUT_RIGHT   (gPlayer1Controller->buttonPressed & R_JPAD || gPlayer1Controller->buttonDown & R_JPAD || gPlayer1Controller->rawStickX >=  16.0f)
+#define INPUT_UP      (gPlayer1Controller->buttonPressed & U_JPAD || gPlayer1Controller->buttonDown & U_JPAD || gPlayer1Controller->rawStickY >=  16.0f)
+#define INPUT_DOWN    (gPlayer1Controller->buttonPressed & D_JPAD || gPlayer1Controller->buttonDown & D_JPAD || gPlayer1Controller->rawStickY <= -16.0f)
+#define SCROLL        (gConfigVar & 0x3F)
 
 void config_options_scroll(void) {
-    if (gHighlightToggle)
-        return;
+    if (gConfigVar & (1 << 6)) return;
 
-    if (gGlobalTimer % 4 == 0) {
-        if (gPlayer1Controller->buttonDown & L_JPAD || gPlayer1Controller->rawStickX <= -16.0f) {
-            gConfigScroll--; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
-        }
-        if (gPlayer1Controller->buttonDown & R_JPAD || gPlayer1Controller->rawStickX >=  16.0f) {
-            gConfigScroll++; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
-        }
-        if (gPlayer1Controller->buttonDown & U_JPAD || gPlayer1Controller->rawStickY >=  16.0f) {
-            if (gConfigScroll == (CFG_START + 1)) gConfigScroll = (CFG_END - 2); else
-            { gConfigScroll -= 2; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
-        }
-        if (gPlayer1Controller->buttonDown & D_JPAD || gPlayer1Controller->rawStickY <= -16.0f) {
-            if (gConfigScroll == (CFG_END - 1)) gConfigScroll = (CFG_START + 2); else
-            { gConfigScroll += 2; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
-        }
-    }
+    if ((gGlobalTimer & 3) == 0) {
+        if (INPUT_LEFT) { gConfigVar--; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+        if (INPUT_RIGHT) { gConfigVar++; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+        if (INPUT_UP) { (SCROLL == (CFG_START + 1)) ? (gConfigVar = (CFG_END - 2) + (gConfigVar & 0xC0)) : (gConfigVar -= 2);
+            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+        if (INPUT_DOWN) { (SCROLL == (CFG_END - 1)) ? (gConfigVar = (CFG_START + 2) + (gConfigVar & 0xC0)) : (gConfigVar += 2);
+            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }}
 
-    if (gConfigScroll == CFG_START) gConfigScroll = (CFG_END - 1);
-    if (gConfigScroll == CFG_END) gConfigScroll = (CFG_START + 1);
+    if (SCROLL == CFG_START) gConfigVar = (CFG_END - 1) + (gConfigVar & 0xC0);
+    if (SCROLL == CFG_END) gConfigVar = (CFG_START + 1) + (gConfigVar & 0xC0);
 }
 
-u8 gFPSSignal = FALSE;
-
-void config_options(void) {
-    gFPSSignal = FALSE;
-    if (gPlayer1Controller->buttonPressed & A_BUTTON) {
-#ifdef WIDE
-        if (gConfigScroll == CFG_WIDE) {
-            gConfig.widescreen ^= 1;
-            save_file_set_widescreen_mode(gConfig.widescreen);
-        }
-#endif
-        if (gConfigScroll == CFG_FOV) gHighlightToggle ^= 1;
-        if (gConfigScroll == CFG_HUD) gHudToggle ^= 1;
-        if (gConfigScroll == CFG_STATS) { gDebugToggle ^= 1; gShowDebugText ^= 1; }
-        if (gConfigScroll == CFG_CAM) {
-            (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO)
-            ? cam_select_alt_mode(CAM_SELECTION_FIXED) : cam_select_alt_mode(CAM_SELECTION_MARIO);
-        }
-        if (gConfigScroll == CFG_LUIGI) {
-            gLuigiToggle ^= 1;
-            if (gMovesetToggle) {
-                if (!gLuigiToggle) {
-                    gKickTimer = 0;
-                    gKickToggle = FALSE;
-                } else {
-                    gKickTimer = 5;
-                    gKickToggle = TRUE;
-                }
-            }
-        }
-        if (gConfigScroll == CFG_MOVESET && !gABCToggle && !gRealToggle) gMovesetToggle ^= 1;
-        if (gConfigScroll == CFG_STEPS) dynSteps = (dynSteps + 1) % 3;
-        if (gConfigScroll == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) gTimerToggle ^= 1;
-        if (gConfigScroll == CFG_SSK && !gRealToggle) g95Toggle ^= 1;
-        if (gConfigScroll == CFG_REAL) {
-            gRealToggle ^= 1;
-            g95Toggle = TRUE;
-            gKickToggle = TRUE;
-            gMovesetToggle = FALSE;
-            (!gRealToggle)
-            ? (gKickTimer = 0)
-            : (gKickTimer = 5);
-        }
-        if (gConfigScroll == CFG_DIVE) gDiveToggle = (gDiveToggle + 1) % 3;
-        if (gConfigScroll == CFG_VKICK && (!gLuigiToggle || !gMovesetToggle) && !gRealToggle) {
-            gKickToggle ^= 1;
-            (!gKickToggle)
-            ? (gKickTimer = 0)
-            : (gKickTimer = 5);
-        }
-        if (gConfigScroll == CFG_CTURN) gTurnToggle ^= 1;
-        if (gConfigScroll == CFG_ABC) {
-            gABCToggle = (gABCToggle + 1) % 3;
-            gMovesetToggle = FALSE;
-        }
-        if (gConfigScroll == CFG_LVL) gLVLToggle ^= 1;
-        // if (gHudDisplay.stars >= 100)
-        if (gConfigScroll == CFG_FLY) gFlightToggle ^= 1;
-        if (gConfigScroll == CFG_FPS) {
-            gFPSCap = (gFPSCap + 1) % FPS_USER_END;
-            gFPSSignal = TRUE;
-        }
-        if (gConfigScroll == CFG_DBG) spdToggle ^= 1;
-        if (gConfigScroll == CFG_SNAP) snapSwitch ^= 1;
-        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-    }
-    if (gPlayer1Controller->buttonPressed & B_BUTTON) {
-        if (gConfigScroll == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum)) && gTimerToggle) gHighlightToggle ^= 1;
-        if (gConfigScroll == CFG_VKICK || gConfigScroll == CFG_DBG || gConfigScroll == CFG_SNAP) gHighlightToggle ^= 1;
-        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-    }
-}
+#undef INPUT_LEFT
+#undef INPUT_RIGHT
+#undef INPUT_DOWN
+#undef INPUT_UP
 
 void fov_slider(void) {
     s16 minFov = -15; s16 maxFov = 45;
-    if (gPlayer1Controller->rawStickX <= -16.0f) { sFovSlider -= 0.03125f; }
-    if (gPlayer1Controller->rawStickX >= 16.0f) { sFovSlider += 0.03125f; }
+    sFovSlider += (f32)(gPlayer1Controller->rawStickX / 64.0f);
 
-    if (gGlobalTimer % 2 == 0) {
+    if ((vBlanks & 3) == 0) {
         if (gPlayer1Controller->buttonDown & L_JPAD) { sFovSlider--;
             if (sFovSlider >= minFov) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource); }
         if (gPlayer1Controller->buttonDown & R_JPAD) { sFovSlider++;
             if (sFovSlider <= maxFov) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource); }
     }
-    if ((gPlayer1Controller->buttonPressed & L_JPAD && sFovSlider <= minFov) ||
-        (gPlayer1Controller->buttonPressed & R_JPAD && sFovSlider >= minFov)) play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
+    if ((gPlayer1Controller->buttonPressed & L_JPAD && sFovSlider <= minFov) || (gPlayer1Controller->buttonPressed & R_JPAD && sFovSlider >= minFov))
+        play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
 
     if (gPlayer1Controller->buttonPressed & D_JPAD) {
         sFovSlider = 0; play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource); }
 
     sFovSlider = CLAMP(sFovSlider, minFov, maxFov);
+}
+
+u8 gKickVar = (1 << 7) + MODERN_TIMER;
+u8 gMovesetVar = 0; /* ABCDEEFF | A = 1995, B = Real, C = Luigi, D = Moveset, E = ABC, F = Dive */
+
+void config_options(void) {
+    if (gPlayer1Controller->buttonPressed & A_BUTTON) {
+#ifdef WIDE
+        if (SCROLL == CFG_WIDE) {
+            gConfig.widescreen ^= 1;
+            save_file_set_widescreen_mode(gConfig.widescreen);
+        }
+#endif
+        if (SCROLL == CFG_FOV) gConfigVar ^= (1 << 6);
+        if (SCROLL == CFG_HUD) gHudToggle ^= 1;
+        if (SCROLL == CFG_STATS) { gDebugToggle ^= 1; gShowDebugText ^= 1; }
+        if (SCROLL == CFG_CAM) {
+            (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO)
+            ? cam_select_alt_mode(CAM_SELECTION_FIXED) : cam_select_alt_mode(CAM_SELECTION_MARIO);
+        }
+        if (SCROLL == CFG_LUIGI) { gLuigiToggle ^= 1;
+            if (gMovesetToggle) { (!gLuigiToggle) ? (gKickVar = (1 << 7) + MODERN_TIMER) : (gKickVar = CLASSIC_TIMER); }}
+        if (SCROLL == CFG_MOVESET && !gABCToggle && !gRealToggle) gMovesetToggle ^= 1;
+        if (SCROLL == CFG_STEPS) dynSteps = (dynSteps + 1) % 3;
+        if (SCROLL == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum))) gTimerToggle ^= 1;
+        if (SCROLL == CFG_SSK && !gRealToggle) g95Toggle ^= 1;
+        if (SCROLL == CFG_REAL) {
+            gRealToggle ^= 1;
+            g95Toggle = TRUE;
+            gMovesetToggle = FALSE;
+            (!gRealToggle) ? (gKickVar = (1 << 7) + MODERN_TIMER) : (gKickVar = CLASSIC_TIMER);
+        }
+        if (SCROLL == CFG_DIVE) gMovesetVar = (gMovesetVar & 0b10) ? (gMovesetVar & 0xFC) : (gMovesetVar + 1);
+        if (SCROLL == CFG_VKICK && (!gLuigiToggle || !gMovesetToggle) && !gRealToggle) {
+            (gKickVar & (1 << 7)) ? (gKickVar = CLASSIC_TIMER) : (gKickVar = (1 << 7) + MODERN_TIMER); }
+        if (SCROLL == CFG_CTURN) gTurnToggle ^= 1;
+        if (SCROLL == CFG_ABC) {
+            gMovesetVar = (gMovesetVar & 0x8) ? (gMovesetVar & 0xF3) : (((gMovesetVar >> 2) + 1) << 2) + (gMovesetVar & 0b11);
+            gMovesetToggle = FALSE;
+        }
+        if (SCROLL == CFG_LVL) gLVLToggle ^= 1;
+        // if (gHudDisplay.stars >= 100)
+        if (SCROLL == CFG_FLY) gFlightToggle ^= 1;
+        if (SCROLL == CFG_FPS) {
+            gFPSCap = (gFPSCap + 1) % FPS_USER_END;
+        }
+        if (SCROLL == CFG_DBG) spdToggle ^= 1;
+        if (SCROLL == CFG_SNAP) snapSwitch ^= 1;
+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+    }
+    if (gPlayer1Controller->buttonPressed & B_BUTTON) {
+        if (SCROLL == CFG_TIMER && !(COURSE_IS_MAIN_COURSE(gCurrCourseNum)) && gTimerToggle) gConfigVar ^= (1 << 6);
+        if (SCROLL == CFG_VKICK || SCROLL == CFG_DBG || SCROLL == CFG_SNAP) gConfigVar ^= (1 << 6);
+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
+    }
 }
 
 u16 gTimerTime = 60;
@@ -1693,15 +1669,15 @@ u8 spdSpd = 0;
 
 u32 value_slider(u32 var, u32 def, u8 scroll, u8 rate) {
     print_set_envcolour(255, 255, 255, 255);
-    if (gHighlightToggle && gConfigScroll == scroll) {
+    if (gConfigVar & (1 << 6) && SCROLL == scroll) {
         print_set_envcolour(255, 255, 95, 255);
         if (vBlanks % rate == 0) {
             if (gPlayer1Controller->buttonDown & L_JPAD) var--;
             if (gPlayer1Controller->buttonDown & R_JPAD) var++;
-            if (gPlayer1Controller->buttonPressed & D_JPAD) {
-                var = def;
-                play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
-            }
+        }
+        if (gPlayer1Controller->buttonPressed & D_JPAD) {
+            var = def;
+            play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         }
     }
     if (scroll == CFG_VKICK) var = CLAMP((s32)var, 0, 30);
@@ -1715,7 +1691,7 @@ u8 gFPSCap = 0;
  * It takes in an x and y pos, scroll number, and string.
  */
 void config_option_render(u8 x, u8 y, const char *str, u8 scroll) {
-    (gConfigScroll == scroll)
+    (SCROLL == scroll)
     ? print_set_envcolour(255, 255, 255, 255)
     : print_set_envcolour(127, 127, 127, 255);
 
@@ -1723,9 +1699,9 @@ void config_option_render(u8 x, u8 y, const char *str, u8 scroll) {
 }
 
 void config_options_box(void) {
-    char config[64];
     config_options_scroll();
     config_options();
+    char config[64];
     u8 x = 32;
     u8 y = 28;
 
@@ -1737,21 +1713,21 @@ void config_options_box(void) {
 #else
     sprintf(config, "Widescreen Disabled");
 #endif
-    (gConfigScroll == CFG_WIDE) ? print_set_envcolour(255, 255, 255, 255) : print_set_envcolour(127, 127, 127, 255);
+    (SCROLL == CFG_WIDE) ? print_set_envcolour(255, 255, 255, 255) : print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
     sprintf(config, "FOV: %2.4f", sFovSlider + 45.0f);
-    if (gConfigScroll == CFG_FOV) {
-        if (!gHighlightToggle) print_set_envcolour(255, 255, 255, 255);
-        else { fov_slider(); print_set_envcolour(255, 255, 95, 255); }
-    } else print_set_envcolour(127, 127, 127, 255);
+    if (SCROLL == CFG_FOV) {
+        if (gConfigVar & (1 << 6)) { fov_slider(); print_set_envcolour(255, 255, 95, 255); }
+        else print_set_envcolour(255, 255, 255, 255); }
+    else print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_HUD)
+    if (SCROLL == CFG_HUD)
         print_small_text_light(160, 204, "Toggle the HUD Automatically hiding.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     (!gHudToggle) ? sprintf(config, "Hud Hide: On") : sprintf(config, "Hud Hide: Off");
@@ -1764,7 +1740,7 @@ void config_options_box(void) {
     config_option_render(x, y, config, CFG_STATS);
     if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_FPS) print_small_text_light(160, 204, "FPS Cap (WARNING: UNSTABLE)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (SCROLL == CFG_FPS) print_small_text_light(160, 204, "FPS Cap (WARNING: UNSTABLE)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     switch (gFPSCap) {
         case FPS_15: sprintf(config, "FPS: 15"); break;
@@ -1778,7 +1754,7 @@ void config_options_box(void) {
     if (x >= 160) { y += 12; } (x < 160) ? (x += 160) : (x -= 160);
 
     (cam_select_alt_mode(CAM_SELECTION_NONE) == CAM_SELECTION_MARIO) ? sprintf(config, "Camera Angle: Mario") : sprintf(config, "Camera Angle: Fixed");
-    (gConfigScroll == CFG_CAM) ? print_set_envcolour(255, 255, 255, 255) : print_set_envcolour(127, 127, 127, 255);
+    (SCROLL == CFG_CAM) ? print_set_envcolour(255, 255, 255, 255) : print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (x >= 160) { x -= 160; } y += 32;
@@ -1788,18 +1764,18 @@ void config_options_box(void) {
 
     if (!gLuigiToggle) print_set_envcolour(255, 95, 95, 255);
     if (gLuigiToggle) print_set_envcolour(95, 255, 95, 255);
-    if (gConfigScroll == CFG_LUIGI) print_small_text_light(160, 204, "Choose your Player!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (SCROLL == CFG_LUIGI) print_small_text_light(160, 204, "Choose your Player!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gLuigiToggle) { sprintf(config, "Brother: Mario"); print_set_envcolour(255, 95, 95, 255); }
                   else { sprintf(config, "Brother: Luigi"); print_set_envcolour(95, 255, 95, 255); }
 
-    if (gConfigScroll != CFG_LUIGI) print_set_envcolour(127, 127, 127, 255);
+    if (SCROLL != CFG_LUIGI) print_set_envcolour(127, 127, 127, 255);
 
     print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_MOVESET) print_small_text_light(160, 204, "Enable Luigi's special moves!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (SCROLL == CFG_MOVESET) print_small_text_light(160, 204, "Enable Luigi's special moves!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gMovesetToggle) sprintf(config, "Luigi's Moveset: Off"); else sprintf(config, "Luigi's Moveset: On");
 
@@ -1807,19 +1783,19 @@ void config_options_box(void) {
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
     
-    if (gConfigScroll == CFG_SNAP) {
+    if (SCROLL == CFG_SNAP) {
         print_small_text_light(160, 204, "Snap Mario's direction!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
     }
 
-    if (gHighlightToggle && gConfigScroll == CFG_SNAP) {
+    if (gConfigVar & (1 << 6) && SCROLL == CFG_SNAP) {
         if (snapSwitch) {
-            snapListID = value_slider(snapListID, SNAPDEF, CFG_SNAP, 4);
+            snapListID = value_slider(snapListID, SNAP_START, CFG_SNAP, 4);
                         if (snapListID == 0) snapListID++;
             if (snapPreset[snapListID] == 1) snapListID--;
             snapValue = snapPreset[snapListID];
         } else snapValue = value_slider(snapValue, 8, CFG_SNAP, 2);
     }
-    if (gConfigScroll != CFG_SNAP) print_set_envcolour(127, 127, 127, 255);
+    if (SCROLL != CFG_SNAP) print_set_envcolour(127, 127, 127, 255);
 
     if (snapSwitch) {
         (snapValue == 0xFFFF) ? sprintf(config, "Snap Preset: None", snapValue) : sprintf(config, "Snap Preset: %d", snapValue + 1);
@@ -1829,7 +1805,7 @@ void config_options_box(void) {
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_STEPS) {
+    if (SCROLL == CFG_STEPS) {
         if (dynSteps == 1) print_small_text_light(160, 192, "Max amount of steps is FPS-dependant.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
         if (dynSteps == 2) print_small_text_light(160, 192, "Max amount of steps is 4. (TAS)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
         print_small_text_light(160, 204, "Change amount of Physics Steps based on Mario's speed.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
@@ -1843,11 +1819,11 @@ void config_options_box(void) {
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_TIMER)
+    if (SCROLL == CFG_TIMER)
         print_small_text_light(160, 204, "Spaghetti Time. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     gTimerTime = value_slider(gTimerTime, 60, CFG_TIMER, 2); // this is temp, every level will have their own custom amount of time soon
-    if (gConfigScroll != CFG_TIMER) print_set_envcolour(127, 127, 127, 255);
+    if (SCROLL != CFG_TIMER) print_set_envcolour(127, 127, 127, 255);
 
     if (!gTimerToggle) sprintf(config, "Time Attack: Off");
     if (gTimerToggle) {
@@ -1860,7 +1836,7 @@ void config_options_box(void) {
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_SSK) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (SCROLL == CFG_SSK) print_small_text_light(160, 204, "Changes the moveset to be more beta-accurate.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!g95Toggle) sprintf(config, "Shoshinkai: Off");
     if (g95Toggle) sprintf(config, "Shoshinkai: On");
@@ -1869,7 +1845,7 @@ void config_options_box(void) {
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_REAL) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (SCROLL == CFG_REAL) print_small_text_light(160, 204, "Makes things more ''realistic''. (Troll mode)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gRealToggle) sprintf(config, "Realistic Mode: Off");
     if (gRealToggle) sprintf(config, "Realistic Mode: On");
@@ -1878,40 +1854,42 @@ void config_options_box(void) {
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_DIVE)
+    if (SCROLL == CFG_DIVE)
         print_small_text_light(160, 204, "What behavior to use when pressing B in the air.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gDiveToggle)     sprintf(config, "Always Dive: Off");
-    if (gDiveToggle == 1) sprintf(config, "Always Dive: Dive");
-    if (gDiveToggle == 2) sprintf(config, "Always Dive: Auto");
+    switch (gMovesetVar & 0b11) {
+        case 0: sprintf(config, "Always Dive: Off"); break;
+        case 1: sprintf(config, "Always Dive: Dive"); break;
+        case 2: sprintf(config, "Always Dive: Auto"); break; }
 
     config_option_render(x, y, config, CFG_DIVE);
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
-
-    if (gConfigScroll == CFG_VKICK) {
-        (!gKickToggle)
+    
+    if (SCROLL == CFG_VKICK) {
+        (gKickVar & (1 << 7))
         ? print_small_text_light(160, 192, "Current Mode: Modern", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE)
         : print_small_text_light(160, 192, "Current Mode: Vanilla", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
         print_small_text_light(160, 204, "Vanilla Wall Kicks. (Press B to change duration.)", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
     }
 
-    gKickTimer = value_slider(gKickTimer, (!gKickToggle) ? 0 : 5, CFG_VKICK, 3);
-    if (gKickTimer > 0 && gKickTimer < 5) print_set_envcolour(255, 95, 95, 255);
-    if (gKickTimer >= 10) print_set_envcolour(127, 255, 175, 255);
-    if (gConfigScroll != CFG_VKICK) print_set_envcolour(127, 127, 127, 255);
+    gKickVar = (gKickVar & (1 << 7)) + value_slider(gKickVar & 0x7F, (gKickVar & (1 << 7)) ? MODERN_TIMER : CLASSIC_TIMER, CFG_VKICK, 3);
 
-    sprintf(config, "V-Kicks:%2d Frames", gKickTimer);
-    if (gKickTimer == 0) sprintf(config, "V-Kicks: Off");
-    if (gKickTimer == 1) sprintf(config, "V-Kicks: 1 Frame");
-    if (gKickTimer == 5) sprintf(config, "V-Kicks: Vanilla");
-    if (gKickTimer >= 10) sprintf(config, "V-Kicks: %2d Frames", gKickTimer);
+    if ((gKickVar & 0x7F) > 0 && (gKickVar & 0x7F) < 5) print_set_envcolour(255, 95, 95, 255);
+    if ((gKickVar & 0x7F) >= 10) print_set_envcolour(127, 255, 175, 255);
+    if (SCROLL != CFG_VKICK) print_set_envcolour(127, 127, 127, 255);
+
+    switch (gKickVar & 0x7F) {
+        case  MODERN_TIMER: sprintf(config, "V-Kicks: Off"); break;
+        case CLASSIC_TIMER: sprintf(config, "V-Kicks: Vanilla"); break;
+        case             1: sprintf(config, "V-Kicks: 1 Frame"); break;
+        default:            sprintf(config, "V-Kicks: %d Frames", gKickVar & 0x7F); break; }
 
     print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_CTURN)
+    if (SCROLL == CFG_CTURN)
         print_small_text_light(160, 204, "Toggles Mario doing a half circle when turning.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     if (!gTurnToggle) sprintf(config, "Circle Turn: On");
@@ -1921,19 +1899,20 @@ void config_options_box(void) {
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
-    if (gConfigScroll == CFG_ABC)
+    if (SCROLL == CFG_ABC)
         print_small_text_light(160, 204, "A Button Challenge! How many stars can you get?", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
-    if (!gABCToggle) sprintf(config, "AB Challenge: Off");
-    if (gABCToggle == 1) sprintf(config, "AB Challenge: Easy");
-    if (gABCToggle == 2) sprintf(config, "AB Challenge: Hard");
+    switch (gMovesetVar & 0xC) {
+        case 0x0: sprintf(config, "AB Challenge: Off"); break;
+        case 0x4: sprintf(config, "AB Challenge: Easy"); break;
+        case 0x8: sprintf(config, "AB Challenge: Hard"); break; }
 
     config_option_render(x, y, config, CFG_ABC);
     if (x >= 160) y += 12;
     (x < 160) ? (x += 160) : (x -= 160);
 
     /*
-    if (gConfigScroll == CFG_HARD) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+    if (SCROLL == CFG_HARD) print_small_text_light(160, 204, "TODO: HARD MODE", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
     sprintf(config, "TEMP");
 
@@ -1943,23 +1922,23 @@ void config_options_box(void) {
     */
 
     if (gDebugLevelSelect) {
-        if (gConfigScroll == CFG_LVL) print_small_text_light(160, 204, "Programmer Mode.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (SCROLL == CFG_LVL) print_small_text_light(160, 204, "Programmer Mode.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         if (!gLVLToggle) sprintf(config, "LVLSELECT Mode: Off");
         if (gLVLToggle) sprintf(config, "LVLSELECT Mode: On");
 
         print_set_envcolour(255, 255, 255, 255);
-        if (gConfigScroll != CFG_LVL) print_set_envcolour(127, 127, 127, 255);
+        if (SCROLL != CFG_LVL) print_set_envcolour(127, 127, 127, 255);
     } else {
         gDebugLevelSelect = FALSE;
 
         print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == CFG_LVL) print_small_text_light(160, 204, "Locked, available in Level Select.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (SCROLL == CFG_LVL) print_small_text_light(160, 204, "Locked, available in Level Select.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         sprintf(config, "Locked!");
 
         print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll != CFG_LVL) print_set_envcolour(79, 79, 79, 255);
+        if (SCROLL != CFG_LVL) print_set_envcolour(79, 79, 79, 255);
     }
 
     print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
@@ -1967,21 +1946,21 @@ void config_options_box(void) {
     (x < 160) ? (x += 160) : (x -= 160);
 
     if (gHudDisplay.stars >= 100) {
-        if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (SCROLL == CFG_FLY) print_small_text_light(160, 204, "Mario's gonna fly for you! Wheeee!", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         if (!gFlightToggle) sprintf(config, "Infinite Flight: Off");
         if (gFlightToggle) sprintf(config, "Infinite Flight: On");
 
         print_set_envcolour(255, 255, 255, 255);
-        if (gConfigScroll != CFG_FLY) print_set_envcolour(127, 127, 127, 255);
+        if (SCROLL != CFG_FLY) print_set_envcolour(127, 127, 127, 255);
     } else {
         print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll == CFG_FLY) print_small_text_light(160, 204, "Locked, collect 100 Stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
+        if (SCROLL == CFG_FLY) print_small_text_light(160, 204, "Locked, collect 100 Stars.", PRINT_TEXT_ALIGN_CENTER, PRINT_ALL, FONT_OUTLINE);
 
         sprintf(config, "Locked!");
 
         print_set_envcolour(143, 143, 143, 255);
-        if (gConfigScroll != CFG_FLY) print_set_envcolour(79, 79, 79, 255);
+        if (SCROLL != CFG_FLY) print_set_envcolour(79, 79, 79, 255);
     }
 
     print_small_text_light(x, y, config, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
@@ -1989,7 +1968,7 @@ void config_options_box(void) {
     (x < 160) ? (x += 160) : (x -= 160);
     
     spdSpd = value_slider(spdSpd, 0, CFG_DBG, 2);
-    if (gConfigScroll != CFG_DBG) print_set_envcolour(127, 127, 127, 255);
+    if (SCROLL != CFG_DBG) print_set_envcolour(127, 127, 127, 255);
 
     if (!spdToggle) sprintf(config, "DEBUG SPEED: Off");
     if (spdToggle && spdSpd != 0) sprintf(config, "DEBUG SPEED: %2d", spdSpd);
@@ -2006,6 +1985,8 @@ void config_options_box(void) {
     print_small_text_light(140, (y - 16), "Events", PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
     */
 }
+
+#undef SCROLL
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
     #define CRS_NUM_X1 93
@@ -2296,70 +2277,10 @@ s32 render_pause_courses_and_castle(void) {
     s16 index;
 
     if ((gPlayer1Controller->buttonPressed & A_BUTTON && gDialogLineNum == MENU_OPT_CONFIG) ||
-         gPlayer1Controller->buttonPressed & R_TRIG) { gPlayer1Controller->buttonPressed &= ~A_BUTTON; gConfigOpen ^= 1; gDialogLineNum = MENU_OPT_DEFAULT; }
+         gPlayer1Controller->buttonPressed & R_TRIG) { gPlayer1Controller->buttonPressed &= ~A_BUTTON; gConfigVar ^= (1 << 7); gDialogLineNum = MENU_OPT_DEFAULT; }
     if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
     
-    if (!gConfigOpen) {
-        switch (gDialogBoxState) {
-            case DIALOG_STATE_OPENING:
-                gDialogLineNum = MENU_OPT_DEFAULT;
-                gDialogTextAlpha = 0;
-                level_set_transition(-1, NULL);
-                play_sound(SOUND_MENU_PAUSE_OPEN, gGlobalSoundSource);
-
-                if (gCurrCourseNum >= COURSE_MIN
-                 && gCurrCourseNum <= COURSE_MAX) {
-                    change_dialog_camera_angle();
-                    gDialogBoxState = DIALOG_STATE_VERTICAL;
-                } else {
-                    highlight_last_course_complete_stars();
-                    gDialogBoxState = DIALOG_STATE_HORIZONTAL;
-                }
-                break;
-
-            case DIALOG_STATE_VERTICAL:
-                shade_screen();
-                // 31 20
-                render_pause_castle_menu_box(95, 84, 0);
-                render_pause_my_score_coins();
-                render_pause_red_coins();
-#ifndef DISABLE_EXIT_COURSE
-                render_pause_course_options(129, 112, &gDialogLineNum, 16);
-#endif
-
-                if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
-                    level_set_transition(0, NULL);
-                    play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
-                    gDialogBoxState = DIALOG_STATE_OPENING;
-                    gMenuMode = MENU_MODE_NONE;
-
-                    if (gDialogLineNum == MENU_OPT_EXIT_COURSE) {
-                        index = gDialogLineNum;
-                    } else { // MENU_OPT_CONTINUE or MENU_OPT_CAMERA_ANGLE_R
-                        index = MENU_OPT_DEFAULT;
-                    }
-
-                    return index;
-                }
-                break;
-
-            case DIALOG_STATE_HORIZONTAL:
-                shade_screen();
-                print_hud_pause_colorful_str();
-                render_pause_castle_menu_box(80, 40, 32);
-                render_pause_castle_main_strings(104, 60);
-
-                if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
-                    level_set_transition(0, NULL);
-                    play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
-                    gMenuMode = MENU_MODE_NONE;
-                    gDialogBoxState = DIALOG_STATE_OPENING;
-
-                    return MENU_OPT_DEFAULT;
-                }
-                break;
-        }
-    } else {
+    if (gConfigVar & (1 << 7)) {
         prepare_blank_box();
         render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 191);
         finish_blank_box();
@@ -2369,7 +2290,66 @@ s32 render_pause_courses_and_castle(void) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         print_generic_string(93, 8, textConfigClose);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+        goto menuEnd; }
+    switch (gDialogBoxState) {
+        case DIALOG_STATE_OPENING:
+            gDialogLineNum = MENU_OPT_DEFAULT;
+            gDialogTextAlpha = 0;
+            level_set_transition(-1, NULL);
+            play_sound(SOUND_MENU_PAUSE_OPEN, gGlobalSoundSource);
+
+            if (gCurrCourseNum >= COURSE_MIN
+                && gCurrCourseNum <= COURSE_MAX) {
+                change_dialog_camera_angle();
+                gDialogBoxState = DIALOG_STATE_VERTICAL;
+            } else {
+                highlight_last_course_complete_stars();
+                gDialogBoxState = DIALOG_STATE_HORIZONTAL;
+            }
+            break;
+
+        case DIALOG_STATE_VERTICAL:
+            shade_screen();
+            render_pause_castle_menu_box(95, 84, 0);
+            render_pause_my_score_coins();
+            render_pause_red_coins();
+#ifndef DISABLE_EXIT_COURSE
+            render_pause_course_options(129, 112, &gDialogLineNum, 16);
+#endif
+
+            if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
+                level_set_transition(0, NULL);
+                play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
+                gDialogBoxState = DIALOG_STATE_OPENING;
+                gMenuMode = MENU_MODE_NONE;
+
+                if (gDialogLineNum == MENU_OPT_EXIT_COURSE) {
+                    index = gDialogLineNum;
+                } else { // MENU_OPT_CONTINUE or MENU_OPT_CAMERA_ANGLE_R
+                    index = MENU_OPT_DEFAULT;
+                }
+
+                return index;
+            }
+            break;
+
+        case DIALOG_STATE_HORIZONTAL:
+            shade_screen();
+            print_hud_pause_colorful_str();
+            render_pause_castle_menu_box(80, 40, 32);
+            render_pause_castle_main_strings(104, 60);
+
+            if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
+                level_set_transition(0, NULL);
+                play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
+                gMenuMode = MENU_MODE_NONE;
+                gDialogBoxState = DIALOG_STATE_OPENING;
+
+                return MENU_OPT_DEFAULT;
+            }
+            break;
     }
+menuEnd:
     if (gDialogTextAlpha < 255) {
         gDialogTextAlpha += 17;
     }

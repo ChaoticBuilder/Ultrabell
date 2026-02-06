@@ -48,7 +48,7 @@
             {"release_rate": 10, "pan": 83, "envelope": "envelope0", "sound": {"sample": "09", "tuning": 1.25992105}},
             {"release_rate": 10, "pan": 83, "envelope": "envelope0", "sound": {"sample": "perc_ride_cymbal", "tuning": 0.94387431}},
             {"release_rate": 10, "pan": 83, "envelope": "envelope0", "sound": {"sample": "11_splash_cymbal", "tuning": 1.18920712}},
-            {"release_rate": 10, "pan": 83, "envelope": "envelope0", "sound": {"sample": "10_cymbal_bell", "tuning": 1.68179283}},
+            {"release_rate": 10, "pan": 83, "envelope": "envelope0", "sound": {"sample": "10_cymbal_bell", "tuning": 0.94387431}},
             {"release_rate": 10, "pan": 35, "envelope": "envelope0", "sound": {"sample": "0A_tambourine", "tuning": 1.18920712}},
             {"release_rate": 10, "pan": 35, "envelope": "envelope0", "sound": {"sample": "0A_tambourine", "tuning": 1.25992105}},
             {"release_rate": 10, "pan": 35, "envelope": "envelope0", "sound": {"sample": "0A_tambourine", "tuning": 1.33483985}},
