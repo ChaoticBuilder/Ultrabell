@@ -519,8 +519,6 @@ levels/castle_inside/2.ia16.png
 levels/castle_inside/20.rgba16.png
 levels/castle_inside/21.rgba16.png
 levels/castle_inside/22.rgba16.png
-levels/castle_inside/23.rgba16.png
-levels/castle_inside/24.rgba16.png
 levels/castle_inside/25.rgba16.png
 levels/castle_inside/26.rgba16.png
 levels/castle_inside/29.rgba16.png
@@ -942,13 +940,11 @@ sound/samples/instruments/24_strings_2.aiff
 sound/samples/instruments/25_strings_3.aiff
 sound/samples/instruments/27_harpsichord.aiff
 sound/samples/instruments/28_sitar_1.aiff
-sound/samples/instruments/29_orchestra_hit.aiff
 sound/samples/instruments/2D_trombone.aiff
 sound/samples/instruments/2E_accordion.aiff
 sound/samples/instruments/2F_sleigh_bells.aiff
 sound/samples/instruments/30_rarefaction-lahna.aiff
 sound/samples/instruments/31_rarefaction-convolution.aiff
-sound/samples/instruments/32_metal_rimshot.aiff
 sound/samples/instruments/33_kick_drum_2.aiff
 sound/samples/instruments/34_alto_flute.aiff
 sound/samples/instruments/34b_organ.aiff
@@ -1049,7 +1045,6 @@ sound/samples/sfx_mario/03_mario_haha.aiff
 sound/samples/sfx_mario/04_mario_yahoo.aiff
 sound/samples/sfx_mario/06_mario_hrmm.aiff
 sound/samples/sfx_mario/07_mario_wah2.aiff
-sound/samples/sfx_mario/08_mario_whoa.aiff
 sound/samples/sfx_mario/0A_mario_attacked.aiff
 sound/samples/sfx_mario/0D_mario_yawning.aiff
 sound/samples/sfx_mario/0E_mario_snoring1.aiff
@@ -1196,7 +1191,6 @@ sound/sequences/us/01_cutscene_collect_star.m64
 sound/sequences/us/05_level_water.m64
 sound/sequences/us/07_level_boss_koopa.m64
 sound/sequences/us/0A_level_spooky.m64
-sound/sequences/us/0C_level_underground.m64
 sound/sequences/us/0D_menu_star_select.m64
 sound/sequences/us/0E_event_powerup.m64
 sound/sequences/us/10_event_koopa_message.m64
