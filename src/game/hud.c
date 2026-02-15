@@ -769,22 +769,19 @@ void sleep_draw(void) {
 
 #include "camera.h"
 #include "area.h"
+#include "mario.h"
 
 void testing(void) {
+	print_text_fmt_int(16, 48, "%x", gMarioState->health);
+	print_text_fmt_int(16, 32, "%x", gMarioState->damage);
+	print_text_fmt_int(16, 16, "%x", gMarioState->alive);
+
+	/*
     char debug[64];
     print_set_envcolour(255, 255, 255, 255);
-    sprintf(debug, "%d", gCurrLevelNum);
+    sprintf(debug, "%x", gMarioState->damage);
     print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-
-    /*
-    struct Surface *floor = gMarioState->floor;
-    f32 steepness = sqrtf(floor->normal.x * floor->normal.x + floor->normal.z * floor->normal.z);
-    sprintf(debug, "%2.4f", (steepness + 8.0f) * 16.0f);
-    print_small_text_light(120, 216, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    sprintf(debug, "%2.4f", (steepness / 12.0f) + 1.0f);
-    print_small_text_light(120, 224, debug, PRINT_ALL, PRINT_ALL, FONT_OUTLINE);
-    */
-    // print_text_fmt_int(160, 64, "%d", gMaxSimultaneousNotes);
+	*/
 }
 
 /**
@@ -820,7 +817,7 @@ void render_hud(void) {
 #else
         create_dl_ortho_matrix();
 #endif
-        // testing();
+        testing();
 
         handle_stats();
         if (gHudToggle) { mTimer = 1; cTimer = 1; }

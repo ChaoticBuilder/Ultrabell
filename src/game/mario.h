@@ -6,6 +6,11 @@
 #include "macros.h"
 #include "types.h"
 
+#define WEDGES 8
+#define HPINIT 0xA
+#define SLICE (1 << HPINIT)
+#define MAXHP (4 * SLICE * WEDGES)
+
 enum dustArray {
     SMOVE,
     JUMP

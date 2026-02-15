@@ -341,10 +341,10 @@ void set_mario_initial_action(struct MarioState *m, u32 spawnType, u32 actionArg
     }
 
 #ifdef PREVENT_DEATH_LOOP
-    if (m->isDead) {
-        m->health = 0x880;
-        m->healthAdjust = 0;
-        m->isDead = FALSE;
+    if (!m->alive) {
+        m->health = MAXHP;
+        m->damage = 0;
+        m->alive = TRUE;
     }
 #endif
 
@@ -767,9 +767,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 sSourceWarpNodeId = WARP_NODE_DEATH;
                 play_transition(WARP_TRANSITION_FADE_INTO_BOWSER, sDelayedWarpTimer, 0x00, 0x00, 0x00);
                 play_sound(SOUND_MENU_BOWSER_LAUGH, gGlobalSoundSource);
-#ifdef PREVENT_DEATH_LOOP
-                m->isDead = TRUE;
-#endif
+                m->alive = TRUE;
                 break;
 
             case WARP_OP_WARP_FLOOR:
@@ -944,10 +942,9 @@ void initiate_delayed_warp(void) {
 
 void update_hud_values(void) {
     if (gCurrCreditsEntry == NULL) {
-        s16 numHealthWedges = gMarioState->health > 0 ? gMarioState->health >> 8 : 0;
-
+		s16 numHealthWedges = (gMarioState->health != 0) ? MIN((gMarioState->health >> (HPINIT + 2)) + 1, WEDGES) : 0;
 #ifdef BREATH_METER
-        s16 numBreathWedges = gMarioState->breath > 0 ? gMarioState->breath >> 8 : 0;
+		s16 numBreathWedges = (gMarioState->breath != 0) ? MIN((gMarioState->breath >> (HPINIT + 2)) + 1, WEDGES) : 0;
 #endif
         // COND_BIT((gCurrCourseNum >= COURSE_MIN), gHudDisplay.flags, HUD_DISPLAY_FLAG_COIN_COUNT);
 

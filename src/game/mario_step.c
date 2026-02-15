@@ -748,9 +748,6 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
 
     set_mario_wall(m, NULL);
 
-    if (m->vel[1] < 0) m->fallVel = -m->vel[1];
-    else m->fallVel = 0;
-
     for (i = 0; i < numSteps; i++) {
         Vec3f step = {
             m->vel[0] / numSteps / gDeltaTime,
@@ -779,8 +776,6 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
     if (m->vel[1] >= 0.0f) {
         m->peakHeight = m->pos[1];
     }
-    if (m->vel[1] < 0) m->fallVel = -m->vel[1];
-    else if (m->vel[1] > 0) m->fallVel = 0;
 
     m->terrainSoundAddend = mario_get_terrain_sound_addend(m);
 

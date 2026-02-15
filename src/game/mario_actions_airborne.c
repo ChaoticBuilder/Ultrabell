@@ -56,10 +56,6 @@ s32 lava_boost_on_wall(struct MarioState *m) {
 }
 
 s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
-#ifdef NO_FALL_DAMAGE
-    return FALSE;
-#endif
-
     f32 fallHeight = m->peakHeight - m->pos[1];
     f32 damageHeight = FALL_DAMAGE_HEIGHT_SMALL;
 
@@ -70,23 +66,22 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 #endif
         set_camera_shake_from_hit(SHAKE_FALL_DAMAGE);
     }
+#ifdef NO_FALL_DAMAGE
+    return FALSE;
+#endif
 
     if (m->flags & MARIO_METAL_CAP) {
         if (!gRealToggle) return FALSE;
-        else {
-            m->healthAdjust = -0x100;
-            return drop_and_set_mario_action(m, hardFallAction, 4);
-        }
+		m->damage = -0x100;
+		return drop_and_set_mario_action(m, hardFallAction, 4);
     }
 
-    if (m->floor->type != SURFACE_BURNING) {
-        if (m->vel[1] < -mTerminalVel && mTerminalVel != 0 && fallHeight > damageHeight) {
-            u8 multiplier = ((m->marioBodyState->wingFlutter == FALSE) ? 0x40 : 0x10);
-            m->healthAdjust = (-m->fallVel + mTerminalVel) * multiplier;
-            play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
-            if (!gRealToggle) m->squishTimer = ((m->healthAdjust > -0x400) ? 30 : 60);
-            if (m->healthAdjust <= -0x400) return drop_and_set_mario_action(m, hardFallAction, 4);
-        }
+    if (m->vel[1] < -mTerminalVel && mTerminalVel != 0 && fallHeight > damageHeight && m->floor->type != SURFACE_BURNING) {
+		play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
+		u16 multiplier = SLICE * ((m->marioBodyState->wingFlutter == FALSE) ? 0.75f : 0.375f);
+		m->damage = MIN(m->vel[1] + mTerminalVel, 0) * multiplier;
+		if (!gRealToggle) m->squishTimer = ((m->damage > -(SLICE * 16)) ? 30 : 60);
+		if (m->damage <= -(SLICE * 16)) return drop_and_set_mario_action(m, hardFallAction, 4);
     }
 
     return FALSE;

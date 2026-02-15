@@ -560,7 +560,7 @@ u32 determine_knockback_action(struct MarioState *m, UNUSED s32 arg) {
 
     s16 angleToObject = mario_obj_angle_to_object(m, m->interactObj);
     s16 facingDYaw = angleToObject - m->faceAngle[1];
-    s16 remainingHealth = m->health - 0x40 * m->hurtCounter;
+    u16 killed = m->health <= m->damage;
 
     if (m->action & (ACT_FLAG_SWIMMING | ACT_FLAG_METAL_WATER)) {
         terrainIndex = 2;
@@ -568,7 +568,7 @@ u32 determine_knockback_action(struct MarioState *m, UNUSED s32 arg) {
         terrainIndex = 1;
     }
 
-    if (remainingHealth < 0x100) {
+    if (killed) {
         strengthIndex = 2;
     } else if (m->interactObj->oDamageOrCoinValue >= 4) {
         strengthIndex = 2;
@@ -672,7 +672,7 @@ u32 should_push_or_pull_door(struct MarioState *m, struct Object *obj) {
     return (dYaw <= 0x4000) ? WARP_FLAG_DOOR_PULLED : WARP_FLAG_DOOR_FLIP_MARIO;
 }
 
-u32 take_damage_from_interact_object(struct MarioState *m) {
+s32 take_damage_from_interact_object(struct MarioState *m) {
     s32 shake;
     s32 damage = m->interactObj->oDamageOrCoinValue;
 
@@ -692,7 +692,7 @@ u32 take_damage_from_interact_object(struct MarioState *m) {
         damage = 0;
     }
 
-    m->hurtCounter += 4 * damage;
+    m->damage -= 4 * SLICE * damage;
 
 #if ENABLE_RUMBLE
     queue_rumble_data(5, 80);
@@ -703,7 +703,7 @@ u32 take_damage_from_interact_object(struct MarioState *m) {
 }
 
 u32 take_damage_and_knock_back(struct MarioState *m, struct Object *obj) {
-    u32 damage;
+    s32 damage;
 
     if (!sInvulnerable && !(m->flags & MARIO_VANISH_CAP)
         && !(obj->oInteractionSubtype & INT_SUBTYPE_DELAY_INVINCIBILITY)) {
@@ -775,7 +775,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 #endif // !NON_STOP_STARS
     u32 grandStar = (obj->oInteractionSubtype & INT_SUBTYPE_GRAND_STAR) != 0;
 
-    if (m->health >= 0x100) {
+    if (m->health > 0) {
         cTimer = 120;
         mario_stop_riding_and_holding(m);
 #if ENABLE_RUMBLE

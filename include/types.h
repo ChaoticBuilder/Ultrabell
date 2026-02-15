@@ -430,7 +430,9 @@ struct MarioState {
     /*0xAA*/ s16 numStars;
     /*0xAC*/ s8 numKeys; // Unused key mechanic
     /*0xAD*/ s8 numLives;
-    /*0xAE*/ s16 health;
+			 u8 alive;
+    /*0xAE*/ u16 health;
+             s32 damage;
     /*0xB0*/ s16 animYTrans;
     /*0xB2*/ u8 hurtCounter;
     /*0xB3*/ u8 healCounter;
@@ -444,11 +446,8 @@ struct MarioState {
              f32 sleepTimer;
     // -- HackerSM64 MarioState fields begin --
 #ifdef BREATH_METER
-             s16 breath;
+             u16 breath;
              u8  breathCounter;
-#endif
-#ifdef PREVENT_DEATH_LOOP
-             u8  isDead : 1;
 #endif
            Vec3f lastSafePos;
            Vec3f prevPos;
@@ -458,9 +457,6 @@ struct MarioState {
              s16 moveYaw;
              s16 ceilYaw;
              s16 wallYaw;
-             s16 healthAdjust;
-             // u8  healthSpeed;
-             u16 fallVel;
     // -- HackerSM64 MarioState fields end --
 };
 

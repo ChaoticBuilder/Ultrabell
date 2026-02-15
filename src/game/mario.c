@@ -1515,76 +1515,53 @@ void set_submerged_cam_preset_and_spawn_bubbles(struct MarioState *m) {
  * Both increments and decrements Mario's HP.
  */
 void update_mario_health(struct MarioState *m) {
-    s32 terrainIsSnow;
+	if (m->input & INPUT_Z_PRESSED) m->health = 1;
+    s32 terrainIsSnow = (m->area->terrainType & TERRAIN_MASK) == TERRAIN_SNOW;
 
-    if (m->health >= 0x100) {
-        // When already healing or hurting Mario, Mario's HP is not changed any more here.
-        if (((u32) m->healCounter | (u32) m->hurtCounter) == 0) {
-            if ((m->input & INPUT_IN_POISON_GAS) && !(m->action & ACT_FLAG_INTANGIBLE)) {
-                if (!(m->flags & MARIO_METAL_CAP) && !gLVLToggle) {
-                    m->health -= 4;
-                }
-            } else {
-                if ((m->action & ACT_FLAG_SWIMMING) && !(m->action & ACT_FLAG_INTANGIBLE)) {
-                    terrainIsSnow = (m->area->terrainType & TERRAIN_MASK) == TERRAIN_SNOW;
+    if (m->alive && (!m->health
 #ifdef BREATH_METER
-                    // when in snow terrains lose 3 health.
-                    if ((m->pos[1] < (m->waterLevel - 140)) && terrainIsSnow) {
-                        m->health -= 3;
-                    }
-#else
-                    // When Mario is near the water surface, recover health (unless in snow),
-                    // when in snow terrains lose 3 health.
-                    // If using the debug level select, do not lose any HP to water.
-                    if ((m->pos[1] >= (m->waterLevel - 140)) && !terrainIsSnow) {
-                        m->health += 0x1A;
-                    } else if (!gLVLToggle) {
-                        m->health -= (terrainIsSnow ? 3 : 1);
-                    }
+	|| !m->breath
 #endif
-                } else if (g95Toggle && !gRealToggle && gGlobalTimer % 2 == 0) {
-                    m->health++;
-                }
-            }
-        }
-
-        if (m->healCounter > 0) {
-            if (gRealToggle) m->health -= 0x30;
-            m->health += 0x40;
-            m->healCounter--;
-        }
-        if (m->hurtCounter > 0) {
-            if (gRealToggle) m->health -= 0x40;
-            m->health -= 0x40;
-            m->hurtCounter--;
-        }
-        if (m->healthAdjust != 0) {
-            if (m->healthAdjust < 0) m->health = approach_s16_symmetric(m->health, 0xFF, 0x20);
-            else                     m->health = approach_s16_symmetric(m->health, 0x880, 0x20);
-                               m->healthAdjust = approach_s16_symmetric(m->healthAdjust, 0, 0x20);
-        }
-
-        if (m->health > 0x880) m->health = 0x880;
-        if (m->health < 0x100)
-            m->health = 0xFF;
-         
+	)) { m->alive = FALSE; return; }
+	if (!m->alive || m->damage != 0 || (m->flags & MARIO_METAL_CAP) || m->action & ACT_FLAG_INTANGIBLE) goto healthUpdate;
+	if (m->input & INPUT_IN_POISON_GAS && !gLVLToggle) m->damage -= 0x80;
+	if (m->action & ACT_FLAG_SWIMMING) {
+		if (m->pos[1] < (m->waterLevel - 140) && !gLVLToggle) {
+#ifdef BREATH_METER
+			m->breath -= (terrainIsSnow) ? 0x60 : 0x20;
+			if (terrainIsSnow) m->damage -= 0x20;
+#else
+			m->damage -= (terrainIsSnow) ? 0x60 : 0x20;
+#endif
+		} else if (!terrainIsSnow) {
+			m->damage += (SLICE * 0.25f);
+		}
+	}
+healthUpdate:
+	if (m->alive && m->damage == 0) m->health += ((MAXHP - m->health) >> (HPINIT + 2)) + 1;
+	if (m->damage != 0) {
+		m->health += CLAMP(m->damage, -SLICE, SLICE);
+		m->damage = approach_s32_symmetric(m->damage, 0, SLICE);
+	}
+	if (m->health > MAXHP) m->health = MAXHP;
+	if (!m->alive) return;
 
 #ifndef BREATH_METER
-        // Play a noise to alert the player when Mario is close to drowning.
-        if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < 0x300)) {
+	// Play a noise to alert the player when Mario is close to drowning.
+	if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < SLICE * 12)) {
+		if (!g95Toggle) play_sound(SOUND_MOVING_ALMOST_DROWNING, gGlobalSoundSource);
 #if ENABLE_RUMBLE
-            if (gRumblePakTimer == 0) {
-                gRumblePakTimer = 36;
-                if (is_rumble_finished_and_queue_empty()) {
-                    queue_rumble_data(3, 30);
-                }
-            }
-        } else {
-            gRumblePakTimer = 0;
+		if (gRumblePakTimer == 0) {
+			gRumblePakTimer = 36;
+			if (is_rumble_finished_and_queue_empty()) {
+				queue_rumble_data(3, 30);
+			}
+		}
+	} else {
+		gRumblePakTimer = 0;
 #endif
-        }
+	}
 #endif
-    }
 }
 
 #ifdef BREATH_METER
@@ -1945,6 +1922,7 @@ void init_mario(void) {
     gMarioState->forwardVel = 0.0f;
     gMarioState->squishTimer = 0;
 
+	gMarioState->damage = 0;
     gMarioState->hurtCounter = 0;
     gMarioState->healCounter = 0;
 
@@ -2018,7 +1996,9 @@ void init_mario_from_save_file(void) {
 #else
     gMarioState->numLives = 0;
 #endif
-    gMarioState->health = 0x880;
+	gMarioState->alive = TRUE;
+    gMarioState->health = MAXHP;
+	gMarioState->damage = 0;
 #ifdef BREATH_METER
     gMarioState->breath = 0x880;
     gHudDisplay.breath = 8;
@@ -2027,5 +2007,5 @@ void init_mario_from_save_file(void) {
     gMarioState->animYTrans = 0xBD;
 
     gHudDisplay.coins = 0;
-    gHudDisplay.wedges = 8;
+    gHudDisplay.wedges = WEDGES;
 }

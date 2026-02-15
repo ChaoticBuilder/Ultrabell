@@ -885,7 +885,7 @@ static void common_water_knockback_step(struct MarioState *m, s32 animation, u32
             m->invincTimer = 30;
         }
 
-        set_mario_action(m, m->health >= 0x100 ? endAction : ACT_WATER_DEATH, 0);
+        set_mario_action(m, m->alive ? endAction : ACT_WATER_DEATH, 0);
     }
 }
 
@@ -911,7 +911,7 @@ static s32 act_water_shocked(struct MarioState *m) {
 
     if (m->actionTimer >= 6) {
         m->invincTimer = 30;
-        set_mario_action(m, m->health < 0x100 ? ACT_WATER_DEATH : ACT_WATER_IDLE, 0);
+        set_mario_action(m, !m->alive ? ACT_WATER_DEATH : ACT_WATER_IDLE, 0);
     }
 
     stationary_slow_down(m);
@@ -921,7 +921,6 @@ static s32 act_water_shocked(struct MarioState *m) {
 }
 
 static s32 act_drowning(struct MarioState *m) {
-    f32 rand = random_float();
     switch (m->actionState) {
         case ACT_STATE_DROWNING_EYES_HALF_CLOSED:
             set_mario_animation(m, MARIO_ANIM_DROWNING_PART1);
@@ -934,12 +933,8 @@ static s32 act_drowning(struct MarioState *m) {
         case ACT_STATE_DROWNING_EYES_DEAD:
             set_mario_animation(m, MARIO_ANIM_DROWNING_PART2);
             m->marioBodyState->eyeState = MARIO_EYES_DEAD;
-            if (m->marioObj->header.gfx.animInfo.animFrame == 30) {
-                if (rand < 0.015625f) {
-                    if (!gRealToggle) level_trigger_warp(m, WARP_OP_DEATH);
-                }
-                // so yk the github description and how it mentions secrets hidden within? yeah this is now the first ever secret implemented, very small chance to get a perma death :3
-                // just a cool insight for people browsing the code
+            if (is_anim_at_end(m)) {
+                level_trigger_warp(m, WARP_OP_DEATH);
             }
             break;
     }
@@ -1585,7 +1580,7 @@ static s32 check_common_submerged_cancels(struct MarioState *m) {
         }
     }
 
-    if (m->health < 0x100 && !(m->action & (ACT_FLAG_INTANGIBLE | ACT_FLAG_INVULNERABLE))) {
+    if (!m->alive && !(m->action & (ACT_FLAG_INTANGIBLE | ACT_FLAG_INVULNERABLE))) {
         set_mario_action(m, ACT_DROWNING, 0);
     }
 
