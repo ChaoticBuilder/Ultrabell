@@ -1515,40 +1515,38 @@ void set_submerged_cam_preset_and_spawn_bubbles(struct MarioState *m) {
  * Both increments and decrements Mario's HP.
  */
 void update_mario_health(struct MarioState *m) {
-	if (m->input & INPUT_Z_PRESSED) m->health = 1;
     s32 terrainIsSnow = (m->area->terrainType & TERRAIN_MASK) == TERRAIN_SNOW;
 
-    if (m->alive && (!m->health
+    if (!m->health
 #ifdef BREATH_METER
 	|| !m->breath
 #endif
-	)) { m->alive = FALSE; return; }
+	) { m->alive = FALSE; return; }
 	if (!m->alive || m->damage != 0 || (m->flags & MARIO_METAL_CAP) || m->action & ACT_FLAG_INTANGIBLE) goto healthUpdate;
-	if (m->input & INPUT_IN_POISON_GAS && !gLVLToggle) m->damage -= 0x80;
+	if (m->input & INPUT_IN_POISON_GAS && !gLVLToggle) m->damage -= SLICE80;
 	if (m->action & ACT_FLAG_SWIMMING) {
 		if (m->pos[1] < (m->waterLevel - 140) && !gLVLToggle) {
 #ifdef BREATH_METER
-			m->breath -= (terrainIsSnow) ? 0x60 : 0x20;
-			if (terrainIsSnow) m->damage -= 0x20;
+			m->breath -= (terrainIsSnow) ? SLICE40 : SLICE20;
+			if (terrainIsSnow) m->damage -= SLICE20;
 #else
-			m->damage -= (terrainIsSnow) ? 0x60 : 0x20;
+			m->damage -= (terrainIsSnow) ? SLICE40 : SLICE20;
 #endif
 		} else if (!terrainIsSnow) {
-			m->damage += (SLICE * 0.25f);
+			m->damage += SLICE180;
 		}
 	}
 healthUpdate:
-	if (m->alive && m->damage == 0) m->health += ((MAXHP - m->health) >> (HPINIT + 2)) + 1;
+	if (m->damage == 0) m->health += (MAXHP + SLICE - (m->health + 1)) >> HPINIT;
 	if (m->damage != 0) {
-		m->health += CLAMP(m->damage, -SLICE, SLICE);
-		m->damage = approach_s32_symmetric(m->damage, 0, SLICE);
+		m->health += CLAMP(m->damage, -MIN(SLICE200, m->health), MIN(SLICE200, MAXHP - m->health));
+		m->damage = approach_s32_symmetric(m->damage, 0, SLICE200);
 	}
-	if (m->health > MAXHP) m->health = MAXHP;
 	if (!m->alive) return;
 
 #ifndef BREATH_METER
 	// Play a noise to alert the player when Mario is close to drowning.
-	if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < SLICE * 12)) {
+	if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < SLICE * 3)) {
 		if (!g95Toggle) play_sound(SOUND_MOVING_ALMOST_DROWNING, gGlobalSoundSource);
 #if ENABLE_RUMBLE
 		if (gRumblePakTimer == 0) {

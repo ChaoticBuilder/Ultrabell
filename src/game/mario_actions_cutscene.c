@@ -524,7 +524,7 @@ s32 act_debug_free_move(struct MarioState *m) {
     Vec3f pos;
 
     if (gPlayer1Controller->buttonPressed & L_TRIG) {
-        m->health = 0x880;
+        m->health = MAXHP;
     }
 
     f32 speed = (gPlayer1Controller->buttonDown & B_BUTTON) ? 4.0f : 1.0f;
@@ -772,9 +772,9 @@ s32 act_eaten_by_bubba(struct MarioState *m) {
     set_mario_animation(m, MARIO_ANIM_A_POSE);
     m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
 #ifdef BREATH_METER
-    m->breath = 0xFF;
+    m->breath = 0;
 #endif
-    m->health = 0xFF;
+    m->health = 0;
     if (m->actionTimer++ == 60) {
         level_trigger_warp(m, WARP_OP_DEATH);
     }
@@ -1119,12 +1119,12 @@ s32 act_spawn_spin_landing(struct MarioState *m) {
  */
 s32 act_exit_airborne(struct MarioState *m) {
 #ifdef BREATH_METER
-    m->breath = 0x880;
+    m->breath = MAXHP;
 #endif
     if (15 < m->actionTimer++
         && launch_mario_until_land(m, ACT_EXIT_LAND_SAVE_DIALOG, MARIO_ANIM_GENERAL_FALL, -32.0f)) {
         // heal Mario
-        m->healCounter = 127;
+        m->damage = MAXHP;
     }
     // rotate him to face away from the entrance
     m->marioObj->header.gfx.angle[1] += 0x8000;
@@ -1134,11 +1134,11 @@ s32 act_exit_airborne(struct MarioState *m) {
 
 s32 act_falling_exit_airborne(struct MarioState *m) {
 #ifdef BREATH_METER
-    m->breath = 0x880;
+    m->breath = MAXHP;
 #endif
     if (launch_mario_until_land(m, ACT_EXIT_LAND_SAVE_DIALOG, MARIO_ANIM_GENERAL_FALL, 0.0f)) {
         // heal Mario
-        m->healCounter = 127;
+        m->damage = MAXHP;
     }
     // rotate Mario to face away from the entrance
     m->marioObj->header.gfx.angle[1] += 0x8000;
@@ -1239,12 +1239,12 @@ s32 act_death_exit(struct MarioState *m) {
         m->numLives--;
 #endif
         // restore 7.75 units of health
-        m->healCounter = 127;
+        m->damage = MAXHP;
     }
     // one unit of health
-    m->health = 0x0100;
+    m->health = SLICE;
 #ifdef BREATH_METER
-    m->breath = 0x880;
+    m->breath = MAXHP;
 #endif
     return FALSE;
 }
@@ -1257,12 +1257,12 @@ s32 act_unused_death_exit(struct MarioState *m) {
         m->numLives--;
 #endif
         // restore 7.75 units of health
-        m->healCounter = 127;
+        m->damage = MAXHP;
     }
     // one unit of health
-    m->health = 0x0100;
+    m->health = SLICE;
 #ifdef BREATH_METER
-    m->breath = 0x880;
+    m->breath = MAXHP;
 #endif
     return FALSE;
 }
@@ -1278,12 +1278,12 @@ s32 act_falling_death_exit(struct MarioState *m) {
         m->numLives--;
 #endif
         // restore 7.75 units of health
-        m->healCounter = 127;
+        m->damage = MAXHP;
     }
     // one unit of health
-    m->health = 0x0100;
+    m->health = SLICE;
 #ifdef BREATH_METER
-    m->breath = 0x880;
+    m->breath = MAXHP;
 #endif
     return FALSE;
 }
@@ -1291,7 +1291,7 @@ s32 act_falling_death_exit(struct MarioState *m) {
 // waits 11 frames before actually executing, also has reduced fvel
 s32 act_special_exit_airborne(struct MarioState *m) {
 #ifdef BREATH_METER
-    m->breath = 0x880;
+    m->breath = MAXHP;
 #endif
     struct Object *marioObj = m->marioObj;
 
@@ -1304,7 +1304,7 @@ s32 act_special_exit_airborne(struct MarioState *m) {
 
     if (launch_mario_until_land(m, ACT_EXIT_LAND_SAVE_DIALOG, MARIO_ANIM_SINGLE_JUMP, -24.0f)) {
         // heal Mario
-        m->healCounter = 127;
+        m->damage = MAXHP;
         m->actionArg = 1;
     }
 
@@ -1333,14 +1333,14 @@ s32 act_special_death_exit(struct MarioState *m) {
 #ifdef ENABLE_LIVES
         m->numLives--;
 #endif
-        m->healCounter = 127;
+        m->damage = MAXHP;
     }
     // show Mario
     marioObj->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
     // one unit of health
-    m->health = 0x0100;
+    m->health = SLICE;
 #ifdef BREATH_METER
-    m->breath = 0x880;
+    m->breath = MAXHP;
 #endif
 
     return FALSE;
@@ -1587,9 +1587,9 @@ s32 act_squished(struct MarioState *m) {
                           2.0f - squishAmount);
             } else {
                 if (!(m->flags & MARIO_METAL_CAP) && m->invincTimer == 0) {
-                    if (gRealToggle) m->health = 0xFF;
+                    if (gRealToggle) m->health = 0;
                     // cap on: 3 units; cap off: 4.5 units
-                    m->hurtCounter += m->flags & MARIO_CAP_ON_HEAD ? 12 : 18;
+                    m->damage -= SLICE * (m->flags & MARIO_CAP_ON_HEAD ? 3 : 4);
                     play_sound_if_no_flag(m, SOUND_MARIO_ATTACKED, MARIO_MARIO_SOUND_PLAYED);
                 }
 
@@ -1613,7 +1613,7 @@ s32 act_squished(struct MarioState *m) {
                     level_trigger_warp(m, WARP_OP_DEATH);
                     // woosh, he's gone!
                     set_mario_action(m, ACT_DISAPPEARED, 0);
-                } else if (m->hurtCounter == 0) {
+                } else if (m->damage == 0) {
                     // un-squish animation
                     m->squishTimer = 30;
                     set_mario_action(m, ACT_IDLE, 0);
@@ -1650,8 +1650,8 @@ s32 act_squished(struct MarioState *m) {
     // squished for more than 10 seconds, so kill Mario
     if (m->actionArg++ > 300) {
         // 0 units of health
-        m->health = 0x00FF;
-        m->hurtCounter = 0;
+        m->health = 0;
+        m->damage = 0;
         level_trigger_warp(m, WARP_OP_DEATH);
         // woosh, he's gone!
         set_mario_action(m, ACT_DISAPPEARED, 0);
@@ -1921,9 +1921,9 @@ static s32 act_intro_cutscene(struct MarioState *m) {
 static void jumbo_star_cutscene_falling(struct MarioState *m) {
     if (m->actionState == ACT_STATE_JUMBO_STAR_CUTSCENE_FALLING_FALL) {
 #ifdef POWER_STARS_HEAL
-        m->healCounter = 127;
+        m->damage = MAXHP;
 #ifdef BREATH_METER
-        m->breathCounter = 31;
+        m->bubble = MAXHP;
 #endif
 #endif
         m->input |= INPUT_A_DOWN;

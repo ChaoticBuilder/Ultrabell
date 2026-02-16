@@ -942,9 +942,9 @@ void initiate_delayed_warp(void) {
 
 void update_hud_values(void) {
     if (gCurrCreditsEntry == NULL) {
-		s16 numHealthWedges = (gMarioState->health != 0) ? MIN((gMarioState->health >> (HPINIT + 2)) + 1, WEDGES) : 0;
+		s16 numHealthWedges = (gMarioState->health != 0) ? MIN((gMarioState->health >> HPINIT) + 1, WEDGES) : 0;
 #ifdef BREATH_METER
-		s16 numBreathWedges = (gMarioState->breath != 0) ? MIN((gMarioState->breath >> (HPINIT + 2)) + 1, WEDGES) : 0;
+		s16 numBreathWedges = (gMarioState->breath != 0) ? MIN((gMarioState->breath >> HPINIT) + 1, WEDGES) : 0;
 #endif
         // COND_BIT((gCurrCourseNum >= COURSE_MIN), gHudDisplay.flags, HUD_DISPLAY_FLAG_COIN_COUNT);
 

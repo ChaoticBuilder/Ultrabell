@@ -118,7 +118,7 @@ s32 act_idle(struct MarioState *m) {
         return set_mario_action(m, ACT_COUGHING, 0);
     }
 
-    if (!(m->actionArg & 1) && m->health < 0x400) {
+    if (!(m->actionArg & 1) && m->health < SLICE * 4) {
         return set_mario_action(m, ACT_PANTING, 0);
     }
 
@@ -560,12 +560,11 @@ s32 act_crouching(struct MarioState *m) {
 }
 
 s32 act_panting(struct MarioState *m) {
-    if (!g95Toggle) m->health++;
     if (m->input & INPUT_STOMPED) {
         return set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }
 
-    if (m->health >= 0x400) {
+    if (m->health >= SLICE * 4) {
         return set_mario_action(m, ACT_IDLE, 0);
     }
 
@@ -592,7 +591,7 @@ s32 act_hold_panting_unused(struct MarioState *m) {
         return drop_and_set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }
 
-    if (m->health >= 0x400) {
+    if (m->health >= SLICE * 4) {
         return set_mario_action(m, ACT_HOLD_IDLE, 0);
     }
 
@@ -1098,7 +1097,7 @@ s32 check_common_stationary_cancels(struct MarioState *m) {
     }
 
     if (m->action != ACT_NO_STANDING_DEATH) {
-        if (m->health < 0x100) {
+        if (!m->alive) {
             update_mario_sound_and_camera(m);
             return drop_and_set_mario_action(m, ACT_STANDING_DEATH, 0);
         }

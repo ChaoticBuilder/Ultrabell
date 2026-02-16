@@ -78,10 +78,10 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 
     if (m->vel[1] < -mTerminalVel && mTerminalVel != 0 && fallHeight > damageHeight && m->floor->type != SURFACE_BURNING) {
 		play_sound(SOUND_MARIO_ATTACKED, m->marioObj->header.gfx.cameraToObject);
-		u16 multiplier = SLICE * ((m->marioBodyState->wingFlutter == FALSE) ? 0.75f : 0.375f);
+		u16 multiplier = SLICE40 * ((m->marioBodyState->wingFlutter == FALSE) ? 10 : 5);
 		m->damage = MIN(m->vel[1] + mTerminalVel, 0) * multiplier;
-		if (!gRealToggle) m->squishTimer = ((m->damage > -(SLICE * 16)) ? 30 : 60);
-		if (m->damage <= -(SLICE * 16)) return drop_and_set_mario_action(m, hardFallAction, 4);
+		if (!gRealToggle) m->squishTimer = ((-m->damage < SLICE * 4) ? 30 : 60);
+		if (-m->damage >= SLICE * 4) return drop_and_set_mario_action(m, hardFallAction, 4);
     }
 
     return FALSE;
@@ -1052,10 +1052,7 @@ s32 act_burning_jump(struct MarioState *m) {
     m->marioObj->oMarioBurnTimer += 3;
 
     if (!gLVLToggle) {
-        m->health -= 10;
-        if (m->health < 0x100) {
-            m->health = 0xFF;
-        }
+        m->damage -= 10;
     }
 #if ENABLE_RUMBLE
     reset_rumble_timers_slip();
@@ -1076,10 +1073,7 @@ s32 act_burning_fall(struct MarioState *m) {
     m->marioObj->oMarioBurnTimer += 3;
 
     if (!gLVLToggle) {
-        m->health -= 10;
-        if (m->health < 0x100) {
-            m->health = 0xFF;
-        }
+        m->damage -= 10;
     }
 #if ENABLE_RUMBLE
     reset_rumble_timers_slip();
@@ -1660,7 +1654,7 @@ s32 act_lava_boost(struct MarioState *m) {
     }
 
     if (m->flags & MARIO_METAL_CAP || gLVLToggle) m->hurtCounter = 0;
-    if (m->health < 0x100) {
+    if (!m->alive) {
         level_trigger_warp(m, WARP_OP_DEATH);
     }
 

@@ -447,7 +447,7 @@ struct MarioState {
     // -- HackerSM64 MarioState fields begin --
 #ifdef BREATH_METER
              u16 breath;
-             u8  breathCounter;
+             s32 bubble;
 #endif
            Vec3f lastSafePos;
            Vec3f prevPos;

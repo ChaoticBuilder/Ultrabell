@@ -561,6 +561,7 @@ u32 determine_knockback_action(struct MarioState *m, UNUSED s32 arg) {
     s16 angleToObject = mario_obj_angle_to_object(m, m->interactObj);
     s16 facingDYaw = angleToObject - m->faceAngle[1];
     u16 killed = m->health <= m->damage;
+	if (killed) m->damage = m->health;
 
     if (m->action & (ACT_FLAG_SWIMMING | ACT_FLAG_METAL_WATER)) {
         terrainIndex = 2;
@@ -692,7 +693,7 @@ s32 take_damage_from_interact_object(struct MarioState *m) {
         damage = 0;
     }
 
-    m->damage -= 4 * SLICE * damage;
+    m->damage -= SLICE * damage;
 
 #if ENABLE_RUMBLE
     queue_rumble_data(5, 80);
@@ -737,9 +738,9 @@ void reset_mario_pitch(struct MarioState *m) {
 u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
     cTimer = 60;
     if ((m->numCoins + obj->oDamageOrCoinValue) > m->numCoins) m->numCoins += obj->oDamageOrCoinValue;
-    m->healCounter += 4 * obj->oDamageOrCoinValue;
+    m->damage += SLICE * obj->oDamageOrCoinValue;
 #ifdef BREATH_METER
-    m->breathCounter += (4 * obj->oDamageOrCoinValue);
+    m->bubble += SLICE * obj->oDamageOrCoinValue;
 #endif
     obj->oInteractStatus = INT_STATUS_INTERACTED;
 #if ENABLE_RUMBLE
@@ -753,9 +754,9 @@ u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *
 
 u32 interact_water_ring(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
 #ifdef BREATH_METER
-    m->breathCounter += 4 * obj->oDamageOrCoinValue;
+    m->bubble += SLICE * obj->oDamageOrCoinValue;
 #else
-    m->healCounter += 4 * obj->oDamageOrCoinValue;
+    m->damage += SLICE * obj->oDamageOrCoinValue;
 #endif
     obj->oInteractStatus = INT_STATUS_INTERACTED;
     return FALSE;
@@ -775,7 +776,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 #endif // !NON_STOP_STARS
     u32 grandStar = (obj->oInteractionSubtype & INT_SUBTYPE_GRAND_STAR) != 0;
 
-    if (m->health > 0) {
+    if (m->alive) {
         cTimer = 120;
         mario_stop_riding_and_holding(m);
 #if ENABLE_RUMBLE
@@ -783,18 +784,16 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 #endif
 
 #ifdef POWER_STARS_HEAL
-        m->hurtCounter = 0;
-        (!gRealToggle) ? (m->healCounter = 31) : (m->healCounter = 127);
+        m->damage = MAXHP;
  #ifdef BREATH_METER
-        m->breathCounter = 31;
+        m->bubble = MAXHP;
  #endif
         if (!noExit) {
 #else // !POWER_STARS_HEAL
         if (!noExit) {
-            m->hurtCounter = 0;
-            m->healCounter = 0;
+			m->damage = 0;
  #ifdef BREATH_METER
-            m->breathCounter = 0;
+            m->bubble = 0;
  #endif
 #endif // !POWER_STARS_HEAL
             m->capTimer = 0xFF;
@@ -1873,7 +1872,7 @@ void check_death_barrier(struct MarioState *m) {
 void check_lava_boost(struct MarioState *m) {
     if (!(m->action & ACT_FLAG_RIDING_SHELL) && m->pos[1] < m->floorHeight + 10.0f) {
         if (!(m->flags & MARIO_METAL_CAP)) {
-            m->hurtCounter += (m->flags & MARIO_CAP_ON_HEAD) ? 8 : 12;
+            m->damage -= SLICE * (m->flags & MARIO_CAP_ON_HEAD ? 2 : 3);
         }
 
         update_mario_sound_and_camera(m);

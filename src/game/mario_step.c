@@ -648,6 +648,7 @@ u16 gGravTimer = 0;
 u16 gravity_applier(struct MarioState *m, f32 baseVel, f32 terminalVel, u8 exp) {
     f32 dec;
     if (!exp) {
+		if (gRealToggle) { baseVel *= 1.25f; }
         if (LUIGI_MOVESET && aGravToggle) { baseVel *= 0.75f; terminalVel *= 0.75f; }
         if (gMovesetToggle && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
             if (!gLuigiToggle) baseVel *= 0.8125f; else { dec = MIN(gGravTimer * 0.046875f, 0.75f);
@@ -664,36 +665,53 @@ u16 gravity_applier(struct MarioState *m, f32 baseVel, f32 terminalVel, u8 exp) 
 void apply_gravity(struct MarioState *m) {
     f32 baseVel;
 
+/*
+	if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) { mTerminalVel = 0; apply_twirl_gravity(m); }
+	else if (should_strengthen_gravity_for_jump_ascent(m)) {
+		m->vel[1] /= 4.0f / gDeltaTime; }
+	else if (m->action & ACT_FLAG_METAL_WATER) {
+		mTerminalVel = 0; baseVel = ((!gRealToggle) ? 1.0f : 1.25f); m->vel[1] -= baseVel / gDeltaTime; MAX(m->vel[1], -24.0f); }
+	else if (m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)
+	switch (m->action) {
+		case     ACT_SHOT_FROM_CANNON: mTerminalVel = gravity_applier(m, 1.0f, 64, FALSE); break;
+		case            ACT_LONG_JUMP:
+		case       ACT_BBH_ENTER_SPIN: mTerminalVel = gravity_applier(m, 2.0f, 64, FALSE); break;
+		case           ACT_LAVA_BOOST:
+		case           ACT_SLIDE_KICK:
+		case ACT_FALL_AFTER_STAR_GRAB: mTerminalVel = gravity_applier(m, 3.5f, 64, FALSE); break;
+		case        ACT_GETTING_BLOWN: mTerminalVel = gravity_applier(m, m->windGravity, 64, FALSE); break;
+		case         ACT_GROUND_POUND: mTerminalVel = 64; gravity_applier(m, 0.25f, 5.0f, TRUE); break;
+	}
+*/
+
     if (m->action == ACT_TWIRLING && m->vel[1] < 0.0f) { mTerminalVel = 0; apply_twirl_gravity(m); }
-    else if (m->action == ACT_SHOT_FROM_CANNON) mTerminalVel = gravity_applier(m, (!gRealToggle) ? 1.0f : 1.25f, 64, FALSE);
+    else if (m->action == ACT_SHOT_FROM_CANNON) mTerminalVel = gravity_applier(m, 1.0f, 64, FALSE);
     else if (m->action == ACT_LONG_JUMP || m->action == ACT_BBH_ENTER_SPIN) {
-        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 64, FALSE);
-    } else if (m->action == ACT_LAVA_BOOST || m->action == ACT_SLIDE_KICK || m->action == ACT_FALL_AFTER_STAR_GRAB) {
-        mTerminalVel = gravity_applier(m, 3.5f, 64, FALSE);
-    } else if (m->action == ACT_GETTING_BLOWN) {
+        mTerminalVel = gravity_applier(m, 2.0f, 64, FALSE); }
+    else if (m->action == ACT_LAVA_BOOST || m->action == ACT_SLIDE_KICK || m->action == ACT_FALL_AFTER_STAR_GRAB) {
+        mTerminalVel = gravity_applier(m, 3.5f, 64, FALSE); }
+    else if (m->action == ACT_GETTING_BLOWN) {
         mTerminalVel = 64;
         m->vel[1] -= m->windGravity / gDeltaTime;
-        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.015625f / gDeltaTime + 1;
-    } else if (should_strengthen_gravity_for_jump_ascent(m)) {
-        m->vel[1] /= 4.0f / gDeltaTime;
-    } else if (m->action & ACT_FLAG_METAL_WATER) {
+        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.015625f / gDeltaTime + 1; }
+    else if (should_strengthen_gravity_for_jump_ascent(m)) {
+        m->vel[1] /= 4.0f / gDeltaTime; }
+    else if (m->action & ACT_FLAG_METAL_WATER) {
         mTerminalVel = 0;
         baseVel = ((!gRealToggle) ? 1.0f : 1.25f);
         m->vel[1] -= baseVel / gDeltaTime;
-        if (m->vel[1] < -24.0f) m->vel[1] = -24.0f;
-    } else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
+        if (m->vel[1] < -24.0f) m->vel[1] = -24.0f; }
+    else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
         aGravToggle = FALSE;
-        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 2.0f : 2.5f), 32, FALSE);
-    } else if (m->action == ACT_GROUND_POUND) { mTerminalVel = 64; gravity_applier(m, 0.25f, 5.0f, TRUE); }
+        mTerminalVel = gravity_applier(m, 2.0f, 32, FALSE); }
+    else if (m->action == ACT_GROUND_POUND) { mTerminalVel = 64; gravity_applier(m, 0.25f, 5.0f, TRUE); }
     else {
-        mTerminalVel = gravity_applier(m, ((!gRealToggle) ? 4.0f : 5.0f), 64, FALSE);
-    }
+        mTerminalVel = gravity_applier(m, 4.0f, 64, FALSE); }
     if (m->flags & MARIO_METAL_CAP && !gRealToggle && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
         baseVel = 2.0f;
         if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) baseVel /= 2;
-        mTerminalVel = gravity_applier(m, baseVel, 32, FALSE);
-    }
+        mTerminalVel = gravity_applier(m, baseVel, 32, FALSE); }
 
     /*
     if (gABCToggle || gRealToggle) return;

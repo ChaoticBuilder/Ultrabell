@@ -817,7 +817,7 @@ void render_hud(void) {
 #else
         create_dl_ortho_matrix();
 #endif
-        testing();
+        //testing();
 
         handle_stats();
         if (gHudToggle) { mTimer = 1; cTimer = 1; }

@@ -7,9 +7,20 @@
 #include "types.h"
 
 #define WEDGES 8
-#define HPINIT 0xA
+#define HPINIT 0xC
 #define SLICE (1 << HPINIT)
-#define MAXHP (4 * SLICE * WEDGES)
+
+enum SLICES {
+	SLICE20  = (SLICE  >> 7),
+	SLICE40  = (SLICE  >> 6),
+	SLICE80  = (SLICE  >> 5),
+	SLICE100 = (SLICE  >> 4),
+	SLICE180 = (SLICE80 * 3),
+	SLICE200 = (SLICE  >> 3),
+	SLICE800 = (SLICE  >> 1),
+};
+
+#define MAXHP (SLICE * WEDGES - SLICE800)
 
 enum dustArray {
     SMOVE,

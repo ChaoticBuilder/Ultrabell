@@ -1,0 +1,97 @@
+format_version = 2
+
+[info]
+name = "Ultrabell"
+description = "A widely-supported base for <i>Super Mario 64</i> romhacks, with common tweaks that can be easily toggled.<br><b>Recommended for beginners.</b>"
+success_splash = """
+<h1>Ultrabell project setup complete!</h1>
+<p>Congratulations on setting up your project! It is recommended that you Git, which will allow you to track the changes you make to your romhack over time. Git is a command line tool, but there is software that can simplify its use for you, including Visual Studio Code (linked in the section below).</p>
+<p>Once you're familiar with Git, you should:</p>
+<ul>
+<li>Create a new, empty repository on GitHub for your romhack</li>
+<li>Add the GitHub repository as a <i>remote</i></li>
+<li>Frequently <i>commit</i> your changes and <i>push</i> them to GitHub</li>
+</ul>
+<p>Doing this will keep a backup copy of your project in case of data loss, and allow you to revert to an earlier version if anything goes wrong.</p>
+<p>The following commonly used tools are recommended for creating your romhack:</p>
+<h2><a href="https://www.blender.org/download/">Blender</a> with the <a href="https://github.com/Fast-64/fast64">Fast64 plugin</a></h2>
+<p>Allows you to create custom levels, object models, and animations.<br>
+<i>Fast64 might not be updated for use with the latest version of Blender. Check the Fast64 page linked above to see which versions are supported.</i></p>
+<h2><a href="https://code.visualstudio.com/">Visual Studio Code</a></h2>
+<p>A basic code editor. Also provides an easy way to use Git, so it's helpful for managing your project even if you don't want to write code.<br>
+<i>If you prefer, AI features can be disabled completely by checking "Disable AI Features" on the settings page.</i></p>
+"""
+
+[repo]
+url = "https://github.com/ChaoticBuilder/Ultrabell.git"
+commit = "93a0816b6cae207dded12e5e2eaa2aa8fbdb5d2c"
+env_path = "env"
+
+[baserom]
+name = "Super Mario 64 (USA)"
+sha256 = "17ce077343c6133f8c9f2d6d6d9a4ab62c8cd2aa57c40aea1f490b4c8bb21d91"
+path = "baserom.us.z64"
+
+
+[dependency.git]
+# Latest not to mangle ANSI escape codes using Windows Terminal (determined by bisect on 2026-01-21)
+name = "Git for Windows (v2.49.0)"
+url = "https://github.com/git-for-windows/git/releases/download/v2.49.0.windows.1/Git-2.49.0-64-bit.tar.bz2"
+sha256 = "6c5d66e3dd6cd44e50ba7892e9e24ace57934f277a3424c9702a400b3fedc1eb"
+include_paths = ["bin", "usr/bin"]
+
+[dependency.winlibs]
+# Latest
+name = "WinLibs Standalone GCC (v15.2.0)"
+url = "https://github.com/brechtsanders/winlibs_mingw/releases/download/15.2.0posix-13.0.0-ucrt-r5/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r5.zip"
+sha256 = "7c3fd442be612e6ad5f86c91cf33f336748500bc761e3112bfdba29434baa5f6"
+include_paths = ["mingw64/bin"]
+
+[dependency.n64libs]
+# Latest
+name = "Aglab's N64 MinGW Toolchain (v2.0)"
+url = "https://github.com/aglab2/winn64libs/releases/download/2.0/n64libs.zip"
+sha256 = "6eb61aed51294038be0605f3a41d7c1f8577a3d27e54a1e104f4325c135e22b2"
+include_paths = ["sdk/bin"]
+
+[dependency.python]
+# Latest
+name = "Python (v3.14.2)"
+url = "https://www.python.org/ftp/python/3.14.2/python-3.14.2-embed-amd64.zip"
+sha256 = "f05e28d161c6b15af64a7cb7f08b4a22b3a6b03eee71baee24ea557b3bdd5798"
+include_paths = [""]
+setup = [
+    ["copy", "python.exe", "python3.exe"],
+    ["delete", "python314._pth"]
+]
+
+[dependency.ripgrep]
+# Latest
+name = "ripgrep (v15.1.0)"
+url = "https://github.com/BurntSushi/ripgrep/releases/download/15.1.0/ripgrep-15.1.0-x86_64-pc-windows-msvc.zip"
+sha256 = "124510b94b6baa3380d051fdf4650eaa80a302c876d611e9dba0b2e18d87493a"
+include_paths = ["ripgrep-15.1.0-x86_64-pc-windows-msvc"]
+
+
+[[action]]
+name = "Build ROM"
+description = "Compile your changes into a ROM."
+commands = [["mingw32-make", "-j", "%NUMBER_OF_PROCESSORS%"]]
+
+[[action]]
+name = "Build and Play"
+description = "Build the ROM and launch it using your default emulator."
+commands = [
+    ["mingw32-make", "-j", "%NUMBER_OF_PROCESSORS%"],
+    ["start", "./build/us_n64/sm64.z64"]
+]
+
+[[action]]
+name = "Clear Build Cache"
+description = "Delete all data created by building the ROM. This can fix certain types of build errors, but makes building the ROM take longer next time."
+commands = [["mingw32-make", "clean"]]
+
+[[action]]
+name = "Create Patch"
+description = "Create a patch that you can use to share your romhack with others."
+commands = [["mingw32-make", "patch", "-j", "%NUMBER_OF_PROCESSORS%"]]
