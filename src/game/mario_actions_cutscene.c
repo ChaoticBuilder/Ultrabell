@@ -535,10 +535,10 @@ s32 act_debug_free_move(struct MarioState *m) {
     vec3f_copy(pos, m->pos);
 
     if (gPlayer1Controller->buttonDown & U_JPAD) {
-        pos[1] += 16.0f * speed / gDeltaTime;
+        pos[1] += 16.0f * speed;
     }
     if (gPlayer1Controller->buttonDown & D_JPAD) {
-        pos[1] -= 16.0f * speed / gDeltaTime;
+        pos[1] -= 16.0f * speed;
     }
 
     if (gPlayer1Controller->buttonPressed & A_BUTTON) {
@@ -563,8 +563,8 @@ s32 act_debug_free_move(struct MarioState *m) {
 
     if (m->intendedMag > 0) {
         speed *= m->intendedMag * 2.0f;
-        pos[0] += speed * sins(m->intendedYaw) / gDeltaTime;
-        pos[2] += speed * coss(m->intendedYaw) / gDeltaTime;
+        pos[0] += speed * sins(m->intendedYaw);
+        pos[2] += speed * coss(m->intendedYaw);
     }
 
     // TODO: Add ability to ignore collision
@@ -799,7 +799,7 @@ u32 unlockEnd;
 s32 act_unlocking_key_door(struct MarioState *m) {
     if (m->actionTimer == 0) {
         set_mario_animation(m, MARIO_ANIM_UNLOCK_DOOR);
-        unlockEnd = m->marioObj->header.gfx.animInfo.curAnim->loopEnd * gDeltaTime;
+        unlockEnd = m->marioObj->header.gfx.animInfo.curAnim->loopEnd;
     }
 
     if (m->actionTimer < unlockEnd) m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
@@ -817,13 +817,13 @@ s32 act_unlocking_key_door(struct MarioState *m) {
 
     if (m->actionTimer > unlockEnd) {
         if (m->actionTimer < (unlockEnd + 5)) {
-            m->faceAngle[1] -= DEGREES(22.5f / gDeltaTime);
+            m->faceAngle[1] -= DEGREES(22.5f);
         } else if (m->actionTimer <= (unlockEnd + 10)) {
             set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 0x00020000);
             m->pos[0] += 12.5f * sins(m->faceAngle[1]);
             m->pos[2] += 12.5f * coss(m->faceAngle[1]);
         } else if (m->actionTimer < (unlockEnd + 15)) {
-            m->faceAngle[1] += DEGREES(22.5f / gDeltaTime);
+            m->faceAngle[1] += DEGREES(22.5f);
         }
     }
 
@@ -917,8 +917,8 @@ s32 act_entering_star_door(struct MarioState *m) {
         // targetDX and targetDZ are the offsets to add to Mario's position to
         // have Mario stand 150 units in front of the door
 
-        targetDX = m->usedObj->oPosX + (225.0f / gDeltaTime) * sins(targetAngle) - m->pos[0];
-        targetDZ = m->usedObj->oPosZ + (225.0f / gDeltaTime) * coss(targetAngle) - m->pos[2];
+        targetDX = m->usedObj->oPosX + 225.0f * sins(targetAngle) - m->pos[0];
+        targetDZ = m->usedObj->oPosZ + 225.0f * coss(targetAngle) - m->pos[2];
 
         m->marioObj->oMarioReadingSignDPosX = targetDX / 20.0f;
         m->marioObj->oMarioReadingSignDPosZ = targetDZ / 20.0f;
@@ -927,12 +927,12 @@ s32 act_entering_star_door(struct MarioState *m) {
     }
 
     // set Mario's animation
-    if (m->actionTimer < (20 * gDeltaTime)) {
+    if (m->actionTimer < 20) {
         set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
     }
 
     // go through door? for 20 frames
-    else if (m->actionTimer < (30 * gDeltaTime)) {
+    else if (m->actionTimer < 30) {
         m->pos[0] += m->marioObj->oMarioReadingSignDPosX;
         m->pos[2] += m->marioObj->oMarioReadingSignDPosZ;
 
@@ -946,15 +946,15 @@ s32 act_entering_star_door(struct MarioState *m) {
             m->faceAngle[1] += 0x8000;
         }
 
-        m->pos[0] += (18.0f / gDeltaTime) * sins(m->faceAngle[1]);
-        m->pos[2] += (18.0f / gDeltaTime) * coss(m->faceAngle[1]);
+        m->pos[0] += 18.0f * sins(m->faceAngle[1]);
+        m->pos[2] += 18.0f * coss(m->faceAngle[1]);
 
         set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 0x00050000);
     }
 
     stop_and_set_height_to_floor(m);
 
-    if (m->actionTimer >= (48 * gDeltaTime)) {
+    if (m->actionTimer >= 48) {
         set_mario_action(m, ACT_IDLE, 0);
     }
 
@@ -987,16 +987,7 @@ s32 act_going_through_door(struct MarioState *m) {
     stop_and_set_height_to_floor(m);
 
     if (m->actionArg & WARP_FLAG_DOOR_IS_WARP) {
-        // if (!doorTroll) {
-        if (m->actionTimer >= (0xC * gDeltaTime)) level_trigger_warp(m, WARP_OP_WARP_DOOR);
-        /*
-        } else {
-            if (m->actionTimer >= (0x60 * gDeltaTime)) {
-                level_trigger_warp(m, WARP_OP_WARP_DOOR);
-                doorTroll = FALSE;
-            }
-        }
-        */
+        if (m->actionTimer >= 0xC) level_trigger_warp(m, WARP_OP_WARP_DOOR);
     } else if (is_anim_at_end(m)) {
         if (m->actionArg & WARP_FLAG_DOOR_FLIP_MARIO) {
             m->faceAngle[1] += 0x8000;

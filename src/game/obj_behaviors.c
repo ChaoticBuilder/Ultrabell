@@ -186,7 +186,7 @@ s8 turn_obj_away_from_steep_floor(struct Surface *objFloor, f32 floorY, f32 objV
  * Orients an object with the given normals, typically the surface under the object.
  */
 void obj_orient_graph(struct Object *obj, f32 normalX, f32 normalY, f32 normalZ) {
-    Vec3f objVisualPosition, surfaceNormals;
+    Vec3f surfaceNormals;
 
     // Passes on orienting certain objects that shouldn't be oriented, like boulders.
     if (!sOrientObjWithFloor) {
@@ -198,11 +198,9 @@ void obj_orient_graph(struct Object *obj, f32 normalX, f32 normalY, f32 normalZ)
         return;
     }
 
-    vec3f_copy_y_off(objVisualPosition, &obj->oPosVec, obj->oGraphYOffset);
     vec3f_set(surfaceNormals, normalX, normalY, normalZ);
-
-    mtxf_align_terrain_normal(obj->transform, surfaceNormals, objVisualPosition, obj->oFaceAngleYaw);
-    obj->header.gfx.throwMatrix = &obj->transform;
+	quat_align_with_floor(obj->header.gfx.throwRotation,surfaceNormals);
+	obj->oFlags |= OBJ_FLAG_THROW_ROTATION;
 }
 
 /**
@@ -226,7 +224,7 @@ void calc_new_obj_vel_and_pos_y(struct Surface *objFloor, f32 objFloorY, f32 obj
     f32 objFriction;
 
     // Caps vertical speed with a "terminal velocity".
-    o->oVelY -= o->oGravity / gDeltaTime;
+    o->oVelY -= o->oGravity;
     if (o->oVelY > 75.0) {
         o->oVelY = 75.0;
     }
@@ -234,7 +232,7 @@ void calc_new_obj_vel_and_pos_y(struct Surface *objFloor, f32 objFloorY, f32 obj
         o->oVelY = -75.0;
     }
 
-    o->oPosY += o->oVelY / gDeltaTime;
+    o->oPosY += o->oVelY;
 
     // Snap the object up to the floor.
     if (o->oPosY < objFloorY) {
@@ -273,7 +271,7 @@ void calc_new_obj_vel_and_pos_y_underwater(struct Surface *objFloor, f32 floorY,
     f32 floor_nZ = objFloor->normal.z;
 
     f32 netYAccel = (1.0f - o->oBuoyancy) * (-1.0f * o->oGravity);
-    o->oVelY -= netYAccel / gDeltaTime;
+    o->oVelY -= netYAccel;
 
     // Caps vertical speed with a "terminal velocity".
     if (o->oVelY > 75.0f) {
@@ -283,7 +281,7 @@ void calc_new_obj_vel_and_pos_y_underwater(struct Surface *objFloor, f32 floorY,
         o->oVelY = -75.0f;
     }
 
-    o->oPosY += o->oVelY / gDeltaTime;
+    o->oPosY += o->oVelY;
 
     // Snap the object up to the floor.
     if (o->oPosY < floorY) {
@@ -323,8 +321,8 @@ void calc_new_obj_vel_and_pos_y_underwater(struct Surface *objFloor, f32 floorY,
 
     // Decreases both vertical velocity and forward velocity. Likely so that skips above
     // don't loop infinitely.
-    o->oForwardVel = sqrtf(sqr(objVelX) + sqr(objVelZ)) * 0.8f / gDeltaTime;
-    o->oVelY *= 0.8f / gDeltaTime;
+    o->oForwardVel = sqrtf(sqr(objVelX) + sqr(objVelZ)) * 0.8f;
+    o->oVelY *= 0.8f;
 }
 
 /**
@@ -369,8 +367,8 @@ s16 object_step(void) {
     f32 floorY;
     f32 waterY = FLOOR_LOWER_LIMIT_MISC;
 
-    f32 objVelX = o->oForwardVel * sins(o->oMoveAngleYaw) / gDeltaTime;
-    f32 objVelZ = o->oForwardVel * coss(o->oMoveAngleYaw) / gDeltaTime;
+    f32 objVelX = o->oForwardVel * sins(o->oMoveAngleYaw);
+    f32 objVelZ = o->oForwardVel * coss(o->oMoveAngleYaw);
 
     s16 collisionFlags = 0;
 
@@ -515,7 +513,7 @@ void obj_return_and_displace_home(struct Object *obj, f32 homeX, UNUSED f32 home
 s32 obj_check_if_facing_toward_angle(u32 base, u32 goal, s16 range) {
     s16 dAngle = (u16) goal - (u16) base;
 
-    if ((sins(-range) < sins(dAngle)) && (sins(dAngle) < (sins(range)))
+    if (((f32) sins(-range) < (f32) sins(dAngle)) && ((f32) sins(dAngle) < (f32) sins(range))
         && (coss(dAngle) > 0)) {
         return TRUE;
     }

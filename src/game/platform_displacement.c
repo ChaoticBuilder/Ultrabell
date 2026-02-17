@@ -69,18 +69,18 @@ void update_mario_platform(void) {
 void update_platform_displacement_info(struct PlatformDisplacementInfo *displaceInfo, Vec3f pos, s16 yaw, struct Object *platform) {
     Vec3f scaledPos, yawVec, localPos;
 
-    // Avoid a crash if the platform unloaded its collision while stood on or is static
-    if (platform->header.gfx.throwMatrix == NULL) return;
+    Mat4 transform;
+    mtxf_object_noscale(transform,platform);
 
     // Update position
-    vec3_diff(localPos, pos, (*platform->header.gfx.throwMatrix)[3]);
-    linear_mtxf_transpose_mul_vec3(*platform->header.gfx.throwMatrix, scaledPos, localPos);
+    vec3_diff(localPos, pos, (transform)[3]);
+    linear_mtxf_transpose_mul_vec3(transform, scaledPos, localPos);
     vec3_quot(displaceInfo->prevTransformedPos, scaledPos, platform->header.gfx.scale);
     vec3_copy(displaceInfo->prevPos, pos);
 
     // Update yaw
     vec3_set(yawVec, sins(yaw), 0, coss(yaw));
-    linear_mtxf_transpose_mul_vec3(*platform->header.gfx.throwMatrix, displaceInfo->prevTransformedYawVec, yawVec);
+    linear_mtxf_transpose_mul_vec3(transform, displaceInfo->prevTransformedYawVec, yawVec);
     displaceInfo->prevYaw = yaw;
 
     // Update platform and timer
@@ -99,8 +99,8 @@ void apply_platform_displacement(struct PlatformDisplacementInfo *displaceInfo, 
     // Determine how much Mario turned on his own since last frame
     s16 yawDifference = *yaw - displaceInfo->prevYaw;
 
-    // Avoid a crash if the platform unloaded its collision while stood on or is static
-    if (platform->header.gfx.throwMatrix == NULL) return;
+    Mat4 transform;
+    mtxf_object_noscale(transform,platform);
 
     // Determine how far Mario moved on his own since last frame
     vec3_diff(posDifference, pos, displaceInfo->prevPos);
@@ -115,14 +115,14 @@ void apply_platform_displacement(struct PlatformDisplacementInfo *displaceInfo, 
         } else {
             // Transform from relative positions to world positions
             vec3_prod(scaledPos, displaceInfo->prevTransformedPos, platform->header.gfx.scale);
-            linear_mtxf_mul_vec3(*platform->header.gfx.throwMatrix, pos, scaledPos);
-            vec3_add(pos, (*platform->header.gfx.throwMatrix)[3]);
+            linear_mtxf_mul_vec3(transform, pos, scaledPos);
+            vec3_add(pos, (transform)[3]);
 
             // Add on how much Mario moved in the previous frame
             vec3_add(pos, posDifference);
 
             // Calculate new yaw
-            linear_mtxf_mul_vec3(*platform->header.gfx.throwMatrix, yawVec, displaceInfo->prevTransformedYawVec);
+            linear_mtxf_mul_vec3(transform, yawVec, displaceInfo->prevTransformedYawVec);
             *yaw = atan2s(yawVec[2], yawVec[0]) + yawDifference;
         }
     }

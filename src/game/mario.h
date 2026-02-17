@@ -20,12 +20,17 @@ enum SLICES {
 	SLICE800 = (SLICE  >> 1),
 };
 
-#define MAXHP (SLICE * WEDGES - SLICE800)
-
 enum dustArray {
     SMOVE,
     JUMP
 };
+
+enum {
+    ANIM_LIST_GFX,
+    ANIM_LIST_LOGIC
+};
+
+#define MAXHP (SLICE * WEDGES - SLICE800)
 
 extern u8  fadeWarpTarget;
 extern u8  cameraLook;

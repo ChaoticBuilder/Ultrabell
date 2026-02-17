@@ -61,7 +61,37 @@ s32 is_anim_past_end(struct MarioState *m) {
  * Sets Mario's animation without any acceleration, running at its default rate.
  */
 s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
-    return set_mario_anim_with_accel(m, targetAnimID, 0x10000);
+    struct Object *marioObj = m->marioObj;
+    struct Animation *targetAnim = m->animList[ANIM_LIST_LOGIC]->bufTarget;
+    
+    m->queueTargetAnimID = targetAnimID;
+    m->queueTargetAnim = m->animList[ANIM_LIST_GFX]->bufTarget;
+
+    if (load_patchable_table(gMarioState->animList[ANIM_LIST_LOGIC], targetAnimID)) {
+        targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
+        targetAnim->index  = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->index);
+    }
+
+    if (marioObj->header.gfx.animInfo.animID != targetAnimID) {
+        marioObj->header.gfx.animInfo.animID = targetAnimID;
+        marioObj->header.gfx.animInfo.curAnim = targetAnim;
+        marioObj->header.gfx.animInfo.animAccel = 0;
+        marioObj->header.gfx.animInfo.animYTrans = m->animYTrans;
+
+        if (targetAnim->flags & ANIM_FLAG_NO_ACCEL) {
+            marioObj->header.gfx.animInfo.animFrame = targetAnim->startFrame;
+        } else {
+            if (targetAnim->flags & ANIM_FLAG_FORWARD) {
+                marioObj->header.gfx.animInfo.animFrame = targetAnim->startFrame + 1;
+            } else {
+                marioObj->header.gfx.animInfo.animFrame = targetAnim->startFrame - 1;
+            }
+        }
+        marioObj->header.gfx.animInfo.animFrameF = marioObj->header.gfx.animInfo.animFrame;
+    }
+
+    marioObj->header.gfx.animInfo.animAccelF = 1.0f;
+    return marioObj->header.gfx.animInfo.animFrame;
 }
 
 /**
@@ -70,11 +100,12 @@ s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
  */
 s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel) {
     struct Object *marioObj = m->marioObj;
-    struct Animation *targetAnim = m->animList->bufTarget;
+    struct Animation *targetAnim = m->animList[ANIM_LIST_LOGIC]->bufTarget;
 
-    accel /= gDeltaTime;
+    m->queueTargetAnimID = targetAnimID;
+    m->queueTargetAnim = m->animList[ANIM_LIST_GFX]->bufTarget;
 
-    if (load_patchable_table(m->animList, targetAnimID)) {
+    if (load_patchable_table(gMarioState->animList[ANIM_LIST_LOGIC], targetAnimID)) {
         targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
         targetAnim->index = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->index);
     }
@@ -95,9 +126,11 @@ s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel)
         }
 
         marioObj->header.gfx.animInfo.animFrame = (marioObj->header.gfx.animInfo.animFrameAccelAssist >> 0x10);
+        marioObj->header.gfx.animInfo.animFrameF = marioObj->header.gfx.animInfo.animFrame;
     }
 
     marioObj->header.gfx.animInfo.animAccel = accel;
+    marioObj->header.gfx.animInfo.animAccelF = accel / 65536.0f;
 
     return marioObj->header.gfx.animInfo.animFrame;
 }
@@ -121,6 +154,7 @@ void set_anim_to_frame(struct MarioState *m, s16 animFrame) {
         } else {
             animInfo->animFrame = animFrame - 1;
         }
+		animInfo->animFrameF = animInfo->animFrame;
     }
 }
 
@@ -1633,10 +1667,6 @@ void mario_reset_bodystate(struct MarioState *m) {
 void sink_mario_in_quicksand(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
 
-    if (marioObj->header.gfx.throwMatrix) {
-        (*marioObj->header.gfx.throwMatrix)[3][1] -= m->quicksandDepth;
-    }
-
     marioObj->header.gfx.pos[1] -= m->quicksandDepth;
 }
 
@@ -1890,6 +1920,8 @@ s32 execute_mario_action(UNUSED struct Object *obj) {
         queue_rumble_particles(gMarioState);
 #endif
 
+        bcopy(gMarioState->marioBodyState,gMarioState->marioGfxBodyState,sizeof(gBodyStates[0]));
+
         return gMarioState->particleFlags;
     }
 
@@ -1980,8 +2012,10 @@ void init_mario_from_save_file(void) {
     gMarioState->spawnInfo = &gPlayerSpawnInfos[0];
     gMarioState->statusForCamera = &gPlayerCameraState[0];
     gMarioState->marioBodyState = &gBodyStates[0];
+    gMarioState->marioGfxBodyState = &gBodyStates[1];
     gMarioState->controller = &gControllers[0];
-    gMarioState->animList = &gMarioAnimsBuf;
+    gMarioState->animList[ANIM_LIST_GFX] = &gMarioAnimsBuf[ANIM_LIST_GFX];
+    gMarioState->animList[ANIM_LIST_LOGIC] = &gMarioAnimsBuf[ANIM_LIST_LOGIC];
     gMarioState->fadeWarpOpacity = 0xFF;
     fadeWarpTarget = 0xFF;
 

@@ -12,9 +12,11 @@
 #include "screen_transition.h"
 #include "segment2.h"
 #include "sm64.h"
+#include "game/frame_lerp.h"
 
 u8 sTransitionFadeTimer = 0;
 u16 sTransitionTextureAngle = 0;
+f32 sTransitionLerp = 0.0f;
 
 void *sTextureTransitionID[] = {
     texture_transition_star_half,
@@ -25,11 +27,14 @@ void *sTextureTransitionID[] = {
 
 
 s32 set_and_reset_transition_fade_timer(u8 transTime) {
-    sTransitionFadeTimer++;
+    if (gFrameLerpRenderFrame == FRAMELERP_NORMAL) {
+        sTransitionFadeTimer++;
+    }
 
     if (sTransitionFadeTimer >= transTime) {
         sTransitionFadeTimer = 0;
         sTransitionTextureAngle = 0;
+        sTransitionLerp = 0.0f;
         return TRUE;
     }
 
@@ -83,6 +88,8 @@ void make_tex_transition_vertices(Vtx *verts, f32 centerTransX, f32 centerTransY
 
 f32 calc_tex_transition_radius(u8 transTime, struct WarpTransitionData *transData) {
     f32 amount = (f32) sTransitionFadeTimer / (f32) (transTime - 1);
+    sTransitionLerp = frameLerpFloat(amount, sTransitionLerp);
+    amount = sTransitionLerp;
 
 #ifdef POLISHED_TRANSITIONS
     return smoothstep(transData->startTexRadius, transData->endTexRadius, amount);
@@ -113,6 +120,8 @@ f32 calc_tex_transition_pos_distance(s8 transTime, struct WarpTransitionData *tr
     f32 distance = sqrtf(sqr(startX - endX) + sqr(startY - endY));
 
     f32 amount = (f32) sTransitionFadeTimer / (f32)(transTime - 1);
+    sTransitionLerp = frameLerpFloat(amount, sTransitionLerp);
+    amount = sTransitionLerp;
 
     return distance * amount;
 }

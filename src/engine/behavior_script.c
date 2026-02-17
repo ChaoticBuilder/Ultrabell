@@ -14,7 +14,7 @@
 #include "math_util.h"
 #include "graph_node.h"
 #include "surface_collision.h"
-#include "game/main.h"
+#include "game/frame_lerp.h"
 
 // Macros for retrieving arguments from behavior scripts.
 #define BHV_CMD_GET_1ST_U8(index)     (u8)((gCurBhvCommand[index] >> 24) & 0xFF) // unused
@@ -822,6 +822,10 @@ void cur_obj_update(void) {
 
     s32 inRoom = cur_obj_is_mario_in_room();
 
+    if (objFlags & OBJ_FLAG_THROW_ROTATION) {
+        o->oFlags &= ~OBJ_FLAG_THROW_ROTATION;
+    }
+
     if (inRoom == MARIO_OUTSIDE_ROOM && (objFlags & OBJ_FLAG_ONLY_PROCESS_INSIDE_ROOM)) {
         cur_obj_disable_rendering_in_room();
         return;
@@ -859,9 +863,7 @@ void cur_obj_update(void) {
 
     // Increment the object's timer.
     if (o->oTimer < 0x3FFFFFFF) {
-        if (vBlankTimer) o->oTimer++; // UPDATE WHEN I'VE FIGURED OUT HOW TO FIX BELOW 30FPS
-        if (vBlankTimer) o->oDeltaTimer += vBlankTimer; // UPDATE WHEN I'VE FIGURED OUT HOW TO FIX BELOW 30FPS
-        // o->oTimer += vBlankTimer;
+        o->oTimer++;
     }
 
     // If the object's action has changed, reset the action timer.
@@ -946,4 +948,6 @@ void cur_obj_update(void) {
             o->activeFlags &= ~ACTIVE_FLAG_FAR_AWAY;
         }
     }
+
+    frameLerp_cache_pos(o->header.gfx.pos,o->header.gfx.posCache,o->header.gfx.posVideoCache);
 }

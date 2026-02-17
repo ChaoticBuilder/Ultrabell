@@ -11,6 +11,7 @@
 #include "audio/external.h"
 #include "textures.h"
 #include "level_geo.h"
+#include "frame_lerp.h"
 
 /**
  * This file implements environment effects that are not snow:
@@ -153,7 +154,9 @@ void envfx_update_lava(Vec3s centerPos) {
             envfx_set_lava_bubble_position(i, centerPos);
             (gEnvFxBuffer + i)->isAlive = TRUE;
         } else if (!(globalTimer & 1)) {
-            (gEnvFxBuffer + i)->animFrame += 1;
+            if (gFrameLerpRenderFrame == FRAMELERP_NORMAL) {
+                (gEnvFxBuffer + i)->animFrame += 1;
+            }
             if ((gEnvFxBuffer + i)->animFrame > 8) {
                 (gEnvFxBuffer + i)->isAlive = FALSE;
                 (gEnvFxBuffer + i)->animFrame = 0;
@@ -231,16 +234,16 @@ void envfx_update_whirlpool(void) {
             envfx_rotate_around_whirlpool(&(gEnvFxBuffer + i)->xPos, &(gEnvFxBuffer + i)->yPos,
                                           &(gEnvFxBuffer + i)->zPos);
         } else {
-            (gEnvFxBuffer + i)->angleAndDist[1] -= 30;
+            (gEnvFxBuffer + i)->angleAndDist[1] -= 40;
             (gEnvFxBuffer + i)->angleAndDist[0] +=
-                (s16)(2000 - (gEnvFxBuffer + i)->angleAndDist[1] * 2) + 0x400;
+                (s16)(3000 - (gEnvFxBuffer + i)->angleAndDist[1] * 2) + 0x400;
             (gEnvFxBuffer + i)->xPos =
                 gEnvFxBubbleConfig[ENVFX_STATE_SRC_X]
                 + sins((gEnvFxBuffer + i)->angleAndDist[0]) * (gEnvFxBuffer + i)->angleAndDist[1];
             (gEnvFxBuffer + i)->zPos =
                 gEnvFxBubbleConfig[ENVFX_STATE_SRC_Z]
                 + coss((gEnvFxBuffer + i)->angleAndDist[0]) * (gEnvFxBuffer + i)->angleAndDist[1];
-            (gEnvFxBuffer + i)->bubbleY -= 30 - ((s16)(gEnvFxBuffer + i)->angleAndDist[1] / 100);
+            (gEnvFxBuffer + i)->bubbleY -= 40 - ((s16)(gEnvFxBuffer + i)->angleAndDist[1] / 100);
             (gEnvFxBuffer + i)->yPos = (i + gEnvFxBuffer)->bubbleY;
 
             envfx_rotate_around_whirlpool(&(gEnvFxBuffer + i)->xPos, &(gEnvFxBuffer + i)->yPos,
@@ -284,10 +287,9 @@ void envfx_update_jetstream(void) {
             (gEnvFxBuffer + i)->yPos =
                 gEnvFxBubbleConfig[ENVFX_STATE_SRC_Y] + (random_float() * 400.0f - 200.0f);
         } else {
-            // y direction is reversed
-            (gEnvFxBuffer + i)->angleAndDist[1] += 15;
-            (gEnvFxBuffer + i)->xPos += sins((gEnvFxBuffer + i)->angleAndDist[0]) * 5.0f;
-            (gEnvFxBuffer + i)->zPos += coss((gEnvFxBuffer + i)->angleAndDist[0]) * 5.0f;
+            (gEnvFxBuffer + i)->angleAndDist[1] += 10;
+            (gEnvFxBuffer + i)->xPos += sins((gEnvFxBuffer + i)->angleAndDist[0]) * 10.0f;
+            (gEnvFxBuffer + i)->zPos += coss((gEnvFxBuffer + i)->angleAndDist[0]) * 10.0f;
             (gEnvFxBuffer + i)->yPos -= ((gEnvFxBuffer + i)->angleAndDist[1] / 30) - 50;
         }
     }
@@ -316,11 +318,11 @@ s32 envfx_init_bubble(s32 mode) {
             break;
 
         case ENVFX_WHIRLPOOL_BUBBLES:
-            sBubbleParticleCount = 15;
+            sBubbleParticleCount = 60;
             break;
 
         case ENVFX_JETSTREAM_BUBBLES:
-            sBubbleParticleCount = 1;
+            sBubbleParticleCount = 60;
             break;
     }
 

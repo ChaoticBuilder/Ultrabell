@@ -14,7 +14,6 @@ extern struct GraphNodeHeldObject  *gCurGraphNodeHeldObject;
 #define gCurGraphNodeObjectNode ((struct Object *)gCurGraphNodeObject)
 extern u16 gAreaUpdateCounter;
 extern Vec3f globalLightDirection;
-extern s8 mirrorFlip;
 
 #define GRAPH_ROOT_PERSP 0
 #define GRAPH_ROOT_ORTHO 1

@@ -30,6 +30,8 @@
 #include "game/puppycam2.h"
 #include "game/puppyprint.h"
 #include "game/emutest.h"
+#include "game/main.h"
+#include <PR/os_internal_reg.h>
 
 #include "config.h"
 
@@ -329,6 +331,13 @@ static void level_cmd_init_level(void) {
 #ifdef PUPPYPRINT_DEBUG
     gInitLevelTime = osGetTime();
 #endif
+    if (gLevelChangeSpinlockState == 1) {
+        gLevelChangeSpinlockState = 2;
+        while(gLevelChangeSpinlockState == 2){
+            osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+        }
+    }
+
     init_graph_node_start(NULL, (struct GraphNodeStart *) &gObjParentGraphNode);
     clear_objects();
     clear_areas();
@@ -368,6 +377,13 @@ void unmap_tlbs(void) {
 }
 
 static void level_cmd_clear_level(void) {
+    if (gLevelChangeSpinlockState == 1) {
+        gLevelChangeSpinlockState = 2;
+        while(gLevelChangeSpinlockState == 2){
+            osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+        }
+    }
+
     clear_objects();
     clear_area_graph_nodes();
     clear_areas();
@@ -401,6 +417,10 @@ static void level_cmd_free_level_pool(void) {
         }
     }
     main_pool_push_state();
+
+    if (gLevelChangeSpinlockState == 3) {
+        gLevelChangeSpinlockState = 1;
+    }
 
     sCurrentCmd = CMD_NEXT;
 }
@@ -952,11 +972,6 @@ struct LevelCommand *level_script_execute(struct LevelCommand *cmd) {
     while (sScriptStatus == SCRIPT_RUNNING) {
         LevelScriptJumpTable[sCurrentCmd->type]();
     }
-
-    init_rcp(CLEAR_ZBUFFER);
-    render_game();
-    end_master_display_list();
-    alloc_display_list(0);
 
     return sCurrentCmd;
 }

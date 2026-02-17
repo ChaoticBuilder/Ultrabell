@@ -912,7 +912,6 @@ void load_main_menu_save_file(struct Object *fileButton, s32 fileNum) {
         transitionTime++;
         if (transitionTime >= 20) {
             sSelectedFileNum = fileNum; // second jump to actually load the file
-            if (gFPSCap == FPS_MENU) gFPSCap = FPS_60;
         }
     }
 }

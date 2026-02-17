@@ -360,8 +360,8 @@ s32 perform_ground_step(struct MarioState *m) {
     set_mario_wall(m, NULL);
 
     for (i = 0; i < numSteps; i++) {
-        intendedPos[0] = m->pos[0] + (m->floor->normal.y * (m->vel[0] / numSteps)) / gDeltaTime;
-        intendedPos[2] = m->pos[2] + (m->floor->normal.y * (m->vel[2] / numSteps)) / gDeltaTime;
+        intendedPos[0] = m->pos[0] + m->floor->normal.y * (m->vel[0] / numSteps);
+        intendedPos[2] = m->pos[2] + m->floor->normal.y * (m->vel[2] / numSteps);
         intendedPos[1] = m->pos[1];
 
         stepResult = perform_ground_quarter_step(m, intendedPos);
@@ -584,46 +584,10 @@ void apply_twirl_gravity(struct MarioState *m) {
     f32 twirlTarget = (!(m->input & INPUT_A_DOWN)) ? 1.0f : 1.5f;
     if (m->input & INPUT_Z_DOWN) twirlTarget = 0.375f;
     twirlMulti = approach_f32_symmetric(twirlMulti, twirlTarget, 0.25f);
-    m->vel[1] -= 1.0f * twirlGrav / twirlMulti / gDeltaTime;
+    m->vel[1] -= 1.0f * twirlGrav / twirlMulti;
 
     tTerminalVel = -16.0f * twirlGrav / twirlMulti;
     if (m->vel[1] < tTerminalVel) m->vel[1] = tTerminalVel;
-/*
-    f32 grav = twirlGrav;
-// #ifdef Z_TWIRL
-    if (!(m->input & INPUT_Z_DOWN)) grav = twirlGrav;
-    else (!g95Toggle || gRealToggle) ? (grav = 10.0f) : (grav = 7.5f);
-// #endif
-    f32 weight = MIN(1024.0f / m->angleVel[1], 1.0f);
-    m->vel[1] -= 4.0f * weight * grav / gDeltaTime;
-
-    f32 terminalVel = -75.0f * weight * grav;
-    if (m->vel[1] < terminalVel) m->vel[1] = terminalVel;
-*/
-/*    
-#ifdef Z_TWIRL
-    f32 Zmodifier;
-    if (!g95Toggle) Zmodifier = m->input & INPUT_Z_DOWN ? 10.0f : 1.625f;
-    if (g95Toggle) Zmodifier = m->input & INPUT_Z_DOWN ? 7.5f : 1.0f;
-#endif
-    f32 heaviness = 1.0f;
-
-    if (m->angleVel[1] > 1024) {
-        heaviness = 1024.0f / m->angleVel[1];
-    }
-
-#ifdef Z_TWIRL
-    f32 terminalVelocity = -75.0f * heaviness * Zmodifier;
-    m->vel[1] -= (4.0f / gDeltaTime) * heaviness * Zmodifier;
-#else
-    f32 terminalVelocity = -75.0f * heaviness;
-
-    m->vel[1] -= (4.0f / gDeltaTime) * heaviness;
-#endif
-    if (m->vel[1] < terminalVelocity) {
-        m->vel[1] = terminalVelocity;
-    }
-*/
 }
 
 u32 should_strengthen_gravity_for_jump_ascent(struct MarioState *m) {
@@ -654,10 +618,10 @@ u16 gravity_applier(struct MarioState *m, f32 baseVel, f32 terminalVel, u8 exp) 
             if (!gLuigiToggle) baseVel *= 0.8125f; else { dec = MIN(gGravTimer * 0.046875f, 0.75f);
             baseVel *= dec; if (dec < 0.75f) gGravTimer++; }}
 
-        m->vel[1] -= baseVel / gDeltaTime;
-        if (m->vel[1] < -terminalVel) m->vel[1] *= 1.0f - (baseVel / (gDeltaTime * 96.0f)); }
-    else { dec = MIN(gGravTimer * baseVel, terminalVel); m->vel[1] -= dec / gDeltaTime;
-        if (m->vel[1] < -mTerminalVel) m->vel[1] *= 1.0f - (terminalVel / (gDeltaTime * 96.0f));
+        m->vel[1] -= baseVel;
+        if (m->vel[1] < -terminalVel) m->vel[1] *= 1.0f - (baseVel / 96.0f); }
+    else { dec = MIN(gGravTimer * baseVel, terminalVel); m->vel[1] -= dec;
+        if (m->vel[1] < -mTerminalVel) m->vel[1] *= 1.0f - (terminalVel / 96.0f);
         if (dec < terminalVel) gGravTimer++; }
     return terminalVel;
 }
@@ -692,14 +656,14 @@ void apply_gravity(struct MarioState *m) {
         mTerminalVel = gravity_applier(m, 3.5f, 64, FALSE); }
     else if (m->action == ACT_GETTING_BLOWN) {
         mTerminalVel = 64;
-        m->vel[1] -= m->windGravity / gDeltaTime;
-        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 0.015625f / gDeltaTime + 1; }
+        m->vel[1] -= m->windGravity;
+        if (m->vel[1] < -mTerminalVel) m->vel[1] /= 1.015625f; }
     else if (should_strengthen_gravity_for_jump_ascent(m)) {
-        m->vel[1] /= 4.0f / gDeltaTime; }
+        m->vel[1] *= 0.25f; }
     else if (m->action & ACT_FLAG_METAL_WATER) {
         mTerminalVel = 0;
         baseVel = ((!gRealToggle) ? 1.0f : 1.25f);
-        m->vel[1] -= baseVel / gDeltaTime;
+        m->vel[1] -= baseVel;
         if (m->vel[1] < -24.0f) m->vel[1] = -24.0f; }
     else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
         m->marioBodyState->wingFlutter = TRUE;
@@ -710,7 +674,7 @@ void apply_gravity(struct MarioState *m) {
         mTerminalVel = gravity_applier(m, 4.0f, 64, FALSE); }
     if (m->flags & MARIO_METAL_CAP && !gRealToggle && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
         baseVel = 2.0f;
-        if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) baseVel /= 2;
+        if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) baseVel *= 0.5f;
         mTerminalVel = gravity_applier(m, baseVel, 32, FALSE); }
 
     /*
@@ -768,9 +732,9 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
 
     for (i = 0; i < numSteps; i++) {
         Vec3f step = {
-            m->vel[0] / numSteps / gDeltaTime,
-            m->vel[1] / numSteps / gDeltaTime,
-            m->vel[2] / numSteps / gDeltaTime,
+            m->vel[0] / numSteps,
+            m->vel[1] / numSteps,
+            m->vel[2] / numSteps,
         };
 
         intendedPos[0] = m->pos[0] + step[0];

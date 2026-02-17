@@ -234,11 +234,10 @@ void cur_obj_forward_vel_approach_upward(f32 target, f32 increment) {
 }
 
 s32 cur_obj_rotate_yaw_toward(s16 target, s16 increment) {
-    if (!vBlankTimer) return FALSE;
     s16 startYaw;
 
     startYaw = (s16) o->oMoveAngleYaw;
-    o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, target, increment); //* vBlankTimer
+    o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, target, increment);
 
     if ((o->oAngleVelYaw = (s16)((s16) o->oMoveAngleYaw - startYaw)) == 0) {
         return TRUE;
@@ -329,12 +328,6 @@ struct Object *spawn_object_rel_with_rot(struct Object *parent, ModelID32 model,
     return newObj;
 }
 
-struct Object *spawn_obj_with_transform_flags(struct Object *parent, ModelID32 model, const BehaviorScript *behavior) {
-    struct Object *newObj = spawn_object(parent, model, behavior);
-    newObj->oFlags |= OBJ_FLAG_UPDATE_TRANSFORM_FOR_THROW_MATRIX | OBJ_FLAG_SET_THROW_MATRIX_FROM_TRANSFORM;
-    return newObj;
-}
-
 struct Object *spawn_water_droplet(struct Object *parent, struct WaterDropletParams *params) {
     struct Object *newObj = spawn_object(parent, params->model, params->behavior);
 
@@ -382,7 +375,7 @@ struct Object *spawn_object_at_origin(struct Object *parent, UNUSED s32 unusedAr
     obj->header.gfx.areaIndex = parent->header.gfx.areaIndex;
     obj->header.gfx.activeAreaIndex = parent->header.gfx.areaIndex;
 
-    geo_obj_init(&obj->header.gfx, gLoadedGraphNodes[model], gVec3fZero, gVec3sZero);
+    geo_obj_init((struct GraphNodeObject *) &obj->header.gfx, gLoadedGraphNodes[model], gVec3fZero, gVec3sZero);
 
     return obj;
 }
@@ -473,7 +466,7 @@ void obj_set_gfx_pos_from_pos(struct Object *obj) {
 
 void obj_init_animation(struct Object *obj, s32 animIndex) {
     struct Animation **anims = obj->oAnimations;
-    geo_obj_init_animation_accel(&obj->header.gfx, &anims[animIndex], 0x10000);
+    geo_obj_init_animation(&obj->header.gfx, &anims[animIndex]);
 }
 
 void obj_apply_scale_to_transform(struct Object *obj) {
@@ -502,7 +495,7 @@ void cur_obj_scale(f32 scale) {
 
 void cur_obj_init_animation(s32 animIndex) {
     struct Animation **anims = o->oAnimations;
-    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], 0x10000);
+    geo_obj_init_animation(&o->header.gfx, &anims[animIndex]);
 }
 
 void cur_obj_init_animation_with_sound(s32 animIndex) {
@@ -513,20 +506,14 @@ void cur_obj_init_animation_with_sound(s32 animIndex) {
 
 void cur_obj_init_animation_with_accel_and_sound(s32 animIndex, f32 accel) {
     struct Animation **anims = o->oAnimations;
-    s32 animAccel = (s32)(accel * 65536.0f);
-    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], animAccel);
+    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], accel);
     o->oSoundStateID = animIndex;
-}
-
-void cur_obj_init_animation_x1_with_sound(s32 animIndex) {
-    struct Animation **anims = o->oAnimations;
-    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], 0x10000);
 }
 
 void obj_init_animation_with_sound(struct Object *obj, const struct Animation * const* animations, s32 animIndex) {
     struct Animation **anims = (struct Animation **)animations;
     obj->oAnimations = (struct Animation **)animations;
-    geo_obj_init_animation_accel(&obj->header.gfx, &anims[animIndex], 0x10000);
+    geo_obj_init_animation(&obj->header.gfx, &anims[animIndex]);
     obj->oSoundStateID = animIndex;
 }
 
@@ -1151,10 +1138,9 @@ void cur_obj_move_y_with_terminal_vel(void) {
     o->oPosY += o->oVelY;
 }
 
-void cur_obj_compute_vel_xz(u8 vSync) {
-    if (!vSync) return;
-    o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw); //* vSync
-    o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw); //* vSync
+void cur_obj_compute_vel_xz(void) {
+    o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw);
+    o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw);
 }
 
 f32 increment_velocity_toward_range(f32 value, f32 center, f32 zeroThreshold, f32 increment) {
@@ -1455,7 +1441,7 @@ void cur_obj_move_standard(s16 steepSlopeAngleDegrees) {
             steepSlopeNormalY = coss(DEGREES(steepSlopeAngleDegrees));
         }
 
-        cur_obj_compute_vel_xz(1);
+        cur_obj_compute_vel_xz();
         cur_obj_apply_drag_xz(dragStrength);
 
         cur_obj_move_xz(steepSlopeNormalY, careAboutEdgesAndSteepSlopes);
@@ -1478,21 +1464,14 @@ UNUSED static s32 cur_obj_within_bounds(f32 bounds) {
     return TRUE;
 }
 
-void cur_obj_move_using_vel_and_gravity(u8 vSync) {
-    if (!vSync) return;
+void cur_obj_move_using_vel_and_gravity(void) {
     o->oVelY += o->oGravity; //! No terminal velocity
-    // o->oVelY *= vSync;
     vec3f_add(&o->oPosVec, &o->oVelVec);
 }
 
 void cur_obj_move_using_fvel_and_gravity(void) {
-    cur_obj_compute_vel_xz(1);
-    cur_obj_move_using_vel_and_gravity(1); //! No terminal velocity
-}
-
-void cur_obj_move_using_fvel_and_gravity_delta(void) {
-    cur_obj_compute_vel_xz(vBlankTimer);
-    cur_obj_move_using_vel_and_gravity(vBlankTimer); //! No terminal velocity
+    cur_obj_compute_vel_xz();
+    cur_obj_move_using_vel_and_gravity(); //! No terminal velocity
 }
 
 void obj_set_pos_relative(struct Object *obj, struct Object *other, f32 dleft, f32 dy, f32 dforward) {
@@ -1550,8 +1529,6 @@ void obj_set_throw_matrix_from_transform(struct Object *obj) {
         obj_apply_scale_to_transform(obj);
     }
 
-    obj->header.gfx.throwMatrix = &obj->transform;
-
     obj_scale(obj, 1.0f);
 }
 
@@ -1563,8 +1540,6 @@ void obj_build_transform_relative_to_parent(struct Object *obj) {
     mtxf_mul(obj->transform, obj->transform, parent->transform);
 
     vec3f_copy(&obj->oPosVec, obj->transform[3]);
-
-    obj->header.gfx.throwMatrix = &obj->transform;
 
     obj_scale(obj, 1.0f);
 }
@@ -2207,9 +2182,8 @@ void cur_obj_align_gfx_with_floor(void) {
     if (floor != NULL) {
         Vec3f floorNormal;
         surface_normal_to_vec3f(floorNormal, floor);
-
-        mtxf_align_terrain_normal(o->transform, floorNormal, position, o->oFaceAngleYaw);
-        o->header.gfx.throwMatrix = &o->transform;
+        quat_align_with_floor(o->header.gfx.throwRotation,floorNormal);
+        o->oFlags |= OBJ_FLAG_THROW_ROTATION;
     }
 }
 
@@ -2267,6 +2241,7 @@ void obj_copy_behavior_params(struct Object *dst, struct Object *src) {
 void cur_obj_init_animation_and_anim_frame(s32 animIndex, s32 animFrame) {
     cur_obj_init_animation_with_sound(animIndex);
     o->header.gfx.animInfo.animFrame = animFrame;
+    o->header.gfx.animInfo.animFrameF = animFrame;
 }
 
 s32 cur_obj_init_animation_and_check_if_near_end(s32 animIndex) {
@@ -2346,4 +2321,57 @@ void cur_obj_spawn_star_at_y_offset(f32 targetX, f32 targetY, f32 targetZ, f32 o
     o->oPosY += offsetY + gDebugInfo[DEBUG_PAGE_ENEMYINFO][0];
     spawn_default_star(targetX, targetY, targetZ);
     o->oPosY = objectPosY;
+}
+
+void mtxf_object_gfx(Mat4 dest, struct Object * obj) {
+    Quat rotation;
+	Quat finalRot;
+
+    quat_from_zxy_euler(rotation,obj->header.gfx.angle);
+    quat_mul(finalRot,rotation,obj->header.gfx.throwRotation);
+    quat_normalize(finalRot);
+
+    mtxf_from_quat(finalRot,dest);
+    dest[3][0] += obj->header.gfx.pos[0];
+    dest[3][1] += obj->header.gfx.pos[1];
+    dest[3][2] += obj->header.gfx.pos[2];
+
+    mtxf_scale_vec3f(dest, dest, obj->header.gfx.scale);
+}
+
+void mtxf_object(Mat4 dest, struct Object * obj) {
+    Vec3s euler_rot = {obj->oFaceAnglePitch,obj->oFaceAngleYaw,obj->oFaceAngleRoll};
+    Quat rotation;
+	Quat finalRot;
+    quat_from_zxy_euler(rotation,euler_rot);
+    if (obj->oFlags & OBJ_FLAG_THROW_ROTATION) {
+        quat_mul(finalRot,rotation,obj->header.gfx.throwRotation);
+    } else {
+        quat_copy(finalRot,rotation);
+	}
+    quat_normalize(finalRot);
+
+    mtxf_from_quat(finalRot,dest);
+    dest[3][0] += obj->oPosX;
+    dest[3][1] += obj->oPosY;
+    dest[3][2] += obj->oPosZ;
+
+    mtxf_scale_vec3f(dest, dest, obj->header.gfx.scale);
+}
+
+void mtxf_object_noscale(Mat4 dest, struct Object * obj) {
+    Quat rotation;
+	Quat finalRot;
+    quat_from_zxy_euler(rotation,obj->header.gfx.angle);
+    if (obj->oFlags & OBJ_FLAG_THROW_ROTATION) {
+        quat_mul(finalRot,rotation,obj->header.gfx.throwRotation);
+    } else {
+        quat_copy(finalRot,rotation);
+    }
+    quat_normalize(finalRot);
+
+    mtxf_from_quat(finalRot,dest);
+    dest[3][0] += obj->header.gfx.pos[0];
+    dest[3][1] += obj->header.gfx.pos[1];
+    dest[3][2] += obj->header.gfx.pos[2];
 }

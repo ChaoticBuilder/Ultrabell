@@ -16,6 +16,9 @@ enum EnvFxMode {
     /*14*/ ENVFX_JETSTREAM_BUBBLES  // JRB, DDD (submarine area)
 };
 
+extern Vec3f gSkyboxCameraPos;
+extern Vec3f gSkyboxCameraFoc;
+
 Gfx *geo_envfx_main(s32 callContext, struct GraphNode *node, Mat4 mtxf);
 Gfx *geo_skybox_main(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx);
 

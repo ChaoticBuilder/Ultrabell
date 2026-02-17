@@ -37,7 +37,9 @@ extern OSMesgQueue gGameVblankQueue;
 extern OSMesgQueue gGfxVblankQueue;
 extern OSMesg gGameMesgBuf[1];
 extern OSMesg gGfxMesgBuf[1];
+extern OSMesg gGraphicsMesgBuf[1];
 extern struct VblankHandler gGameVblankHandler;
+extern struct VblankHandler gGraphicsVblankHandler;
 extern uintptr_t gPhysicalFramebuffers[3];
 extern uintptr_t gPhysicalZBuffer;
 extern void *gMarioAnimsMemAlloc;
@@ -71,7 +73,7 @@ extern struct DemoInput gRecordedDemoInput;
 
 // this area is the demo input + the header. when the demo is loaded in, there is a header the size
 // of a single word next to the input list. this word is the current ID count.
-extern struct DmaHandlerList gMarioAnimsBuf;
+extern struct DmaHandlerList gMarioAnimsBuf[2];
 extern struct DmaHandlerList gDemoInputsBuf;
 
 extern u8 gMarioAnims[];
@@ -81,9 +83,11 @@ extern u16 sRenderingFramebuffer;
 extern u32 gGlobalTimer;
 extern u8  vBlankTimer;
 extern f32 gDeltaTime;
+extern u8 gLevelChangeSpinlockState;
 
 void setup_game_memory(void);
 void thread5_game_loop(UNUSED void *arg);
+void thread10_graphics_loop(UNUSED void *arg);
 void clear_framebuffer(s32 color);
 void clear_viewport(Vp *viewport, s32 color);
 void make_viewport_clip_rect(Vp *viewport);

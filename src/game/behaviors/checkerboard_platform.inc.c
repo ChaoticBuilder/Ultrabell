@@ -84,8 +84,8 @@ void bhv_checkerboard_platform_loop(void) {
             break;
     }
 
-    if (vBlankTimer) o->oMoveAnglePitch += absi(o->oAngleVelPitch);
-    if (vBlankTimer) o->oFaceAnglePitch += absi(o->oAngleVelPitch);
+    o->oMoveAnglePitch += absi(o->oAngleVelPitch);
+    o->oFaceAnglePitch += absi(o->oAngleVelPitch);
     o->oFaceAngleYaw = o->oMoveAngleYaw;
 
     if (o->oMoveAnglePitch != 0) {
@@ -96,9 +96,9 @@ void bhv_checkerboard_platform_loop(void) {
     if (o->oCheckerBoardPlatformRotateAction == 1) {
         o->oAngleVelPitch = 0;
         o->oFaceAnglePitch &= ~0x7FFF;
-        cur_obj_move_using_fvel_and_gravity_delta();
+        cur_obj_move_using_fvel_and_gravity();
     } else {
-        cur_obj_move_using_fvel_and_gravity_delta();
+        cur_obj_move_using_fvel_and_gravity();
     }
 
     load_object_collision_model();

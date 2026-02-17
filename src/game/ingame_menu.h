@@ -64,12 +64,11 @@ enum ConfigMenuIDs {
 
 enum FPSPresets {
     FPS_30,
-    FPS_45,
-    FPS_60,
+    FPS_MENU,
     FPS_15,
     FPS_20,
     FPS_USER_END,
-    FPS_MENU,
+    FPS_60,
 };
 
 #define ASCII_TO_DIALOG(asc)                                       \
@@ -216,6 +215,7 @@ extern u16 gDialogTextAlpha;
 extern s16 gCutsceneMsgXOffset;
 extern s16 gCutsceneMsgYOffset;
 extern u8  gRedCoinsCollected;
+extern s16 gMenuMode;
 
 void create_dl_identity_matrix(void);
 void create_dl_translation_matrix(s8 pushOp, f32 x, f32 y, f32 z);
@@ -243,6 +243,6 @@ void set_cutscene_message(s16 xOffset, s16 yOffset, s16 msgIndex, s16 msgDuratio
 void do_cutscene_handler(void);
 void render_hud_cannon_reticle(void);
 void reset_red_coins_collected(void);
-s32 render_menus_and_dialogs(void);
+s32 render_menus_and_dialogs(u8 i);
 
 #endif // INGAME_MENU_H

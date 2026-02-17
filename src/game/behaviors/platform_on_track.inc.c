@@ -324,7 +324,7 @@ static void platform_on_track_act_pause_briefly(void) {
  * and eventually blinking and disappearing.
  */
 static void platform_on_track_act_fall(void) {
-    cur_obj_move_using_vel_and_gravity(1);
+    cur_obj_move_using_vel_and_gravity();
 
     if (gMarioObject->platform != o) {
         platform_on_track_mario_not_on_platform();

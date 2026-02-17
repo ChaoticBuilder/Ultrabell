@@ -30,6 +30,7 @@
 #include "profiling.h"
 #include "gfx_dimensions.h"
 #include "mario.h"
+#include "frame_lerp.h"
 
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
 
@@ -2700,7 +2701,7 @@ void update_lakitu(struct Camera *c) {
     if (!(gCameraMovementFlags & CAM_MOVE_PAUSE_SCREEN)) {
         newYaw = next_lakitu_state(newPos, newFoc, c->pos, c->focus, sOldPosition, sOldFocus,
                                    c->nextYaw);
-        set_or_approach_s16_symmetric(&c->yaw, newYaw, (sYawSpeed / gDeltaTime));
+        set_or_approach_s16_symmetric(&c->yaw, newYaw, sYawSpeed);
         sStatusFlags &= ~CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
 
         // Update old state
@@ -2720,10 +2721,10 @@ void update_lakitu(struct Camera *c) {
                                          gLakituState.focHSpeed, gLakituState.focVSpeed,
                                          gLakituState.focHSpeed);
         // Adjust Lakitu's speed back to normal
-        set_or_approach_f32_asymptotic(&gLakituState.focHSpeed, (0.75f / gDeltaTime), 0.05f);
-        set_or_approach_f32_asymptotic(&gLakituState.focVSpeed, (0.375f / gDeltaTime), 0.05f);
-        set_or_approach_f32_asymptotic(&gLakituState.posHSpeed, (0.25f / gDeltaTime), 0.05f);
-        set_or_approach_f32_asymptotic(&gLakituState.posVSpeed, (0.25f / gDeltaTime), 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.focHSpeed, 0.75f, 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.focVSpeed, 0.375f, 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.posHSpeed, 0.25f, 0.05f);
+        set_or_approach_f32_asymptotic(&gLakituState.posVSpeed, 0.25f, 0.05f);
 
         // Turn on smooth movement when it hasn't been blocked for 2 frames
         if (sStatusFlags & CAM_FLAG_BLOCK_SMOOTH_MOVEMENT) {
@@ -2773,6 +2774,9 @@ void update_lakitu(struct Camera *c) {
     clamp_pitch(gLakituState.pos, gLakituState.focus, 0x3E00, -0x3E00);
     gLakituState.mode = c->mode;
     gLakituState.defMode = c->defMode;
+
+    frameLerp_cache_pos(gLakituState.pos,gLakituState.cachePos,gLakituState.cacheVideoPos);
+    frameLerp_cache_pos(gLakituState.focus,gLakituState.cacheFoc,gLakituState.cacheVideoFoc);
 }
 
 /**
@@ -3337,6 +3341,10 @@ void update_graph_node_camera(struct GraphNodeCamera *gc) {
     gc->rollScreen = gLakituState.roll;
     vec3f_copy(gc->pos, gLakituState.pos);
     vec3f_copy(gc->focus, gLakituState.focus);
+    vec3f_copy(gc->posCache, gLakituState.cachePos);
+    vec3f_copy(gc->focusCache, gLakituState.cacheFoc);
+    vec3f_copy(gc->posVideoCache, gLakituState.cacheVideoPos);
+    vec3f_copy(gc->focusVideoCache, gLakituState.cacheVideoFoc);
     zoom_out_if_paused_and_outside(gc);
 }
 
@@ -3844,14 +3852,14 @@ s32 camera_approach_f32_symmetric_bool(f32 *current, f32 target, f32 increment) 
         increment = -1 * increment;
     }
     if (dist > 0) {
-        dist -= (increment / gDeltaTime);
+        dist -= increment;
         if (dist > 0) {
             *current = target - dist;
         } else {
             *current = target;
         }
     } else {
-        dist += (increment / gDeltaTime);
+        dist += increment;
         if (dist < 0) {
             *current = target - dist;
         } else {
@@ -3872,7 +3880,7 @@ f32 camera_approach_f32_symmetric(f32 current, f32 target, f32 increment) {
     f32 dist = target - current;
 
     if (increment < 0) {
-        increment = -1 * (increment / gDeltaTime);
+        increment = -1 * increment;
     }
     if (dist > 0) {
         dist -= increment;
@@ -3882,7 +3890,7 @@ f32 camera_approach_f32_symmetric(f32 current, f32 target, f32 increment) {
             current = target;
         }
     } else {
-        dist += (increment / gDeltaTime);
+        dist += increment;
         if (dist < 0) {
             current = target - dist;
         } else {
@@ -4237,8 +4245,8 @@ void rotate_in_yz(Vec3f dst, Vec3f src, s16 pitch) {
  * Start shaking the camera's pitch (up and down)
  */
 void set_camera_pitch_shake(s16 mag, s16 decay, s16 inc) {
-    if (gLakituState.shakeMagnitude[0] < (s32)(mag * gDeltaTime)) {
-        gLakituState.shakeMagnitude[0] = (s32)(mag * gDeltaTime);
+    if (gLakituState.shakeMagnitude[0] < mag) {
+        gLakituState.shakeMagnitude[0] = mag;
         gLakituState.shakePitchDecay = decay;
         gLakituState.shakePitchVel = inc;
     }
@@ -4248,8 +4256,8 @@ void set_camera_pitch_shake(s16 mag, s16 decay, s16 inc) {
  * Start shaking the camera's yaw (side to side)
  */
 void set_camera_yaw_shake(s16 mag, s16 decay, s16 inc) {
-    if (abss((s32)(mag * gDeltaTime)) > abss(gLakituState.shakeMagnitude[1])) {
-        gLakituState.shakeMagnitude[1] = (s32)(mag * gDeltaTime);
+    if (abss(mag) > abss(gLakituState.shakeMagnitude[1])) {
+        gLakituState.shakeMagnitude[1] = mag;
         gLakituState.shakeYawDecay = decay;
         gLakituState.shakeYawVel = inc;
     }
@@ -4259,8 +4267,8 @@ void set_camera_yaw_shake(s16 mag, s16 decay, s16 inc) {
  * Start shaking the camera's roll (rotate screen clockwise and counterclockwise)
  */
 void set_camera_roll_shake(s16 mag, s16 decay, s16 inc) {
-    if (gLakituState.shakeMagnitude[2] < (s32)(mag * gDeltaTime)) {
-        gLakituState.shakeMagnitude[2] = (s32)(mag * gDeltaTime);
+    if (gLakituState.shakeMagnitude[2] < mag) {
+        gLakituState.shakeMagnitude[2] = mag;
         gLakituState.shakeRollDecay = decay;
         gLakituState.shakeRollVel = inc;
     }
@@ -4309,7 +4317,7 @@ void shake_camera_pitch(Vec3f pos, Vec3f focus) {
         gHudShakeY = (random_float() - 0.5f) * 4.0f;
 
         vec3f_get_dist_and_angle(pos, focus, &dist, &pitch, &yaw);
-        pitch += (gLakituState.shakeMagnitude[0] * sins(gLakituState.shakePitchPhase)) / gDeltaTime;
+        pitch += gLakituState.shakeMagnitude[0] * sins(gLakituState.shakePitchPhase);
         vec3f_set_dist_and_angle(pos, focus, dist, pitch, yaw);
         increment_shake_offset(&gLakituState.shakePitchPhase, gLakituState.shakePitchVel);
         if (camera_approach_s16_symmetric_bool(&gLakituState.shakeMagnitude[0], 0,
@@ -4331,7 +4339,7 @@ void shake_camera_yaw(Vec3f pos, Vec3f focus) {
 
     if (gLakituState.shakeMagnitude[1] != 0) {
         vec3f_get_dist_and_angle(pos, focus, &dist, &pitch, &yaw);
-        yaw += (gLakituState.shakeMagnitude[1] * sins(gLakituState.shakeYawPhase)) / gDeltaTime;
+        yaw += gLakituState.shakeMagnitude[1] * sins(gLakituState.shakeYawPhase);
         vec3f_set_dist_and_angle(pos, focus, dist, pitch, yaw);
         increment_shake_offset(&gLakituState.shakeYawPhase, gLakituState.shakeYawVel);
         if (camera_approach_s16_symmetric_bool(&gLakituState.shakeMagnitude[1], 0,
@@ -4347,7 +4355,7 @@ void shake_camera_yaw(Vec3f pos, Vec3f focus) {
 void shake_camera_roll(s16 *roll) {
     if (gLakituState.shakeMagnitude[2] != 0) {
         increment_shake_offset(&gLakituState.shakeRollPhase, gLakituState.shakeRollVel);
-        *roll += (gLakituState.shakeMagnitude[2] * sins(gLakituState.shakeRollPhase)) / gDeltaTime;
+        *roll += gLakituState.shakeMagnitude[2] * sins(gLakituState.shakeRollPhase);
         if (camera_approach_s16_symmetric_bool(&gLakituState.shakeMagnitude[2], 0,
                                                gLakituState.shakeRollDecay) == 0) {
             gLakituState.shakeRollPhase = 0;
@@ -8933,11 +8941,11 @@ void cutscene_unlock_key_door_fov_shake(UNUSED struct Camera *c) {
  */
 void cutscene_unlock_key_door(UNUSED struct Camera *c) {
     cutscene_event(cutscene_unlock_key_door_start, c, 0, 0);
-    cutscene_event(cutscene_unlock_key_door_approach_mario, c, 0, (123 * gDeltaTime));
-    cutscene_event(cutscene_unlock_key_door_fly_back, c, (124 * gDeltaTime), -1);
-    cutscene_event(cutscene_unlock_key_door_fov_shake, c, (79 * gDeltaTime), (79 * gDeltaTime));
-    cutscene_event(cutscene_unlock_key_door_focus_lock, c, (70 * gDeltaTime), (110 * gDeltaTime));
-    cutscene_event(cutscene_unlock_key_door_stub, c, (112 * gDeltaTime), (112 * gDeltaTime));
+    cutscene_event(cutscene_unlock_key_door_approach_mario, c, 0, 123);
+    cutscene_event(cutscene_unlock_key_door_fly_back, c, 124, -1);
+    cutscene_event(cutscene_unlock_key_door_fov_shake, c, 79, 79);
+    cutscene_event(cutscene_unlock_key_door_focus_lock, c, 70, 110);
+    cutscene_event(cutscene_unlock_key_door_stub, c, 112, 112);
 }
 
 /**
@@ -10771,8 +10779,6 @@ void zoom_fov_30(UNUSED struct MarioState *m) {
 void fov_default(struct MarioState *m) {
     sStatusFlags &= ~CAM_FLAG_SLEEPING;
 
-    /* Reverted sleeping zoom back to vanilla behavior because of camera look */
-    /* Will I keep it this way? idk, I just know that I'm too lazy to figure out how to fix rn -w- */
     if ((m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
         camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (30.f - sFOVState.fov) / 30.f);
         sStatusFlags |= CAM_FLAG_SLEEPING;
@@ -10827,7 +10833,7 @@ void set_fov_bbh(struct MarioState *m) {
         targetFoV = 45.f;
     }
 
-    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, (2.f / gDeltaTime), (2.f / gDeltaTime));
+    sFOVState.fov = approach_f32_symmetric(sFOVState.fov, targetFoV, 2.f);
 }
 
 /**

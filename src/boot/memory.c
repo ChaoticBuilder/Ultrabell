@@ -25,6 +25,7 @@
 #endif
 #include "game/puppyprint.h"
 #include "src/game/debug.h"
+#include <PR/os_internal_reg.h>
 
 struct MainPoolState {
     u32 freeSpace;
@@ -146,6 +147,7 @@ void main_pool_init(void *start, void *end) {
  * If there is not enough space, return NULL.
  */
 void *main_pool_alloc(u32 size, u32 side) {
+    u32 mask = __osDisableInt();
     struct MainPoolBlock *newListHead;
     void *addr = NULL;
 
@@ -168,6 +170,7 @@ void *main_pool_alloc(u32 size, u32 side) {
             addr = (u8 *) sPoolListHeadR + 16;
         }
     }
+    __osRestoreInt(mask);
     return addr;
 }
 
@@ -206,6 +209,7 @@ u32 main_pool_free(void *addr) {
  * The block does not move.
  */
 void *main_pool_realloc(void *addr, u32 size) {
+    u32 mask = __osDisableInt();
     void *newAddr = NULL;
     struct MainPoolBlock *block = (struct MainPoolBlock *) ((u8 *) addr - 16);
 
@@ -213,6 +217,7 @@ void *main_pool_realloc(void *addr, u32 size) {
         main_pool_free(addr);
         newAddr = main_pool_alloc(size, MEMORY_POOL_LEFT);
     }
+    __osRestoreInt(mask);
     return newAddr;
 }
 

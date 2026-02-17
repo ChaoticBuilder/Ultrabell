@@ -347,82 +347,6 @@ void mtxf_shadow(Mat4 dest, Vec3f upDir, Vec3f pos, Vec3f scale, s16 yaw) {
 }
 
 /**
- * Set 'dest' to a transformation matrix that aligns an object with the terrain
- * based on the normal. Used for enemies.
- * 'upDir' is the terrain normal
- * 'yaw' is the angle which it should face
- * 'pos' is the object's position in the world
- */
-void mtxf_align_terrain_normal(Mat4 dest, Vec3f upDir, Vec3f pos, s16 yaw) {
-    PUPPYPRINT_ADD_COUNTER(gPuppyCallCounter.matrix);
-    Vec3f lateralDir;
-    Vec3f leftDir;
-    Vec3f forwardDir;
-    vec3f_set(lateralDir, sins(yaw), 0.0f, coss(yaw));
-    vec3f_normalize(upDir);
-    vec3f_cross(leftDir, upDir, lateralDir);
-    vec3f_normalize(leftDir);
-    vec3f_cross(forwardDir, leftDir, upDir);
-    vec3f_normalize(forwardDir);
-    vec3f_copy(dest[0], leftDir);
-    vec3f_copy(dest[1], upDir);
-    vec3f_copy(dest[2], forwardDir);
-    vec3f_copy(dest[3], pos);
-    MTXF_END(dest);
-}
-
-/**
- * Set 'mtx' to a transformation matrix that aligns an object with the terrain
- * based on 3 height samples in an equilateral triangle around the object.
- * Used for Mario when crawling or sliding.
- * 'yaw' is the angle which it should face
- * 'pos' is the object's position in the world
- * 'radius' is the distance from each triangle vertex to the center
- */
-void mtxf_align_terrain_triangle(Mat4 mtx, Vec3f pos, s16 yaw, f32 radius) {
-    PUPPYPRINT_ADD_COUNTER(gPuppyCallCounter.matrix);
-    struct Surface *floor;
-    Vec3f point0, point1, point2;
-    Vec3f forward;
-    Vec3f xColumn, yColumn, zColumn;
-    f32 minY   = (-radius * 3);
-    f32 height = (pos[1] + 150);
-
-    point0[0] = (pos[0] + (radius * sins(yaw + DEGREES( 60))));
-    point0[2] = (pos[2] + (radius * coss(yaw + DEGREES( 60))));
-    point0[1] = find_floor(point0[0], height, point0[2], &floor);
-    point1[0] = (pos[0] + (radius * sins(yaw + DEGREES(180))));
-    point1[2] = (pos[2] + (radius * coss(yaw + DEGREES(180))));
-    point1[1] = find_floor(point1[0], height, point1[2], &floor);
-    point2[0] = (pos[0] + (radius * sins(yaw + DEGREES(-60))));
-    point2[2] = (pos[2] + (radius * coss(yaw + DEGREES(-60))));
-    point2[1] = find_floor(point2[0], height, point2[2], &floor);
-
-    if ((point0[1] - pos[1]) < minY) point0[1] = pos[1];
-    if ((point1[1] - pos[1]) < minY) point1[1] = pos[1];
-    if ((point2[1] - pos[1]) < minY) point2[1] = pos[1];
-
-    f32 avgY = (point0[1] + point1[1] + point2[1]) / 3.f;
-
-    vec3f_set(forward, sins(yaw), 0.0f, coss(yaw));
-    find_vector_perpendicular_to_plane(yColumn, point0, point1, point2);
-    vec3f_normalize(yColumn);
-    vec3f_cross(xColumn, yColumn, forward);
-    vec3f_normalize(xColumn);
-    vec3f_cross(zColumn, xColumn, yColumn);
-    vec3f_normalize(zColumn);
-    vec3f_copy(mtx[0], xColumn);
-    vec3f_copy(mtx[1], yColumn);
-    vec3f_copy(mtx[2], zColumn);
-
-    mtx[3][0] = pos[0];
-    mtx[3][1] = MAX(pos[1], avgY);
-    mtx[3][2] = pos[2];
-
-    MTXF_END(mtx);
-}
-
-/**
  * Sets matrix 'dest' to the matrix product b * a assuming they are both
  * transformation matrices with a w-component of 1. Since the bottom row
  * is assumed to equal [0, 0, 0, 1], it saves some multiplications and
@@ -1099,4 +1023,234 @@ s16 snap_to_angle(s16 angle, u16 snap) {
         }
     }
     return angle;
+}
+
+//from: https://en.wikipedia.org/wiki/Fast_inverse_square_root
+f32 invsqrtf(f32 number) {
+	s32 i;
+	f32 x2, y;
+	const f32 threehalfs = 1.5F;
+
+	x2 = number * 0.5F;
+	y  = number;
+	i  = * ( s32 * ) &y;						// evil floating point bit level hacking
+	i  = 0x5f3759df - ( i >> 1 );               // what the fuck?
+	y  = * ( f32 * ) &i;
+	y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
+	y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+
+	return y;
+}
+
+/// Set Vec3f to the forward component of q. (Untested)
+void vec3f_quat_look(Vec3f dest, Quat q) {
+    f32 x = q[0];
+    f32 y = q[1];
+    f32 z = q[2];
+    f32 w = q[3];
+
+    dest[0] = 2.0f * (x * z + w * y);
+    dest[1] = 2.0f * (y * z - w * x);
+    dest[2] = 1.0f - 2.0f * (x * x + y * y);
+}
+
+/// Convert a quaternion to a rotation matrix.
+void mtxf_from_quat(Quat q, Mat4 dest) {
+    dest[0][0] = -2.f * (q[1] * q[1] + q[2] * q[2]) + 1.f;
+    dest[0][1] =  2.f * (q[0] * q[1] - q[3] * q[2]);
+    dest[0][2] =  2.f * (q[0] * q[2] + q[3] * q[1]);
+
+    dest[1][0] =  2.f * (q[0] * q[1] + q[3] * q[2]);
+    dest[1][1] = -2.f * (q[0] * q[0] + q[2] * q[2]) + 1.f;
+    dest[1][2] =  2.f * (q[1] * q[2] - q[3] * q[0]);
+
+    dest[2][0] =  2.f * (q[0] * q[2] - q[3] * q[1]);
+    dest[2][1] =  2.f * (q[1] * q[2] + q[3] * q[0]);
+    dest[2][2] = -2.f * (q[0] * q[0] + q[1] * q[1]) + 1.f;
+
+    dest[3][0] = dest[3][1] = dest[3][2] = dest[0][3] = dest[1][3] = dest[2][3] = 0.f;
+    dest[3][3] = 1.f;
+}
+
+/// Return the dot product of q1 and q2. Arthur made fun of me for this function name...
+f32 quat_dot(Quat q1, Quat q2) {
+    return q1[3] * q2[3] + q1[0] * q2[0] + q1[1] * q2[1] + q1[2] * q2[2];
+}
+
+/// Initialize neutral quaternion.
+void quat_identity(Quat dest) {
+    dest[0] = 0.f;
+    dest[1] = 0.f;
+    dest[2] = 0.f;
+    dest[3] = 1.f;
+}
+
+/// Copy a quaternion.
+void quat_copy(Quat dest, Quat src) {
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+    dest[3] = src[3];
+}
+
+/// Multiply two quaternions.
+void quat_mul(Quat dest, Quat a, Quat b) {
+    dest[0] = a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1];
+    dest[1] = a[3] * b[1] + a[1] * b[3] + a[2] * b[0] - a[0] * b[2];
+    dest[2] = a[3] * b[2] + a[2] * b[3] + a[0] * b[1] - a[1] * b[0];
+    dest[3] = a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2];
+}
+
+/// Normalize a quaternion.
+void quat_normalize(Quat quat) {
+    f32 invMag = invsqrtf(quat[0] * quat[0] + quat[1] * quat[1] + quat[2] * quat[2] + quat[3] * quat[3]);
+    quat[0] *= invMag;
+    quat[1] *= invMag;
+    quat[2] *= invMag;
+    quat[3] *= invMag;
+}
+
+/// Convert an euler angle (zxy) to a quaternion.
+void quat_from_zxy_euler(Quat dest, Vec3s angle) {
+    f32 cx = coss((-angle[0]) * 0.5);
+    f32 sx = sins((-angle[0]) * 0.5);
+    f32 cy = coss((-angle[1]) * 0.5);
+    f32 sy = sins((-angle[1]) * 0.5);
+    f32 cz = coss((-angle[2]) * 0.5);
+    f32 sz = sins((-angle[2]) * 0.5);
+
+    dest[0] = sx * cy * cz - cx * sy * sz;
+    dest[1] = cx * sy * cz + sx * cy * sz;
+    dest[2] = cx * cy * sz + sx * sy * cz;
+    dest[3] = cx * cy * cz - sx * sy * sz;
+}
+
+/// Convert an euler angle (xyz) to a quaternion.
+void quat_from_xyz_euler(Quat dest, Vec3s angle) {
+    f32 cx = coss((-angle[0]) * 0.5);
+    f32 sx = sins((-angle[0]) * 0.5);
+    f32 cy = coss((-angle[1]) * 0.5);
+    f32 sy = sins((-angle[1]) * 0.5);
+    f32 cz = coss((-angle[2]) * 0.5);
+    f32 sz = sins((-angle[2]) * 0.5);
+
+    dest[0] = sx * cy * cz + cx * sy * sz;
+    dest[1] = cx * sy * cz - sx * cy * sz;
+    dest[2] = cx * cy * sz + sx * sy * cz;
+    dest[3] = cx * cy * cz - sx * sy * sz;
+}
+
+/// Return inverse of q. (Untested)
+void quat_inverse(Quat dest, Quat q) {
+    f32 normSq = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
+    if (normSq > 0.0f) {
+        f32 invNormSq = 1.0f / normSq;
+        dest[0] = -q[0] * invNormSq;
+        dest[1] = -q[1] * invNormSq;
+        dest[2] = -q[2] * invNormSq;
+        dest[3] =  q[3] * invNormSq;
+    } else {
+        // If the quaternion has zero norm, return identity quaternion as a fallback.
+        dest[0] = dest[1] = dest[2] = 0.0f;
+        dest[3] = 1.0f;
+    }
+}
+
+//from: http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+/// Return an interpolated quaternion between q1 and q2 depending on the value of lambda.
+void quat_slerp(Quat dest, Quat q1, Quat q2 , f32 lambda) {
+    f32 q2_copy[4];
+    f32 dot = quat_dot(q1,q2);
+
+    // Ensure shortest path by negating q2 if necessary
+    if (dot < 0.0f) {
+        dot = -dot;
+        q2_copy[0] = -q2[0];
+        q2_copy[1] = -q2[1];
+        q2_copy[2] = -q2[2];
+        q2_copy[3] = -q2[3];
+    } else {
+        quat_copy(q2_copy, q2);
+    }
+
+    // If the dot product is very close to 1, use linear interpolation (LERP) for stability
+    if (dot > 0.9995f) {
+        dest[0] = q1[0] + lambda * (q2_copy[0] - q1[0]);
+        dest[1] = q1[1] + lambda * (q2_copy[1] - q1[1]);
+        dest[2] = q1[2] + lambda * (q2_copy[2] - q1[2]);
+        dest[3] = q1[3] + lambda * (q2_copy[3] - q1[3]);
+        quat_normalize(dest);
+        return;
+    }
+
+    // Perform spherical linear interpolation (SLERP)
+    f32 theta = acosf(dot);
+    f32 sinTheta = sinf(theta);
+    f32 w1 = sinf((1.0f - lambda) * theta) / sinTheta;
+    f32 w2 = sinf(lambda * theta) / sinTheta;
+
+    dest[0] = w1 * q1[0] + w2 * q2_copy[0];
+    dest[1] = w1 * q1[1] + w2 * q2_copy[1];
+    dest[2] = w1 * q1[2] + w2 * q2_copy[2];
+    dest[3] = w1 * q1[3] + w2 * q2_copy[3];
+    quat_normalize(dest);
+}
+
+//from: https://irrlicht.sourceforge.io/docu/quaternion_8h_source.html#l00658
+/// Return a quaternion that represents the rotation needed to go from from to to.
+void quat_fromto(Quat dest, Vec3f from, Vec3f to) {
+    f32 d = vec3f_dot(to,from);
+
+    f32 s = sqrtf((1+d)*2.f);
+    f32 invs = 1.f / s;
+    Vec3f c;
+    vec3f_cross(c,from,to);
+    vec3_scale_dest(c,c,invs);
+
+    dest[0] = c[0];
+    dest[1] = c[1];
+    dest[2] = c[2];
+    dest[3] = s*.5;
+
+    quat_normalize(dest);
+}
+
+/// Align quaternion with the normal from a floor triangle.
+void quat_align_with_floor(Quat dest, Vec3f floorNormal) {
+    Vec3f up = {0.f,1.f,0.f};
+    quat_fromto(dest,floorNormal,up);
+}
+
+/*
+Replacement for mtxf_align_terrain_triangle.
+Samples 3 floor points in an equilateral triangle and sets the alignment normal
+to the normal of the triangle. Makes sliding nice and smooth.
+*/
+void quat_align_with_floor_fancy(Quat dest, Vec3f pos, s16 yaw) {
+    struct Surface *floor;
+    Vec3f point0, point1, point2;
+    Vec3f yColumn;
+    f32 height = (pos[1] + 150);
+    f32 radius = 40.0f;
+    f32 minY   = (-radius * 3);
+
+    point0[0] = (pos[0] + (radius * sins(yaw + DEGREES( 60))));
+    point0[2] = (pos[2] + (radius * coss(yaw + DEGREES( 60))));
+    point0[1] = find_floor(point0[0], height, point0[2], &floor);
+    point1[0] = (pos[0] + (radius * sins(yaw + DEGREES(180))));
+    point1[2] = (pos[2] + (radius * coss(yaw + DEGREES(180))));
+    point1[1] = find_floor(point1[0], height, point1[2], &floor);
+    point2[0] = (pos[0] + (radius * sins(yaw + DEGREES(-60))));
+    point2[2] = (pos[2] + (radius * coss(yaw + DEGREES(-60))));
+    point2[1] = find_floor(point2[0], height, point2[2], &floor);
+
+    if ((point0[1] - pos[1]) < minY) point0[1] = pos[1];
+    if ((point1[1] - pos[1]) < minY) point1[1] = pos[1];
+    if ((point2[1] - pos[1]) < minY) point2[1] = pos[1];
+
+    find_vector_perpendicular_to_plane(yColumn, point0, point1, point2);
+    vec3f_normalize(yColumn);
+
+    Vec3f up = {0.f,1.f,0.f};
+    quat_fromto(dest,yColumn,up);
 }

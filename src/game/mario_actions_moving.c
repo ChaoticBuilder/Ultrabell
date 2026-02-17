@@ -73,16 +73,8 @@ void play_step_sound(struct MarioState *m, s16 frame1, s16 frame2) {
 void align_with_floor(struct MarioState *m) {
     struct Surface *floor = m->floor;
     if ((floor != NULL) && (m->pos[1] < (m->floorHeight + 80.0f))) {
-        m->pos[1] = m->floorHeight;
-#ifdef FAST_FLOOR_ALIGN
-        // if (absf(m->forwardVel) > FAST_FLOOR_ALIGN) {
-            Vec3f floorNormal;
-            surface_normal_to_vec3f(floorNormal, floor);
-            mtxf_align_terrain_normal(sFloorAlignMatrix[m->playerID], floorNormal, m->pos, m->faceAngle[1]);
-#else
-        mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerID], m->pos, m->faceAngle[1], 40.0f);
-#endif
-        m->marioObj->header.gfx.throwMatrix = &sFloorAlignMatrix[m->playerID];
+		quat_align_with_floor_fancy(m->marioObj->header.gfx.throwRotation,m->marioObj->header.gfx.pos,m->faceAngle[1]);
+		m->marioObj->oFlags |= OBJ_FLAG_THROW_ROTATION;
     }
 }
 
@@ -263,8 +255,8 @@ s32 update_sliding(struct MarioState *m, f32 stopSpeed) {
     //! This is attempting to use trig derivatives to rotate Mario's speed.
     // It is slightly off/asymmetric since it uses the new X speed, but the old
     // Z speed.
-    m->slideVelX += m->slideVelZ * ((m->intendedMag / 32.0f) * sideward * 0.05f) / gDeltaTime;
-    m->slideVelZ -= m->slideVelX * ((m->intendedMag / 32.0f) * sideward * 0.05f) / gDeltaTime;
+    m->slideVelX += m->slideVelZ * (m->intendedMag / 32.0f) * sideward * 0.05f;
+    m->slideVelZ -= m->slideVelX * (m->intendedMag / 32.0f) * sideward * 0.05f;
 
     newSpeed = sqrtf(m->slideVelX * m->slideVelX + m->slideVelZ * m->slideVelZ);
 
@@ -314,9 +306,9 @@ void apply_slope_accel(struct MarioState *m) {
         }
 
         if (floorDYaw < 0x4000) {
-            m->forwardVel += (slopeAccel * steepness) / gDeltaTime;
+            m->forwardVel += slopeAccel * steepness;
         } else {
-            m->forwardVel -= (slopeAccel * steepness) / gDeltaTime;
+            m->forwardVel -= slopeAccel * steepness;
         }
     }
 
@@ -380,18 +372,18 @@ void update_shell_speed(struct MarioState *m) {
         if (g95Toggle) vel = 0.5f;
         if (gRealToggle) vel = 1.0f;
         if (LUIGI_MOVESET || m->flags & MARIO_METAL_CAP) vel = 0.5f;
-        m->forwardVel += vel / gDeltaTime;
+        m->forwardVel += vel;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.125f / gDeltaTime;
+        m->forwardVel -= 0.125f;
     }
     
     //! No backward speed cap (shell hyperspeed)
     if (m->forwardVel > 64.0f) {
-        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 64.0f) / 128.0f, 0, 8.0f) / gDeltaTime);
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 64.0f) / 128.0f, 0, 8.0f));
     }
 
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * 24.0f / gDeltaTime);
+        m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * 24.0f);
 
     apply_slope_accel(m);
 }
@@ -458,7 +450,7 @@ void update_walking_speed(struct MarioState *m) {
 
     if (m->forwardVel <= 0.0f) {
         // Slow down if moving backwards
-        m->forwardVel += 1.0f / gDeltaTime;
+        m->forwardVel += 1.0f;
     } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
         f32 vel = 0.75f;
@@ -466,13 +458,13 @@ void update_walking_speed(struct MarioState *m) {
         if (gRealToggle) vel = 1.0f;
         if (m->flags & MARIO_METAL_CAP) vel = 0.5f; // god I wish there was a better way to do this
         if (LUIGI_MOVESET) vel *= 0.75f;
-        m->forwardVel += vel / gDeltaTime;
+        m->forwardVel += vel;
     } else if (m->floor->normal.y >= 0.95f) {
-        m->forwardVel -= 0.125f / gDeltaTime;
+        m->forwardVel -= 0.125f;
     }
 
     if (m->forwardVel > 32.0f) {
-        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 128.0f, 0, 8.0f) / gDeltaTime);
+        m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 128.0f, 0, 8.0f));
     }
 
     u32 turnSpd = (!LUIGI_MOVESET) ? 24.0f : 18.0f;
@@ -489,18 +481,18 @@ void update_walking_speed(struct MarioState *m) {
             m->faceAngle[1] = m->intendedYaw;
         }
     } else {
-        m->faceAngle[1] = m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * turnSpd / gDeltaTime);
+        m->faceAngle[1] = m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * turnSpd);
     }
 #else
     // Vanilla
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * turnSpd / gDeltaTime);
+        m->intendedYaw - approach_s32_symmetric((s16)(m->intendedYaw - m->faceAngle[1]), 0, ABS(m->forwardVel + 48.0f) * turnSpd);
 #endif
     apply_slope_accel(m);
 }
 
 void update_debug_speed(struct MarioState *m) {
-    if (m->forwardVel < spdSpd || spdSpd == 0) m->forwardVel += m->intendedMag / 32.0f / gDeltaTime;
+    if (m->forwardVel < spdSpd || spdSpd == 0) m->forwardVel += m->intendedMag / 32.0f;
 
 #ifdef VELOCITY_BASED_TURN_SPEED
     if ((m->heldObj == NULL) && !(m->action & ACT_FLAG_SHORT_HITBOX)) {
@@ -520,7 +512,7 @@ void update_debug_speed(struct MarioState *m) {
 #else
     // Vanilla
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800 / gDeltaTime, 0x800 / gDeltaTime);
+        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
 #endif
     apply_slope_accel(m);
 }

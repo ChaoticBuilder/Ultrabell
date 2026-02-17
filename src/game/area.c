@@ -415,11 +415,7 @@ void render_game(void) {
         print_displaying_credits_entry();
         gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, gBorderHeight, SCREEN_WIDTH,
                       SCREEN_HEIGHT - gBorderHeight);
-        gMenuOptSelectIndex = render_menus_and_dialogs();
-
-        if (gMenuOptSelectIndex != 0) {
-            gSaveOptSelectIndex = gMenuOptSelectIndex;
-        }
+        render_menus_and_dialogs(TRUE);
 
         if (gViewportClip != NULL) {
             make_viewport_clip_rect(gViewportClip);

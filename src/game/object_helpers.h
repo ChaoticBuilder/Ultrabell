@@ -81,7 +81,6 @@ struct Object *spawn_object_abs_with_rot(struct Object *parent, s16 uselessArg, 
                                          s16 x, s16 y, s16 z, s16 pitch, s16 yaw, s16 roll);
 struct Object *spawn_object_rel_with_rot(struct Object *parent, ModelID32 model, const BehaviorScript *behavior,
                                          s16 xOff, s16 yOff, s16 zOff, s16 pitch, s16 yaw, s16 roll);
-struct Object *spawn_obj_with_transform_flags(struct Object *parent, ModelID32 model, const BehaviorScript *behavior);
 struct Object *spawn_water_droplet(struct Object *parent, struct WaterDropletParams *params);
 struct Object *spawn_object_at_origin(struct Object *parent, UNUSED s32 unusedArg, ModelID32 model, const BehaviorScript *behavior);
 struct Object *spawn_object(struct Object *parent, ModelID32 model, const BehaviorScript *behavior);
@@ -105,7 +104,6 @@ void obj_scale(struct Object *obj, f32 scale);
 void cur_obj_scale(f32 scale);
 void cur_obj_init_animation_with_sound(s32 animIndex);
 void cur_obj_init_animation_with_accel_and_sound(s32 animIndex, f32 accel);
-void cur_obj_init_animation_x1_with_sound(s32 animIndex);
 void cur_obj_init_animation(s32 animIndex);
 void obj_init_animation_with_sound(struct Object *obj, const struct Animation * const* animations, s32 animIndex);
 void cur_obj_enable_rendering(void);
@@ -158,7 +156,7 @@ void cur_obj_move_y(f32 gravity, f32 bounciness, f32 buoyancy);
 void cur_obj_unused_resolve_wall_collisions(f32 offsetY, f32 radius);
 void cur_obj_move_xz_using_fvel_and_yaw(void);
 void cur_obj_move_y_with_terminal_vel(void);
-void cur_obj_compute_vel_xz(u8 vSync);
+void cur_obj_compute_vel_xz(void);
 f32 increment_velocity_toward_range(f32 value, f32 center, f32 zeroThreshold, f32 increment);
 s32 obj_check_if_collided_with_object(struct Object *obj1, struct Object *obj2);
 void cur_obj_set_behavior(const BehaviorScript *behavior);
@@ -181,7 +179,7 @@ s32 cur_obj_advance_looping_anim(void);
 s32 cur_obj_resolve_wall_collisions(void);
 void cur_obj_update_floor_and_walls(void);
 void cur_obj_move_standard(s16 steepSlopeAngleDegrees);
-void cur_obj_move_using_vel_and_gravity(u8 vSync);
+void cur_obj_move_using_vel_and_gravity(void);
 void cur_obj_move_using_fvel_and_gravity(void);
 void cur_obj_move_using_fvel_and_gravity_delta(void);
 s32 cur_obj_angle_to_home(void);
@@ -278,6 +276,8 @@ void enable_time_stop_including_mario(void);
 void disable_time_stop_including_mario(void);
 s32 cur_obj_check_interacted(void);
 void cur_obj_spawn_loot_blue_coin(void);
+void mtxf_object(Mat4 dest, struct Object * obj);
+void mtxf_object_noscale(Mat4 dest, struct Object * obj);
 
 void cur_obj_spawn_star_at_y_offset(f32 targetX, f32 targetY, f32 targetZ, f32 offsetY);
 

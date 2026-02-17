@@ -95,7 +95,7 @@ void exclamation_box_act_active(void) {
 }
 
 void exclamation_box_act_scaling(void) {
-    cur_obj_move_using_vel_and_gravity(1);
+    cur_obj_move_using_vel_and_gravity();
     o->oExclamationBoxScaleAngle += 0x800;
     cur_obj_scale(sins(o->oExclamationBoxScaleAngle) + 2.0f);
     if (o->oTimer > 15) {

@@ -9,7 +9,6 @@
  */
 void bhv_platform_normals_init(void) {
     vec3f_set(&o->oTiltingPyramidNormalVec, 0.0f, 1.0f, 0.0f);
-    mtxf_align_terrain_normal(o->transform, &o->oTiltingPyramidNormalVec, &o->oPosVec, 0);
 }
 
 /**
@@ -18,7 +17,6 @@ void bhv_platform_normals_init(void) {
  */
 void bhv_tilting_inverted_pyramid_loop(void) {
     Vec3f targetNormal;
-    Mat4 *transform = &o->transform;
     s32 marioOnPlatform = (gMarioObject->platform == o);
 
     if (marioOnPlatform) {
@@ -36,7 +34,7 @@ void bhv_tilting_inverted_pyramid_loop(void) {
     approach_f32_symmetric_bool(&o->oTiltingPyramidNormalX, targetNormal[0], 0.01f);
     approach_f32_symmetric_bool(&o->oTiltingPyramidNormalY, targetNormal[1], 0.01f);
     approach_f32_symmetric_bool(&o->oTiltingPyramidNormalZ, targetNormal[2], 0.01f);
-    mtxf_align_terrain_normal(*transform, &o->oTiltingPyramidNormalVec, &o->oPosVec, 0x0);
 
-    o->header.gfx.throwMatrix = transform;
+    quat_align_with_floor(o->header.gfx.throwRotation,&o->oTiltingPyramidNormalVec);
+    o->oFlags |= OBJ_FLAG_THROW_ROTATION;
 }
