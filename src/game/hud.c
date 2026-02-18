@@ -56,7 +56,7 @@ u8 curFrameTimeIndex = 0;
 
 #include "PR/os_convert.h"
 
-f32 gDeltaTime;
+f32 gDeltaTime = 1.0f;
 
 #ifdef USE_PROFILER
 float profiler_get_fps();
@@ -75,19 +75,15 @@ f32 calculate_and_update_fps() {
 }
 #endif
 
-void fps_calc(void) {
-    #ifdef USE_PROFILER
-        gDeltaTime = profiler_get_fps();
-    #else
-        gDeltaTime = calculate_and_update_fps();
-    #endif
-    gDeltaTime /= 30.0f;
-}
-
 void print_fps(s32 x, s32 y) {
+#ifdef USE_PROFILER
+    f32 fps = profiler_get_fps();
+#else
+    f32 fps = calculate_and_update_fps();
+#endif
     char text[14];
 
-    sprintf(text, "FPS %2.3f", gDeltaTime);
+    sprintf(text, "FPS %2.3f", fps);
 #ifdef PUPPYPRINT
     print_small_text(x, y, text, PRINT_TEXT_ALIGN_LEFT, PRINT_ALL, FONT_OUTLINE);
 #else
@@ -218,7 +214,7 @@ void render_dl_power_meter(s16 numHealthWedges) {
 void animate_power_meter_emphasized(void) {
     s16 speed = 1 + (((sPowerMeterHUD.y - HUD_POWER_METER_EMPHASIZED_Y) + 1) / 2);
     
-    if (vBlankTimer) approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_EMPHASIZED_Y, speed);
+    approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_EMPHASIZED_Y, speed);
     if (sPowerMeterVisibleTimer >= 30) {
         sPowerMeterHUD.animation = POWER_METER_DEEMPHASIZING;
         sPowerMeterVisibleTimer = 0;
@@ -232,7 +228,7 @@ void animate_power_meter_emphasized(void) {
 static void animate_power_meter_deemphasizing(void) {
     s16 speed = 1 + (((HUD_POWER_METER_Y - sPowerMeterHUD.y) + 1) / 6);
 
-    if (vBlankTimer) approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_Y, speed);
+    approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_Y, speed);
     if (sPowerMeterHUD.y > HUD_POWER_METER_Y) {
         sPowerMeterHUD.y = HUD_POWER_METER_Y;
         sPowerMeterHUD.animation = POWER_METER_VISIBLE;
@@ -244,7 +240,7 @@ static void animate_power_meter_deemphasizing(void) {
  * Moves power meter y pos quickly until it's at 301 to be hidden.
  */
 static void animate_power_meter_hiding(void) {
-    if (vBlankTimer) approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_HIDDEN_Y, sqr(sPowerMeterVisibleTimer));
+    approach_s16_symmetric_bool(&sPowerMeterHUD.y, HUD_POWER_METER_HIDDEN_Y, sqr(sPowerMeterVisibleTimer));
     if (sPowerMeterHUD.y >= HUD_POWER_METER_HIDDEN_Y) {
         sPowerMeterHUD.animation = POWER_METER_HIDDEN;
         sPowerMeterVisibleTimer = 0;
@@ -306,7 +302,7 @@ void render_hud_power_meter(void) {
         default:                                                             break;
     }
     render_dl_power_meter(shownHealthWedges);
-    if (vBlankTimer) sPowerMeterVisibleTimer++;
+    sPowerMeterVisibleTimer++;
 }
 
 #ifdef BREATH_METER
@@ -548,9 +544,9 @@ void render_hud_keys(void) {
 void render_hud_timer(void) {
     Texture *(*hudLUT)[58] = segmented_to_virtual(&main_hud_lut);
     u16 timerValFrames = gHudDisplay.timer;
-    u16 timerMins = timerValFrames / (gDeltaTime * 1800.0f);
-    u16 timerSecs = (timerValFrames - (timerMins * 1800)) / (gDeltaTime * 30.0f);
-    u16 timerFracSecs = (timerValFrames / (u8)(gDeltaTime * 3.0f + 0.5f)) % 10;
+    u16 timerMins = timerValFrames / (30 * 60);
+    u16 timerSecs = (timerValFrames - (timerMins * 1800)) / 30;
+    u16 timerFracSecs = ((timerValFrames - (timerMins * 1800) - (timerSecs * 30)) & 0xFFFF) / 3;
 
 #if MULTILANG
     switch (eu_get_language()) {
@@ -789,7 +785,6 @@ void testing(void) {
  * excluding the cannon reticle which detects a camera preset for it.
  */
 void render_hud(void) {
-    fps_calc();
     s16 hudDisplayFlags = gHudDisplay.flags;
     if (hudDisplayFlags == HUD_DISPLAY_NONE) {
         sPowerMeterHUD.animation = POWER_METER_HIDDEN;

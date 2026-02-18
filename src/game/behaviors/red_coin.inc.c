@@ -1,3 +1,4 @@
+#include "game/main.h"
 
 /**
  * This file contains the initialization and behavior for red coins.

@@ -45,7 +45,6 @@
 #include "save_file.h"
 #include "seq_ids.h"
 #include "spawn_sound.h"
-#include "main.h"
 
 //! TODO: remove static
 
@@ -271,8 +270,7 @@ static s32 obj_y_vel_approach(f32 target, f32 delta) {
 }
 
 static s32 obj_move_pitch_approach(s16 target, s16 delta) {
-    if (!vBlankTimer) return FALSE;
-    o->oMoveAnglePitch = approach_s16_symmetric(o->oMoveAnglePitch, target, delta); //* vBlankTimer
+    o->oMoveAnglePitch = approach_s16_symmetric(o->oMoveAnglePitch, target, delta);
 
     if ((s16) o->oMoveAnglePitch == target) {
         return TRUE;
@@ -282,8 +280,7 @@ static s32 obj_move_pitch_approach(s16 target, s16 delta) {
 }
 
 static s32 obj_face_pitch_approach(s16 targetPitch, s16 deltaPitch) {
-    if (!vBlankTimer) return FALSE;
-    o->oFaceAnglePitch = approach_s16_symmetric(o->oFaceAnglePitch, targetPitch, deltaPitch); //* vBlankTimer
+    o->oFaceAnglePitch = approach_s16_symmetric(o->oFaceAnglePitch, targetPitch, deltaPitch);
 
     if ((s16) o->oFaceAnglePitch == targetPitch) {
         return TRUE;

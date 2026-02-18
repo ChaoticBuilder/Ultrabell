@@ -673,7 +673,7 @@ u32 should_push_or_pull_door(struct MarioState *m, struct Object *obj) {
     return (dYaw <= 0x4000) ? WARP_FLAG_DOOR_PULLED : WARP_FLAG_DOOR_FLIP_MARIO;
 }
 
-s32 take_damage_from_interact_object(struct MarioState *m) {
+u32 take_damage_from_interact_object(struct MarioState *m) {
     s32 shake;
     s32 damage = m->interactObj->oDamageOrCoinValue;
 
@@ -704,14 +704,12 @@ s32 take_damage_from_interact_object(struct MarioState *m) {
 }
 
 u32 take_damage_and_knock_back(struct MarioState *m, struct Object *obj) {
-    s32 damage;
-
     if (!sInvulnerable && !(m->flags & MARIO_VANISH_CAP)
         && !(obj->oInteractionSubtype & INT_SUBTYPE_DELAY_INVINCIBILITY)) {
         obj->oInteractStatus = INT_STATUS_INTERACTED | INT_STATUS_ATTACKED_MARIO;
         m->interactObj = obj;
 
-        damage = take_damage_from_interact_object(m);
+        u32 damage = take_damage_from_interact_object(m);
 
         if (obj->oInteractionSubtype & INT_SUBTYPE_BIG_KNOCKBACK) {
             m->forwardVel = 40.0f;
@@ -980,16 +978,7 @@ u32 get_door_save_file_flag(struct Object *door) {
     u32 saveFileFlag = 0;
     s16 requiredNumStars = door->oBehParams >> 24;
 
-    /*
-    s16 isCcmDoor = door->oPosX < 0.0f;
-    s16 isPssDoor = door->oPosY > 500.0f;
-    */
-
     switch (requiredNumStars) {
-        /*
-        case  1: saveFileFlag = (isPssDoor ? SAVE_FLAG_UNLOCKED_PSS_DOOR : SAVE_FLAG_UNLOCKED_WF_DOOR ); break;
-        case  3: saveFileFlag = (isCcmDoor ? SAVE_FLAG_UNLOCKED_CCM_DOOR : SAVE_FLAG_UNLOCKED_JRB_DOOR); break;
-        */
         case  8: saveFileFlag = SAVE_FLAG_UNLOCKED_BITDW_DOOR;                                           break;
         case 24: saveFileFlag = SAVE_FLAG_UNLOCKED_BITFS_DOOR;                                           break;
         case 40: saveFileFlag = SAVE_FLAG_UNLOCKED_50_STAR_DOOR;                                         break;
@@ -1038,10 +1027,6 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
             u32 text = DIALOG_022 << 16;
 
             switch (requiredNumStars) {
-                /*
-                case  1: text = DIALOG_024 << 16; break;
-                case  3: text = DIALOG_025 << 16; break;
-                */
                 case  8: text = DIALOG_026 << 16; break;
                 case 24: text = DIALOG_027 << 16; break;
                 case 40: text = DIALOG_028 << 16; break;
@@ -1090,7 +1075,6 @@ u32 interact_tornado(struct MarioState *m, UNUSED u32 interactType, struct Objec
 
     if (m->action != ACT_TORNADO_TWIRLING && m->action != ACT_SQUISHED) {
         mario_stop_riding_and_holding(m);
-        // mario_set_forward_vel(m, 0.0f);
         update_mario_sound_and_camera(m);
 
         obj->oInteractStatus = INT_STATUS_INTERACTED;
@@ -1582,8 +1566,8 @@ u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o
         m->flags |= MARIO_CAP_ON_HEAD;
 
         switch (capFlag) {
-            case MARIO_VANISH_CAP: capTime = 900; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
-            case MARIO_METAL_CAP:  capTime = 900; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
+            case MARIO_VANISH_CAP: capTime =  900; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
+            case MARIO_METAL_CAP:  capTime =  900; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_METAL_CAP); break;
             case MARIO_WING_CAP:   capTime = 1800; capMusic = SEQUENCE_ARGS(4, SEQ_EVENT_POWERUP  ); break;
         }
         if (gLVLToggle) capTime *= 2;
@@ -1691,7 +1675,6 @@ u32 mario_can_talk(struct MarioState *m, u32 arg) {
     return FALSE;
 }
 
-// fuck pressing a to read signs / talk to npcs it sucks ass!
 #ifdef EASIER_DIALOG_TRIGGER
 #define SIGN_RANGE DEGREES(90)
 #else
@@ -1892,7 +1875,7 @@ void pss_end_slide(struct MarioState *m) {
     //! This flag isn't set on death or level entry, allowing double star spawn
     if (sPssSlideStarted) {
         u16 slideTime = level_control_timer(TIMER_CONTROL_STOP);
-        if (slideTime < 630 * gDeltaTime) {
+        if (slideTime < 630) {
             m->marioObj->oBehParams = (1 << 24);
             spawn_default_star(-6358.0f, -4300.0f, 4700.0f);
         }

@@ -69,6 +69,7 @@ void update_mario_platform(void) {
 void update_platform_displacement_info(struct PlatformDisplacementInfo *displaceInfo, Vec3f pos, s16 yaw, struct Object *platform) {
     Vec3f scaledPos, yawVec, localPos;
 
+
     Mat4 transform;
     mtxf_object_noscale(transform,platform);
 

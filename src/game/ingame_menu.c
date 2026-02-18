@@ -2531,7 +2531,7 @@ s32 render_menus_and_dialogs(u8 i) {
 
     create_dl_ortho_matrix();
 
-    if (gMenuMode != MENU_MODE_NONE) {
+    if (gMenuMode != MENU_MODE_NONE && i) {
         switch (gMenuMode) {
             case MENU_MODE_RENDER_PAUSE_SCREEN:
                 mode = render_pause_courses_and_castle();
@@ -2544,7 +2544,7 @@ s32 render_menus_and_dialogs(u8 i) {
         gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;
     } else if (gDialogID != DIALOG_NONE) {
         // The Peach "Dear Mario" message needs to be repositioned separately
-        if (gDialogID == DIALOG_020) {
+        if (gDialogID == DIALOG_020 && i) {
             print_peach_letter_message();
             return mode;
         }

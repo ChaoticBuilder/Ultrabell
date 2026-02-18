@@ -10,7 +10,6 @@
 #include "interaction.h"
 #include "mario_step.h"
 #include "ingame_menu.h"
-#include "print.h"
 #include "hud.h"
 
 #include "config.h"
@@ -351,11 +350,7 @@ s32 perform_ground_step(struct MarioState *m) {
     s32 i;
     u32 stepResult = GROUND_STEP_NONE;
     Vec3f intendedPos;
-    u8 stepCap = ((gDeltaTime < 1.0f) ? sqr(gDeltaTime) : gDeltaTime) * 12.0f;
-    /* dividing by 2.0f can be replaced by subtracting 0x800000, which is more efficient since this code runs every frame, thanks Kaze!
-     * for the number you want, just use windows calc and multiply the number by 4194304 (0x400000) */
-    u8 numSteps = (dynSteps) ? CLAMP(MAX((f32)((ABS((s32)(m->forwardVel)) - 0x4000000)), /* This is a division by 16 */ 0), 1, ((dynSteps < 2) ? stepCap : 4)) : 4;
-    // print_text_fmt_int(160, 64, "%d", numSteps);
+    u8 numSteps = 4;
 
     set_mario_wall(m, NULL);
 
@@ -721,12 +716,10 @@ void apply_vertical_wind(struct MarioState *m) {
 
 s32 perform_air_step(struct MarioState *m, u32 stepArg) {
     Vec3f intendedPos;
-    u8 stepCap = ((gDeltaTime < 1.0f) ? sqr(gDeltaTime) : gDeltaTime) * 12.0f;
-    u8 numSteps = (dynSteps) ? CLAMP(MAX((f32)(ABS(m->forwardVel + m->vel[1]) - 0x4000000), 0), 1, ((dynSteps < 2) ? stepCap : 4)) : 4;
+    u8 numSteps = 4;
     s32 i;
     s32 quarterStepResult;
     s32 stepResult = AIR_STEP_NONE;
-    // print_text_fmt_int(160, 64, "%d", numSteps);
 
     set_mario_wall(m, NULL);
 

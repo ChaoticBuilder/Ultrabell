@@ -1,4 +1,5 @@
 // spawn_star.inc.c
+#include "game/main.h"
 
 static struct ObjectHitbox sCollectStarHitbox = {
     /* interactType:      */ INTERACT_STAR_OR_KEY,

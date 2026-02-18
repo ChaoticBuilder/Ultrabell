@@ -896,23 +896,13 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
     }
 }
 
-u8 transitionPlayed = FALSE;
-u8 transitionTime = 0;
-
 /**
  * Loads a save file selected after it goes into a full screen state
  * retuning sSelectedFileNum to a save value defined in fileNum.
  */
 void load_main_menu_save_file(struct Object *fileButton, s32 fileNum) {
-    if (fileButton->oMenuButtonState == MENU_BUTTON_STATE_GROWING && !transitionPlayed) {
-        transitionPlayed = TRUE;
-        sSelectedFileNum = fileNum; // first jump to initialize the transition
-    } else if (transitionPlayed) {
-        sSelectedFileNum = 0;
-        transitionTime++;
-        if (transitionTime >= 20) {
-            sSelectedFileNum = fileNum; // second jump to actually load the file
-        }
+    if (fileButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
+        sSelectedFileNum = fileNum;
     }
 }
 
@@ -1214,16 +1204,15 @@ void handle_cursor_button_input(void) {
 void handle_controller_cursor_input(void) {
     s16 rawStickX = gPlayer1Controller->rawStickX;
     s16 rawStickY = gPlayer1Controller->rawStickY;
-    // Nintendo is dumb, I would've used intendedMag, but apparently, that's for the MarioObject only, so I have to CODE IN ANOTHER VELOCITY SYSTEM! :D
 
     // Handle deadzone
     if (rawStickX > -4 && rawStickX < 4) {
         rawStickX = 0;
-        sCursorVel[0] = approach_f32(sCursorVel[0], 0, ABS(sCursorVel[0] / 1.125), ABS(sCursorVel[0] / 1.125));
+        sCursorVel[0] = approach_f32(sCursorVel[0], 0, ABS(sCursorVel[0] * 0.875f), ABS(sCursorVel[0] * 0.875f));
     }
     if (rawStickY > -4 && rawStickY < 4) {
         rawStickY = 0;
-        sCursorVel[1] = approach_f32(sCursorVel[1], 0, ABS(sCursorVel[1] / 1.125), ABS(sCursorVel[1] / 1.125));
+        sCursorVel[1] = approach_f32(sCursorVel[1], 0, ABS(sCursorVel[1] * 0.875f), ABS(sCursorVel[1] * 0.875f));
     }
     if ((rawStickX > 0 && sCursorVel[0] < 0) || (rawStickX < 0 && sCursorVel[0] > 0)) {
         sCursorVel[0] = approach_f32(sCursorVel[0], CLAMP(rawStickX, -12, 12), ABS(rawStickX / 12), ABS(rawStickX / 12));
@@ -1239,19 +1228,8 @@ void handle_controller_cursor_input(void) {
     sCursorPos[1] += sCursorVel[1];
 
     // Stop cursor from going offscreen
-    if (sCursorPos[0] > 129.0f) {
-        sCursorPos[0] = 129.0f;
-    }
-    if (sCursorPos[0] < -151.0f) {
-        sCursorPos[0] = -151.0f;
-    }
-
-    if (sCursorPos[1] > 116.0f) {
-        sCursorPos[1] = 116.0f;
-    }
-    if (sCursorPos[1] < -95.0f) {
-        sCursorPos[1] = -95.0f;
-    }
+	sCursorPos[0] = CLAMP(sCursorPos[0], -151.0f, 129.0f);
+	sCursorPos[1] = CLAMP(sCursorPos[1], -95.0f, 116.0f);
 
     if (sCursorClickingTimer == 0) {
         handle_cursor_button_input();
