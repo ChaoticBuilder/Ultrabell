@@ -153,8 +153,6 @@ enum MusicDynConditionTypes {
     MARIO_IS_IN_ROOM,
 };
 
-#include "game/hud.h"
-
 #define DYN1(cond1, val1, res) (s16)(1 << (15 - cond1) | res), val1
 #define DYN2(cond1, val1, cond2, val2, res)                                                            \
     (s16)(1 << (15 - cond1) | 1 << (15 - cond2) | res), val1, val2

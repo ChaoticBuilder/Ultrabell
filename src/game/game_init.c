@@ -615,12 +615,10 @@ void adjust_analog_stick(struct Controller *controller) {
 /**
  * Update the controller struct with available inputs if present.
  */
-void read_controller_inputs(s32 threadID) {
+void read_controller_inputs(void) {
     // If any controllers are plugged in, update the controller information.
     if (gControllerBits) {
-        if (threadID == THREAD_5_GAME_LOOP) {
-            osRecvMesg(&gSIEventMesgQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-        }
+        osRecvMesg(&gSIEventMesgQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
         osContGetReadDataEx(gControllerPads);
 #if ENABLE_RUMBLE
         release_rumble_pak_control();
@@ -815,20 +813,14 @@ void thread5_game_loop(UNUSED void *arg) {
 
     while (TRUE) {
 		if (!sSingleThreadOtherFrame) goto skipFrame;
-
-        vBlankTimer = 0;
-        while (vBlanksPrev++ < vBlanks) {
-            vBlankTimer++;
-        }
-
         profiler_frame_setup();
         // If the reset timer is active, run the process to reset the game.
-        if (gResetTimer != 0) {
+        if (gResetTimer) {
             draw_reset_bars();
             continue;
         }
 #ifdef PUPPYPRINT_DEBUG
-    bzero(&gPuppyCallCounter, sizeof(gPuppyCallCounter));
+    	bzero(&gPuppyCallCounter, sizeof(gPuppyCallCounter));
 #endif
         // If any controllers are plugged in, start read the data for when
         // read_controller_inputs is called later.
@@ -840,7 +832,7 @@ void thread5_game_loop(UNUSED void *arg) {
         }
 
         audio_game_loop_tick();
-        read_controller_inputs(THREAD_5_GAME_LOOP);
+        read_controller_inputs();
         profiler_update(PROFILER_TIME_CONTROLLERS, 0);
         profiler_collision_reset();
         addr = level_script_execute(addr);
@@ -889,7 +881,7 @@ skipFrame:
 		}
 	
         if (sSingleThreaded) {
-            if (sFrameCap60) {
+            if (sFrameCap60 && gFPSCap == FPS_60) {
                 gFrameLerpRenderFrame = FRAMELERP_NORMAL;
                 if (sSingleThreadOtherFrame) {
                     gFrameLerpRenderFrame = FRAMELERP_BETWEEN;
@@ -913,14 +905,13 @@ skipFrame:
             display_and_vsync();
             // End Render
 
-            if (sFrameCap60) {
-                sSingleThreadOtherFrame = !sSingleThreadOtherFrame;
-                osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-            } else {
-                sSingleThreadOtherFrame = TRUE;
-                osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-                osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-    		}
+			if (sFrameCap60 && gFPSCap == FPS_60) sSingleThreadOtherFrame = !sSingleThreadOtherFrame; else {
+				sSingleThreadOtherFrame = TRUE;
+
+				if (gFPSCap == FPS_20 || gFPSCap == FPS_15) osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+				if (gFPSCap == FPS_15) osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+				osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK); }
+			osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
         } else {
             sSingleThreadOtherFrame = TRUE;
 
@@ -982,8 +973,10 @@ void thread10_graphics_loop(UNUSED void *arg) {
         display_and_vsync();
 
 		osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-        if (!gFPSCap || gFPSCap == FPS_MENU || gFPSCap == FPS_20 || gFPSCap == FPS_15 || !sFrameCap60) osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-		if (gFPSCap == FPS_20 || gFPSCap == FPS_15) osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-		if (gFPSCap == FPS_15) osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+		if (!sFrameCap60 || gFPSCap != FPS_60) {
+			if (gFPSCap == FPS_20 || gFPSCap == FPS_15) osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+			if (gFPSCap == FPS_15) osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+			osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+		}
     }
 }

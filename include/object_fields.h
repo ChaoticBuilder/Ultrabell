@@ -134,33 +134,32 @@
 #define /*0x14C*/ oAction                                       OBJECT_FIELD_S32(0x31)
 #define /*0x150*/ oSubAction                                    OBJECT_FIELD_S32(0x32)
 #define /*0x154*/ oTimer                                        OBJECT_FIELD_S32(0x33)
-#define /*0x154*/ oDeltaTimer                                   OBJECT_FIELD_S32(0x34)
-#define /*0x158*/ oBounciness                                   OBJECT_FIELD_F32(0x35)
-#define /*0x15C*/ oDistanceToMario                              OBJECT_FIELD_F32(0x36)
-#define /*0x160*/ oAngleToMario                                 OBJECT_FIELD_S32(0x37)
+#define /*0x158*/ oBounciness                                   OBJECT_FIELD_F32(0x34)
+#define /*0x15C*/ oDistanceToMario                              OBJECT_FIELD_F32(0x35)
+#define /*0x160*/ oAngleToMario                                 OBJECT_FIELD_S32(0x36)
 /* Home Position vector */
-#define /*0x164*/ O_HOME_INDEX                                  0x38
-#define /*0x164*/ O_HOME_X_INDEX                                (O_HOME_INDEX + 0) // 0x38
-#define /*0x168*/ O_HOME_Y_INDEX                                (O_HOME_INDEX + 1) // 0x39
-#define /*0x16C*/ O_HOME_Z_INDEX                                (O_HOME_INDEX + 2) // 0x3A
+#define /*0x164*/ O_HOME_INDEX                                  0x37
+#define /*0x164*/ O_HOME_X_INDEX                                (O_HOME_INDEX + 0) // 0x37
+#define /*0x168*/ O_HOME_Y_INDEX                                (O_HOME_INDEX + 1) // 0x38
+#define /*0x16C*/ O_HOME_Z_INDEX                                (O_HOME_INDEX + 2) // 0x39
 #define /*0x164*/ oHomeVec                                      OBJECT_FIELD_F32(O_HOME_INDEX)
 #define /*0x164*/ oHomeX                                        OBJECT_FIELD_F32(O_HOME_X_INDEX)
 #define /*0x168*/ oHomeY                                        OBJECT_FIELD_F32(O_HOME_Y_INDEX)
 #define /*0x16C*/ oHomeZ                                        OBJECT_FIELD_F32(O_HOME_Z_INDEX)
 /* Common fields */
-#define /*0x170*/ oFriction                                     OBJECT_FIELD_F32(0x3B)
-#define /*0x174*/ oBuoyancy                                     OBJECT_FIELD_F32(0x3C)
-#define /*0x178*/ oSoundStateID                                 OBJECT_FIELD_S32(0x3D)
-#define /*0x17C*/ oOpacity                                      OBJECT_FIELD_S32(0x3E)
-#define /*0x180*/ oDamageOrCoinValue                            OBJECT_FIELD_S32(0x3F)
-#define /*0x184*/ oHealth                                       OBJECT_FIELD_S32(0x40)
-#define /*0x188*/ oBehParams                                    OBJECT_FIELD_U32(0x41)
-#define /*0x18C*/ oPrevAction                                   OBJECT_FIELD_S32(0x42)
-#define /*0x190*/ oInteractionSubtype                           OBJECT_FIELD_U32(0x43)
-#define /*0x194*/ oCollisionDistance                            OBJECT_FIELD_F32(0x44)
-#define /*0x198*/ oNumLootCoins                                 OBJECT_FIELD_S32(0x45)
-#define /*0x19C*/ oDrawingDistance                              OBJECT_FIELD_F32(0x46)
-#define /*0x1A0*/ oRoom                                         OBJECT_FIELD_S32(0x47)
+#define /*0x170*/ oFriction                                     OBJECT_FIELD_F32(0x3A)
+#define /*0x174*/ oBuoyancy                                     OBJECT_FIELD_F32(0x3B)
+#define /*0x178*/ oSoundStateID                                 OBJECT_FIELD_S32(0x3C)
+#define /*0x17C*/ oOpacity                                      OBJECT_FIELD_S32(0x3D)
+#define /*0x180*/ oDamageOrCoinValue                            OBJECT_FIELD_S32(0x3E)
+#define /*0x184*/ oHealth                                       OBJECT_FIELD_S32(0x3F)
+#define /*0x188*/ oBehParams                                    OBJECT_FIELD_U32(0x40)
+#define /*0x18C*/ oPrevAction                                   OBJECT_FIELD_S32(0x41)
+#define /*0x190*/ oInteractionSubtype                           OBJECT_FIELD_U32(0x42)
+#define /*0x194*/ oCollisionDistance                            OBJECT_FIELD_F32(0x43)
+#define /*0x198*/ oNumLootCoins                                 OBJECT_FIELD_S32(0x44)
+#define /*0x19C*/ oDrawingDistance                              OBJECT_FIELD_F32(0x45)
+#define /*0x1A0*/ oRoom                                         OBJECT_FIELD_S32(0x46)
 // 0x1A4 is unused, possibly related to 0x1A8 in removed macro purposes.
 #define /*0x1A8*/ oUnusedCoinParams                             OBJECT_FIELD_U32(0x48)
 // 0x1AC-0x1B2 (0x48-0x4A) are object specific and defined below the common fields.

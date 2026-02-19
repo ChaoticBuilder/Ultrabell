@@ -60,7 +60,7 @@ void bhv_moving_yellow_coin_init(void) {
 
 void bhv_moving_yellow_coin_loop(void) {
     s16 collisionFlags;
-    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
+    o->oAnimState++;
 
     switch (o->oAction) {
         case MOV_YCOIN_ACT_IDLE:
@@ -110,7 +110,7 @@ void bhv_moving_blue_coin_init(void) {
 
 void bhv_moving_blue_coin_loop(void) {
     s16 collisionFlags;
-    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
+    o->oAnimState++;
 
     switch (o->oAction) {
         case MOV_BCOIN_ACT_STILL:
@@ -239,7 +239,7 @@ void bhv_blue_coin_sliding_loop(void) {
 
 void bhv_blue_coin_jumping_loop(void) {
     s16 collisionFlags;
-    if (vBlankTimer > 0) o->oAnimState += vBlankTimer;
+    o->oAnimState++;
 
     switch (o->oAction) {
         case MOV_BCOIN_ACT_STILL:

@@ -39,5 +39,5 @@ void bhv_rotating_platform_loop(void) {
         cur_obj_scale(sWFRotatingPlatformData[o->oBehParams2ndByte].scale * 0.01f);
     }
     o->oAngleVelYaw = speed << 4;
-    o->oFaceAngleYaw += o->oAngleVelYaw / gDeltaTime;
+    o->oFaceAngleYaw += o->oAngleVelYaw;
 }

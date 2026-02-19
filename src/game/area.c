@@ -414,7 +414,7 @@ void render_game(void) {
         print_displaying_credits_entry();
         gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, gBorderHeight, SCREEN_WIDTH,
                       SCREEN_HEIGHT - gBorderHeight);
-        render_menus_and_dialogs(TRUE);
+        render_menus_and_dialogs();
 
         if (gViewportClip != NULL) {
             make_viewport_clip_rect(gViewportClip);

@@ -2,11 +2,9 @@
 
 #include "src/game/main.h"
 #include "src/game/ingame_menu.h"
-#include "src/game/print.h"
 #include "src/game/hud.h"
 
 void bhv_1up_interact(void) {
-    // removed the random death thing, it was kinda pointless honestly
     if (obj_check_if_collided_with_object(o, gMarioObject)) {
         play_sound(SOUND_GENERAL_COLLECT_1UP, gGlobalSoundSource);
 #ifdef MUSHROOMS_HEAL

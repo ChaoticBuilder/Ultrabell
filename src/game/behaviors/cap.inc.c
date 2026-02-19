@@ -30,12 +30,6 @@ void cap_despawn(void) {
     }
 }
 
-void normal_cap_despawn(void) {
-    if (o->oTimer > 600) {
-        obj_flicker_and_disappear(o, 600);
-    }
-}
-
 void cap_check_quicksand(void) {
     if (sObjFloor == NULL) {
         return;
@@ -231,6 +225,7 @@ void normal_cap_set_save_flags(void) {
 
 void normal_cap_act_0(void) {
     o->oFaceAngleYaw += o->oForwardVel * 128.0f;
+    o->oFaceAnglePitch += o->oForwardVel * 80.0f;
     s16 collisionFlags = object_step();
 
     if (collisionFlags & OBJ_COL_FLAG_GROUNDED) {
@@ -239,6 +234,7 @@ void normal_cap_act_0(void) {
         if (o->oVelY != 0.0f) {
             o->oCapDoScaleVertically = TRUE;
             o->oVelY = 0.0f;
+            o->oFaceAnglePitch = 0;
         }
     }
 
@@ -270,9 +266,6 @@ void bhv_normal_cap_loop(void) {
     if (cap_set_hitbox() == TRUE) {
         save_file_clear_flags(SAVE_FLAG_CAP_ON_GROUND);
     }
-
-    cap_set_hitbox();
-    normal_cap_despawn();
 }
 
 void bhv_vanish_cap_init(void) {

@@ -339,6 +339,9 @@ void check_stack_validity(void) {
     gThread5Stack[0]++;
     gThread5Stack[THREAD5_STACK - 1]++;
     assert(gThread5Stack[0] == gThread5Stack[THREAD5_STACK - 1], "Thread 5 stack overflow.")
+    gThread10Stack[0]++;
+    gThread10Stack[THREAD10_STACK - 1]++;
+    assert(gThread10Stack[0] == gThread10Stack[THREAD10_STACK - 1], "Thread 10 stack overflow.")
 #if ENABLE_RUMBLE
     gThread6Stack[0]++;
     gThread6Stack[THREAD6_STACK - 1]++;

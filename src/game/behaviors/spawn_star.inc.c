@@ -31,7 +31,7 @@ void bhv_collect_star_init(void) {
 }
 
 void bhv_collect_star_loop(void) {
-    o->oAnimState = (vBlanks >> 2) % 8;
+    o->oAnimState = (gGlobalTimer >> 1) & 7;
 
     if (o->oInteractStatus & INT_STATUS_INTERACTED) {
         obj_mark_for_deletion(o);
@@ -68,7 +68,7 @@ void bhv_star_spawn_loop(void) {
         case SPAWN_STAR_ARC_CUTSCENE_ACT_GO_TO_HOME:
             obj_move_xyz_using_fvel_and_yaw(o);
             o->oStarSpawnVelY += o->oVelY;
-            o->oPosY = o->oStarSpawnVelY + sins((o->oTimer * 0x8000) / 30) * (400.0f / gDeltaTime);
+            o->oPosY = o->oStarSpawnVelY + sins((o->oTimer * 0x8000) / 30) * 400.0f;
             animSPDTarget = 48;
 
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
@@ -84,10 +84,10 @@ void bhv_star_spawn_loop(void) {
             break;
 
         case SPAWN_STAR_ARC_CUTSCENE_ACT_BOUNCE:
-            if (o->oTimer < 20) o->oVelY = (20 - o->oTimer) / gDeltaTime;
+            if (o->oTimer < 20) o->oVelY = 20 - o->oTimer;
             else {
                 animSPDTarget = 8;
-                o->oVelY = -10.0f / gDeltaTime;
+                o->oVelY = -10.0f;
             }
 
             spawn_object(o, MODEL_NONE, bhvSparkleSpawn);
@@ -109,9 +109,9 @@ void bhv_star_spawn_loop(void) {
             }
             break;
     }
-    f32 animSPDGoal = animSPDTarget / (gDeltaTime * 8.0f);
+    f32 animSPDGoal = animSPDTarget / 8.0f;
     animSPD += (animSPDInc = approach_f32_symmetric(animSPDInc, animSPDGoal, ABS(animSPDGoal - animSPDInc) / 256.0f));
-    o->oAnimState = (u8)(animSPD) % 8;
+    o->oAnimState = (u8)(animSPD) & 7;
     print_text_fmt_int(16, 16, "%d", animSPDInc);
 }
 

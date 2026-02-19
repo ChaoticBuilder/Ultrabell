@@ -1216,7 +1216,7 @@ UNUSED static s32 play_mode_unused(void) {
 s32 update_level(void) {
     s32 changeLevel = FALSE;
 
-    gMenuOptSelectIndex = render_menus_and_dialogs(FALSE);
+    gMenuOptSelectIndex = logic_menus_and_dialogs();
 
     if (gMenuOptSelectIndex != 0) {
         gSaveOptSelectIndex = gMenuOptSelectIndex;

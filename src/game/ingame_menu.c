@@ -1624,37 +1624,32 @@ u16 snapValue = snapPreset[SNAP_START];
 u8 snapListID = SNAP_START;
 u8 gConfigVar = 0b00000001;
 
-#define INPUT_LEFT    (gPlayer1Controller->buttonPressed & L_JPAD || gPlayer1Controller->buttonDown & L_JPAD || gPlayer1Controller->rawStickX <= -16.0f)
-#define INPUT_RIGHT   (gPlayer1Controller->buttonPressed & R_JPAD || gPlayer1Controller->buttonDown & R_JPAD || gPlayer1Controller->rawStickX >=  16.0f)
-#define INPUT_UP      (gPlayer1Controller->buttonPressed & U_JPAD || gPlayer1Controller->buttonDown & U_JPAD || gPlayer1Controller->rawStickY >=  16.0f)
-#define INPUT_DOWN    (gPlayer1Controller->buttonPressed & D_JPAD || gPlayer1Controller->buttonDown & D_JPAD || gPlayer1Controller->rawStickY <= -16.0f)
-#define SCROLL        (gConfigVar & 0x3F)
+#define INPUT(x) ((gPlayer1Controller->buttonPressed & x) || ((gGlobalTimer & 7) && (gPlayer1Controller->buttonDown & x)))
+#define STICK_L  ((gGlobalTimer & 7) && gPlayer1Controller->rawStickX <= -16.0f)
+#define STICK_R  ((gGlobalTimer & 7) && gPlayer1Controller->rawStickX >=  16.0f)
+#define STICK_U  ((gGlobalTimer & 7) && gPlayer1Controller->rawStickY >=  16.0f)
+#define STICK_D  ((gGlobalTimer & 7) && gPlayer1Controller->rawStickY <= -16.0f)
+#define SCROLL   (gConfigVar & 0x3F)
 
 void config_options_scroll(void) {
     if (gConfigVar & (1 << 6)) return;
 
-    if ((gGlobalTimer & 3) == 0) {
-        if (INPUT_LEFT) { gConfigVar--; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
-        if (INPUT_RIGHT) { gConfigVar++; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
-        if (INPUT_UP) { (SCROLL == (CFG_START + 1)) ? (gConfigVar = (CFG_END - 2) + (gConfigVar & 0xC0)) : (gConfigVar -= 2);
-            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
-        if (INPUT_DOWN) { (SCROLL == (CFG_END - 1)) ? (gConfigVar = (CFG_START + 2) + (gConfigVar & 0xC0)) : (gConfigVar += 2);
-            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }}
+	if (INPUT(L_JPAD) || STICK_L) { gConfigVar--; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+	if (INPUT(R_JPAD) || STICK_R) { gConfigVar++; play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+	if (INPUT(U_JPAD) || STICK_U) { (SCROLL == (CFG_START + 1)) ? (gConfigVar = (CFG_END - 2) + (gConfigVar & 0xC0)) : (gConfigVar -= 2);
+		play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
+	if (INPUT(D_JPAD) || STICK_D) { (SCROLL == (CFG_END - 1)) ? (gConfigVar = (CFG_START + 2) + (gConfigVar & 0xC0)) : (gConfigVar += 2);
+		play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource); }
 
     if (SCROLL == CFG_START) gConfigVar = (CFG_END - 1) + (gConfigVar & 0xC0);
     if (SCROLL == CFG_END) gConfigVar = (CFG_START + 1) + (gConfigVar & 0xC0);
 }
 
-#undef INPUT_LEFT
-#undef INPUT_RIGHT
-#undef INPUT_DOWN
-#undef INPUT_UP
-
 void fov_slider(void) {
     s16 minFov = -15; s16 maxFov = 45;
     sFovSlider += (f32)(gPlayer1Controller->rawStickX / 64.0f);
 
-    if ((vBlanks & 3) == 0) {
+    if ((gGlobalTimer & 1) == 0) {
         if (gPlayer1Controller->buttonDown & L_JPAD) { sFovSlider--;
             if (sFovSlider >= minFov) play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource); }
         if (gPlayer1Controller->buttonDown & R_JPAD) { sFovSlider++;
@@ -1732,7 +1727,7 @@ u32 value_slider(u32 var, u32 def, u8 scroll, u8 rate) {
     print_set_envcolour(255, 255, 255, 255);
     if (gConfigVar & (1 << 6) && SCROLL == scroll) {
         print_set_envcolour(255, 255, 95, 255);
-        if (vBlanks % rate == 0) {
+        if (gGlobalTimer % rate == 0) {
             if (gPlayer1Controller->buttonDown & L_JPAD) var--;
             if (gPlayer1Controller->buttonDown & R_JPAD) var++;
         }
@@ -1760,8 +1755,6 @@ void config_option_render(u8 x, u8 y, const char *str, u8 scroll) {
 }
 
 void config_options_box(void) {
-    config_options_scroll();
-    config_options();
     char config[64];
     u8 x = 32;
     u8 y = 28;
@@ -2228,8 +2221,6 @@ void render_pause_castle_course_stars(s16 x, s16 y, s16 fileIndex, s16 courseInd
 
     u8 str[COURSE_STAGES_COUNT * 2];
 
-    UNUSED u8 textStar[] = { TEXT_STAR };
-
     u8 starFlags = save_file_get_star_flags(fileIndex, courseIndex);
     u16 starCount = save_file_get_course_star_count(fileIndex, courseIndex);
 
@@ -2334,12 +2325,6 @@ s32 gCourseDoneMenuTimer = 0;
 s32 gCourseCompleteCoins = 0;
 
 s32 render_pause_courses_and_castle(void) {
-	s16 index;
-
-    if ((gPlayer1Controller->buttonPressed & A_BUTTON && gDialogLineNum == MENU_OPT_CONFIG) ||
-         gPlayer1Controller->buttonPressed & R_TRIG) { gPlayer1Controller->buttonPressed &= ~A_BUTTON; gConfigVar ^= (1 << 7); gDialogLineNum = MENU_OPT_DEFAULT; }
-    if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
-    
     if (gConfigVar & (1 << 7)) {
         prepare_blank_box();
         render_blank_box(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 191);
@@ -2350,6 +2335,38 @@ s32 render_pause_courses_and_castle(void) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         print_generic_string(93, 8, textConfigClose);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+        return MENU_OPT_NONE; }
+	switch (gDialogBoxState) {
+        case DIALOG_STATE_VERTICAL:
+            shade_screen();
+            render_pause_castle_menu_box(95, 84, 0);
+            render_pause_my_score_coins();
+            render_pause_red_coins();
+#ifndef DISABLE_EXIT_COURSE
+            render_pause_course_options(129, 112, &gDialogLineNum, 16);
+#endif
+			break;
+
+        case DIALOG_STATE_HORIZONTAL:
+            shade_screen();
+            print_hud_pause_colorful_str();
+            render_pause_castle_menu_box(80, 40, 32);
+            render_pause_castle_main_strings(104, 60);
+			break;
+	}
+    return MENU_OPT_NONE;
+}
+
+s32 logic_pause_courses_and_castle(void) {
+	s16 index;
+
+    if ((gPlayer1Controller->buttonPressed & A_BUTTON && gDialogLineNum == MENU_OPT_CONFIG) ||
+         gPlayer1Controller->buttonPressed & R_TRIG) { gConfigVar ^= (1 << 7); gDialogLineNum = MENU_OPT_DEFAULT; }
+    if (gPlayer1Controller->buttonPressed & L_TRIG) gMusicToggle ^= 1;
+
+    if (gConfigVar & (1 << 7)) {
+		config_options_scroll();
+		config_options();
         goto menuEnd; }
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
@@ -2369,14 +2386,6 @@ s32 render_pause_courses_and_castle(void) {
             break;
 
         case DIALOG_STATE_VERTICAL:
-            shade_screen();
-            render_pause_castle_menu_box(95, 84, 0);
-            render_pause_my_score_coins();
-            render_pause_red_coins();
-#ifndef DISABLE_EXIT_COURSE
-            render_pause_course_options(129, 112, &gDialogLineNum, 16);
-#endif
-
             if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
                 level_set_transition(0, NULL);
                 play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
@@ -2394,11 +2403,6 @@ s32 render_pause_courses_and_castle(void) {
             break;
 
         case DIALOG_STATE_HORIZONTAL:
-            shade_screen();
-            print_hud_pause_colorful_str();
-            render_pause_castle_menu_box(80, 40, 32);
-            render_pause_castle_main_strings(104, 60);
-
             if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
                 level_set_transition(0, NULL);
                 play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
@@ -2413,7 +2417,6 @@ menuEnd:
     if (gDialogTextAlpha < 255) {
         gDialogTextAlpha += 17;
     }
-
     return MENU_OPT_NONE;
 }
 
@@ -2526,15 +2529,38 @@ s32 render_course_complete_screen(void) {
     return MENU_OPT_NONE;
 }
 
-s32 render_menus_and_dialogs(u8 i) {
-    s32 mode = MENU_OPT_NONE;
-
+s32 render_menus_and_dialogs(void) {
     create_dl_ortho_matrix();
 
-    if (gMenuMode != MENU_MODE_NONE && i) {
+    if (gMenuMode != MENU_MODE_NONE) {
         switch (gMenuMode) {
             case MENU_MODE_RENDER_PAUSE_SCREEN:
-                mode = render_pause_courses_and_castle();
+                render_pause_courses_and_castle();
+                break;
+            case MENU_MODE_RENDER_COURSE_COMPLETE_SCREEN:
+                render_course_complete_screen();
+                break;
+        }
+    } else if (gDialogID != DIALOG_NONE) {
+        // The Peach "Dear Mario" message needs to be repositioned separately
+        if (gDialogID == DIALOG_020) {
+            print_peach_letter_message();
+            return FALSE;
+        }
+
+        render_dialog_entries();
+    }
+
+    return FALSE;
+}
+
+s32 logic_menus_and_dialogs(void) {
+	s32 mode = MENU_OPT_NONE;
+
+	if (gMenuMode != MENU_MODE_NONE) {
+        switch (gMenuMode) {
+            case MENU_MODE_RENDER_PAUSE_SCREEN:
+                mode = logic_pause_courses_and_castle();
                 break;
             case MENU_MODE_RENDER_COURSE_COMPLETE_SCREEN:
                 mode = render_course_complete_screen();
@@ -2543,16 +2569,8 @@ s32 render_menus_and_dialogs(u8 i) {
 
         gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;
     } else if (gDialogID != DIALOG_NONE) {
-        // The Peach "Dear Mario" message needs to be repositioned separately
-        if (gDialogID == DIALOG_020 && i) {
-            print_peach_letter_message();
-            return mode;
-        }
-
-        if (!i) logic_dialog_entries();
-		else render_dialog_entries();
-        gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;
-    }
-
-    return mode;
+		logic_dialog_entries();
+		gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;
+	}
+	return mode;
 }

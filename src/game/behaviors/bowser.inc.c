@@ -6,8 +6,6 @@
 
 // Bowser's Tail
 
-#include "game/print.h"
-
 /**
  * Checks whenever the Bowser and his tail should be intangible or not
  * By default it starts tangible
