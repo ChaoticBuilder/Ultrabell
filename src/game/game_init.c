@@ -493,7 +493,7 @@ void display_and_vsync(void) {
     }
 }
 
-#if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
+#if !defined(DISABLE_DEMO) && defined(START_SCREEN)
 // this function records distinct inputs over a 255-frame interval to RAM locations and was likely
 // used to record the demo sequences seen in the final game. This function is unused.
 UNUSED static void record_demo(void) {
@@ -624,7 +624,7 @@ void read_controller_inputs(void) {
         release_rumble_pak_control();
 #endif
     }
-#if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
+#if !defined(DISABLE_DEMO) && defined(START_SCREEN)
     run_demo_inputs();
 #endif
 

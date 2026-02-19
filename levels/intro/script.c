@@ -103,8 +103,10 @@ const LevelScript level_intro_mario_head_regular[] = {
     INIT_LEVEL(),
     BLACKOUT(/*active*/ TRUE),
     LOAD_GODDARD(),
+#ifdef START_SCREEN
 #ifdef KEEP_MARIO_HEAD
     LOAD_MARIO_HEAD(/*loadHeadID*/ REGULAR_FACE),
+#endif
     LOAD_BEHAVIOR_DATA(),
     LOAD_TITLE_SCREEN_BG(),
 

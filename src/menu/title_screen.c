@@ -33,7 +33,7 @@ static char sLevelSelectStageNames[64][16] = {
 #undef STUB_LEVEL
 #undef DEFINE_LEVEL
 
-#ifdef KEEP_MARIO_HEAD
+#ifdef START_SCREEN
 #ifndef DISABLE_DEMO
 static u16 sDemoCountdown = 0;
 #endif
@@ -179,7 +179,7 @@ s32 intro_level_select(void) {
     return LEVEL_NONE;
 }
 
-#ifdef KEEP_MARIO_HEAD
+#ifdef START_SCREEN
 /**
  * Regular intro function that handles Mario's greeting voice and game start.
  */
@@ -209,7 +209,7 @@ s32 intro_regular(void) {
         // 100 is File Select - 101 is Level Select
         level = (LEVEL_FILE_SELECT + gDebugLevelSelect);
     }
-#if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
+#if !defined(DISABLE_DEMO) && defined(START_SCREEN)
     return run_level_id_or_demo(level);
 #else
     return level;
@@ -233,7 +233,7 @@ s32 intro_game_over(void) {
         // same criteria as intro_regular
         level = LEVEL_FILE_SELECT + gDebugLevelSelect;
     }
-#if !defined(DISABLE_DEMO) && defined(KEEP_MARIO_HEAD)
+#if !defined(DISABLE_DEMO) && defined(START_SCREEN)
     return run_level_id_or_demo(level);
 #else
     return level;
@@ -258,7 +258,7 @@ s32 intro_play_its_a_me_mario(void) {
 s32 lvl_intro_update(s16 arg, UNUSED s32 unusedArg) {
     switch (arg) {
         case LVL_INTRO_PLAY_ITS_A_ME_MARIO: return intro_play_its_a_me_mario();
-#ifdef KEEP_MARIO_HEAD
+#ifdef START_SCREEN
         case LVL_INTRO_REGULAR:             return intro_regular();
         case LVL_INTRO_GAME_OVER:           return intro_game_over();
 #else

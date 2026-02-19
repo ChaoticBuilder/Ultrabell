@@ -5,9 +5,14 @@
  ********************/
 
 /**
+ * Enables the Title Screen.
+ */
+#define START_SCREEN
+
+/**
  * Enables Goddard (the Mario head).
  */
-#define KEEP_MARIO_HEAD
+// #define KEEP_MARIO_HEAD
 
 /**
  * Enables the Goddard easter egg from Shindou (has no effect if KEEP_MARIO_HEAD is disabled).

@@ -153,12 +153,13 @@
  * config_goddard.h
  */
 
-#ifndef KEEP_MARIO_HEAD
+#ifndef START_SCREEN
     #undef GODDARD_EASTER_EGG
+	#undef KEEP_MARIO_HEAD
 
     #undef DISABLE_DEMO
     #define DISABLE_DEMO
-#endif // !KEEP_MARIO_HEAD
+#endif // !START_SCREEN
 
 
 /*****************
