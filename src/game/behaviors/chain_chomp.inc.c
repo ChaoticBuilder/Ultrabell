@@ -8,7 +8,6 @@
  * Processing order is bhvWoodenPost, bhvChainChompGate, bhvChainChomp, bhvChainChompChainPart.
  * The chain parts are processed starting at the post and ending at the chomp.
  */
-#include "src/game/print.h"
 
 #define CHAIN_CHOMP_CHAIN_MAX_DIST_BETWEEN_PARTS 192.0f
 
@@ -444,18 +443,12 @@ void bhv_wooden_post_update(void) {
     if (o->oWoodenPostOffsetY != 0.0f) {
         o->oPosY = o->oHomeY + o->oWoodenPostOffsetY;
     } else if (!GET_BPARAM3(o->oBehParams)) { // Whether the post has coins or not
-        // Reset the timer once mario is far enough
-        if (o->oDistanceToMario > 400.0f) {
-            o->oTimer = o->oWoodenPostTotalMarioAngle = 0;
-        } else {
-            // When mario runs around the post 3 times within 200 frames, spawn
-            // coins
-            o->oWoodenPostTotalMarioAngle += (s16)(o->oAngleToMario - o->oWoodenPostPrevAngleToMario);
-            if (absi(o->oWoodenPostTotalMarioAngle) > 0x30000 && o->oTimer < 200) {
-                obj_spawn_loot_yellow_coins(o, 5, 20.0f);
-                set_object_respawn_info_bits(o, RESPAWN_INFO_TYPE_NORMAL);
-            }
-        }
+		// When mario runs around the post 3 times, spawn coins
+		o->oWoodenPostTotalMarioAngle += (s16)(o->oAngleToMario - o->oWoodenPostPrevAngleToMario);
+		if (absi(o->oWoodenPostTotalMarioAngle) > 0x30000) {
+			obj_spawn_loot_yellow_coins(o, 5, 20.0f);
+			set_object_respawn_info_bits(o, RESPAWN_INFO_TYPE_NORMAL);
+		}
 
         o->oWoodenPostPrevAngleToMario = o->oAngleToMario;
     }

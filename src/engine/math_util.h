@@ -50,18 +50,20 @@ extern f32 gSineTable[];
 #define tans(x) (sins(x) / coss(x))
 #define cots(x) (coss(x) / sins(x))
 #define atans(x) gArctanTable[(s32)((((x) * 1024) + 0.5f))] // is this correct? used for atan2_lookup
+#ifdef GRAPHICS_THREAD
 #define acoss(x) (0x4000 - sins(x))
 
 #define sinf(x) (sins(radians_to_angle(x)))
 #define cosf(x) (coss(radians_to_angle(x)))
 #define acosf(x) ((M_PI/2.f) - sinf(x))
 
+#define DEG_TO_RAD (M_PI / 32768.0)
+#endif
+
 // Angle conversion macros
 
 #define RAD_PER_DEG (M_PI / 180.0f)
 #define DEG_PER_RAD (180.0f / M_PI)
-#define DEG_TO_RAD (M_PI / 32768.0)
-
 
 // Various basic helper macros
 
@@ -536,11 +538,16 @@ ALWAYS_INLINE s32 roundf(f32 in) {
 #define vec3f_get_lateral_dist vec3_get_lateral_dist
 #define vec3s_get_lateral_dist vec3_get_lateral_dist
 
-#define vec3f_get_dist_squared(from, to, dist) { \
+#ifdef GRAPHICS_THREAD
+#define vec3_get_dist_squared(from, to, dist) { \
     Vec3f _d;                           \
     vec3_diff(_d, (to), (from));        \
     *(dist) = vec3_sumsq((_d));           \
 }
+
+#define vec3f_get_dist_squared vec3_get_dist_squared
+#define vec3s_get_dist_squared vec3_get_dist_squared
+#endif
 
 /// Finds the pitch between two vectors
 #define vec3_get_pitch(from, to, pitch) {                     \
@@ -643,6 +650,10 @@ void mtxf_rotate_zxy_and_translate_and_mul(Vec3s rot, Vec3f trans, Mat4 dest, Ma
 void mtxf_rotate_xyz_and_translate_and_mul(Vec3s rot, Vec3f trans, Mat4 dest, Mat4 src);
 void mtxf_billboard(Mat4 dest, Mat4 mtx, Vec3f position, Vec3f scale, s16 angle);
 void mtxf_shadow(Mat4 dest, Vec3f upDir, Vec3f pos, Vec3f scale, s16 yaw);
+#ifndef GRAPHICS_THREAD
+void mtxf_align_terrain_normal(Mat4 dest, Vec3f upDir, Vec3f pos, s16 yaw);
+void mtxf_align_terrain_triangle(Mat4 mtx, Vec3f pos, s16 yaw, f32 radius);
+#endif
 void mtxf_mul(Mat4 dest, Mat4 a, Mat4 b);
 void mtxf_scale_vec3f(Mat4 dest, Mat4 mtx, Vec3f s);
 void mtxf_mul_vec3s(Mat4 mtx, Vec3s b);
@@ -682,6 +693,7 @@ void anim_spline_init(Vec4s *keyFrames);
 s32  anim_spline_poll(Vec3f result);
 f32 find_surface_on_ray(Vec3f orig, Vec3f dir, struct Surface **hit_surface, Vec3f hit_pos, s32 flags);
 
+#ifdef GRAPHICS_THREAD
 void vec3f_quat_look(Vec3f dest, Quat input);
 void mtxf_from_quat(Quat q, Mat4 dest);
 f32 quat_dot(Quat q1, Quat q2);
@@ -697,6 +709,7 @@ void quat_slerp(Quat qr, Quat q1, Quat q2 , f32 lambda);
 void quat_fromto(Quat dest, Vec3f from, Vec3f to);
 void quat_align_with_floor(Quat dest, Vec3f floorNormal);
 void quat_align_with_floor_fancy(Quat dest, Vec3f pos, s16 yaw);
+#endif
 
 ALWAYS_INLINE f32 remap(f32 x, f32 fromA, f32 toA, f32 fromB, f32 toB) {
     return (x - fromA) / (toA - fromA) * (toB - fromB) + fromB;

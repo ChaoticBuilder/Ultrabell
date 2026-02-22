@@ -161,6 +161,14 @@
     #define DISABLE_DEMO
 #endif // !START_SCREEN
 
+/*****************
+ * config_graphics.h
+ */
+
+#ifdef GRAPHICS_THREAD
+	#undef KEEP_MARIO_HEAD
+#endif // GRAPHICS_THREAD
+
 
 /*****************
  * config_menu.h

@@ -341,7 +341,7 @@ Bool32 mario_lose_cap_to_enemy(UNUSED u32 enemyType) {
 }
 #else
 void mario_blow_off_cap(struct MarioState *m, f32 capSpeed) {
-    if (g95Toggle) return;
+    if (gMovesetVar & DEMO) return;
     struct Object *capObject;
 
     if (does_mario_have_normal_cap_on_head(m)) {
@@ -362,7 +362,7 @@ void mario_blow_off_cap(struct MarioState *m, f32 capSpeed) {
 }
 
 Bool32 mario_lose_cap_to_enemy(u32 enemyType) {
-    if (g95Toggle) return TRUE;
+    if (gMovesetVar & DEMO) return TRUE;
     if (does_mario_have_normal_cap_on_head(gMarioState)) {
         save_file_set_flags(enemyType == 1 ? SAVE_FLAG_CAP_ON_KLEPTO : SAVE_FLAG_CAP_ON_UKIKI);
         gMarioState->flags &= ~(MARIO_NORMAL_CAP | MARIO_CAP_ON_HEAD);
@@ -1837,7 +1837,7 @@ void mario_process_interactions(struct MarioState *m) {
     if (!(m->marioObj->collidedObjInteractTypes & INTERACT_WARP)) {
         sJustTeleported = FALSE;
     }
-    if (g95Toggle && (m->action != ACT_SLEEPING || gRealToggle)) {
+    if (gMovesetVar & DEMO) {
         sDelayInvincTimer = FALSE;
         sInvulnerable = FALSE;
         m->invincTimer = 0;
@@ -1855,7 +1855,7 @@ void check_death_barrier(struct MarioState *m) {
 void check_lava_boost(struct MarioState *m) {
     if (!(m->action & ACT_FLAG_RIDING_SHELL) && m->pos[1] < m->floorHeight + 10.0f) {
         if (!(m->flags & MARIO_METAL_CAP)) {
-            m->damage -= SLICE * (m->flags & MARIO_CAP_ON_HEAD ? 2 : 3);
+            m->damage -= SLICE800 * (m->flags & MARIO_CAP_ON_HEAD ? 2 : 3);
         }
 
         update_mario_sound_and_camera(m);
@@ -1912,8 +1912,7 @@ void mario_handle_special_floors(struct MarioState *m) {
 
         if (!(m->action & (ACT_FLAG_AIR | ACT_FLAG_SWIMMING))) {
             if (floorType == SURFACE_BURNING) {
-                if (!gRealToggle) check_lava_boost(m);
-                if (gRealToggle) {
+                if (!(gMovesetVar & REAL)) check_lava_boost(m); else {
                     play_sound(SOUND_OBJ_BULLY_EXPLODE_LAVA, m->marioObj->header.gfx.cameraToObject);
                     spawn_object(m->marioObj, MODEL_SMOKE, bhvBobombBullyDeathSmoke);
 

@@ -30,9 +30,7 @@
 
 #include "config.h"
 
-u8 gLuigiToggle = FALSE;
 s32 gSecondsToggle = TRUE;
-u8 gHudToggle;
 u8 pitchInvert = 1;
 
 /* @file hud.c
@@ -55,8 +53,6 @@ OSTime frameTimes[FRAMETIME_COUNT];
 u8 curFrameTimeIndex = 0;
 
 #include "PR/os_convert.h"
-
-f32 gDeltaTime = 1.0f;
 
 #ifdef USE_PROFILER
 float profiler_get_fps();
@@ -425,14 +421,14 @@ void handle_stats(void) {
     u8 addGoal = 0;
     if (ABS(gHudDisplay.stars) >= 100 || ABS(gHudDisplay.coins) >= 100) addGoal = 26;
     else if (ABS(gHudDisplay.stars) >= 10 || ABS(gHudDisplay.coins) >= 10) addGoal = 13;
-    if (vBlankTimer && addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 3);
+    if (addOffset != addGoal) addOffset = approach_s16_symmetric(addOffset, addGoal, 3);
 
     /* Power Meter offset calculation */
     if (cTimerArg >= 2) statX = goal;
     else if (statX != goal) {
         cTimer = 1;
         u8 div = (goal > 0) ? 6 : 4;
-        if (vBlankTimer) statX = approach_s16_symmetric(statX, goal, (div / 3 + ABS((goal - statX) + 1) / div));
+        statX = approach_s16_symmetric(statX, goal, (div / 3 + ABS((goal - statX) + 1) / div));
     }
     hudStatsX = ABS(HUD_STATS_X) + statX + addOffset;
 
@@ -482,8 +478,12 @@ void cs_invis(void) {
  */
 void render_hud_mario_lives(void) {
     if (!hurtShake) {
-        if (!gLuigiToggle)  print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, ","); // 'Mario' glyph
-        else                print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, ";"); // 'Luigi' glyph
+        switch (gMovesetVar & 3) {
+			case C_MARIO: print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, ","); break; // 'Mario' glyph
+        	case C_LUIGI: print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, ";"); break; // 'Luigi' glyph
+			case  C_TOAD: print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, "<"); break; // 'Toad' glyph
+        	case  C_ETTE: print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, ">"); break; // 'Toadette' glyph
+		}
         print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(32) + gHudShakeX, mPosY + gHudShakeY, "*"); // 'X' glyph
         print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(48) + gHudShakeX, mPosY + gHudShakeY, "%d", gHudDisplay.lives);
     } else print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(16) + gHudShakeX, mPosY + gHudShakeY, "ROLA!");
@@ -585,9 +585,11 @@ void attack_timer(void) {
             if (timerCount > 0) timerCount--;
             if (timerCount <= 0) {
                 gMarioState->health -= 4;
+				/*
                 if (g95Toggle && !gRealToggle) gMarioState->health -= 1;
                 if (!g95Toggle && gMarioState->action == ACT_PANTING) gMarioState->health -= 2;
                 // pesky health regens -w-
+				*/
             }
         }
     }
@@ -754,8 +756,8 @@ void sleep_draw(void) {
         finish_blank_box();
     }
     if (sleepTimer == sleepInc) return;
-    if (sleepTimer > sleepInc && (vBlanks & 7) == 0) sleepInc++;
-    if (sleepTimer < sleepInc && vBlankTimer) {
+    if (sleepTimer > sleepInc && (gGlobalTimer & 7) == 0) sleepInc++;
+    if (sleepTimer < sleepInc) {
         (sleepInc > 0 && (sleepInc - 1) > sleepTimer) 
         ? sleepInc--
         : (sleepInc = sleepTimer); // subtracting would either overflow, or be less than sleepTimer. 
@@ -763,14 +765,8 @@ void sleep_draw(void) {
     }
 }
 
-#include "camera.h"
-#include "area.h"
-#include "mario.h"
-
 void testing(void) {
-	print_text_fmt_int(16, 48, "%x", gMarioState->health);
-	print_text_fmt_int(16, 32, "%x", gMarioState->damage);
-	print_text_fmt_int(16, 16, "%x", gMarioState->alive);
+	//print_text_fmt_int(16, 16, "%d", LUIGI_MOVESET);
 
 	/*
     char debug[64];
@@ -815,7 +811,7 @@ void render_hud(void) {
         //testing();
 
         handle_stats();
-        if (gHudToggle) { mTimer = 1; cTimer = 1; }
+        if (gConfigVar & HUD) { mTimer = 1; cTimer = 1; }
 #ifdef ENABLE_LIVES
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_LIVES) {
             ms_invis();
@@ -851,7 +847,7 @@ void render_hud(void) {
         music_menu();
         if (gDebugToggle) debug_stats();
         sleep_draw();
-        if (!gHudToggle) return;
+        if (!(gConfigVar & HUD)) return;
         if (gDebugLevelSelect && !gLVLToggle) demo_mode();
 #ifdef VANILLA_STYLE_CUSTOM_DEBUG
         if (gCustomDebugMode) {

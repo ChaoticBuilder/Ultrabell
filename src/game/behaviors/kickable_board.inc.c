@@ -88,4 +88,7 @@ void bhv_kickable_board_loop(void) {
             load_object_collision_model();
             break;
     }
+#ifndef GRAPHICS_THREAD
+	o->header.gfx.throwMatrix = NULL;
+#endif
 }

@@ -17,6 +17,7 @@ enum SLICES {
 	SLICE100 = (SLICE  >> 4),
 	SLICE180 = (SLICE80 * 3),
 	SLICE200 = (SLICE  >> 3),
+	SLICE400 = (SLICE  >> 2),
 	SLICE800 = (SLICE  >> 1),
 };
 
@@ -33,9 +34,6 @@ enum {
 #define MAXHP (SLICE * WEDGES - SLICE800)
 
 extern u8  fadeWarpTarget;
-extern u8  cameraLook;
-extern s16 lookTimer;
-extern u16 lookChance;
 extern u8 aGravToggle;
 extern s16 stickAngle;
 

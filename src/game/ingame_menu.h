@@ -7,21 +7,13 @@
 #define CLASSIC_TIMER 5
 #define  MODERN_TIMER 0
 
-extern u8 gConfigVar;
+extern u16 gConfigVar;
 extern f32 sFovSlider;
-extern u8 gLuigiToggle;
-extern u8 gHudToggle;
-extern u8 gVisToggle;
 extern u8 gDebugToggle;
-extern u8 gMovesetVar;
-extern u8 g95Toggle;
-extern u8 gRealToggle;
+extern u16 gMovesetVar;
 extern u8 gTimerToggle;
 extern u8 gKickVar;
 extern u16 gTimerTime;
-extern u8 gDiveToggle;
-extern u8 gTurnToggle;
-extern u8 gABCToggle;
 extern u8 gLVLToggle;
 extern u8 gFlightToggle;
 extern u8 gMusicToggle;
@@ -30,10 +22,37 @@ extern u8 gFPSCap;
 extern u8 dynSteps;
 extern u8 spdToggle;
 extern u8 spdSpd;
-extern u8 gMovesetToggle;
 extern u16 snapValue;
 
-#define LUIGI_MOVESET (gMovesetToggle & gLuigiToggle)
+enum {
+	/* Config */
+	HUD     = (1 << 13), /* 0x2000 */
+	SELECT  = (1 << 14), /* 0x4000 */
+	MENU    = (1 << 15), /* 0x4000 */
+	/* Moveset */
+	C_MARIO = (0 << 0),
+	C_LUIGI,
+	C_TOAD,
+	C_ETTE,
+	D_OFF   = (0 << 2),  /* 0x0    */
+	D_ON    = (1 << 2),  /* 0x4    */
+	D_AUTO  = (2 << 2),  /* 0x8    */
+	D_MASK  = (3 << 2),  /* 0xC    */
+	A_OFF   = (0 << 4),  /* 0x00   */
+	A_EASY    = (1 << 4),  /* 0x10   */
+	A_HARD  = (2 << 4),  /* 0x20   */
+	A_MASK  = (3 << 4),  /* 0x40   */
+	SNAP    = (1 << 11), /* 0x800  */
+	TURN    = (1 << 12), /* 0x1000 */
+	MOVE    = (1 << 13), /* 0x2000 */
+	REAL    = (1 << 14), /* 0x4000 */
+	DEMO    = (1 << 15), /* 0x8000 */
+};
+
+#define M_MARIO ((gMovesetVar & (3 | MOVE)) == (C_MARIO | MOVE))
+#define M_LUIGI ((gMovesetVar & (3 | MOVE)) == (C_LUIGI | MOVE))
+#define  M_TOAD ((gMovesetVar & (3 | MOVE)) ==  (C_TOAD | MOVE))
+#define  M_ETTE ((gMovesetVar & (3 | MOVE)) ==  (C_ETTE | MOVE))
 
 enum ConfigMenuIDs {
     CFG_START,
@@ -44,16 +63,16 @@ enum ConfigMenuIDs {
     CFG_FPS,
     CFG_CAM,
     /* Gameplay */
-    CFG_LUIGI,
+    CFG_PLAYER,
     CFG_MOVESET,
     CFG_SNAP,
     CFG_STEPS,
     CFG_TIMER,
-    CFG_SSK,
+    CFG_DEMO,
     CFG_REAL,
     CFG_DIVE,
     CFG_VKICK,
-    CFG_CTURN,
+    CFG_TURN,
     CFG_ABC,
     // CFG_HARD,
     CFG_LVL,

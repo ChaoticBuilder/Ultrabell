@@ -47,6 +47,13 @@
 #define AUTO_LOD
 
 /**
+ * Adds a separate Graphics Thread for Deltatime calculations and 60FPS.
+ * Currently very unstable, and runs horribly on console.
+ * !! (Incompatible with KEEP_MARIO_HEAD)
+ */
+#define GRAPHICS_THREAD
+
+/**
  * Enables Puppyprint, a display library for text and large images.
  * Automatically enabled when PUPPYPRINT_DEBUG is enabled.
  */

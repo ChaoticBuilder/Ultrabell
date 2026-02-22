@@ -346,6 +346,84 @@ void mtxf_shadow(Mat4 dest, Vec3f upDir, Vec3f pos, Vec3f scale, s16 yaw) {
     MTXF_END(dest);
 }
 
+#ifndef GRAPHICS_THREAD
+/**
+ * Set 'dest' to a transformation matrix that aligns an object with the terrain
+ * based on the normal. Used for enemies.
+ * 'upDir' is the terrain normal
+ * 'yaw' is the angle which it should face
+ * 'pos' is the object's position in the world
+ */
+void mtxf_align_terrain_normal(Mat4 dest, Vec3f upDir, Vec3f pos, s16 yaw) {
+    PUPPYPRINT_ADD_COUNTER(gPuppyCallCounter.matrix);
+    Vec3f lateralDir;
+    Vec3f leftDir;
+    Vec3f forwardDir;
+    vec3f_set(lateralDir, sins(yaw), 0.0f, coss(yaw));
+    vec3f_normalize(upDir);
+    vec3f_cross(leftDir, upDir, lateralDir);
+    vec3f_normalize(leftDir);
+    vec3f_cross(forwardDir, leftDir, upDir);
+    vec3f_normalize(forwardDir);
+    vec3f_copy(dest[0], leftDir);
+    vec3f_copy(dest[1], upDir);
+    vec3f_copy(dest[2], forwardDir);
+    vec3f_copy(dest[3], pos);
+    MTXF_END(dest);
+}
+
+/**
+ * Set 'mtx' to a transformation matrix that aligns an object with the terrain
+ * based on 3 height samples in an equilateral triangle around the object.
+ * Used for Mario when crawling or sliding.
+ * 'yaw' is the angle which it should face
+ * 'pos' is the object's position in the world
+ * 'radius' is the distance from each triangle vertex to the center
+ */
+void mtxf_align_terrain_triangle(Mat4 mtx, Vec3f pos, s16 yaw, f32 radius) {
+    PUPPYPRINT_ADD_COUNTER(gPuppyCallCounter.matrix);
+    struct Surface *floor;
+    Vec3f point0, point1, point2;
+    Vec3f forward;
+    Vec3f xColumn, yColumn, zColumn;
+    f32 minY   = (-radius * 3);
+    f32 height = (pos[1] + 150);
+
+    point0[0] = (pos[0] + (radius * sins(yaw + DEGREES( 60))));
+    point0[2] = (pos[2] + (radius * coss(yaw + DEGREES( 60))));
+    point0[1] = find_floor(point0[0], height, point0[2], &floor);
+    point1[0] = (pos[0] + (radius * sins(yaw + DEGREES(180))));
+    point1[2] = (pos[2] + (radius * coss(yaw + DEGREES(180))));
+    point1[1] = find_floor(point1[0], height, point1[2], &floor);
+    point2[0] = (pos[0] + (radius * sins(yaw + DEGREES(-60))));
+    point2[2] = (pos[2] + (radius * coss(yaw + DEGREES(-60))));
+    point2[1] = find_floor(point2[0], height, point2[2], &floor);
+
+    if ((point0[1] - pos[1]) < minY) point0[1] = pos[1];
+    if ((point1[1] - pos[1]) < minY) point1[1] = pos[1];
+    if ((point2[1] - pos[1]) < minY) point2[1] = pos[1];
+
+    f32 avgY = (point0[1] + point1[1] + point2[1]) / 3.f;
+
+    vec3f_set(forward, sins(yaw), 0.0f, coss(yaw));
+    find_vector_perpendicular_to_plane(yColumn, point0, point1, point2);
+    vec3f_normalize(yColumn);
+    vec3f_cross(xColumn, yColumn, forward);
+    vec3f_normalize(xColumn);
+    vec3f_cross(zColumn, xColumn, yColumn);
+    vec3f_normalize(zColumn);
+    vec3f_copy(mtx[0], xColumn);
+    vec3f_copy(mtx[1], yColumn);
+    vec3f_copy(mtx[2], zColumn);
+
+    mtx[3][0] = pos[0];
+    mtx[3][1] = MAX(pos[1], avgY);
+    mtx[3][2] = pos[2];
+
+    MTXF_END(mtx);
+}
+#endif // !GRAPHICS_THREAD
+
 /**
  * Sets matrix 'dest' to the matrix product b * a assuming they are both
  * transformation matrices with a w-component of 1. Since the bottom row
@@ -1025,6 +1103,7 @@ s16 snap_to_angle(s16 angle, u16 snap) {
     return angle;
 }
 
+#ifdef GRAPHICS_THREAD
 //from: https://en.wikipedia.org/wiki/Fast_inverse_square_root
 f32 invsqrtf(f32 number) {
 	s32 i;
@@ -1254,3 +1333,4 @@ void quat_align_with_floor_fancy(Quat dest, Vec3f pos, s16 yaw) {
     Vec3f up = {0.f,1.f,0.f};
     quat_fromto(dest,yColumn,up);
 }
+#endif // GRAPHICS_THREAD

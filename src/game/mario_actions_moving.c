@@ -124,7 +124,7 @@ void slide_bonk(struct MarioState *m, u32 fastAction, UNUSED u32 slowAction) {
 s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 actionArg) {
     if (m->flags & MARIO_WING_CAP) {
         return set_mario_action(m, ACT_FLYING_TRIPLE_JUMP, 0);
-    } else if (m->forwardVel > 16.0f && !gRealToggle) {
+    } else if (m->forwardVel > 16.0f && !(gMovesetVar & REAL)) {
         if (!gSpecialTripleJump) return set_mario_action(m, ACT_TWIRLING, 0);
                             else return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
     } else {
@@ -369,9 +369,10 @@ void update_shell_speed(struct MarioState *m) {
         m->forwardVel += 1.0f;
     } else if (m->forwardVel <= targetSpeed) {
         f32 vel = 0.75f;
-        if (g95Toggle) vel = 0.5f;
-        if (gRealToggle) vel = 1.0f;
-        if (LUIGI_MOVESET || m->flags & MARIO_METAL_CAP) vel = 0.5f;
+        if (gMovesetVar & DEMO) vel = 0.5f;
+        if (gMovesetVar & REAL) vel = 1.0f;
+		if (M_TOAD) vel *= 2.0f;
+        if (M_LUIGI || m->flags & MARIO_METAL_CAP) vel = 0.5f;
         m->forwardVel += vel;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.125f;
@@ -406,8 +407,8 @@ s32 apply_slope_decel(struct MarioState *m, f32 decelCoef) {
             decel = decelCoef * 3.0f;
             break;
     }
-    if (LUIGI_MOVESET) {
-        decel /= 3.0f;
+    if (M_LUIGI) {
+        decel *= 0.5f;
     }
 
     if ((m->forwardVel = approach_f32(m->forwardVel, 0.0f, decel, decel)) == 0.0f) {
@@ -454,10 +455,10 @@ void update_walking_speed(struct MarioState *m) {
     } else if (m->forwardVel <= targetSpeed) {
         // If accelerating
         f32 vel = 0.75f;
-        if (g95Toggle) vel = 0.5f;
-        if (gRealToggle) vel = 1.0f;
-        if (m->flags & MARIO_METAL_CAP) vel = 0.5f; // god I wish there was a better way to do this
-        if (LUIGI_MOVESET) vel *= 0.75f;
+        if (gMovesetVar & DEMO) vel = 0.5f;
+        if (gMovesetVar & REAL) vel = 1.0f;
+		if (M_TOAD) vel *= 2.0f;
+        if (M_LUIGI || m->flags & MARIO_METAL_CAP) vel = 0.5f;
         m->forwardVel += vel;
     } else if (m->floor->normal.y >= 0.95f) {
         m->forwardVel -= 0.125f;
@@ -467,7 +468,7 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel = approach_f32_symmetric(m->forwardVel, 32.0f, CLAMP((m->forwardVel - 32.0f) / 128.0f, 0, 8.0f));
     }
 
-    u32 turnSpd = (!LUIGI_MOVESET) ? 24.0f : 18.0f;
+    u32 turnSpd = (!M_LUIGI) ? 24.0f : 18.0f;
 #ifdef VELOCITY_BASED_TURN_SPEED
     if ((m->heldObj == NULL) && !(m->action & ACT_FLAG_SHORT_HITBOX)) {
         if (m->forwardVel >= 16.0f) {
@@ -535,7 +536,7 @@ s32 should_begin_sliding(struct MarioState *m) {
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     //! Speed kick (shoutouts to SimpleFlips)
     if (m->forwardVel >= 16.0f) {
-        if (g95Toggle || gABCToggle) { (!gRealToggle) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f); }
+        if (gMovesetVar & (DEMO | A_MASK)) { (!(gMovesetVar & REAL)) ? (m->vel[1] = 24.0f) : (m->vel[1] = 20.0f); }
         return set_mario_action(m, ACT_DIVE, 1);
     }
 
@@ -550,7 +551,7 @@ s32 begin_braking_action(struct MarioState *m) {
         return set_mario_action(m, ACT_STANDING_AGAINST_WALL, 0);
     }
 
-    if (m->forwardVel > 20.0f || (LUIGI_MOVESET && !(m->flags & MARIO_METAL_CAP))) {
+    if (m->forwardVel > 20.0f || (M_LUIGI && !(m->flags & MARIO_METAL_CAP))) {
         return set_mario_action(m, ACT_BRAKING, 0);
     }
 
@@ -753,8 +754,7 @@ void tilt_body_walking(struct MarioState *m, UNUSED s16 startYaw) {
         // Pitch is reversed, a higher multiplier makes Mario tilt backwards farther instead of forwards.
         // s16 nextBodyRoll = -(s16)(dYaw * 0.0f);
         s16 nextBodyPitch;
-        if (!gLuigiToggle) nextBodyPitch = -(s16)((m->forwardVel - 12) * 48);
-        else               nextBodyPitch = -(s16)((m->forwardVel - 12) * 96);
+        nextBodyPitch = -(s16)((m->forwardVel - 12) * 48);
 
         nextBodyPitch = CLAMP(nextBodyPitch, -DEGREES(45), 0);
 
@@ -848,10 +848,6 @@ s32 act_walking(struct MarioState *m) {
             break;
     }
 
-    if ((vBlanks >> 1) % 512 == 0) {
-        cameraLook = TRUE;
-        lookChance = 0x4000;
-    }
     check_ledge_climb_down(m);
     tilt_body_walking(m, startYaw);
     return FALSE;
@@ -863,7 +859,7 @@ s32 act_move_punching(struct MarioState *m) {
     }
 
     if (m->actionState == ACT_STATE_MOVE_PUNCHING_CAN_JUMP_KICK && m->input & INPUT_A_DOWN) {
-        if (gDiveToggle != 1) return set_mario_action(m, ACT_JUMP_KICK, 0);
+        if (!(gMovesetVar & D_ON)) return set_mario_action(m, ACT_JUMP_KICK, 0);
         return set_mario_action(m, ACT_JUMP, 0);
     }
 
@@ -989,7 +985,7 @@ s32 act_turning_around(struct MarioState *m) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED && !gABCToggle) {
+    if (m->input & INPUT_A_PRESSED && !(gMovesetVar & A_MASK)) {
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 
@@ -1037,7 +1033,7 @@ s32 act_finish_turning_around(struct MarioState *m) {
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0);
     }
 
-    if (m->input & INPUT_A_PRESSED && !gABCToggle) {
+    if (m->input & INPUT_A_PRESSED && !(gMovesetVar & A_MASK)) {
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 
@@ -1507,7 +1503,7 @@ s32 stomach_slide_action(struct MarioState *m, u32 stopAction, u32 airAction, s3
 
 s32 act_butt_slide(struct MarioState *m) {
     s32 cancel;
-    (!gABCToggle)
+    (!(gMovesetVar & A_MASK))
     ? (cancel = common_slide_action_with_jump(m, ACT_BUTT_SLIDE_STOP, ACT_JUMP, ACT_BUTT_SLIDE_AIR, MARIO_ANIM_SLIDE))
     : (cancel = stomach_slide_action(m, ACT_BUTT_SLIDE_STOP, ACT_BUTT_SLIDE_AIR, MARIO_ANIM_SLIDE));
     tilt_body_butt_slide(m);
@@ -1520,7 +1516,7 @@ s32 act_hold_butt_slide(struct MarioState *m) {
     }
 
     s32 cancel;
-    (!gABCToggle)
+    (!(gMovesetVar & A_MASK))
     ? (cancel = common_slide_action_with_jump(m, ACT_HOLD_BUTT_SLIDE_STOP, ACT_HOLD_JUMP, ACT_HOLD_BUTT_SLIDE_AIR,
                                               MARIO_ANIM_SLIDING_ON_BOTTOM_WITH_LIGHT_OBJ))
     : (cancel = stomach_slide_action(m, ACT_HOLD_BUTT_SLIDE_STOP, ACT_HOLD_BUTT_SLIDE_AIR,
@@ -1536,14 +1532,14 @@ s32 act_crouch_slide(struct MarioState *m) {
     }
 
     if (m->input & INPUT_B_PRESSED) {
-        if (m->forwardVel >= 16.0f && !g95Toggle) {
+        if (m->forwardVel >= 16.0f && !(gMovesetVar & DEMO)) {
             return set_mario_action(m, ACT_SLIDE_KICK, 0);
-        } else if (gABCToggle < 2) {
+        } else if (!(gMovesetVar & A_HARD)) {
             if (check_ground_dive_or_punch(m)) return TRUE;
         }
     }
 
-    s32 action = (!g95Toggle) ? ACT_LONG_JUMP : ACT_JUMP;
+    s32 action = (!(gMovesetVar & DEMO)) ? ACT_LONG_JUMP : ACT_JUMP;
     if (m->input & INPUT_A_PRESSED) {
         return set_jumping_action(m, action, 0);
     }

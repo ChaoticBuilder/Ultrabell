@@ -313,8 +313,8 @@ s32 update_hang_moving(struct MarioState *m) {
     Vec3f nextPos;
 #ifdef BETTER_HANGING
     f32 maxSpeed = (m->intendedMag / 4.0f);
-    if (g95Toggle) maxSpeed /= 2.0f;
-    if (gRealToggle) maxSpeed /= 1.5f;
+	if (gMovesetVar & DEMO) maxSpeed *= 0.5f;
+    if (gMovesetVar & REAL) maxSpeed *= 0.75f;
 #else
     f32 maxSpeed = HANGING_SPEED;
 #endif
@@ -523,7 +523,7 @@ s32 act_hang_moving(struct MarioState *m) {
 
 #endif
     if (update_hang_moving(m) == HANG_LEFT_CEIL) {
-        if (!gRealToggle) {
+        if (!(gMovesetVar & REAL)) {
             m->forwardVel = 8.0f;
             m->vel[1] = 48.0f;
         }
@@ -586,7 +586,7 @@ s32 act_ledge_grab(struct MarioState *m) {
     s16 intendedDYaw = m->intendedYaw - m->faceAngle[1];
     s32 hasSpaceForMario = (m->ceilHeight - m->floorHeight >= 160.0f);
 
-    if (vBlankTimer && m->actionTimer < 10) {
+    if (m->actionTimer < 10) {
         m->actionTimer++;
     }
     if (m->floor->normal.y < COS25) {
@@ -769,7 +769,7 @@ s32 act_in_cannon(struct MarioState *m) {
 
                 marioObj->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
 
-                (!gRealToggle)
+                (!(gMovesetVar & REAL))
                 ? set_mario_action(m, ACT_SHOT_FROM_CANNON, 1)
                 : set_mario_action(m, ACT_SHOT_FROM_CANNON, 2);
 #if ENABLE_RUMBLE

@@ -94,7 +94,7 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
 
         case ACT_ARG_PUNCH_SEQUENCE_BREAKDANCE:
             create_dialog_box(DIALOG_038);
-            if (g95Toggle) {
+            if (gMovesetVar & DEMO) {
                 return set_mario_action(m, ACT_CROUCHING, 0);
             }
             play_mario_action_sound(m, SOUND_MARIO_PUNCH_HOO, 1);
@@ -124,7 +124,7 @@ s32 act_punching(struct MarioState *m) {
     }
 
     if (m->actionState == ACT_STATE_PUNCHING_CAN_JUMP_KICK && m->input & INPUT_A_DOWN) {
-        if (gDiveToggle != 1) return set_mario_action(m, ACT_JUMP_KICK, 0);
+        if (!(gMovesetVar & D_ON)) return set_mario_action(m, ACT_JUMP_KICK, 0);
         return set_mario_action(m, ACT_JUMP, 0);
     }
 

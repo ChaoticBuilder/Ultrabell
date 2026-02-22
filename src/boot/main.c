@@ -39,7 +39,9 @@ OSThread gIdleThread;
 OSThread gMainThread;
 OSThread gGameLoopThread;
 OSThread gSoundThread;
+#ifdef GRAPHICS_THREAD
 OSThread gGraphicsThread;
+#endif
 
 OSIoMesg gDmaIoMesg;
 OSMesg gMainReceivedMesg;
@@ -339,9 +341,11 @@ void check_stack_validity(void) {
     gThread5Stack[0]++;
     gThread5Stack[THREAD5_STACK - 1]++;
     assert(gThread5Stack[0] == gThread5Stack[THREAD5_STACK - 1], "Thread 5 stack overflow.")
+#ifdef GRAPHICS_THREAD
     gThread10Stack[0]++;
     gThread10Stack[THREAD10_STACK - 1]++;
     assert(gThread10Stack[0] == gThread10Stack[THREAD10_STACK - 1], "Thread 10 stack overflow.")
+#endif
 #if ENABLE_RUMBLE
     gThread6Stack[0]++;
     gThread6Stack[THREAD6_STACK - 1]++;
@@ -375,7 +379,7 @@ void thread3_main(UNUSED void *arg) {
     osSyncPrintf("Linker  : %s\n", __linker__);
 #endif
 
-    if (!(gEmulator & EMU_CONSOLE)) {
+    if (!(gEmulator & (EMU_CONSOLE | EMU_HIACC))) {
         gBorderHeight = BORDER_HEIGHT_EMULATOR;
 #ifdef RCVI_HACK
         VI.comRegs.vSync = 525*20;   
@@ -408,7 +412,9 @@ void thread3_main(UNUSED void *arg) {
     create_thread(&gGameLoopThread, THREAD_5_GAME_LOOP, thread5_game_loop, NULL, gThread5Stack + THREAD5_STACK, 10);
     osStartThread(&gGameLoopThread);
 
+#ifdef GRAPHICS_THREAD
 	create_thread(&gGraphicsThread, THREAD_10_GRAPHICS, thread10_graphics_loop, NULL, gThread10Stack + THREAD10_STACK, 1);
+#endif
 
     while (TRUE) {
         OSMesg msg;

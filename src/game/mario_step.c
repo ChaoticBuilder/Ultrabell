@@ -575,7 +575,7 @@ f32 twirlMulti = 1.0f;
 f32 tTerminalVel = 0.0f;
 
 void apply_twirl_gravity(struct MarioState *m) {
-    f32 twirlGrav = (!g95Toggle || gRealToggle) ? 1.625f : 1.0f;
+    f32 twirlGrav = ((gMovesetVar & DEMO) && !(gMovesetVar & REAL)) ? 1.625f : 1.0f;
     f32 twirlTarget = (!(m->input & INPUT_A_DOWN)) ? 1.0f : 1.5f;
     if (m->input & INPUT_Z_DOWN) twirlTarget = 0.375f;
     twirlMulti = approach_f32_symmetric(twirlMulti, twirlTarget, 0.25f);
@@ -607,10 +607,10 @@ u16 gGravTimer = 0;
 u16 gravity_applier(struct MarioState *m, f32 baseVel, f32 terminalVel, u8 exp) {
     f32 dec;
     if (!exp) {
-		if (gRealToggle) { baseVel *= 1.25f; }
-        if (LUIGI_MOVESET && aGravToggle) { baseVel *= 0.75f; terminalVel *= 0.75f; }
-        if (gMovesetToggle && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
-            if (!gLuigiToggle) baseVel *= 0.8125f; else { dec = MIN(gGravTimer * 0.046875f, 0.75f);
+		if ((gMovesetVar & REAL) | M_TOAD) { baseVel *= 1.25f; }
+        if (M_LUIGI && aGravToggle) { baseVel *= 0.75f; terminalVel *= 0.75f; }
+        if ((gMovesetVar & MOVE) && aGravToggle && m->input & INPUT_A_DOWN && m->vel[1] <= 0) {
+            if ((gMovesetVar & 3) != C_LUIGI) baseVel *= 0.8125f; else { dec = MIN(gGravTimer * 0.046875f, 0.75f);
             baseVel *= dec; if (dec < 0.75f) gGravTimer++; }}
 
         m->vel[1] -= baseVel;
@@ -657,7 +657,7 @@ void apply_gravity(struct MarioState *m) {
         m->vel[1] *= 0.25f; }
     else if (m->action & ACT_FLAG_METAL_WATER) {
         mTerminalVel = 0;
-        baseVel = ((!gRealToggle) ? 1.0f : 1.25f);
+        baseVel = ((!(gMovesetVar & REAL)) ? 1.0f : 1.25f);
         m->vel[1] -= baseVel;
         if (m->vel[1] < -24.0f) m->vel[1] = -24.0f; }
     else if ((m->flags & MARIO_WING_CAP) && m->vel[1] < 0.0f && (m->input & INPUT_A_DOWN)) {
@@ -667,7 +667,7 @@ void apply_gravity(struct MarioState *m) {
     else if (m->action == ACT_GROUND_POUND) { mTerminalVel = 64; gravity_applier(m, 0.25f, 5.0f, TRUE); }
     else {
         mTerminalVel = gravity_applier(m, 4.0f, 64, FALSE); }
-    if (m->flags & MARIO_METAL_CAP && !gRealToggle && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
+    if (m->flags & MARIO_METAL_CAP && !(gMovesetVar & REAL) && (m->action != ACT_SHOT_FROM_CANNON && m->action != ACT_GETTING_BLOWN)) {
         baseVel = 2.0f;
         if (m->action == ACT_LONG_JUMP || m->action == ACT_SLIDE_KICK) baseVel *= 0.5f;
         mTerminalVel = gravity_applier(m, baseVel, 32, FALSE); }

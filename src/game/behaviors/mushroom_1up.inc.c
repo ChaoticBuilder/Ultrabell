@@ -14,7 +14,7 @@ void bhv_1up_interact(void) {
 #endif
 #endif
 #ifdef ENABLE_LIVES
-    if (!gRealToggle) {
+    if (!(gMovesetVar & REAL)) {
         mTimer = 30; gMarioState->numLives++;
     }
 #endif

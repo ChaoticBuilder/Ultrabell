@@ -25,7 +25,7 @@ void bhv_explosion_loop(void) {
     o->oOpacity -= 14;
 
     cur_obj_scale((f32) o->oTimer / 9.0f + 1.0f);
-    if (gRealToggle) {
+    if (gMovesetVar & REAL) {
         o->oDamageOrCoinValue = 31;
         o->hitboxHeight = 1600;
         o->hitboxRadius = 1600;

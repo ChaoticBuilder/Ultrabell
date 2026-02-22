@@ -30,8 +30,10 @@
 #include "game/puppycam2.h"
 #include "game/puppyprint.h"
 #include "game/emutest.h"
+#ifdef GRAPHICS_THREAD
 #include "game/main.h"
 #include <PR/os_internal_reg.h>
+#endif
 
 #include "config.h"
 
@@ -331,12 +333,14 @@ static void level_cmd_init_level(void) {
 #ifdef PUPPYPRINT_DEBUG
     gInitLevelTime = osGetTime();
 #endif
+#ifdef GRAPHICS_THREAD
     if (gLevelChangeSpinlockState == 1) {
         gLevelChangeSpinlockState = 2;
-        while(gLevelChangeSpinlockState == 2){
+        while (gLevelChangeSpinlockState == 2) {
             osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
         }
     }
+#endif
 
     init_graph_node_start(NULL, (struct GraphNodeStart *) &gObjParentGraphNode);
     clear_objects();
@@ -377,12 +381,14 @@ void unmap_tlbs(void) {
 }
 
 static void level_cmd_clear_level(void) {
+#ifdef GRAPHICS_THREAD
     if (gLevelChangeSpinlockState == 1) {
         gLevelChangeSpinlockState = 2;
-        while(gLevelChangeSpinlockState == 2){
+        while (gLevelChangeSpinlockState == 2) {
             osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
         }
     }
+#endif
 
     clear_objects();
     clear_area_graph_nodes();
@@ -418,9 +424,11 @@ static void level_cmd_free_level_pool(void) {
     }
     main_pool_push_state();
 
+#ifdef GRAPHICS_THREAD
     if (gLevelChangeSpinlockState == 3) {
         gLevelChangeSpinlockState = 1;
     }
+#endif
 
     sCurrentCmd = CMD_NEXT;
 }
@@ -972,6 +980,13 @@ struct LevelCommand *level_script_execute(struct LevelCommand *cmd) {
     while (sScriptStatus == SCRIPT_RUNNING) {
         LevelScriptJumpTable[sCurrentCmd->type]();
     }
+
+#ifndef GRAPHICS_THREAD
+	init_rcp(CLEAR_ZBUFFER);
+    render_game();
+    end_master_display_list();
+    alloc_display_list(0);
+#endif
 
     return sCurrentCmd;
 }

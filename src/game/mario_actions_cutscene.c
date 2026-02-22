@@ -1578,7 +1578,7 @@ s32 act_squished(struct MarioState *m) {
                           2.0f - squishAmount);
             } else {
                 if (!(m->flags & MARIO_METAL_CAP) && m->invincTimer == 0) {
-                    if (gRealToggle) m->health = 0;
+                    if (gMovesetVar & REAL) m->health = 0;
                     // cap on: 3 units; cap off: 4.5 units
                     m->damage -= SLICE * (m->flags & MARIO_CAP_ON_HEAD ? 3 : 4);
                     play_sound_if_no_flag(m, SOUND_MARIO_ATTACKED, MARIO_MARIO_SOUND_PLAYED);

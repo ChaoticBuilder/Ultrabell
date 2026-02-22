@@ -236,8 +236,10 @@ struct AnimInfo {
     /*0x0A 0x42*/ u16 animTimer;
     /*0x0C 0x44*/ s32 animFrameAccelAssist;
     /*0x10 0x48*/ s32 animAccel;
+#ifdef GRAPHICS_THREAD
                   f32 animFrameF;
                   f32 animAccelF;
+#endif
 };
 
 struct GraphNodeObject {
@@ -248,6 +250,10 @@ struct GraphNodeObject {
     /*0x1A*/ Vec3s angle;
     /*0x20*/ Vec3f pos;
     /*0x2C*/ Vec3f scale;
+    /*0x38*/ struct AnimInfo animInfo;
+    /*0x4C*/ struct SpawnInfo *spawnInfo;
+    /*0x54*/ Vec3f cameraToObject;
+#ifdef GRAPHICS_THREAD
              Vec3f posCache;
              Vec3f posVideoCache;
              Vec3f posLerp;
@@ -255,9 +261,9 @@ struct GraphNodeObject {
 			 Vec3f scaleLerp;
              Quat rotLerp;
              Quat throwRotation;
-    /*0x38*/ struct AnimInfo animInfo;
-    /*0x4C*/ struct SpawnInfo *spawnInfo;
-    /*0x54*/ Vec3f cameraToObject;
+#else
+    		 Mat4 *throwMatrix; // matrix ptr
+#endif
 };
 
 struct ObjectNode {
@@ -311,8 +317,8 @@ struct Object {
     } ptrData;
 #endif
     /*0x1CC*/ const BehaviorScript *curBhvCommand;
-    /*0x1D0*/ u32 bhvStackIndex;
-    /*0x1D4*/ uintptr_t bhvStack[8];
+    /*0x1D0*/ u8 bhvStackIndex;
+    /*0x1D4*/ uintptr_t bhvStack[4];
     /*0x1F4*/ s16 bhvDelayTimer;
     /*0x1F6*/ s16 respawnInfoType;
     /*0x1F8*/ f32 hitboxRadius;
@@ -433,9 +439,13 @@ struct MarioState {
     /*0x90*/ struct Area *area;
     /*0x94*/ struct PlayerCameraState *statusForCamera;
     /*0x98*/ struct MarioBodyState *marioBodyState;
-             struct MarioBodyState *marioGfxBodyState;
     /*0x9C*/ struct Controller *controller;
+#ifdef GRAPHICS_THREAD
+             struct MarioBodyState *marioGfxBodyState;
     /*0xA0*/ struct DmaHandlerList *animList[2];
+#else
+    /*0xA0*/ struct DmaHandlerList *animList;
+#endif
     /*0xA4*/ u32 collidedObjInteractTypes;
     /*0xA8*/ u8 numCoins;
     /*0xAA*/ s16 numStars;
@@ -468,9 +478,12 @@ struct MarioState {
              s16 moveYaw;
              s16 ceilYaw;
              s16 wallYaw;
+			 u8 lookTimer;
+#ifdef GRAPHICS_THREAD
              struct Animation * queueTargetAnim;
              s32 queueTargetAnimID;
              s32 queueTargetAnimAccel;
+#endif
     // -- HackerSM64 MarioState fields end --
 };
 

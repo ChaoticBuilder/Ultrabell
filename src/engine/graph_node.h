@@ -218,15 +218,17 @@ struct GraphNodeCamera {
     } config;
     /*0x1C*/ Vec3f pos;
     /*0x28*/ Vec3f focus;
+    /*0x34*/ Mat4 *matrixPtr; // pointer to look-at matrix of this camera as a Mat4
+    /*0x38*/ s16 roll; // roll in look at matrix. Doesn't account for light direction unlike rollScreen.
+    /*0x3A*/ s16 rollScreen; // rolls screen while keeping the light direction consistent
+#ifdef GRAPHICS_THREAD
              Vec3f posLerp;
              Vec3f focLerp;
              Vec3f posCache;
              Vec3f focusCache;
              Vec3f posVideoCache;
              Vec3f focusVideoCache;
-    /*0x34*/ Mat4 *matrixPtr; // pointer to look-at matrix of this camera as a Mat4
-    /*0x38*/ s16 roll; // roll in look at matrix. Doesn't account for light direction unlike rollScreen.
-    /*0x3A*/ s16 rollScreen; // rolls screen while keeping the light direction consistent
+#endif
 };
 
 /** GraphNode that translates and rotates its children.
@@ -262,8 +264,9 @@ struct GraphNodeRotation {
     /*0x00*/ struct GraphNode node;
     /*0x14*/ void *displayList;
     /*0x18*/ Vec3s rotation;
+#ifdef GRAPHICS_THREAD
              Quat rotLerp;
-    // u8 filler[2];
+#endif
 };
 
 /** GraphNode part that transforms itself and its children based on animation
@@ -421,11 +424,15 @@ void geo_reset_object_node(struct GraphNodeObject *graphNode);
 void geo_obj_init(struct GraphNodeObject *graphNode, void *sharedChild, Vec3f pos, Vec3s angle);
 void geo_obj_init_spawninfo(struct GraphNodeObject *graphNode, struct SpawnInfo *spawn);
 void geo_obj_init_animation(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr);
+#ifdef GRAPHICS_THREAD
 void geo_obj_init_animation_accel(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr, f32 animAccel);
+s32  geo_update_animation_frame(struct AnimInfo *obj, s32 *accelAssist);
+#else
+void geo_obj_init_animation_accel(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr, u32 animAccel);
+#endif
 
 s32  retrieve_animation_index(s32 frame, u16 **attributes);
 
-s32  geo_update_animation_frame(struct AnimInfo *obj, s32 *accelAssist);
 f32 geo_update_animation_frame_float(struct AnimInfo *updateAnimInfo);
 void geo_retreive_animation_translation(struct GraphNodeObject *obj, Vec3f position);
 

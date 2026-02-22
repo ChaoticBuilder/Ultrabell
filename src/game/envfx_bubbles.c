@@ -11,7 +11,9 @@
 #include "audio/external.h"
 #include "textures.h"
 #include "level_geo.h"
+#ifdef GRAPHICS_THREAD
 #include "frame_lerp.h"
+#endif
 
 /**
  * This file implements environment effects that are not snow:
@@ -154,9 +156,11 @@ void envfx_update_lava(Vec3s centerPos) {
             envfx_set_lava_bubble_position(i, centerPos);
             (gEnvFxBuffer + i)->isAlive = TRUE;
         } else if (!(globalTimer & 1)) {
-            if (gFrameLerpRenderFrame == FRAMELERP_NORMAL) {
-                (gEnvFxBuffer + i)->animFrame += 1;
-            }
+#ifdef GRAPHICS_THREAD
+			if (gFrameLerpRenderFrame == FRAMELERP_NORMAL)
+#endif
+            { (gEnvFxBuffer + i)->animFrame += 1; }
+			
             if ((gEnvFxBuffer + i)->animFrame > 8) {
                 (gEnvFxBuffer + i)->isAlive = FALSE;
                 (gEnvFxBuffer + i)->animFrame = 0;

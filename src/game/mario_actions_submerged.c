@@ -227,7 +227,7 @@ static void stationary_slow_down(struct MarioState *m) {
 static void update_swimming_speed(struct MarioState *m, f32 decelThreshold) {
     f32 buoyancy = get_buoyancy(m);
     f32 maxSpeed = 32.0f;
-    if (gRealToggle) m->forwardVel /= 1.015625f;
+    if (gMovesetVar & REAL) m->forwardVel /= 1.015625f;
     
     if (m->action & ACT_FLAG_STATIONARY) {
         m->forwardVel -= 0.5f;
@@ -314,7 +314,7 @@ static void common_idle_step(struct MarioState *m, s32 animation, s32 animAccel,
     perform_water_step(m);
     update_water_pitch(m);
 
-    if (isFloating == TRUE && g95Toggle) {
+    if (isFloating == TRUE && (gMovesetVar & DEMO)) {
         m->faceAngle[0] = approach_s32(m->faceAngle[0], 0, 0x200, 0x200);
 
         if (m->forwardVel < targetSpeed) {

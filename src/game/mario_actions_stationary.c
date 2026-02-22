@@ -106,6 +106,7 @@ s32 check_common_hold_idle_cancels(struct MarioState *m) {
 
 //! TODO: actionArg names
 s32 act_idle(struct MarioState *m) {
+	if (m->actionArg == 1 && m->lookTimer) m->actionState = ACT_STATE_IDLE_CAMERA_LOOK;
     if (m->actionTimer > 0) {
         mTimer = 1;
         cTimer = 1;
@@ -126,14 +127,13 @@ s32 act_idle(struct MarioState *m) {
         return TRUE;
     }
 
-    if (lookTimer > 0) m->actionState = ACT_STATE_IDLE_CAMERA_LOOK;
     if (m->actionState == ACT_STATE_IDLE_CAMERA_LOOK) {
-        if (lookTimer > 0) {
-            set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+		if (m->lookTimer) {
+			set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
 
-            stationary_ground_step(m);
-            return FALSE;
-        } else m->actionState = ACT_STATE_IDLE_HEAD_LEFT;
+			stationary_ground_step(m);
+			return FALSE;
+		} else m->actionState = ACT_STATE_IDLE_HEAD_LEFT;
     }
 
     if (m->actionState == ACT_STATE_IDLE_RESET_OR_SLEEP) {
@@ -168,6 +168,7 @@ s32 act_idle(struct MarioState *m) {
         }
 
         if (is_anim_at_end(m)) {
+    		if (m->actionState == ACT_STATE_IDLE_HEAD_CENTER && m->lookTimer) { m->actionState = ACT_STATE_IDLE_CAMERA_LOOK; return FALSE; }
             // Fall asleep after 10 head turning cycles.
             // act_start_sleeping is triggered earlier in the function
             // when actionState == ACT_STATE_IDLE_RESET_OR_SLEEP. This
@@ -177,8 +178,6 @@ s32 act_idle(struct MarioState *m) {
             // 10 cycles before sleeping.
             // actionTimer is used to track how many cycles have passed.
             if (++m->actionState == ACT_STATE_IDLE_RESET_OR_SLEEP) {
-                cameraLook = TRUE;
-                lookChance = 0x1800;
 #ifdef NO_SLEEP
                 m->actionState = ACT_STATE_IDLE_HEAD_LEFT;
 #else
@@ -520,7 +519,7 @@ s32 act_crouching(struct MarioState *m) {
     }
 
     if (m->input & INPUT_B_PRESSED) {
-        if (!g95Toggle) {
+        if ((gMovesetVar & DEMO)) {
             return set_mario_action(m, ACT_PUNCHING, 9);
         } else {
             return set_mario_action(m, ACT_PUNCHING, 0);
@@ -528,7 +527,7 @@ s32 act_crouching(struct MarioState *m) {
     }
 
     if (m->input & INPUT_A_PRESSED) {
-        if (g95Toggle || gABCToggle == 1) {
+        if (gMovesetVar & (DEMO | A_EASY)) {
             return set_jumping_action(m, ACT_JUMP, 2);
         }
         return set_jumping_action(m, ACT_BACKFLIP, 0);
@@ -696,7 +695,7 @@ s32 act_start_crouching(struct MarioState *m) {
     }
 
     if (m->input & INPUT_A_PRESSED) {
-        if (g95Toggle || gABCToggle == 1) {
+        if (gMovesetVar & (DEMO | A_EASY)) {
             return set_jumping_action(m, ACT_JUMP, 2);
         }
         return set_jumping_action(m, ACT_BACKFLIP, 0);
@@ -724,7 +723,7 @@ s32 act_stop_crouching(struct MarioState *m) {
     }
 
     if (m->input & INPUT_A_PRESSED) {
-        if (g95Toggle || gABCToggle == 1) {
+        if (gMovesetVar & (DEMO | A_EASY)) {
             return set_jumping_action(m, ACT_JUMP, 2);
         }
         return set_jumping_action(m, ACT_BACKFLIP, 0);
@@ -830,6 +829,7 @@ s32 landing_step(struct MarioState *m, s32 animID, u32 action) {
     stationary_ground_step(m);
     set_mario_animation(m, animID);
     if (is_anim_at_end(m)) {
+		if (action == ACT_IDLE && m->lookTimer) m->actionArg = 1;
         return set_mario_action(m, action, m->actionArg);
     }
     return FALSE;
@@ -1016,7 +1016,7 @@ s32 act_twirl_land(struct MarioState *m) {
             m->angleVel[1] = 0;
         }
 
-        m->twirlYaw += (m->angleVel[1] / gDeltaTime);
+        m->twirlYaw += m->angleVel[1];
     }
 
     m->marioObj->header.gfx.angle[1] += m->twirlYaw;
@@ -1048,7 +1048,7 @@ s32 act_ground_pound_land(struct MarioState *m) {
 
 s32 act_first_person(struct MarioState *m) {
     s32 exit = m->input & INPUT_OFF_FLOOR;
-    ((!g95Toggle || gRealToggle) && m->actionArg == 0)
+    ((gMovesetVar & DEMO) && m->actionArg == 0)
     ? (fadeWarpTarget = 0)
     : (fadeWarpTarget = 0xFF);
 

@@ -15,7 +15,7 @@ void bullet_bill_act_0(void) {
     o->oFaceAnglePitch = 0;
     o->oFaceAngleRoll = 0;
     o->oMoveFlags = OBJ_MOVE_NONE;
-    if (gRealToggle) {
+    if (gMovesetVar & REAL) {
         o->oDamageOrCoinValue = 31;
         o->hitboxHeight = 25;
         o->hitboxRadius = 25;
@@ -34,7 +34,7 @@ void bullet_bill_act_1(void) {
 
 void bullet_bill_act_2(void) {
     s16 setting;
-    if (!gRealToggle) {
+    if (!(gMovesetVar & REAL)) {
         setting = 3;
     } else {
         setting = 6;
@@ -53,12 +53,12 @@ void bullet_bill_act_2(void) {
         }
 
         spawn_object(o, MODEL_SMOKE, bhvWhitePuffSmoke);
-        if (!gRealToggle) o->oForwardVel = 30.0f;
-        if (gRealToggle) o->oForwardVel = 120.0f;
+        if (!(gMovesetVar & REAL)) o->oForwardVel = 30.0f;
+        					  else o->oForwardVel = 120.0f;
 
         if (o->oDistanceToMario > 300.0f) {
-            if (!gRealToggle) cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
-            if (gRealToggle) cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x200);
+            if (!(gMovesetVar & REAL)) cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
+            					  else cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x200);
         }
 
         if (o->oTimer == 50) {
