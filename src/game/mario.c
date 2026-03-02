@@ -45,7 +45,11 @@
 s32 is_anim_at_end(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
 
-    return (marioObj->header.gfx.animInfo.animFrame + 1) == marioObj->header.gfx.animInfo.curAnim->loopEnd;
+#ifdef GRAPHICS_THREAD
+    return (marioObj->header.gfx.animInfo.animFrame + 1) == marioObj->header.gfx.animInfo.curAnimLogic->loopEnd;
+#else
+	return (marioObj->header.gfx.animInfo.animFrame + 1) == marioObj->header.gfx.animInfo.curAnim->loopEnd;
+#endif
 }
 
 /**
@@ -54,7 +58,11 @@ s32 is_anim_at_end(struct MarioState *m) {
 s32 is_anim_past_end(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
 
-    return marioObj->header.gfx.animInfo.animFrame >= (marioObj->header.gfx.animInfo.curAnim->loopEnd - 2);
+#ifdef GRAPHICS_THREAD
+    return marioObj->header.gfx.animInfo.animFrame >= (marioObj->header.gfx.animInfo.curAnimLogic->loopEnd - 2);
+#else
+	return marioObj->header.gfx.animInfo.animFrame >= (marioObj->header.gfx.animInfo.curAnim->loopEnd - 2);
+#endif
 }
 
 /**
@@ -62,19 +70,29 @@ s32 is_anim_past_end(struct MarioState *m) {
  */
 s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
     struct Object *marioObj = m->marioObj;
+#ifdef GRAPHICS_THREAD
     struct Animation *targetAnim = m->animList[ANIM_LIST_LOGIC]->bufTarget;
     
     m->queueTargetAnimID = targetAnimID;
     m->queueTargetAnim = m->animList[ANIM_LIST_GFX]->bufTarget;
 
     if (load_patchable_table(gMarioState->animList[ANIM_LIST_LOGIC], targetAnimID)) {
+#else
+	struct Animation *targetAnim = m->animList->bufTarget;
+
+	if (load_patchable_table(m->animList, targetAnimID)) {
+#endif
         targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
         targetAnim->index  = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->index);
     }
 
     if (marioObj->header.gfx.animInfo.animID != targetAnimID) {
         marioObj->header.gfx.animInfo.animID = targetAnimID;
+#ifdef GRAPHICS_THREAD
+		marioObj->header.gfx.animInfo.curAnimLogic = targetAnim;
+#else
         marioObj->header.gfx.animInfo.curAnim = targetAnim;
+#endif
         marioObj->header.gfx.animInfo.animAccel = 0;
         marioObj->header.gfx.animInfo.animYTrans = m->animYTrans;
 
@@ -87,10 +105,11 @@ s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
                 marioObj->header.gfx.animInfo.animFrame = targetAnim->startFrame - 1;
             }
         }
-        marioObj->header.gfx.animInfo.animFrameF = marioObj->header.gfx.animInfo.animFrame;
     }
 
+#ifdef GRAPHICS_THREAD
     marioObj->header.gfx.animInfo.animAccelF = 1.0f;
+#endif
     return marioObj->header.gfx.animInfo.animFrame;
 }
 
@@ -100,7 +119,11 @@ s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
  */
 s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel) {
     struct Object *marioObj = m->marioObj;
+#ifdef GRAPHICS_THREAD
     struct Animation *targetAnim = m->animList[ANIM_LIST_LOGIC]->bufTarget;
+#else
+	struct Animation *targetAnim = m->animList->bufTarget;
+#endif
 
     m->queueTargetAnimID = targetAnimID;
     m->queueTargetAnim = m->animList[ANIM_LIST_GFX]->bufTarget;
@@ -112,7 +135,11 @@ s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel)
 
     if (marioObj->header.gfx.animInfo.animID != targetAnimID) {
         marioObj->header.gfx.animInfo.animID = targetAnimID;
+#ifdef GRAPHICS_THREAD
+		marioObj->header.gfx.animInfo.curAnimLogic = targetAnim;
+#else
         marioObj->header.gfx.animInfo.curAnim = targetAnim;
+#endif
         marioObj->header.gfx.animInfo.animYTrans = m->animYTrans;
 
         if (targetAnim->flags & ANIM_FLAG_NO_ACCEL) {
@@ -126,11 +153,12 @@ s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel)
         }
 
         marioObj->header.gfx.animInfo.animFrame = (marioObj->header.gfx.animInfo.animFrameAccelAssist >> 0x10);
-        marioObj->header.gfx.animInfo.animFrameF = marioObj->header.gfx.animInfo.animFrame;
     }
 
     marioObj->header.gfx.animInfo.animAccel = accel;
+#ifdef GRAPHICS_THREAD
     marioObj->header.gfx.animInfo.animAccelF = accel / 65536.0f;
+#endif
 
     return marioObj->header.gfx.animInfo.animFrame;
 }
@@ -140,7 +168,11 @@ s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel)
  */
 void set_anim_to_frame(struct MarioState *m, s16 animFrame) {
     struct AnimInfo *animInfo = &m->marioObj->header.gfx.animInfo;
+#ifdef GRAPHICS_THREAD
+    struct Animation *curAnim = animInfo->curAnimLogic;
+#else
     struct Animation *curAnim = animInfo->curAnim;
+#endif
 
     if (animInfo->animAccel) {
         if (curAnim->flags & ANIM_FLAG_FORWARD) {
@@ -154,7 +186,9 @@ void set_anim_to_frame(struct MarioState *m, s16 animFrame) {
         } else {
             animInfo->animFrame = animFrame - 1;
         }
+#ifdef GRAPHICS_THREAD
 		animInfo->animFrameF = animInfo->animFrame;
+#endif
     }
 }
 
@@ -162,7 +196,11 @@ s32 is_anim_past_frame(struct MarioState *m, s16 animFrame) {
     s32 isPastFrame;
     s32 acceleratedFrame = animFrame << 0x10;
     struct AnimInfo *animInfo = &m->marioObj->header.gfx.animInfo;
+#ifdef GRAPHICS_THREAD
+    struct Animation *curAnim = animInfo->curAnimLogic;
+#else
     struct Animation *curAnim = animInfo->curAnim;
+#endif
 
     if (animInfo->animAccel) {
         if (curAnim->flags & ANIM_FLAG_FORWARD) {
@@ -192,7 +230,11 @@ s32 is_anim_past_frame(struct MarioState *m, s16 animFrame) {
 s16 find_mario_anim_flags_and_translation(struct Object *obj, s32 yaw, Vec3s translation) {
     f32 dx, dz;
 
+#ifdef GRAPHICS_THREAD
+    struct Animation *curAnim = (void *) obj->header.gfx.animInfo.curAnimLogic;
+#else
     struct Animation *curAnim = (void *) obj->header.gfx.animInfo.curAnim;
+#endif
     s16 animFrame = geo_update_animation_frame(&obj->header.gfx.animInfo, NULL);
     u16 *animIndex = segmented_to_virtual((void *) curAnim->index);
     s16 *animValues = segmented_to_virtual((void *) curAnim->values);
@@ -725,7 +767,7 @@ void rotate_mario_head(struct MarioState *m) {
     s16 cameraYaw = gCamera->yaw - m->faceAngle[1];
 	u16 timerThreshold = 0;
 
-	if (ABS(cameraYaw) <= 0x2000) { timerThreshold = 30; m->lookTimer |= (1 << 7); }
+	if (ABS(cameraYaw) <= 0x3000) { timerThreshold = 30; m->lookTimer |= (1 << 7); }
 	else { m->lookTimer &= ~(1 << 7); }
 
 	if (!(m->lookTimer & (1 << 7))) {
@@ -1654,6 +1696,12 @@ void mario_reset_bodystate(struct MarioState *m) {
  */
 void sink_mario_in_quicksand(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
+
+#ifndef GRAPHICS_THREAD
+    if (marioObj->header.gfx.throwMatrix) {
+        (*marioObj->header.gfx.throwMatrix)[3][1] -= m->quicksandDepth;
+    }
+#endif
 
     marioObj->header.gfx.pos[1] -= m->quicksandDepth;
 }

@@ -519,11 +519,10 @@ s32 act_crouching(struct MarioState *m) {
     }
 
     if (m->input & INPUT_B_PRESSED) {
-        if ((gMovesetVar & DEMO)) {
-            return set_mario_action(m, ACT_PUNCHING, 9);
-        } else {
+        if (gMovesetVar & DEMO) {
             return set_mario_action(m, ACT_PUNCHING, 0);
         }
+        return set_mario_action(m, ACT_PUNCHING, 9);
     }
 
     if (m->input & INPUT_A_PRESSED) {
@@ -1048,9 +1047,7 @@ s32 act_ground_pound_land(struct MarioState *m) {
 
 s32 act_first_person(struct MarioState *m) {
     s32 exit = m->input & INPUT_OFF_FLOOR;
-    ((gMovesetVar & DEMO) && m->actionArg == 0)
-    ? (fadeWarpTarget = 0)
-    : (fadeWarpTarget = 0xFF);
+    (!(gMovesetVar & DEMO) && m->actionArg == 0) ? (fadeWarpTarget = 0) : (fadeWarpTarget = 0xFF);
 
     if (m->actionState == ACT_STATE_FIRST_PERSON_SET_MODE) {
         lower_background_noise(2);

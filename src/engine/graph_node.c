@@ -332,6 +332,9 @@ struct GraphNodeObject *init_graph_node_object(struct AllocOnlyPool *pool,
 		vec3f_copy(graphNode->scaleLerp, scale);
         quat_identity(graphNode->throwRotation);
         quat_from_zxy_euler(graphNode->rotLerp, angle);
+		graphNode->animInfo.curAnimLogic = NULL;
+        graphNode->animInfo.animFrameF = 0.0f;
+        graphNode->animInfo.animAccelF = 1.0f;
 #else
 		graphNode->throwMatrix = NULL;
 #endif
@@ -343,10 +346,6 @@ struct GraphNodeObject *init_graph_node_object(struct AllocOnlyPool *pool,
         graphNode->animInfo.animAccel = 0x10000;
         graphNode->animInfo.animTimer = 0;
         graphNode->node.flags |= GRAPH_RENDER_HAS_ANIMATION;
-#ifdef GRAPHICS_THREAD
-        graphNode->animInfo.animFrameF = 0.0f;
-        graphNode->animInfo.animAccelF = 1.0f;
-#endif
     }
 
     return graphNode;
@@ -740,6 +739,7 @@ void geo_obj_init(struct GraphNodeObject *graphNode, void *sharedChild, Vec3f po
     vec3f_copy(graphNode->posLerp, pos);
     vec3f_copy(graphNode->posCache, pos);
     vec3f_copy(graphNode->posVideoCache, pos);
+	graphNode->animInfo.curAnimLogic = NULL;
 #else
 	graphNode->throwMatrix = NULL;
 #endif
@@ -766,10 +766,12 @@ void geo_obj_init_spawninfo(struct GraphNodeObject *graphNode, struct SpawnInfo 
     graphNode->activeAreaIndex = spawn->activeAreaIndex;
     graphNode->sharedChild = spawn->model;
     graphNode->spawnInfo = spawn;
-#ifndef GRAPHICS_THREAD
+    graphNode->animInfo.curAnim = 0;
+#ifdef GRAPHICS_THREAD
+	graphNode->animInfo.curAnimLogic = NULL;
+#else
 	graphNode->throwMatrix = NULL;
 #endif
-    graphNode->animInfo.curAnim = 0;
 
     graphNode->node.flags |= GRAPH_RENDER_ACTIVE;
     graphNode->node.flags &= ~GRAPH_RENDER_INVISIBLE;
@@ -815,6 +817,8 @@ void geo_obj_init_animation_accel(struct GraphNodeObject *graphNode, struct Anim
         graphNode->animInfo.animFrame = graphNode->animInfo.animFrameAccelAssist >> 16;
     }
 #ifdef GRAPHICS_THREAD
+	graphNode->animInfo.curAnimLogic = NULL;
+
     graphNode->animInfo.animAccel = (s32)(animAccel * 65536.0f);
     graphNode->animInfo.animAccelF = animAccel;
 #else
@@ -851,6 +855,11 @@ s32 retrieve_animation_index(s32 frame, u16 **attributes) {
 s32 geo_update_animation_frame(struct AnimInfo *obj, s32 *accelAssist) {
     s32 result;
     struct Animation *anim = obj->curAnim;
+#ifdef GRAPHICS_THREAD
+    if (obj->curAnimLogic != NULL) {
+        anim = obj->curAnimLogic;
+    }
+#endif
 
     if (obj->animTimer == gAreaUpdateCounter || anim->flags & ANIM_FLAG_NO_ACCEL) {
         if (accelAssist != NULL) {

@@ -992,7 +992,11 @@ s32 act_ground_pound(struct MarioState *m) {
     }
 
     m->actionTimer++;
+#ifdef GRAPHICS_THREAD
+    if (m->actionTimer >= m->marioObj->header.gfx.animInfo.curAnimLogic->loopEnd + 4) {
+#else
     if (m->actionTimer >= m->marioObj->header.gfx.animInfo.curAnim->loopEnd + 4) {
+#endif
         m->actionState = ACT_STATE_GROUND_POUND_FALL;
     }
     if (m->actionState > 0) {

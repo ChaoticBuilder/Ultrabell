@@ -234,7 +234,9 @@ extern u16 gDialogTextAlpha;
 extern s16 gCutsceneMsgXOffset;
 extern s16 gCutsceneMsgYOffset;
 extern u8  gRedCoinsCollected;
+#ifdef GRAPHICS_THREAD
 extern s16 gMenuMode;
+#endif
 
 void create_dl_identity_matrix(void);
 void create_dl_translation_matrix(s8 pushOp, f32 x, f32 y, f32 z);
@@ -263,6 +265,8 @@ void do_cutscene_handler(void);
 void render_hud_cannon_reticle(void);
 void reset_red_coins_collected(void);
 s32 render_menus_and_dialogs(void);
+#ifdef GRAPHICS_THREAD
 s32 logic_menus_and_dialogs(void);
+#endif
 
 #endif // INGAME_MENU_H

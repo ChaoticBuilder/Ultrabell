@@ -26,11 +26,20 @@ Gfx *geo_envfx_main(s32 callContext, struct GraphNode *node, Mat4 mtxf) {
         u32 *params = &execNode->parameter; // accessed a s32 as 2 u16s by pointing to the variable and
                                             // casting to a local struct as necessary.
 
+#ifdef GRAPHICS_THREAD
         if (gMenuMode != MENU_MODE_RENDER_PAUSE_SCREEN) {
+#else
+		if (GET_HIGH_U16_OF_32(*params) != gAreaUpdateCounter) {
+#endif
             s32 snowMode = GET_LOW_U16_OF_32(*params);
 
+#ifdef GRAPHICS_THREAD
             vec3f_to_vec3s(camTo, gCurGraphNodeCamera->focLerp);
             vec3f_to_vec3s(camFrom, gCurGraphNodeCamera->posLerp);
+#else
+            vec3f_to_vec3s(camTo, gCurGraphNodeCamera->focus);
+            vec3f_to_vec3s(camFrom, gCurGraphNodeCamera->pos);
+#endif
             vec3f_to_vec3s(marioPos, gPlayerCameraState->pos);
             particleList = envfx_update_particles(snowMode, marioPos, camTo, camFrom);
             if (particleList != NULL) {
@@ -55,7 +64,9 @@ Gfx *geo_envfx_main(s32 callContext, struct GraphNode *node, Mat4 mtxf) {
     return gfx;
 }
 
+#ifdef GRAPHICS_THREAD
 Vec3f gSkyboxCameraPos, gSkyboxCameraFoc;
+#endif
 
 /**
  * Geo function that generates a displaylist for the skybox. Can be assigned
@@ -72,7 +83,11 @@ Gfx *geo_skybox_main(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx) 
         struct GraphNodeCamera *camNode = (struct GraphNodeCamera *) gCurGraphNodeRoot->views[0];
         struct GraphNodePerspective *camFrustum =
             (struct GraphNodePerspective *) camNode->fnNode.node.parent;
+#ifdef GRAPHICS_THREAD
         gfx = create_skybox_facing_camera(0, backgroundNode->background, camFrustum->fov, gSkyboxCameraPos, gSkyboxCameraFoc);
+#else
+		gfx = create_skybox_facing_camera(0, backgroundNode->background, camFrustum->fov, gLakituState.pos, gLakituState.focus);
+#endif
 #endif
     }
 

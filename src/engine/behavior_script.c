@@ -954,6 +954,10 @@ void cur_obj_update(void) {
     }
 
 #ifdef GRAPHICS_THREAD
+    if (o->header.gfx.animInfo.curAnim != NULL) {
+        o->header.gfx.animInfo.animFrame = geo_update_animation_frame(&o->header.gfx.animInfo, &o->header.gfx.animInfo.animFrameAccelAssist);
+    }
+	
     frameLerp_cache_pos(o->header.gfx.pos,o->header.gfx.posCache,o->header.gfx.posVideoCache);
 #endif
 }

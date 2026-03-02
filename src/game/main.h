@@ -56,7 +56,9 @@ extern OSThread gIdleThread;
 extern OSThread gMainThread;
 extern OSThread gGameLoopThread;
 extern OSThread gSoundThread;
+#ifdef GRAPHICS_THREAD
 extern OSThread gGraphicsThread;
+#endif
 extern OSThread hvqmThread;
 #if ENABLE_RUMBLE
 extern OSThread gRumblePakThread;

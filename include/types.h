@@ -237,6 +237,7 @@ struct AnimInfo {
     /*0x0C 0x44*/ s32 animFrameAccelAssist;
     /*0x10 0x48*/ s32 animAccel;
 #ifdef GRAPHICS_THREAD
+				  struct Animation *curAnimLogic;
                   f32 animFrameF;
                   f32 animAccelF;
 #endif

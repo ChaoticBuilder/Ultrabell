@@ -426,14 +426,14 @@ void geo_obj_init_spawninfo(struct GraphNodeObject *graphNode, struct SpawnInfo 
 void geo_obj_init_animation(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr);
 #ifdef GRAPHICS_THREAD
 void geo_obj_init_animation_accel(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr, f32 animAccel);
-s32  geo_update_animation_frame(struct AnimInfo *obj, s32 *accelAssist);
+f32 geo_update_animation_frame_float(struct AnimInfo *updateAnimInfo);
 #else
 void geo_obj_init_animation_accel(struct GraphNodeObject *graphNode, struct Animation **animPtrAddr, u32 animAccel);
 #endif
 
 s32  retrieve_animation_index(s32 frame, u16 **attributes);
 
-f32 geo_update_animation_frame_float(struct AnimInfo *updateAnimInfo);
+s32  geo_update_animation_frame(struct AnimInfo *obj, s32 *accelAssist);
 void geo_retreive_animation_translation(struct GraphNodeObject *obj, Vec3f position);
 
 struct GraphNodeRoot *geo_find_root(struct GraphNode *graphNode);

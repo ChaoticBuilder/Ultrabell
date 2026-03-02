@@ -354,13 +354,16 @@ void check_stack_validity(void) {
 }
 #endif
 
+#include "src/game/object_list_processor.h"
 
 extern void crash_screen_init(void);
 extern OSViMode VI;
+
 void thread3_main(UNUSED void *arg) {
     setup_mesg_queues();
     alloc_pool();
     load_engine_code_segment();
+    bzero(gObjectPool, sizeof(gObjectPool[OBJECT_POOL_CAPACITY]));
     gEmulator = detect_emulator();
 #ifndef UNF
     crash_screen_init();

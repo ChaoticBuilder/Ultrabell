@@ -903,6 +903,9 @@ void thread5_game_loop(UNUSED void *arg) {
         puppyprint_profiler_process();
 #endif
 
+#ifndef GRAPHICS_THREAD
+		display_and_vsync();
+#endif
 #ifdef VANILLA_DEBUG
         try_change_debug_page();
 #endif
