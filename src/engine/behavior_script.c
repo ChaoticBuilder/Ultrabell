@@ -14,9 +14,6 @@
 #include "math_util.h"
 #include "graph_node.h"
 #include "surface_collision.h"
-#ifdef GRAPHICS_THREAD
-#include "game/frame_lerp.h"
-#endif
 
 // Macros for retrieving arguments from behavior scripts.
 #define BHV_CMD_GET_1ST_U8(index)     (u8)((gCurBhvCommand[index] >> 24) & 0xFF) // unused
@@ -824,12 +821,6 @@ void cur_obj_update(void) {
 
     s32 inRoom = cur_obj_is_mario_in_room();
 
-#ifdef GRAPHICS_THREAD
-    if (objFlags & OBJ_FLAG_THROW_ROTATION) {
-        o->oFlags &= ~OBJ_FLAG_THROW_ROTATION;
-    }
-#endif
-
     if (inRoom == MARIO_OUTSIDE_ROOM && (objFlags & OBJ_FLAG_ONLY_PROCESS_INSIDE_ROOM)) {
         cur_obj_disable_rendering_in_room();
         return;
@@ -952,12 +943,4 @@ void cur_obj_update(void) {
             o->activeFlags &= ~ACTIVE_FLAG_FAR_AWAY;
         }
     }
-
-#ifdef GRAPHICS_THREAD
-    if (o->header.gfx.animInfo.curAnim != NULL) {
-        o->header.gfx.animInfo.animFrame = geo_update_animation_frame(&o->header.gfx.animInfo, &o->header.gfx.animInfo.animFrameAccelAssist);
-    }
-	
-    frameLerp_cache_pos(o->header.gfx.pos,o->header.gfx.posCache,o->header.gfx.posVideoCache);
-#endif
 }

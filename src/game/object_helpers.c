@@ -328,6 +328,12 @@ struct Object *spawn_object_rel_with_rot(struct Object *parent, ModelID32 model,
     return newObj;
 }
 
+struct Object *spawn_obj_with_transform_flags(struct Object *parent, ModelID32 model, const BehaviorScript *behavior) {
+    struct Object *newObj = spawn_object(parent, model, behavior);
+    newObj->oFlags |= OBJ_FLAG_UPDATE_TRANSFORM_FOR_THROW_MATRIX | OBJ_FLAG_SET_THROW_MATRIX_FROM_TRANSFORM;
+    return newObj;
+}
+
 struct Object *spawn_water_droplet(struct Object *parent, struct WaterDropletParams *params) {
     struct Object *newObj = spawn_object(parent, params->model, params->behavior);
 
@@ -375,7 +381,7 @@ struct Object *spawn_object_at_origin(struct Object *parent, UNUSED s32 unusedAr
     obj->header.gfx.areaIndex = parent->header.gfx.areaIndex;
     obj->header.gfx.activeAreaIndex = parent->header.gfx.areaIndex;
 
-    geo_obj_init((struct GraphNodeObject *) &obj->header.gfx, gLoadedGraphNodes[model], gVec3fZero, gVec3sZero);
+    geo_obj_init(&obj->header.gfx, gLoadedGraphNodes[model], gVec3fZero, gVec3sZero);
 
     return obj;
 }
@@ -506,7 +512,8 @@ void cur_obj_init_animation_with_sound(s32 animIndex) {
 
 void cur_obj_init_animation_with_accel_and_sound(s32 animIndex, f32 accel) {
     struct Animation **anims = o->oAnimations;
-    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], accel);
+    s32 animAccel = (s32)(accel * 65536.0f);
+    geo_obj_init_animation_accel(&o->header.gfx, &anims[animIndex], animAccel);
     o->oSoundStateID = animIndex;
 }
 
@@ -1529,6 +1536,8 @@ void obj_set_throw_matrix_from_transform(struct Object *obj) {
         obj_apply_scale_to_transform(obj);
     }
 
+	obj->header.gfx.throwMatrix = &obj->transform;
+
     obj_scale(obj, 1.0f);
 }
 
@@ -1540,6 +1549,8 @@ void obj_build_transform_relative_to_parent(struct Object *obj) {
     mtxf_mul(obj->transform, obj->transform, parent->transform);
 
     vec3f_copy(&obj->oPosVec, obj->transform[3]);
+
+	obj->header.gfx.throwMatrix = &obj->transform;
 
     obj_scale(obj, 1.0f);
 }
@@ -2182,8 +2193,9 @@ void cur_obj_align_gfx_with_floor(void) {
     if (floor != NULL) {
         Vec3f floorNormal;
         surface_normal_to_vec3f(floorNormal, floor);
-        quat_align_with_floor(o->header.gfx.throwRotation,floorNormal);
-        o->oFlags |= OBJ_FLAG_THROW_ROTATION;
+
+        mtxf_align_terrain_normal(o->transform, floorNormal, position, o->oFaceAngleYaw);
+        o->header.gfx.throwMatrix = &o->transform;
     }
 }
 
@@ -2241,7 +2253,6 @@ void obj_copy_behavior_params(struct Object *dst, struct Object *src) {
 void cur_obj_init_animation_and_anim_frame(s32 animIndex, s32 animFrame) {
     cur_obj_init_animation_with_sound(animIndex);
     o->header.gfx.animInfo.animFrame = animFrame;
-    o->header.gfx.animInfo.animFrameF = animFrame;
 }
 
 s32 cur_obj_init_animation_and_check_if_near_end(s32 animIndex) {
@@ -2321,57 +2332,4 @@ void cur_obj_spawn_star_at_y_offset(f32 targetX, f32 targetY, f32 targetZ, f32 o
     o->oPosY += offsetY + gDebugInfo[DEBUG_PAGE_ENEMYINFO][0];
     spawn_default_star(targetX, targetY, targetZ);
     o->oPosY = objectPosY;
-}
-
-void mtxf_object_gfx(Mat4 dest, struct Object * obj) {
-    Quat rotation;
-	Quat finalRot;
-
-    quat_from_zxy_euler(rotation,obj->header.gfx.angle);
-    quat_mul(finalRot,rotation,obj->header.gfx.throwRotation);
-    quat_normalize(finalRot);
-
-    mtxf_from_quat(finalRot,dest);
-    dest[3][0] += obj->header.gfx.pos[0];
-    dest[3][1] += obj->header.gfx.pos[1];
-    dest[3][2] += obj->header.gfx.pos[2];
-
-    mtxf_scale_vec3f(dest, dest, obj->header.gfx.scale);
-}
-
-void mtxf_object(Mat4 dest, struct Object * obj) {
-    Vec3s euler_rot = {obj->oFaceAnglePitch,obj->oFaceAngleYaw,obj->oFaceAngleRoll};
-    Quat rotation;
-	Quat finalRot;
-    quat_from_zxy_euler(rotation,euler_rot);
-    if (obj->oFlags & OBJ_FLAG_THROW_ROTATION) {
-        quat_mul(finalRot,rotation,obj->header.gfx.throwRotation);
-    } else {
-        quat_copy(finalRot,rotation);
-	}
-    quat_normalize(finalRot);
-
-    mtxf_from_quat(finalRot,dest);
-    dest[3][0] += obj->oPosX;
-    dest[3][1] += obj->oPosY;
-    dest[3][2] += obj->oPosZ;
-
-    mtxf_scale_vec3f(dest, dest, obj->header.gfx.scale);
-}
-
-void mtxf_object_noscale(Mat4 dest, struct Object * obj) {
-    Quat rotation;
-	Quat finalRot;
-    quat_from_zxy_euler(rotation,obj->header.gfx.angle);
-    if (obj->oFlags & OBJ_FLAG_THROW_ROTATION) {
-        quat_mul(finalRot,rotation,obj->header.gfx.throwRotation);
-    } else {
-        quat_copy(finalRot,rotation);
-    }
-    quat_normalize(finalRot);
-
-    mtxf_from_quat(finalRot,dest);
-    dest[3][0] += obj->header.gfx.pos[0];
-    dest[3][1] += obj->header.gfx.pos[1];
-    dest[3][2] += obj->header.gfx.pos[2];
 }

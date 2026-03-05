@@ -390,20 +390,6 @@ void play_transition_after_delay(s16 transType, s16 time, u8 red, u8 green, u8 b
 }
 
 void render_game(void) {
-#ifdef GRAPHICS_THREAD
-    if (gMarioState->queueTargetAnim != NULL) {
-        struct Animation * targetAnim = gMarioState->animList[ANIM_LIST_GFX]->bufTarget;
-        s32 targetAnimID = gMarioState->queueTargetAnimID;
-        if (load_patchable_table(gMarioState->animList[ANIM_LIST_GFX], targetAnimID)) {
-            targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
-            targetAnim->index  = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->index);
-        }
-
-        gMarioState->marioObj->header.gfx.animInfo.animFrameF = gMarioState->marioObj->header.gfx.animInfo.animFrame;
-        gMarioState->marioObj->header.gfx.animInfo.curAnim = gMarioState->queueTargetAnim;
-        gMarioState->queueTargetAnim = NULL;
-    }
-#endif
     PROFILER_GET_SNAPSHOT_TYPE(PROFILER_DELTA_COLLISION);
     if (gCurrentArea != NULL && !gWarpTransition.pauseRendering) {
         if (gCurrentArea->graphNode) {
@@ -428,15 +414,11 @@ void render_game(void) {
         print_displaying_credits_entry();
         gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, gBorderHeight, SCREEN_WIDTH,
                       SCREEN_HEIGHT - gBorderHeight);
-#ifdef GRAPHICS_THREAD
-        render_menus_and_dialogs();
-#else
 		gMenuOptSelectIndex = render_menus_and_dialogs();
 
         if (gMenuOptSelectIndex != 0) {
             gSaveOptSelectIndex = gMenuOptSelectIndex;
         }
-#endif
 
         if (gViewportClip != NULL) {
             make_viewport_clip_rect(gViewportClip);

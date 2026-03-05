@@ -73,10 +73,6 @@ void play_step_sound(struct MarioState *m, s16 frame1, s16 frame2) {
 void align_with_floor(struct MarioState *m) {
     struct Surface *floor = m->floor;
     if ((floor != NULL) && (m->pos[1] < (m->floorHeight + 80.0f))) {
-#ifdef GRAPHICS_THREAD
-		quat_align_with_floor_fancy(m->marioObj->header.gfx.throwRotation,m->marioObj->header.gfx.pos,m->faceAngle[1]);
-		m->marioObj->oFlags |= OBJ_FLAG_THROW_ROTATION;
-#else
         m->pos[1] = m->floorHeight;
 #ifdef FAST_FLOOR_ALIGN
         // if (absf(m->forwardVel) > FAST_FLOOR_ALIGN) {
@@ -87,7 +83,6 @@ void align_with_floor(struct MarioState *m) {
         mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerID], m->pos, m->faceAngle[1], 40.0f);
 #endif
         m->marioObj->header.gfx.throwMatrix = &sFloorAlignMatrix[m->playerID];
-#endif
     }
 }
 

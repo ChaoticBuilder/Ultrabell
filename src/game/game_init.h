@@ -75,23 +75,29 @@ extern struct DemoInput gRecordedDemoInput;
 
 // this area is the demo input + the header. when the demo is loaded in, there is a header the size
 // of a single word next to the input list. this word is the current ID count.
-extern struct DmaHandlerList gDemoInputsBuf;
-#ifdef GRAPHICS_THREAD
-extern struct DmaHandlerList gMarioAnimsBuf[2];
-#else
 extern struct DmaHandlerList gMarioAnimsBuf;
-#endif
+extern struct DmaHandlerList gDemoInputsBuf;
 
 extern u8 gMarioAnims[];
 extern u8 gDemoInputs[];
 
 extern u16 sRenderingFramebuffer;
 extern u32 gGlobalTimer;
+
 #ifdef GRAPHICS_THREAD
-extern u8 gLevelChangeSpinlockState;
+enum renderFrameList {
+    FRAMELERP_NORMAL,
+    FRAMELERP_BETWEEN,
+    FRAMELERP_SLOW,
+};
+
+extern u32 gRenderFrame;
+extern f32 gDeltaTime;
+
 void thread10_graphics_loop(UNUSED void *arg);
 #endif
 
+void read_controller_inputs(void);
 void setup_game_memory(void);
 void thread5_game_loop(UNUSED void *arg);
 void clear_framebuffer(s32 color);

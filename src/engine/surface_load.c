@@ -15,9 +15,6 @@
 #include "surface_load.h"
 #include "game/puppyprint.h"
 #include "game/debug.h"
-#ifdef GRAPHICS_THREAD
-#include <PR/os_internal_reg.h>
-#endif
 
 #include "config.h"
 
@@ -478,9 +475,6 @@ u32 get_area_terrain_size(TerrainData *data) {
  * boxes (water, gas, JRB fog).
  */
 void load_area_terrain(s32 index, TerrainData *data, RoomData *surfaceRooms, s16 *macroObjects) {
-#ifdef GRAPHICS_THREAD
-    u32 mask = __osDisableInt();
-#endif
     PUPPYPRINT_GET_SNAPSHOT();
     s32 terrainLoadType;
     TerrainData *vertexData = NULL;
@@ -545,16 +539,12 @@ void load_area_terrain(s32 index, TerrainData *data, RoomData *surfaceRooms, s16
     gNumStaticSurfaceNodes = gSurfaceNodesAllocated;
     gNumStaticSurfaces = gSurfacesAllocated;
     profiler_collision_update(first);
-	__osRestoreInt(mask);
 }
 
 /**
  * If not in time stop, clear the surface partitions.
  */
 void clear_dynamic_surfaces(void) {
-#ifdef GRAPHICS_THREAD
-    u32 mask = __osDisableInt();
-#endif
     PUPPYPRINT_GET_SNAPSHOT();
     if (!(gTimeStopState & TIME_STOP_ACTIVE)) {
         clear_dynamic_surface_references();
@@ -573,32 +563,25 @@ void clear_dynamic_surfaces(void) {
         sClearAllCells = FALSE;
     }
     profiler_collision_update(first);
-#ifdef GRAPHICS_THREAD
-    __osRestoreInt(mask);
-#endif
 }
 
 /**
  * Applies an object's transformation to the object's vertices.
  */
 void transform_object_vertices(TerrainData **data, TerrainData *vertexData) {
-    Mat4 transform;
+    Mat4 *objectTransform = &o->transform;
 
     register s32 numVertices = *(*data)++;
-    register TerrainData *vertices = *data;
 
-#ifdef GRAPHICS_THREAD
-	mtxf_object(transform,o);
-#else
-	Mat4 *objectTransform = &o->transform;
+    register TerrainData *vertices = *data;
 
     if (o->header.gfx.throwMatrix == NULL) {
         o->header.gfx.throwMatrix = objectTransform;
         obj_build_transform_from_pos_and_angle(o, O_POS_INDEX, O_FACE_ANGLE_INDEX);
     }
 
-	mtxf_scale_vec3f(transform, *objectTransform, o->header.gfx.scale);
-#endif
+    Mat4 transform;
+    mtxf_scale_vec3f(transform, *objectTransform, o->header.gfx.scale);
 
     // Go through all vertices, rotating and translating them to transform the object.
     Vec3f pos;
@@ -619,9 +602,6 @@ void transform_object_vertices(TerrainData **data, TerrainData *vertexData) {
  * Load in the surfaces for the o. This includes setting the flags, exertion, and room.
  */
 void load_object_surfaces(TerrainData **data, TerrainData *vertexData, u32 dynamic) {
-#ifdef GRAPHICS_THREAD
-    u32 mask = __osDisableInt();
-#endif
     s32 i;
 
     s32 surfaceType = *(*data)++;
@@ -669,9 +649,6 @@ void load_object_surfaces(TerrainData **data, TerrainData *vertexData, u32 dynam
         }
 #endif
     }
-#ifdef GRAPHICS_THREAD
-    __osRestoreInt(mask);
-#endif
 }
 
 #ifdef AUTO_COLLISION_DISTANCE
@@ -757,9 +734,6 @@ void load_object_collision_model(void) {
  * Transform an object's vertices and add them to the static surface pool.
  */
 void load_object_static_model(void) {
-#ifdef GRAPHICS_THREAD
-    u32 mask = __osDisableInt();
-#endif
     PUPPYPRINT_GET_SNAPSHOT();
     TerrainData *collisionData = o->collisionData;
     u32 surfacePoolData;
@@ -785,8 +759,4 @@ void load_object_static_model(void) {
     gNumStaticSurfaceNodes = gSurfaceNodesAllocated;
     gNumStaticSurfaces = gSurfacesAllocated;
     profiler_collision_update(first);
-
-#ifdef GRAPHICS_THREAD
-    __osRestoreInt(mask);
-#endif
 }

@@ -34,10 +34,6 @@
 #include "debug.h"
 #include "ingame_menu.h"
 #include "level_update.h"
-#ifdef GRAPHICS_THREAD
-#include "frame_lerp.h"
-#include <PR/os_internal_reg.h>
-#endif
 
 // Emulators that the Instant Input patch should be applied to
 #define INSTANT_INPUT_WHITELIST (EMU_PARALLEL_LAUNCHER | EMU_PROJECT64 | EMU_MUPEN)
@@ -71,12 +67,6 @@ OSMesg gGfxMesgBuf[1];
 // Vblank Handler
 struct VblankHandler gGameVblankHandler;
 
-#ifdef GRAPHICS_THREAD
-OSMesgQueue gGraphicsVblankQueue;
-OSMesg gGraphicsMesgBuf[1];
-struct VblankHandler gGraphicsVblankHandler;
-#endif
-
 // Buffers
 uintptr_t gPhysicalFramebuffers[3];
 uintptr_t gPhysicalZBuffer;
@@ -84,19 +74,11 @@ uintptr_t gPhysicalZBuffer;
 // Mario Anims and Demo allocation
 void *gMarioAnimsMemAlloc;
 void *gDemoInputsMemAlloc;
-struct DmaHandlerList gDemoInputsBuf;
-
-#ifdef GRAPHICS_THREAD
-struct DmaHandlerList gMarioAnimsBuf[2];
-#else
 struct DmaHandlerList gMarioAnimsBuf;
-#endif
+struct DmaHandlerList gDemoInputsBuf;
 
 // General timer that runs as the game starts
 u32 gGlobalTimer = 0;
-#ifdef GRAPHICS_THREAD
-u32 gGraphicsTimer = 0;
-#endif
 u8 *gAreaSkyboxStart[AREA_COUNT];
 u8 *gAreaSkyboxEnd[AREA_COUNT];
 
@@ -119,12 +101,22 @@ u16 gDemoInputListID = 0;
 struct DemoInput gRecordedDemoInput = { 0 };
 
 #ifdef GRAPHICS_THREAD
+// OS Controllers
+OSMesgQueue gGraphicsVblankQueue;
+OSMesg gGraphicsMesgBuf[1];
+struct VblankHandler gGraphicsVblankHandler;
+
+// General timer that runs as the game starts
+u32 gGraphicsTimer = 0;
+
 // Thread Variables
 u8 sSingleThreadOtherFrame = FALSE;
 u8 sSingleThreaded = TRUE;
 u8 sFrameCap60 = TRUE;
 u8 sVideoThreadStarted = FALSE;
 u8 gLevelChangeSpinlockState = 0;
+u32 gRenderFrame = 0;
+f32 gDeltaTime = 0;
 #endif
 
 // Display
@@ -483,10 +475,6 @@ void select_gfx_pool(void) {
     gGfxSPTask = &gGfxPool->spTask;
     gDisplayListHead = gGfxPool->buffer;
     gGfxPoolEnd = (u8 *) (gGfxPool->buffer + GFX_POOL_SIZE);
-
-#ifdef GRAPHICS_THREAD
-	gGraphicsTimer++;
-#endif
 }
 
 /**
@@ -524,7 +512,9 @@ void display_and_vsync(void) {
         }
     }
 
-#ifndef GRAPHICS_THREAD
+#ifdef GRAPHICS_THREAD
+	gGraphicsTimer++;
+#else
 	gGlobalTimer++;
 #endif
 }
@@ -654,7 +644,9 @@ void adjust_analog_stick(struct Controller *controller) {
 void read_controller_inputs(void) {
     // If any controllers are plugged in, update the controller information.
     if (gControllerBits) {
+#ifndef GRAPHICS_THREAD
         osRecvMesg(&gSIEventMesgQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+#endif
         osContGetReadDataEx(gControllerPads);
 #if ENABLE_RUMBLE
         release_rumble_pak_control();
@@ -776,12 +768,6 @@ void init_controllers(void) {
     osContSetCh(lastUsedPort + 1);
 }
 
-#ifdef GRAPHICS_THREAD
-#define MANIMPOOL (MARIO_ANIMS_POOL_SIZE << 1)
-#else
-#define MANIMPOOL MARIO_ANIMS_POOL_SIZE
-#endif
-
 // Game thread core
 // ----------------------------------------------------------------------------------------------------
 
@@ -803,14 +789,9 @@ void setup_game_memory(void) {
     gPhysicalFramebuffers[1] = VIRTUAL_TO_PHYSICAL(gFramebuffer1);
     gPhysicalFramebuffers[2] = VIRTUAL_TO_PHYSICAL(gFramebuffer2);
     // Setup Mario Animations
-    gMarioAnimsMemAlloc = main_pool_alloc(MANIMPOOL, MEMORY_POOL_LEFT);
+    gMarioAnimsMemAlloc = main_pool_alloc(MARIO_ANIMS_POOL_SIZE, MEMORY_POOL_LEFT);
     set_segment_base_addr(SEGMENT_MARIO_ANIMS, (void *) gMarioAnimsMemAlloc);
-#ifdef GRAPHICS_THREAD
-	setup_dma_table_list(&gMarioAnimsBuf[0], gMarioAnims, gMarioAnimsMemAlloc);
-    setup_dma_table_list(&gMarioAnimsBuf[1], gMarioAnims, gMarioAnimsMemAlloc + MARIO_ANIMS_POOL_SIZE);
-#else
 	setup_dma_table_list(&gMarioAnimsBuf, gMarioAnims, gMarioAnimsMemAlloc);
-#endif
 #ifdef PUPPYPRINT_DEBUG
     set_segment_memory_printout(SEGMENT_MARIO_ANIMS, MARIO_ANIMS_POOL_SIZE);
     set_segment_memory_printout(SEGMENT_DEMO_INPUTS, DEMO_INPUTS_POOL_SIZE);
@@ -824,9 +805,6 @@ void setup_game_memory(void) {
     // Setup Segment 2 (Fonts, Text, etc)
     load_segment_decompress(SEGMENT_SEGMENT2, _segment2_mio0SegmentRomStart, _segment2_mio0SegmentRomEnd);
 }
-
-u32 vBlanksPrev = 0;
-u8  vBlankTimer = 0;
 
 /**
  * Main game loop thread. Runs forever as long as the game continues.
@@ -861,17 +839,20 @@ void thread5_game_loop(UNUSED void *arg) {
 #ifndef GRAPHICS_THREAD
 	render_init();
 #endif
-
     while (TRUE) {
 #ifdef GRAPHICS_THREAD
-		if (!sSingleThreadOtherFrame) goto skipFrame;
+		if (!sVideoThreadStarted) {
+			osStartThread(&gGraphicsThread);
+			sVideoThreadStarted = TRUE;
+		}
 #endif
-        profiler_frame_setup();
         // If the reset timer is active, run the process to reset the game.
         if (gResetTimer) {
             draw_reset_bars();
             continue;
         }
+
+        profiler_frame_setup();
 #ifdef PUPPYPRINT_DEBUG
     	bzero(&gPuppyCallCounter, sizeof(gPuppyCallCounter));
 #endif
@@ -887,29 +868,19 @@ void thread5_game_loop(UNUSED void *arg) {
         audio_game_loop_tick();
 #ifndef GRAPHICS_THREAD
 		select_gfx_pool();
+		read_controller_inputs();
 #endif
-        read_controller_inputs();
         profiler_update(PROFILER_TIME_CONTROLLERS, 0);
         profiler_collision_reset();
         addr = level_script_execute(addr);
-#ifdef GRAPHICS_THREAD
-        frameLerp_update_pos_cache();
-#endif
         profiler_collision_completed();
 #if !defined(PUPPYPRINT_DEBUG) && defined(VISUAL_DEBUG)
         debug_box_input();
 #endif
 #ifdef PUPPYPRINT_DEBUG
         puppyprint_profiler_process();
-#endif
-
-#ifndef GRAPHICS_THREAD
-		display_and_vsync();
-#endif
-#ifdef VANILLA_DEBUG
         try_change_debug_page();
-#endif
-#ifdef VANILLA_DEBUG
+
         // when debug info is enabled, print the "BUF %d" information.
         if (gShowDebugText) {
             // subtract the end of the gfx pool with the display list to obtain the
@@ -917,110 +888,41 @@ void thread5_game_loop(UNUSED void *arg) {
             print_text_fmt_int(160, 96, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
         }
 #endif
-
 #ifdef GRAPHICS_THREAD
 		gGlobalTimer++;
-skipFrame:
-
-        if (gEmulator & (EMU_CONSOLE|EMU_HIACC)) {
-            sSingleThreaded = FALSE;
-            if (gEmulator & EMU_HIACC) {
-                sFrameCap60 = FALSE; // Ares flickers at 60HZ for some reason
-            }
-        }
-
-		if (!sVideoThreadStarted) {
-			sVideoThreadStarted = TRUE;
-			if (!sSingleThreaded) {
-				sSingleThreadOtherFrame = TRUE;
-				osStartThread(&gGraphicsThread);
-				gLevelChangeSpinlockState = 1;
-            } else {
-                // Single threaded mode for emulators
-                osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-                osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-                render_init();
-            }
-		}
-	
-        if (sSingleThreaded) {
-            if (sFrameCap60 && gFPSCap == FPS_60) {
-                gFrameLerpRenderFrame = FRAMELERP_NORMAL;
-                if (sSingleThreadOtherFrame) {
-                    gFrameLerpRenderFrame = FRAMELERP_BETWEEN;
-                }
-                gFrameLerpDeltaTime = 0.5f;
-            } else {
-                gFrameLerpRenderFrame = FRAMELERP_NORMAL;
-                gFrameLerpDeltaTime = 1.0f;
-            }
-            frameLerp_update_pos_video_cache();
-
-            // Render
-            select_gfx_pool();
-            init_rcp(CLEAR_ZBUFFER);
-
-            render_game();
-
-            end_master_display_list();
-            alloc_display_list(0);
-
-            display_and_vsync();
-            // End Render
-
-			if (sFrameCap60 && gFPSCap == FPS_60) sSingleThreadOtherFrame = !sSingleThreadOtherFrame; else {
-				sSingleThreadOtherFrame = TRUE;
-
-				osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK); }
-			osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-        } else {
-            sSingleThreadOtherFrame = TRUE;
-
-            osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-            osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-        }
-    }
+		osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+		osRecvMesg(&gGameVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
+#else
+		display_and_vsync();
+#endif
+	}
 }
 
+#ifdef GRAPHICS_THREAD
 u8 firstFrameBoot = TRUE;
 
 void thread10_graphics_loop(UNUSED void *arg) {
 	u32 lastRenderedFrame = 0xFFFFFFFF;
-	u32 prevTime = 0;
+	OSTime prevTime = 0;
+
     set_vblank_handler(3, &gGraphicsVblankHandler, &gGraphicsVblankQueue, (OSMesg) 1);
-
-	osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-    osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-	
 	render_init();
-	while (!gResetTimer) {
-		if (firstFrameBoot) {
-			// If you remove this, the screen will flash pure white for one frame on init
-			firstFrameBoot = FALSE;
-			gLevelChangeSpinlockState = 3;
-		} else {
-			if (gLevelChangeSpinlockState == 2) {
-				gLevelChangeSpinlockState = 3;
-				while(gLevelChangeSpinlockState == 3) {
-					osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-				}
-			}
-		}
-		frameLerp_update_pos_video_cache();
-		
-		u32 deltaTime = osGetCount() - prevTime;
-		prevTime = osGetCount();
-		gFrameLerpDeltaTime = (f32)deltaTime / (f32)OS_USEC_TO_CYCLES(33333);
+	while (TRUE) {
+		u32 deltaTime = osGetTime() - prevTime;
+		prevTime = osGetTime();
+		gDeltaTime = (f32)deltaTime / (f32)OS_USEC_TO_CYCLES(33333);
 
-		if (deltaTime < OS_USEC_TO_CYCLES(33333)) { // > 30 fps
-            if (gGlobalTimer == lastRenderedFrame + 1) {
-                gFrameLerpRenderFrame = FRAMELERP_NORMAL;
-            } else {
-                gFrameLerpRenderFrame = FRAMELERP_BETWEEN;
-            }
-        } else {
-            gFrameLerpRenderFrame = FRAMELERP_NORMAL;
-        }
+		if (gEmulator & (EMU_CONSOLE|EMU_HIACC)) {
+			if (deltaTime < OS_USEC_TO_CYCLES(33333)) { // > 30 fps
+				gRenderFrame = (lastRenderedFrame == gGlobalTimer) ? FRAMELERP_NORMAL : FRAMELERP_BETWEEN;
+			} else if (deltaTime > OS_USEC_TO_CYCLES(66666)) { // < 15 fps
+				gRenderFrame = (gGlobalTimer - lastRenderedFrame == 1) ? FRAMELERP_SLOW : FRAMELERP_NORMAL;
+			} else {
+				gRenderFrame = FRAMELERP_NORMAL;
+			}
+		} else {
+			gRenderFrame = (lastRenderedFrame == gGlobalTimer) ? FRAMELERP_NORMAL : FRAMELERP_BETWEEN;
+		}
         lastRenderedFrame = gGlobalTimer;
 
 		select_gfx_pool();
@@ -1036,6 +938,6 @@ void thread10_graphics_loop(UNUSED void *arg) {
         if (!sFrameCap60 || gFPSCap != FPS_60) {
             osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
         }
-#endif // GRAPHICS_THREAD
 	}
 }
+#endif // GRAPHICS_THREAD

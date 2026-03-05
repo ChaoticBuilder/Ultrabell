@@ -531,9 +531,6 @@ void warp_credits(void) {
     }
 }
 
-#ifdef GRAPHICS_THREAD
-extern OSMesgQueue gGraphicsVblankQueue;
-#endif
 void check_instant_warp(void) {
     s16 cameraAngle;
     struct Surface *floor;
@@ -556,10 +553,6 @@ void check_instant_warp(void) {
             struct InstantWarp *warp = &gCurrentArea->instantWarps[index];
 
             if (warp->id != 0) {
-#ifdef GRAPHICS_THREAD
-				osRecvMesg(&gGraphicsVblankQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
-#endif
-				
                 gMarioState->pos[0] += warp->displacement[0];
                 gMarioState->pos[1] += warp->displacement[1];
                 gMarioState->pos[2] += warp->displacement[2];
@@ -1220,17 +1213,14 @@ UNUSED static s32 play_mode_unused(void) {
 s32 update_level(void) {
     s32 changeLevel = FALSE;
 
-    gMenuOptSelectIndex = logic_menus_and_dialogs();
-
-    if (gMenuOptSelectIndex != 0) {
-        gSaveOptSelectIndex = gMenuOptSelectIndex;
-    }
-
     switch (sCurrPlayMode) {
         case PLAY_MODE_NORMAL:
             changeLevel = play_mode_normal();
             break;
         case PLAY_MODE_PAUSED:
+#ifdef GRAPHICS_THREAD
+			read_controller_inputs();
+#endif
             changeLevel = play_mode_paused();
             break;
         case PLAY_MODE_CHANGE_AREA:

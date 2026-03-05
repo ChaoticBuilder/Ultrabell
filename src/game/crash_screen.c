@@ -396,7 +396,6 @@ OSThread *get_crashed_thread(void) {
 extern u16 sRenderedFramebuffer;
 extern void audio_signal_game_loop_tick(void);
 extern void stop_sounds_in_continuous_banks(void);
-extern void read_controller_inputs(s32 threadID);
 extern struct SequenceQueueItem sBackgroundMusicQueue[6];
 
 void thread2_crash_screen(UNUSED void *arg) {
@@ -431,7 +430,7 @@ void thread2_crash_screen(UNUSED void *arg) {
 #endif
                 osContStartReadDataEx(&gSIEventMesgQueue);
             }
-            read_controller_inputs(THREAD_2_CRASH_SCREEN);
+            read_controller_inputs();
             draw_crash_screen(thread);
         }
     }

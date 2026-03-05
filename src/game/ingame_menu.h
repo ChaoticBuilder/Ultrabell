@@ -26,9 +26,10 @@ extern u16 snapValue;
 
 enum {
 	/* Config */
-	HUD     = (1 << 13), /* 0x2000 */
-	SELECT  = (1 << 14), /* 0x4000 */
-	MENU    = (1 << 15), /* 0x4000 */
+	HUD       = (1 << 13), /* 0x2000 */
+	SELECT    = (1 << 14), /* 0x4000 */
+	MENU      = (1 << 15), /* 0x8000 */
+	SCR_MASK  = (7 << 13), /* 0xE000 */
 	/* Moveset */
 	C_MARIO = (0 << 0),
 	C_LUIGI,
@@ -39,14 +40,14 @@ enum {
 	D_AUTO  = (2 << 2),  /* 0x8    */
 	D_MASK  = (3 << 2),  /* 0xC    */
 	A_OFF   = (0 << 4),  /* 0x00   */
-	A_EASY    = (1 << 4),  /* 0x10   */
+	A_EASY  = (1 << 4),  /* 0x10   */
 	A_HARD  = (2 << 4),  /* 0x20   */
 	A_MASK  = (3 << 4),  /* 0x40   */
-	SNAP    = (1 << 11), /* 0x800  */
-	TURN    = (1 << 12), /* 0x1000 */
-	MOVE    = (1 << 13), /* 0x2000 */
-	REAL    = (1 << 14), /* 0x4000 */
-	DEMO    = (1 << 15), /* 0x8000 */
+	SNAP      = (1 << 11), /* 0x800  */
+	TURN      = (1 << 12), /* 0x1000 */
+	MOVE      = (1 << 13), /* 0x2000 */
+	REAL      = (1 << 14), /* 0x4000 */
+	DEMO      = (1 << 15), /* 0x8000 */
 };
 
 #define M_MARIO ((gMovesetVar & (3 | MOVE)) == (C_MARIO | MOVE))

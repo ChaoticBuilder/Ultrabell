@@ -79,8 +79,6 @@ typedef f32 Mat2[2][2];
 typedef f32 Mat3[3][3];
 typedef f32 Mat4[4][4];
 
-typedef Vec4f Quat;
-
 // -- Scripts --
 typedef uintptr_t GeoLayout;
 typedef uintptr_t LevelScript;
@@ -237,9 +235,9 @@ struct AnimInfo {
     /*0x0C 0x44*/ s32 animFrameAccelAssist;
     /*0x10 0x48*/ s32 animAccel;
 #ifdef GRAPHICS_THREAD
-				  struct Animation *curAnimLogic;
-                  f32 animFrameF;
-                  f32 animAccelF;
+				  struct Animation *prevAnim;
+                  f32 animPosStack[3];
+                  s16 animRotStack[30][3];
 #endif
 };
 
@@ -253,17 +251,13 @@ struct GraphNodeObject {
     /*0x2C*/ Vec3f scale;
     /*0x38*/ struct AnimInfo animInfo;
     /*0x4C*/ struct SpawnInfo *spawnInfo;
+    /*0x50*/ Mat4 *throwMatrix; // matrix ptr
     /*0x54*/ Vec3f cameraToObject;
 #ifdef GRAPHICS_THREAD
-             Vec3f posCache;
-             Vec3f posVideoCache;
-             Vec3f posLerp;
-             Vec3f translationLerp;
-			 Vec3f scaleLerp;
-             Quat rotLerp;
-             Quat throwRotation;
-#else
-    		 Mat4 *throwMatrix; // matrix ptr
+             Vec3f deltaCurrentPos;
+             Vec3s deltaCurrentRot;
+             Vec3f deltaCurrentScale;
+             u8 firstBit;
 #endif
 };
 
@@ -441,12 +435,7 @@ struct MarioState {
     /*0x94*/ struct PlayerCameraState *statusForCamera;
     /*0x98*/ struct MarioBodyState *marioBodyState;
     /*0x9C*/ struct Controller *controller;
-#ifdef GRAPHICS_THREAD
-             struct MarioBodyState *marioGfxBodyState;
-    /*0xA0*/ struct DmaHandlerList *animList[2];
-#else
     /*0xA0*/ struct DmaHandlerList *animList;
-#endif
     /*0xA4*/ u32 collidedObjInteractTypes;
     /*0xA8*/ u8 numCoins;
     /*0xAA*/ s16 numStars;
@@ -480,11 +469,6 @@ struct MarioState {
              s16 ceilYaw;
              s16 wallYaw;
 			 u8 lookTimer;
-#ifdef GRAPHICS_THREAD
-             struct Animation * queueTargetAnim;
-             s32 queueTargetAnimID;
-             s32 queueTargetAnimAccel;
-#endif
     // -- HackerSM64 MarioState fields end --
 };
 
