@@ -409,7 +409,6 @@ s32 lvl_init_act_selector_values_and_stars(UNUSED s32 arg, UNUSED s32 unused) {
  * Also updates objects and returns act number selected after is chosen.
  */
 s32 lvl_update_obj_and_load_act_button_actions(UNUSED s32 arg, UNUSED s32 unused) {
-	read_controller_inputs();
     // If any of these buttons are pressed, play sound and go to course act
     if ((gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON | B_BUTTON | Z_TRIG))) {
         play_sound(SOUND_MENU_STAR_SOUND_LETS_A_GO, gGlobalSoundSource);

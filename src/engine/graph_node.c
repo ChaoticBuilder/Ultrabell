@@ -289,6 +289,9 @@ struct GraphNodeScale *init_graph_node_scale(struct AllocOnlyPool *pool,
         init_scene_graph_node_links(&graphNode->node, GRAPH_NODE_TYPE_SCALE);
         SET_GRAPH_NODE_LAYER(graphNode->node.flags, drawingLayer);
         graphNode->scale = scale;
+#ifdef GRAPHICS_THREAD
+        graphNode->deltaScale = 0.01f;
+#endif
         graphNode->displayList = displayList;
     }
 
@@ -311,6 +314,12 @@ struct GraphNodeObject *init_graph_node_object(struct AllocOnlyPool *pool,
         vec3f_copy(graphNode->pos, pos);
         vec3f_copy(graphNode->scale, scale);
         vec3s_copy(graphNode->angle, angle);
+#ifdef GRAPHICS_THREAD
+        vec3f_copy(graphNode->deltaPos, pos);
+        vec3f_copy(graphNode->deltaScale, scale);
+        vec3s_copy(graphNode->deltaRot, angle);
+        graphNode->firstBit = 0;
+#endif
         graphNode->sharedChild = sharedChild;
 		graphNode->throwMatrix = NULL;
         graphNode->animInfo.animID = 0;
@@ -357,6 +366,28 @@ struct GraphNodeAnimatedPart *init_graph_node_animated_part(struct AllocOnlyPool
     if (graphNode != NULL) {
         init_scene_graph_node_links(&graphNode->node, GRAPH_NODE_TYPE_ANIMATED_PART);
         vec3s_copy(graphNode->translation, translation);
+#ifdef GRAPHICS_THREAD
+        vec3s_copy(graphNode->rotation, gVec3sZero);
+
+        SET_GRAPH_NODE_LAYER(graphNode->node.flags, drawingLayer);
+        graphNode->displayList = displayList;
+    }
+
+    return graphNode;
+}
+
+struct GraphNodeBone *init_graph_node_bone(struct AllocOnlyPool *pool, struct GraphNodeBone *graphNode,
+                                           s32 drawingLayer, void *displayList, Vec3s translation,
+                                           Vec3s rotation) {
+    if (pool != NULL) {
+        graphNode = alloc_only_pool_alloc(pool, sizeof(struct GraphNodeBone));
+    }
+
+    if (graphNode != NULL) {
+        init_scene_graph_node_links(&graphNode->node, GRAPH_NODE_TYPE_BONE);
+        vec3s_copy(graphNode->translation, translation);
+        vec3s_copy(graphNode->rotation, rotation);
+#endif
         SET_GRAPH_NODE_LAYER(graphNode->node.flags, drawingLayer);
         graphNode->displayList = displayList;
     }

@@ -43,6 +43,9 @@ GeoLayoutCommandProc GeoLayoutJumpTable[] = {
     /*GEO_CMD_NOP_1E                    */ geo_layout_cmd_nop2,
     /*GEO_CMD_NOP_1F                    */ geo_layout_cmd_nop3,
     /*GEO_CMD_NODE_CULLING_RADIUS       */ geo_layout_cmd_node_culling_radius,
+#ifdef GRAPHICS_THREAD
+    /*GEO_CMD_NODE_BONE                 */ geo_layout_cmd_bone,
+#endif
 };
 
 struct GraphNode gObjParentGraphNode;
@@ -187,6 +190,8 @@ void geo_layout_cmd_update_node_flags(void) {
     gGeoLayoutCommand += 0x04 << CMD_SIZE_SHIFT;
 }
 
+extern u8 sFrameCap60;
+
 /*
   0x08: Create a scene graph root node that specifies the viewport
    cmd+0x02: s16 num entries (+2) to allocate for gGeoViews
@@ -203,6 +208,8 @@ void geo_layout_cmd_node_root(void) {
     s16 y = cur_geo_cmd_s16(0x06);
     s16 width = cur_geo_cmd_s16(0x08);
     s16 height = cur_geo_cmd_s16(0x0A);
+
+	//(EMU_CONSOLE|EMU_HIACC)
 
     // number of entries to allocate for gGeoViews array
     // at least 2 are allocated by default
@@ -750,6 +757,32 @@ void geo_layout_cmd_node_culling_radius(void) {
     register_scene_graph_node(&graphNode->node);
     gGeoLayoutCommand += 0x04 << CMD_SIZE_SHIFT;
 }
+
+#ifdef GRAPHICS_THREAD
+/*
+  Create a scene graph node that is rotated by the object's animation + an initial rotation.
+*/
+void geo_layout_cmd_bone(void) {
+    struct GraphNodeBone *graphNode;
+    Vec3s translation;
+    Vec3s rotation;
+    s32 drawingLayer = cur_geo_cmd_u8(0x01);
+    void *displayList;
+    s16 *cmdPos = (s16 *) gGeoLayoutCommand;
+
+    cmdPos = read_vec3s(translation, &cmdPos[2]);
+    cmdPos = read_vec3s(rotation, &cmdPos[0]);
+    displayList = *(void **) &cmdPos[0];
+    cmdPos += 2 << CMD_SIZE_SHIFT;
+
+    graphNode =
+        init_graph_node_bone(gGraphNodePool, NULL, drawingLayer, displayList, translation, rotation);
+
+    register_scene_graph_node(&graphNode->node);
+
+    gGeoLayoutCommand = (u8 *) cmdPos;
+}
+#endif
 
 struct GraphNode *process_geo_layout(struct AllocOnlyPool *pool, void *segptr) {
     // set by register_scene_graph_node when gCurGraphNodeIndex is 0

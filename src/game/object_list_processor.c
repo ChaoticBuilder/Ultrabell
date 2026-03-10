@@ -257,15 +257,26 @@ void spawn_particle(u32 activeParticleFlag, ModelID16 model, const BehaviorScrip
     }
 }
 
+#include "game_init.h"
+
 /**
  * Mario's primary behavior update function.
  */
 void bhv_mario_update(void) {
-    u32 particleFlags = 0;
+    u32 particleFlags = execute_mario_action(gCurrentObject);
     s32 i;
 
-    particleFlags = execute_mario_action(gCurrentObject);
     gCurrentObject->oMarioParticleFlags = particleFlags;
+//#ifdef GRAPHICS_THREAD
+#if 0
+	struct AnimInfo animObj = gCurrentObject->header.gfx.animInfo;
+
+	animObj.curAnim = gMarioState->animList->bufTarget;
+    if (load_patchable_table(gMarioState->animList, animObj.animID)) {
+        animObj.curAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) animObj.curAnim + (uintptr_t) animObj.curAnim->values);
+        animObj.curAnim->index = (void *) VIRTUAL_TO_PHYSICAL((u8 *) animObj.curAnim + (uintptr_t) animObj.curAnim->index);
+    }
+#endif
 
     // Mario code updates MarioState's versions of position etc, so we need
     // to sync it with the Mario object

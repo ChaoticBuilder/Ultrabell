@@ -94,6 +94,22 @@ enum renderFrameList {
 extern u32 gRenderFrame;
 extern f32 gDeltaTime;
 
+#define APPROACH_INT(src, dst) (src += (dst - src) >> 1)
+#define APPROACH_FLOAT(src, dst) (src += (dst - src) * 0.5f)
+#define RETREAT_INT(src, dst) (src -= (dst - src) >> 1)
+#define RETREAT_FLOAT(src, dst) (src -= (dst - src) * 0.5f)
+
+#define APPROACH_VEC3S(src, dst) {	\
+	APPROACH_INT(src[0], dst[0]);	\
+	APPROACH_INT(src[1], dst[1]);	\
+	APPROACH_INT(src[2], dst[2]);	}
+
+#define APPROACH_VEC3F(src, dst) {	\
+	APPROACH_FLOAT(src[0], dst[0]);	\
+	APPROACH_FLOAT(src[1], dst[1]);	\
+	APPROACH_FLOAT(src[2], dst[2]);	}
+
+void node_tool(struct Object *node, u8 mode);
 void thread10_graphics_loop(UNUSED void *arg);
 #endif
 

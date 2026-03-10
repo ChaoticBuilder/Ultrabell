@@ -10771,6 +10771,8 @@ void zoom_fov_30(UNUSED struct MarioState *m) {
 void fov_default(struct MarioState *m) {
     sStatusFlags &= ~CAM_FLAG_SLEEPING;
 
+    /* Reverted sleeping zoom back to vanilla behavior because of camera look */
+    /* Will I keep it this way? idk, I just know that I'm too lazy to figure out how to fix rn -w- */
     if ((m->action == ACT_SLEEPING) || (m->action == ACT_START_SLEEPING)) {
         camera_approach_f32_symmetric_bool(&sFOVState.fov, 30.f, (30.f - sFOVState.fov) / 30.f);
         sStatusFlags |= CAM_FLAG_SLEEPING;
@@ -10825,7 +10827,7 @@ void set_fov_bbh(struct MarioState *m) {
         targetFoV = 45.f;
     }
 
-    sFOVState.fov = approach_f32_symmetric(sFOVState.fov, targetFoV, 2.f);
+    sFOVState.fov = approach_f32(sFOVState.fov, targetFoV, (2.f / gDeltaTime), (2.f / gDeltaTime));
 }
 
 /**

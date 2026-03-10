@@ -644,7 +644,8 @@ void adjust_analog_stick(struct Controller *controller) {
 void read_controller_inputs(void) {
     // If any controllers are plugged in, update the controller information.
     if (gControllerBits) {
-#ifndef GRAPHICS_THREAD
+		/* TODO: figure out how to make inputs 60FPS */
+#if 1 // !GRAPHICS_THREAD
         osRecvMesg(&gSIEventMesgQueue, &gMainReceivedMesg, OS_MESG_BLOCK);
 #endif
         osContGetReadDataEx(gControllerPads);
@@ -806,6 +807,31 @@ void setup_game_memory(void) {
     load_segment_decompress(SEGMENT_SEGMENT2, _segment2_mio0SegmentRomStart, _segment2_mio0SegmentRomEnd);
 }
 
+#ifdef GRAPHICS_THREAD
+void node_tool(struct Object *node, u8 mode) {
+	u8 i;
+	for (i = 0; i < 3; i++) {
+		switch (mode) {
+			case 0:
+				node->header.gfx.deltaPos[i] = node->header.gfx.pos[i];
+				node->header.gfx.deltaRot[i] = node->header.gfx.angle[i];
+				node->header.gfx.deltaScale[i] = node->header.gfx.scale[i];
+				break;
+			case 1:
+				APPROACH_FLOAT(node->header.gfx.deltaPos[i], node->header.gfx.pos[i]);
+				APPROACH_INT(node->header.gfx.deltaRot[i], node->header.gfx.angle[i]);
+				APPROACH_FLOAT(node->header.gfx.deltaScale[i], node->header.gfx.scale[i]);
+				break;
+			case 2:
+				RETREAT_FLOAT(node->header.gfx.deltaPos[i], node->header.gfx.pos[i]);
+				RETREAT_INT(node->header.gfx.deltaRot[i], node->header.gfx.angle[i]);
+				RETREAT_FLOAT(node->header.gfx.deltaScale[i], node->header.gfx.scale[i]);
+				break;
+		}
+	}
+}
+#endif
+
 /**
  * Main game loop thread. Runs forever as long as the game continues.
  */
@@ -864,12 +890,15 @@ void thread5_game_loop(UNUSED void *arg) {
 #endif
             osContStartReadDataEx(&gSIEventMesgQueue);
         }
+#ifdef GRAPHICS_THREAD
+		gMenuOptSelectIndex = ingame_menu_logic();
+#endif
 
         audio_game_loop_tick();
 #ifndef GRAPHICS_THREAD
 		select_gfx_pool();
-		read_controller_inputs();
 #endif
+		read_controller_inputs();
         profiler_update(PROFILER_TIME_CONTROLLERS, 0);
         profiler_collision_reset();
         addr = level_script_execute(addr);

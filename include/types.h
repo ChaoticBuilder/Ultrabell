@@ -254,9 +254,9 @@ struct GraphNodeObject {
     /*0x50*/ Mat4 *throwMatrix; // matrix ptr
     /*0x54*/ Vec3f cameraToObject;
 #ifdef GRAPHICS_THREAD
-             Vec3f deltaCurrentPos;
-             Vec3s deltaCurrentRot;
-             Vec3f deltaCurrentScale;
+             Vec3f deltaPos;
+             Vec3s deltaRot;
+             Vec3f deltaScale;
              u8 firstBit;
 #endif
 };

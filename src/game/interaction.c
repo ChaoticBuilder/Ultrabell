@@ -293,6 +293,9 @@ void mario_drop_held_object(struct MarioState *m) {
         // m->heldObj->oPosY = m->marioBodyState->heldObjLastPosition[1];
         m->heldObj->oPosY = m->pos[1];
         m->heldObj->oPosZ = m->marioBodyState->heldObjLastPosition[2];
+#ifdef GRAPHICS_THREAD
+		m->heldObj->header.gfx.throwMatrix = NULL;
+#endif
 
         m->heldObj->oMoveAngleYaw = m->faceAngle[1];
 
@@ -313,6 +316,9 @@ void mario_throw_held_object(struct MarioState *m) {
         m->heldObj->oPosZ = m->marioBodyState->heldObjLastPosition[2] + 32.0f * coss(m->faceAngle[1]);
 
         m->heldObj->oMoveAngleYaw = m->faceAngle[1];
+#ifdef GRAPHICS_THREAD
+		m->heldObj->header.gfx.throwMatrix = NULL;
+#endif
 
         m->heldObj = NULL;
     }
@@ -1377,7 +1383,7 @@ u32 interact_bounce_top(struct MarioState *m, UNUSED u32 interactType, struct Ob
 u32 interact_spiny_walking(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
     u32 interaction = determine_interaction(m, obj);
 
-    if (interaction & INT_PUNCH) {
+    if (interaction & (INT_PUNCH | INT_KICK | INT_TRIP)) {
         obj->oInteractStatus = INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED | ATTACK_PUNCH;
         bounce_back_from_attack(m, interaction);
     } else if (take_damage_and_knock_back(m, obj)) {

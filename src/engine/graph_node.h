@@ -63,6 +63,9 @@ enum GraphNodeTypes {
     GRAPH_NODE_TYPE_BACKGROUND,
     GRAPH_NODE_TYPE_HELD_OBJ,
     GRAPH_NODE_TYPE_CULLING_RADIUS,
+#ifdef GRAPHICS_THREAD
+	GRAPH_NODE_TYPE_BONE,
+#endif
     GRAPH_NODE_TYPE_ROOT,
     GRAPH_NODE_TYPE_START,
 };
@@ -409,6 +412,9 @@ struct GraphNodeScale               *init_graph_node_scale               (struct
 struct GraphNodeObject              *init_graph_node_object              (struct AllocOnlyPool *pool, struct GraphNodeObject              *graphNode, struct GraphNode *sharedChild, Vec3f pos, Vec3s angle, Vec3f scale);
 struct GraphNodeCullingRadius       *init_graph_node_culling_radius      (struct AllocOnlyPool *pool, struct GraphNodeCullingRadius       *graphNode, s16 radius);
 struct GraphNodeAnimatedPart        *init_graph_node_animated_part       (struct AllocOnlyPool *pool, struct GraphNodeAnimatedPart        *graphNode, s32 drawingLayer, void *displayList, Vec3s translation);
+#ifdef GRAPHICS_THREAD
+struct GraphNodeBone                *init_graph_node_bone                (struct AllocOnlyPool *pool, struct GraphNodeBone                *graphNode, s32 drawingLayer, void *displayList, Vec3s translation, Vec3s rotation);
+#endif
 struct GraphNodeBillboard           *init_graph_node_billboard           (struct AllocOnlyPool *pool, struct GraphNodeBillboard           *graphNode, s32 drawingLayer, void *displayList, Vec3s translation);
 struct GraphNodeDisplayList         *init_graph_node_display_list        (struct AllocOnlyPool *pool, struct GraphNodeDisplayList         *graphNode, s32 drawingLayer, void *displayList);
 struct GraphNodeShadow              *init_graph_node_shadow              (struct AllocOnlyPool *pool, struct GraphNodeShadow              *graphNode, s16 shadowScale, u8 shadowSolidity, u8 shadowType);

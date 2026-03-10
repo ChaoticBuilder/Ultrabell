@@ -44,6 +44,9 @@
  */
 s32 is_anim_at_end(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
+#ifdef GRAPHICS_THREAD
+	if (!(marioObj->header.gfx.animInfo.curAnim && marioObj->header.gfx.animInfo.animFrame)) return FALSE;
+#endif
 
 	return (marioObj->header.gfx.animInfo.animFrame + 1) == marioObj->header.gfx.animInfo.curAnim->loopEnd;
 }
@@ -53,6 +56,9 @@ s32 is_anim_at_end(struct MarioState *m) {
  */
 s32 is_anim_past_end(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
+#ifdef GRAPHICS_THREAD
+	if (!(marioObj->header.gfx.animInfo.curAnim && marioObj->header.gfx.animInfo.animFrame)) return FALSE;
+#endif
 
 	return marioObj->header.gfx.animInfo.animFrame >= (marioObj->header.gfx.animInfo.curAnim->loopEnd - 2);
 }
@@ -63,19 +69,28 @@ s32 is_anim_past_end(struct MarioState *m) {
  */
 s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel) {
     struct Object *marioObj = m->marioObj;
+//#ifndef GRAPHICS_THREAD
+#if 1
 	struct Animation *targetAnim = m->animList->bufTarget;
 
     if (load_patchable_table(m->animList, targetAnimID)) {
         targetAnim->values = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->values);
         targetAnim->index = (void *) VIRTUAL_TO_PHYSICAL((u8 *) targetAnim + (uintptr_t) targetAnim->index);
     }
+#else
+	load_patchable_table(m->animList, targetAnimID);
+#endif
 
     if (marioObj->header.gfx.animInfo.animID != targetAnimID) {
         marioObj->header.gfx.animInfo.animID = targetAnimID;
         marioObj->header.gfx.animInfo.animYTrans = m->animYTrans;
+//#ifdef GRAPHICS_THREAD
+#if 0
+        marioObj->header.gfx.animInfo.animFrame = 0;
+		marioObj->header.gfx.animInfo.animFrameAccelAssist = 0;
+#else
         marioObj->header.gfx.animInfo.curAnim = targetAnim;
 
-		
         if (targetAnim->flags & ANIM_FLAG_NO_ACCEL) {
             marioObj->header.gfx.animInfo.animFrameAccelAssist = (targetAnim->startFrame << 0x10);
         } else {
@@ -87,10 +102,7 @@ s16 set_mario_anim_with_accel(struct MarioState *m, s32 targetAnimID, s32 accel)
         }
 
 		marioObj->header.gfx.animInfo.animFrame = (marioObj->header.gfx.animInfo.animFrameAccelAssist >> 0x10);
-		
-		
-//        marioObj->header.gfx.animInfo.animFrame = 0;
-//		marioObj->header.gfx.animInfo.animFrameAccelAssist = 0;
+#endif
     }
 
     marioObj->header.gfx.animInfo.animAccel = accel;
@@ -125,21 +137,32 @@ s32 is_anim_past_frame(struct MarioState *m, s16 animFrame) {
     s32 acceleratedFrame = animFrame << 0x10;
     struct AnimInfo *animInfo = &m->marioObj->header.gfx.animInfo;
     struct Animation *curAnim = animInfo->curAnim;
+#ifdef GRAPHICS_THREAD
+    if (!(curAnim && animInfo->animFrame)) {
+        return FALSE;
+    }
+#endif
 
     if (animInfo->animAccel) {
+#ifndef GRAPHICS_THREAD
         if (curAnim->flags & ANIM_FLAG_FORWARD) {
             isPastFrame =
                 (animInfo->animFrameAccelAssist > acceleratedFrame)
                 && (acceleratedFrame >= (animInfo->animFrameAccelAssist - animInfo->animAccel));
-        } else {
-            isPastFrame =
+        } else
+#endif
+        {
+			isPastFrame =
                 (animInfo->animFrameAccelAssist < acceleratedFrame)
                 && (acceleratedFrame <= (animInfo->animFrameAccelAssist + animInfo->animAccel));
         }
     } else {
+#ifndef GRAPHICS_THREAD
         if (curAnim->flags & ANIM_FLAG_FORWARD) {
             isPastFrame = (animInfo->animFrame == (animFrame + 1));
-        } else {
+        } else
+#endif
+		{
             isPastFrame = ((animInfo->animFrame + 1) == animFrame);
         }
     }
@@ -177,9 +200,7 @@ s16 find_mario_anim_flags_and_translation(struct Object *obj, s32 yaw, Vec3s tra
  */
 void update_mario_pos_for_anim(struct MarioState *m) {
     Vec3s translation;
-    s16 flags;
-
-    flags = find_mario_anim_flags_and_translation(m->marioObj, m->faceAngle[1], translation);
+    s16 flags = find_mario_anim_flags_and_translation(m->marioObj, m->faceAngle[1], translation);
 
     if (flags & (ANIM_FLAG_HOR_TRANS | ANIM_FLAG_NO_TRANS)) {
         m->pos[0] += (f32) translation[0];
@@ -1398,6 +1419,10 @@ void update_mario_geometry_inputs(struct MarioState *m) {
     }
 }
 
+#ifdef GRAPHICS_THREAD
+extern void read_controller_inputs(void);
+#endif
+
 /**
  * Handles Mario's input flags as well as a couple timers.
  */
@@ -1440,7 +1465,7 @@ void update_mario_inputs(struct MarioState *m) {
 
     // This function is located near other unused trampoline functions,
     // perhaps logically grouped here with the timers.
-    stub_mario_step_1(m);
+    //stub_mario_step_1(m);
 
     if (m->wallKickTimer > 0) {
         m->wallKickTimer--;
@@ -1823,7 +1848,7 @@ s32 execute_mario_action(UNUSED struct Object *obj) {
         }
 #endif
         mario_process_interactions(gMarioState);
-#ifdef GRAPHICS_THREAD
+#if 0 // GRAPHICS_THREAD
 		read_controller_inputs();
 #endif
 
